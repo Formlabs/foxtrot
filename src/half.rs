@@ -13,9 +13,11 @@ pub struct Edge {
 /// Half is a half-edge graph structure, implicitly storing triangles.
 /// It is agnostic to actual point locations, using abstract PointIndex
 /// values instead.
-#[derive(Default)]
 pub struct Half {
     edges: Vec<Edge>,
+}
+impl Default for Half {
+    fn default() -> Self { Half::new() }
 }
 
 impl Half {
