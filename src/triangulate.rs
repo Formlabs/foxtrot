@@ -1,26 +1,13 @@
 use std::collections::BTreeMap;
-use std::num::NonZeroUsize;
 
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
 
 use crate::predicates::{circumcenter, circumradius2, distance2, orient2d, pseudo_angle};
-use crate::Point;
+use crate::{Point, PointIndex, EdgeIndex};
+use crate::half::Half;
 
-#[derive(Copy, Clone, Debug)]
-struct PointIndex(usize);
-
-#[derive(Copy, Clone, Debug)]
-struct EdgeIndex(NonZeroUsize);
-
-#[derive(Copy, Clone, Debug)]
-struct Edge {
-    src: PointIndex,
-    dst: PointIndex,
-    buddy: Option<EdgeIndex>,
-}
-
-struct Triangulation<'a> {
+pub struct Triangulation<'a> {
     points: &'a[Point],
     center: Point,
     order: Vec<usize>, // Ordering of the points, from inner to outer
@@ -28,13 +15,12 @@ struct Triangulation<'a> {
     // This stores the start of an edge (as a pseudoangle) as an index into
     // the edges array
     hull: BTreeMap<OrderedFloat<f64>, EdgeIndex>,
-    edges: Vec<Edge>,
+    half: Half,
 }
 
 impl<'a> Triangulation<'a> {
     pub fn new(points: &'a [Point]) -> Triangulation<'a> {
         let seed = Self::seed_triangle(points);
-        println!("{:?}", seed);
         let center = circumcenter(points[seed.0], points[seed.1], points[seed.2]);
         let mut pts: Vec<(usize, Point)> = points.iter()
             .cloned()
@@ -51,9 +37,7 @@ impl<'a> Triangulation<'a> {
             order,
             center,
 
-            // edges[0] is a reserved slot, so other edges can use None (0)
-            // to indicate when they don't have a matched pair.
-            edges: vec![Edge { src: PointIndex(0), dst: PointIndex(0), buddy: None }],
+            half: Half::new(),
             hull: BTreeMap::new(),
         };
 
@@ -61,35 +45,17 @@ impl<'a> Triangulation<'a> {
         let pb = PointIndex(seed.1);
         let pc = PointIndex(seed.2);
 
-        let e_ab = out.push_edge(pa, pb, None);
-        let e_bc = out.push_edge(pb, pc, None);
-        let e_ca = out.push_edge(pc, pa, None);
-
+        let e_ab = out.half.insert(pa, pb, pc, None, None, None);
         out.hull.insert(out.key(pa), e_ab);
-        out.hull.insert(out.key(pb), e_bc);
-        out.hull.insert(out.key(pc), e_ca);
+        out.hull.insert(out.key(pb), out.half.next(e_ab));
+        out.hull.insert(out.key(pc), out.half.prev(e_ab));
 
         out
     }
 
     fn key(&self, p: PointIndex) -> OrderedFloat<f64> {
         let p = self.points[p.0];
-        OrderedFloat(crate::predicates::pseudo_angle(
-            (p.0 - self.center.0, p.1 - self.center.1)))
-    }
-
-    fn push_edge(&mut self, src: PointIndex, dst: PointIndex, buddy: Option<EdgeIndex>) -> EdgeIndex {
-        let n = self.edges.len();
-        self.edges.push(Edge {src, dst, buddy});
-        EdgeIndex(NonZeroUsize::new(n).unwrap())
-    }
-
-    fn edge(&self, e: EdgeIndex) -> Edge {
-        self.edges[e.0.get()]
-    }
-
-    fn point(&self, p: PointIndex) -> Point {
-        self.points[p.0]
+        OrderedFloat(pseudo_angle((p.0 - self.center.0, p.1 - self.center.1)))
     }
 
     // Calculates a seed triangle from the given set of points
@@ -141,6 +107,39 @@ impl<'a> Triangulation<'a> {
         let mut r = self.hull.range((Unbounded, Included(k)));
         (k.into_inner(), r.next_back().map(|p| *p.1))
     }
+
+    pub fn to_svg(&self) -> String {
+        let x_bounds = self.points.iter().map(|p| p.0).minmax().into_option().unwrap();
+        let y_bounds = self.points.iter().map(|p| p.1).minmax().into_option().unwrap();
+        let line_width = (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0) / 20.0;
+        let dx = |x| { x - x_bounds.0 + line_width};
+        let dy = |y| { y - y_bounds.0 + line_width};
+
+         let mut out = String::new();
+         out.push_str(&format!(
+            r#"<svg viewbox="auto" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="{}" height="{}"
+     style="fill:rgb(0,0,0)" />"#,
+            dx(x_bounds.1) + line_width,
+            dy(y_bounds.1) + line_width));
+         for (pa, pb) in self.half.iter_edges() {
+             out.push_str(&format!(
+                r#"
+    <line x1="{}" y1="{}" x2="{}" y2="{}"
+     style="stroke:rgb(255,0,0);stroke-width:{}" />"#,
+                dx(self.points[pa.0].0),
+                dy(self.points[pa.0].1),
+                dx(self.points[pb.0].0),
+                dy(self.points[pb.0].1),
+                line_width))
+         }
+         out.push_str(&format!(
+            r#"
+    <circle cx="{}" cy="{}" r="{}" style="fill:rgb(0,255,0)" />"#,
+            dx(0.0), dy(0.0), line_width));
+         out.push_str("\n</svg>");
+         out
+    }
 }
 
 #[cfg(test)]
@@ -160,5 +159,6 @@ mod tests {
         }
         println!("{:?}", t.hull.range((std::ops::Bound::Unbounded,
                 std::ops::Bound::Included(t.key(PointIndex(3))))));
+        println!("{}", t.to_svg());
     }
 }
