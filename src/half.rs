@@ -3,11 +3,11 @@ use crate::{PointIndex, EdgeIndex};
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Edge {
-    src: PointIndex,
-    dst: PointIndex,
+    pub src: PointIndex,
+    pub dst: PointIndex,
     prev: EdgeIndex,
     next: EdgeIndex,
-    buddy: Option<EdgeIndex>,
+    pub buddy: Option<EdgeIndex>,
 }
 
 /// Half is a half-edge graph structure, implicitly storing triangles.
