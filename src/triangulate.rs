@@ -7,10 +7,12 @@ use crate::predicates::{circumcenter, circumradius2, distance2, orient2d, pseudo
 use crate::{Point, PointIndex, EdgeIndex};
 use crate::half::Half;
 
+#[derive(Default)]
 pub struct Triangulation<'a> {
     points: &'a[Point],
     center: Point,
-    order: Vec<usize>, // Ordering of the points, from inner to outer
+    order: Vec<usize>,  // Ordering of the points, from inner to outer
+    next: usize,        // Progress of the triangulation
 
     // This stores the start of an edge (as a pseudoangle) as an index into
     // the edges array
@@ -20,26 +22,19 @@ pub struct Triangulation<'a> {
 
 impl<'a> Triangulation<'a> {
     pub fn new(points: &'a [Point]) -> Triangulation<'a> {
-        let seed = Self::seed_triangle(points);
-        let center = circumcenter(points[seed.0], points[seed.1], points[seed.2]);
-        let mut pts: Vec<(usize, Point)> = points.iter()
-            .cloned()
-            .enumerate()
-            .collect();
-        pts.sort_by_key(|p| OrderedFloat(distance2(center, p.1)));
-        let order: Vec<usize> = pts.iter()
-            .map(|p| p.0)
-            .filter(|&i| i != seed.0 && i != seed.1 && i != seed.2)
-            .collect();
-
         let mut out = Triangulation {
             points,
-            order,
-            center,
-
-            half: Half::new(),
-            hull: BTreeMap::new(),
+            ..Default::default()
         };
+
+        let seed = out.seed_triangle();
+        out.center = circumcenter(points[seed.0], points[seed.1], points[seed.2]);
+        let mut order: Vec<usize> = (0..points.len())
+            .filter(|&i| i != seed.0 && i != seed.1 && i != seed.2)
+            .collect();
+        order.sort_by_key(
+            |&p| OrderedFloat(distance2(out.center, out.points[p])));
+        out.order = order;
 
         let pa = PointIndex(seed.0);
         let pb = PointIndex(seed.1);
@@ -60,10 +55,8 @@ impl<'a> Triangulation<'a> {
 
     // Calculates a seed triangle from the given set of points
     // TODO: make robust to < 3 points and colinear inputs
-    fn seed_triangle(pts: &[Point]) -> (usize, usize, usize) {
-        let x_bounds = pts.iter().map(|p| p.0).minmax().into_option().unwrap();
-        let y_bounds = pts.iter().map(|p| p.1).minmax().into_option().unwrap();
-
+    fn seed_triangle(&self) -> (usize, usize, usize) {
+        let (x_bounds, y_bounds) = self.bbox();
         let center = ((x_bounds.0 + x_bounds.1) / 2.0,
                       (y_bounds.0 + y_bounds.1) / 2.0);
 
@@ -71,28 +64,28 @@ impl<'a> Triangulation<'a> {
         //  a) the point closest to the center
         //  b) the point closest to a
         //  c) the point with the minimum circumradius
-        let a = pts.iter()
+        let a = self.points.iter()
             .position_min_by_key(
                 |q| OrderedFloat(distance2(center, **q)))
             .expect("Could not get initial point");
-        let b = pts.iter().enumerate()
+        let b = self.points.iter().enumerate()
             .position_min_by_key(
                 |(j, p)| OrderedFloat(if *j == a {
                     std::f64::INFINITY
                 } else {
-                    distance2(pts[a], **p)
+                    distance2(self.points[a], **p)
                 }))
             .expect("Could not get second point");
-        let c = pts.iter().enumerate()
+        let c = self.points.iter().enumerate()
             .position_min_by_key(
                 |(j, p)| OrderedFloat(if *j == a || *j == b {
                     std::f64::INFINITY
                 } else {
-                    circumradius2(pts[a], pts[b], **p)
+                    circumradius2(self.points[a], self.points[b], **p)
                 }))
             .expect("Could not get third point");
 
-        if orient2d(pts[a], pts[b], pts[c]) > 0.0 {
+        if orient2d(self.points[a], self.points[b], self.points[c]) > 0.0 {
             (a, b, c)
         } else {
             (a, c, b)
@@ -108,9 +101,15 @@ impl<'a> Triangulation<'a> {
         (k.into_inner(), r.next_back().map(|p| *p.1))
     }
 
+    /// Calculates a bounding box, returning ((xmin, xmax), (ymin, ymax))
+    pub fn bbox(&self) -> ((f64, f64), (f64, f64)) {
+        let x = self.points.iter().map(|p| p.0).minmax().into_option().unwrap();
+        let y = self.points.iter().map(|p| p.1).minmax().into_option().unwrap();
+        return (x, y);
+    }
+
     pub fn to_svg(&self) -> String {
-        let x_bounds = self.points.iter().map(|p| p.0).minmax().into_option().unwrap();
-        let y_bounds = self.points.iter().map(|p| p.1).minmax().into_option().unwrap();
+        let (x_bounds, y_bounds) = self.bbox();
         let line_width = (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0) / 40.0;
         let dx = |x| { x - x_bounds.0 + line_width};
         let dy = |y| { y_bounds.1 - y - line_width};
