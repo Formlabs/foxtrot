@@ -231,7 +231,7 @@ mod tests {
         ];
         let t = Triangulation::new(&pts);
         assert_eq!(t.order.len(), 1);
-        assert_eq!(t.order[0], 3);
+        assert_eq!(t.order[0], PointIndex(3));
         for i in 0..4 {
             println!("{}: {:?}, {}", i, pts[i], t.key(PointIndex(i)));
         }
