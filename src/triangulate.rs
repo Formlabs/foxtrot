@@ -111,9 +111,9 @@ impl<'a> Triangulation<'a> {
     pub fn to_svg(&self) -> String {
         let x_bounds = self.points.iter().map(|p| p.0).minmax().into_option().unwrap();
         let y_bounds = self.points.iter().map(|p| p.1).minmax().into_option().unwrap();
-        let line_width = (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0) / 20.0;
+        let line_width = (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0) / 40.0;
         let dx = |x| { x - x_bounds.0 + line_width};
-        let dy = |y| { y - y_bounds.0 + line_width};
+        let dy = |y| { y_bounds.1 - y - line_width};
 
          let mut out = String::new();
          // Put a dummy rectangle in the SVG so that rsvg-convert doesn't clip
@@ -122,14 +122,16 @@ impl<'a> Triangulation<'a> {
     <rect x="0" y="0" width="{}" height="{}"
      style="fill:none" />"#,
             dx(x_bounds.1) + line_width,
-            dy(y_bounds.1) + line_width));
+            dy(y_bounds.0) + 2.0 * line_width));
 
          // Push every edge into the SVG
          for (pa, pb) in self.half.iter_edges() {
              out.push_str(&format!(
                 r#"
     <line x1="{}" y1="{}" x2="{}" y2="{}"
-     style="stroke:rgb(255,0,0);stroke-width:{}" />"#,
+     style="stroke:rgb(255,0,0)"
+     stroke-width="{}"
+     stroke-linecap="round" />"#,
                 dx(self.points[pa.0].0),
                 dy(self.points[pa.0].1),
                 dx(self.points[pb.0].0),
