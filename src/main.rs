@@ -1,10 +1,13 @@
+use rand::Rng;
 use cdt::triangulate::Triangulation;
 
 fn main() {
-    let pts = vec![
-        (0.0, 0.0), (1.5, 0.0), (0.0, 1.0), (2.0, 2.0)
-    ];
+    let mut rng = rand::thread_rng();
+    let mut pts = Vec::new();
+    for _ in 0..20 {
+        pts.push((rng.gen_range(0.0..20.0), rng.gen_range(0.0..20.0)));
+    }
     let mut t = Triangulation::new(&pts);
-    t.step();
+    while t.step() {}
     println!("{}", t.to_svg());
 }

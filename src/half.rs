@@ -77,7 +77,7 @@ impl Half {
 
     /// Returns an iterator over the edges in the data structure
     pub fn iter_edges(&self) -> impl Iterator<Item=(PointIndex, PointIndex)> + '_ {
-        return self.edges.iter().map(|p| (p.src, p.dst))
+        return self.edges.iter().map(|p| (p.src, p.dst)).skip(1)
     }
 
     /// Swaps the target edge, which must be have a matched pair.

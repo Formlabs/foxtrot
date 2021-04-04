@@ -65,7 +65,6 @@ impl<'a> Triangulation<'a> {
 
         // Find the hull edge which will be split by this point
         let (phi, e) = self.get_hull_edge(p);
-        let e = e.unwrap();
 
         /*
          *              p [new point]
@@ -76,7 +75,6 @@ impl<'a> Triangulation<'a> {
          *          b<------a [previous hull edge]
          *              e
          */
-
         let edge = self.half.edge(e);
         let a = edge.src;
         let b = edge.dst;
@@ -99,7 +97,6 @@ impl<'a> Triangulation<'a> {
         self.hull.insert(self.key(a), self.half.next(f));
         self.hull.insert(phi, self.half.prev(f));
 
-        self.next += 1;
         true
     }
 
@@ -144,11 +141,19 @@ impl<'a> Triangulation<'a> {
 
     /// Returns the edge of the bounding hull which the given point projects
     /// onto, as an index into self.edges.
-    fn get_hull_edge(&self, p: PointIndex) -> (OrderedFloat<f64>, Option<EdgeIndex>) {
+    fn get_hull_edge(&self, p: PointIndex) -> (OrderedFloat<f64>, EdgeIndex) {
         use std::ops::Bound::*;
         let k = self.key(p);
+
+        // If we don't find an item in the target range, then it must be below
+        // every other value in the tree, so we return the last item in the
+        // BTreeMap (which is the edge that wraps around from 1 -> 0)
         let mut r = self.hull.range((Unbounded, Included(k)));
-        (k, r.next_back().map(|p| *p.1))
+        let next = r.next_back();
+        match next {
+            Some(e) => (k, *e.1),
+            None => (k, self.hull.iter().next_back().map(|p| *p.1).unwrap()),
+        }
     }
 
     /// Calculates a bounding box, returning ((xmin, xmax), (ymin, ymax))
@@ -161,7 +166,7 @@ impl<'a> Triangulation<'a> {
     pub fn to_svg(&self) -> String {
         const SCALE: f64 = 100.0;
         let (x_bounds, y_bounds) = self.bbox();
-        let line_width = (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0) / 40.0 * SCALE;
+        let line_width = (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0) / 80.0 * SCALE;
         let dx = |x| { SCALE * (x - x_bounds.0) + line_width};
         let dy = |y| { SCALE * (y_bounds.1 - y) + line_width};
 
@@ -196,20 +201,20 @@ impl<'a> Triangulation<'a> {
                 r#"
     <line x1="{}" y1="{}" x2="{}" y2="{}"
      style="stroke:rgb(255,255,0)"
-     stroke-width="{}"
+     stroke-width="{}" stroke-dasharray="{}"
      stroke-linecap="round" />"#,
                 dx(self.points[pa.0].0),
                 dy(self.points[pa.0].1),
                 dx(self.points[pb.0].0),
                 dy(self.points[pb.0].1),
-                line_width))
+                line_width, line_width * 2.0))
          }
 
          // Add a circle at the origin
          out.push_str(&format!(
             r#"
     <circle cx="{}" cy="{}" r="{}" style="fill:rgb(0,255,0)" />"#,
-            dx(0.0), dy(0.0), line_width));
+            dx(self.center.0), dy(self.center.1), line_width));
          out.push_str("\n</svg>");
          out
     }
