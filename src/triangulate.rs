@@ -116,12 +116,15 @@ impl<'a> Triangulation<'a> {
         let dy = |y| { y - y_bounds.0 + line_width};
 
          let mut out = String::new();
+         // Put a dummy rectangle in the SVG so that rsvg-convert doesn't clip
          out.push_str(&format!(
             r#"<svg viewbox="auto" xmlns="http://www.w3.org/2000/svg">
     <rect x="0" y="0" width="{}" height="{}"
-     style="fill:rgb(0,0,0)" />"#,
+     style="fill:none" />"#,
             dx(x_bounds.1) + line_width,
             dy(y_bounds.1) + line_width));
+
+         // Push every edge into the SVG
          for (pa, pb) in self.half.iter_edges() {
              out.push_str(&format!(
                 r#"
@@ -133,6 +136,8 @@ impl<'a> Triangulation<'a> {
                 dy(self.points[pb.0].1),
                 line_width))
          }
+
+         // Add a circle at the origin
          out.push_str(&format!(
             r#"
     <circle cx="{}" cy="{}" r="{}" style="fill:rgb(0,255,0)" />"#,
