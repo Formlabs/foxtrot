@@ -189,6 +189,22 @@ impl<'a> Triangulation<'a> {
                 line_width))
          }
 
+         for e in self.hull.values() {
+             let edge = self.half.edge(*e);
+             let (pa, pb) = (edge.src, edge.dst);
+             out.push_str(&format!(
+                r#"
+    <line x1="{}" y1="{}" x2="{}" y2="{}"
+     style="stroke:rgb(255,255,0)"
+     stroke-width="{}"
+     stroke-linecap="round" />"#,
+                dx(self.points[pa.0].0),
+                dy(self.points[pa.0].1),
+                dx(self.points[pb.0].0),
+                dy(self.points[pb.0].1),
+                line_width))
+         }
+
          // Add a circle at the origin
          out.push_str(&format!(
             r#"
