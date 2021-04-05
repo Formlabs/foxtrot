@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
 
-use crate::predicates::{centroid, circumradius2, distance2, orient2d, in_circle, pseudo_angle};
+use crate::predicates::{centroid, distance2, orient2d, in_circle, pseudo_angle};
 use crate::{Point, PointIndex, EdgeIndex};
 use crate::half::Half;
 
@@ -27,21 +27,15 @@ impl<'a> Triangulation<'a> {
             ..Default::default()
         };
 
+        // seed_triangle() writes out.order and out.center
         let (pa, pb, pc) = out.seed_triangle();
-        out.center = centroid(out.point(pa), out.point(pb), out.point(pc));
-        let mut order: Vec<_> = (0..points.len())
-            .map(PointIndex)
-            .filter(|&i| i != pa && i != pb && i != pc)
-            .collect();
-        order.sort_by_key(
-            |&p| OrderedFloat(distance2(out.center, out.point(p))));
-        out.order = order;
 
         let e_ab = out.half.insert(pa, pb, pc, None, None, None);
         out.hull.insert(out.key(pa), e_ab);
         out.hull.insert(out.key(pb), out.half.next(e_ab));
         out.hull.insert(out.key(pc), out.half.prev(e_ab));
 
+        out.next = 3;
         out
     }
 
@@ -144,43 +138,58 @@ impl<'a> Triangulation<'a> {
         }
     }
 
-    // Calculates a seed triangle from the given set of points
-    // TODO: make robust to < 3 points and colinear inputs
-    fn seed_triangle(&self) -> (PointIndex, PointIndex, PointIndex) {
+    //  Picking the seed triangle and center point is tricky!
+    //
+    //  We want a center which is contained within the seed triangle,
+    //  and with the property that the seed triangle is the initial
+    //  three points when sorted by distance to the center.
+    //
+    //  The paper suggests using the center of the bounding box, but in that
+    //  case, you can end up with cases where the center is _outside_ of the
+    //  initial seed triangle, which is awkward.
+    //
+    //  delaunator and its ports instead pick the circumcenter of a triangle
+    //  near the bbox center, which has the same issue.
+    //
+    //  We iterate, repeatedly picking a center and checking to see if the
+    //  conditions hold; otherwise, we resort and try again.
+    fn seed_triangle(&mut self) -> (PointIndex, PointIndex, PointIndex) {
         let (x_bounds, y_bounds) = self.bbox();
-        let center = ((x_bounds.0 + x_bounds.1) / 2.0,
-                      (y_bounds.0 + y_bounds.1) / 2.0);
 
-        // Pick the initial triangle, with
-        //  a) the point closest to the center
-        //  b) the point closest to a
-        //  c) the point with the minimum circumradius
-        let a = PointIndex(self.points.iter()
-            .position_min_by_key(
-                |q| OrderedFloat(distance2(center, **q)))
-            .expect("Could not get initial point"));
-        let b = PointIndex(self.points.iter().enumerate()
-            .position_min_by_key(
-                |(j, p)| OrderedFloat(if *j == a.0 {
-                    std::f64::INFINITY
-                } else {
-                    distance2(self.point(a), **p)
-                }))
-            .expect("Could not get second point"));
-        let c = PointIndex(self.points.iter().enumerate()
-            .position_min_by_key(
-                |(j, p)| OrderedFloat(if *j == a.0 || *j == b.0 {
-                    std::f64::INFINITY
-                } else {
-                    circumradius2(self.point(a), self.point(b), **p)
-                }))
-            .expect("Could not get third point"));
+        // These are kept as as separate variables to satisfy the borrow
+        // checker; otherwise, sorting order while looking at point(...)
+        // becomes tricky.  We store then before returning.
+        let mut center = ((x_bounds.0 + x_bounds.1) / 2.0,
+                          (y_bounds.0 + y_bounds.1) / 2.0);
+        let mut order: Vec<_> = (0..self.points.len())
+            .map(PointIndex)
+            .collect();
 
-        if orient2d(self.point(a), self.point(b), self.point(c)) > 0.0 {
-            (a, b, c)
-        } else {
-            (a, c, b)
+        for _ in 0..100 {
+            order.sort_by_key(
+                |&p| OrderedFloat(distance2(center, self.point(p))));
+
+            let pa = order[0];
+            let mut pb = order[1];
+            let mut pc = order[2];
+
+            if orient2d(self.point(pa), self.point(pb), self.point(pc)) < 0.0 {
+                std::mem::swap(&mut pb, &mut pc);
+            }
+            if orient2d(self.point(pa), self.point(pb), center) > 0.0 &&
+               orient2d(self.point(pb), self.point(pc), center) > 0.0 &&
+               orient2d(self.point(pc), self.point(pa), center) > 0.0
+            {
+                // Swap in these values (which should be cheap)
+                std::mem::swap(&mut self.center, &mut center);
+                std::mem::swap(&mut self.order, &mut order);
+                return (pa, pb, pc);
+            } else {
+                center = centroid(self.point(pa), self.point(pb), self.point(pc));
+                eprintln!("Got center {:?}", center);
+            }
         }
+        panic!("Could not find seed triangle");
     }
 
     /// Returns the edge of the bounding hull which the given point projects
