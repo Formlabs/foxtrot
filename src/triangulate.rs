@@ -172,16 +172,16 @@ impl<'a> Triangulation<'a> {
         let mut scratch = Vec::with_capacity(self.points.len());
         scratch.extend(self.points.iter()
             .enumerate()
-            .map(|(j, p)| (PointIndex(j), *p, distance2(self.center, *p))));
+            .map(|(j, p)| (PointIndex(j), distance2(self.center, *p))));
 
         // Finds the four points in the given buffer that are closest to the
         // center, returning them in order (so that out[0] is closest).
         //
         // This is faster than sorting the entire array each time to check
         // the four closest distances to a given point.
-        let min4 = |buf: &[(PointIndex, Point, f64)]| -> [PointIndex; 4] {
+        let min4 = |buf: &[(PointIndex, f64)]| -> [PointIndex; 4] {
             let mut array = [(PointIndex(0), std::f64::INFINITY); 4];
-            for &(p, _, score) in buf.iter() {
+            for &(p, score) in buf.iter() {
                 if score >= array[3].1 {
                     continue;
                 }
@@ -230,7 +230,7 @@ impl<'a> Triangulation<'a> {
                     if k.0 == pa || k.0 == pb || k.0 == pc {
                         std::cmp::Ordering::Less
                     } else {
-                        OrderedFloat(k.2).cmp(&OrderedFloat(r.2))
+                        OrderedFloat(k.1).cmp(&OrderedFloat(r.1))
                     });
 
                 // reserve + extend is faster than collect, experimentally
@@ -246,7 +246,7 @@ impl<'a> Triangulation<'a> {
 
                 // Re-calculate distances in the scratch buffer
                 scratch.iter_mut()
-                    .for_each(|p| p.2 = distance2(self.center, p.1));
+                    .for_each(|p| p.1 = distance2(self.center, self.point(p.0)));
             }
         }
         panic!("Could not find seed triangle");
