@@ -27,19 +27,15 @@ impl<'a> Triangulation<'a> {
             ..Default::default()
         };
 
-        let seed = out.seed_triangle();
-        out.center = centroid(points[seed.0], points[seed.1], points[seed.2]);
+        let (pa, pb, pc) = out.seed_triangle();
+        out.center = centroid(out.point(pa), out.point(pb), out.point(pc));
         let mut order: Vec<_> = (0..points.len())
-            .filter(|&i| i != seed.0 && i != seed.1 && i != seed.2)
             .map(PointIndex)
+            .filter(|&i| i != pa && i != pb && i != pc)
             .collect();
         order.sort_by_key(
-            |&p| OrderedFloat(distance2(out.center, out.points[p.0])));
+            |&p| OrderedFloat(distance2(out.center, out.point(p))));
         out.order = order;
-
-        let pa = PointIndex(seed.0);
-        let pb = PointIndex(seed.1);
-        let pc = PointIndex(seed.2);
 
         let e_ab = out.half.insert(pa, pb, pc, None, None, None);
         out.hull.insert(out.key(pa), e_ab);
@@ -49,8 +45,12 @@ impl<'a> Triangulation<'a> {
         out
     }
 
+    fn point(&self, p: PointIndex) -> Point {
+        self.points[p.0]
+    }
+
     fn key(&self, p: PointIndex) -> OrderedFloat<f64> {
-        let p = self.points[p.0];
+        let p = self.point(p);
         OrderedFloat(pseudo_angle((p.0 - self.center.0, p.1 - self.center.1)))
     }
 
@@ -84,7 +84,7 @@ impl<'a> Triangulation<'a> {
         let b = edge.dst;
 
         // Sanity-check that p is on the correct side of b->a
-        let o = orient2d(self.points[b.0], self.points[a.0], self.points[p.0]);
+        let o = orient2d(self.point(b), self.point(a), self.point(p));
         assert!(o != 0.0);
         assert!(o > 0.0);
 
@@ -133,8 +133,8 @@ impl<'a> Triangulation<'a> {
         let e_ad = self.half.next(e_ba);
         let d = self.half.edge(e_ad).dst;
 
-        if in_circle(self.points[a.0], self.points[b.0], self.points[c.0],
-                     self.points[d.0]) > 0.0
+        if in_circle(self.point(a), self.point(b), self.point(c),
+                     self.point(d)) > 0.0
         {
             let e_db = self.half.prev(e_ba);
 
@@ -146,7 +146,7 @@ impl<'a> Triangulation<'a> {
 
     // Calculates a seed triangle from the given set of points
     // TODO: make robust to < 3 points and colinear inputs
-    fn seed_triangle(&self) -> (usize, usize, usize) {
+    fn seed_triangle(&self) -> (PointIndex, PointIndex, PointIndex) {
         let (x_bounds, y_bounds) = self.bbox();
         let center = ((x_bounds.0 + x_bounds.1) / 2.0,
                       (y_bounds.0 + y_bounds.1) / 2.0);
@@ -155,28 +155,28 @@ impl<'a> Triangulation<'a> {
         //  a) the point closest to the center
         //  b) the point closest to a
         //  c) the point with the minimum circumradius
-        let a = self.points.iter()
+        let a = PointIndex(self.points.iter()
             .position_min_by_key(
                 |q| OrderedFloat(distance2(center, **q)))
-            .expect("Could not get initial point");
-        let b = self.points.iter().enumerate()
+            .expect("Could not get initial point"));
+        let b = PointIndex(self.points.iter().enumerate()
             .position_min_by_key(
-                |(j, p)| OrderedFloat(if *j == a {
+                |(j, p)| OrderedFloat(if *j == a.0 {
                     std::f64::INFINITY
                 } else {
-                    distance2(self.points[a], **p)
+                    distance2(self.point(a), **p)
                 }))
-            .expect("Could not get second point");
-        let c = self.points.iter().enumerate()
+            .expect("Could not get second point"));
+        let c = PointIndex(self.points.iter().enumerate()
             .position_min_by_key(
-                |(j, p)| OrderedFloat(if *j == a || *j == b {
+                |(j, p)| OrderedFloat(if *j == a.0 || *j == b.0 {
                     std::f64::INFINITY
                 } else {
-                    circumradius2(self.points[a], self.points[b], **p)
+                    circumradius2(self.point(a), self.point(b), **p)
                 }))
-            .expect("Could not get third point");
+            .expect("Could not get third point"));
 
-        if orient2d(self.points[a], self.points[b], self.points[c]) > 0.0 {
+        if orient2d(self.point(a), self.point(b), self.point(c)) > 0.0 {
             (a, b, c)
         } else {
             (a, c, b)
@@ -231,10 +231,10 @@ impl<'a> Triangulation<'a> {
      style="stroke:rgb(255,0,0)"
      stroke-width="{}"
      stroke-linecap="round" />"#,
-                dx(self.points[pa.0].0),
-                dy(self.points[pa.0].1),
-                dx(self.points[pb.0].0),
-                dy(self.points[pb.0].1),
+                dx(self.point(pa).0),
+                dy(self.point(pa).1),
+                dx(self.point(pb).0),
+                dy(self.point(pb).1),
                 line_width))
          }
 
@@ -247,10 +247,10 @@ impl<'a> Triangulation<'a> {
      style="stroke:rgb(255,255,0)"
      stroke-width="{}" stroke-dasharray="{}"
      stroke-linecap="round" />"#,
-                dx(self.points[pa.0].0),
-                dy(self.points[pa.0].1),
-                dx(self.points[pb.0].0),
-                dy(self.points[pb.0].1),
+                dx(self.point(pa).0),
+                dy(self.point(pa).1),
+                dx(self.point(pb).0),
+                dy(self.point(pb).1),
                 line_width, line_width * 2.0))
          }
 
