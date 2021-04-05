@@ -151,6 +151,10 @@ impl<'a> Triangulation<'a> {
     //  delaunator and its ports instead pick the circumcenter of a triangle
     //  near the bbox center, which has the same issue.
     //
+    //  Picking the centroid of the seed triangle instead of the circumcenter
+    //  can also lead to issues, as another point could be closer, which
+    //  will violate the condition that points are always outside the hull.
+    //
     //  We iterate, repeatedly picking a center and checking to see if the
     //  conditions hold; otherwise, we resort and try again.
     fn seed_triangle(&mut self) -> (PointIndex, PointIndex, PointIndex) {
