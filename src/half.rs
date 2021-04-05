@@ -17,17 +17,17 @@ pub struct Half {
     edges: Vec<Edge>,
 }
 impl Default for Half {
-    fn default() -> Self { Half::new() }
+    fn default() -> Self { Half::new(0) }
 }
 
 impl Half {
-    pub fn new() -> Half {
-        Half {
-            // Store a default edge in slot 0, so that we can use an
-            // Option<NonZeroUsize> for EdgeIndex, which has a type-safe None
-            // value without using any extra storage space
-            edges: vec![Edge::default()],
-        }
+    pub fn new(max_triangles: usize) -> Half {
+        // Store a default edge in slot 0, so that we can use an
+        // Option<NonZeroUsize> for EdgeIndex, which has a type-safe None
+        // value without using any extra storage space
+        let mut edges = Vec::with_capacity(max_triangles * 3);
+        edges.push(Edge::default());
+        Half { edges }
     }
 
     pub fn next(&self, e: EdgeIndex) -> EdgeIndex {

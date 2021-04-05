@@ -24,6 +24,7 @@ impl<'a> Triangulation<'a> {
     pub fn new(points: &'a [Point]) -> Triangulation<'a> {
         let mut out = Triangulation {
             points,
+            half: Half::new(points.len() * 2 - 5),
             ..Default::default()
         };
 
@@ -31,11 +32,14 @@ impl<'a> Triangulation<'a> {
         let (pa, pb, pc) = out.seed_triangle();
 
         let e_ab = out.half.insert(pa, pb, pc, None, None, None);
-        out.hull.insert(out.key(pa), e_ab);
-        out.hull.insert(out.key(pb), out.half.next(e_ab));
-        out.hull.insert(out.key(pc), out.half.prev(e_ab));
+        let e_bc = out.half.next(e_ab);
+        let e_ca = out.half.prev(e_ab);
 
-        out.next = 3;
+        out.hull.insert(out.key(pa), e_ab);
+        out.hull.insert(out.key(pb), e_bc);
+        out.hull.insert(out.key(pc), e_ca);
+
+        out.next = 0;
         out
     }
 
@@ -141,7 +145,7 @@ impl<'a> Triangulation<'a> {
     //  Picking the seed triangle and center point is tricky!
     //
     //  We want a center which is contained within the seed triangle,
-    //  and with the property that the seed triangle is the initial
+    //  and with the property that the seed triangle is the closest
     //  three points when sorted by distance to the center.
     //
     //  The paper suggests using the center of the bounding box, but in that
@@ -156,41 +160,93 @@ impl<'a> Triangulation<'a> {
     //  will violate the condition that points are always outside the hull.
     //
     //  We iterate, repeatedly picking a center and checking to see if the
-    //  conditions hold; otherwise, we resort and try again.
+    //  conditions hold; otherwise, we pick a new center and try again.
     fn seed_triangle(&mut self) -> (PointIndex, PointIndex, PointIndex) {
+        // Start by picking a center which is at the center of the bbox
         let (x_bounds, y_bounds) = self.bbox();
+        self.center = ((x_bounds.0 + x_bounds.1) / 2.0,
+                       (y_bounds.0 + y_bounds.1) / 2.0);
 
-        // These are kept as as separate variables to satisfy the borrow
-        // checker; otherwise, sorting order while looking at point(...)
-        // becomes tricky.  We store then before returning.
-        let mut center = ((x_bounds.0 + x_bounds.1) / 2.0,
-                          (y_bounds.0 + y_bounds.1) / 2.0);
-        let mut order: Vec<_> = (0..self.points.len())
-            .map(PointIndex)
-            .collect();
+        // The scratch buffer contains our points, their indexes, and a distance
+        // relative to the current center.
+        let mut scratch = Vec::with_capacity(self.points.len());
+        scratch.extend(self.points.iter()
+            .enumerate()
+            .map(|(j, p)| (PointIndex(j), *p, distance2(self.center, *p))));
+
+        // Finds the four points in the given buffer that are closest to the
+        // center, returning them in order (so that out[0] is closest).
+        //
+        // This is faster than sorting the entire array each time to check
+        // the four closest distances to a given point.
+        let min4 = |buf: &[(PointIndex, Point, f64)]| -> [PointIndex; 4] {
+            let mut array = [(PointIndex(0), std::f64::INFINITY); 4];
+            for &(p, _, score) in buf.iter() {
+                if score >= array[3].1 {
+                    continue;
+                }
+                for i in 0..4 {
+                    // If the new score is bumping this item out of the array,
+                    // then shift all later items over by one and return.
+                    if score <= array[i].1 {
+                        for j in (i..3).rev() {
+                            array[j + 1] = array[j];
+                        }
+                        array[i] = (p, score);
+                        break;
+                    }
+                }
+            }
+
+            let mut out = [PointIndex(0); 4];
+            for (i, a) in array.iter().enumerate() {
+                out[i] = a.0;
+            }
+            out
+        };
 
         for _ in 0..100 {
-            order.sort_by_key(
-                |&p| OrderedFloat(distance2(center, self.point(p))));
+            let arr = min4(&scratch);
 
-            let pa = order[0];
-            let mut pb = order[1];
-            let mut pc = order[2];
-
+            // Pick out the triangle points, ensuring that they're clockwise
+            let pa = arr[0];
+            let mut pb = arr[1];
+            let mut pc = arr[2];
             if orient2d(self.point(pa), self.point(pb), self.point(pc)) < 0.0 {
                 std::mem::swap(&mut pb, &mut pc);
             }
-            if orient2d(self.point(pa), self.point(pb), center) > 0.0 &&
-               orient2d(self.point(pb), self.point(pc), center) > 0.0 &&
-               orient2d(self.point(pc), self.point(pa), center) > 0.0
+
+            // If the center is contained within the triangle formed by the
+            // three closest points, then we're clear to sort the list and
+            // return it.
+            if orient2d(self.point(pa), self.point(pb), self.center) > 0.0 &&
+               orient2d(self.point(pb), self.point(pc), self.center) > 0.0 &&
+               orient2d(self.point(pc), self.point(pa), self.center) > 0.0
             {
-                // Swap in these values (which should be cheap)
-                std::mem::swap(&mut self.center, &mut center);
-                std::mem::swap(&mut self.order, &mut order);
+                // Sort with a special comparison function that puts the first
+                // three keys at the start of the list, and uses OrderedFloat
+                // otherwise.
+                scratch.sort_unstable_by(|k, r|
+                    if k.0 == pa || k.0 == pb || k.0 == pc {
+                        std::cmp::Ordering::Less
+                    } else {
+                        OrderedFloat(k.2).cmp(&OrderedFloat(r.2))
+                    });
+
+                // reserve + extend is faster than collect, experimentally
+                self.order.reserve(scratch.len() - 3);
+                self.order.extend(scratch.into_iter()
+                    .skip(3) // Skip [pa, pb, pc], which will be at the start
+                    .map(|p| p.0));
                 return (pa, pb, pc);
             } else {
-                center = centroid(self.point(pa), self.point(pb), self.point(pc));
-                eprintln!("Got center {:?}", center);
+                // Pick a new centroid, then retry
+                self.center = centroid(
+                    self.point(pa), self.point(pb), self.point(pc));
+
+                // Re-calculate distances in the scratch buffer
+                scratch.iter_mut()
+                    .for_each(|p| p.2 = distance2(self.center, p.1));
             }
         }
         panic!("Could not find seed triangle");
