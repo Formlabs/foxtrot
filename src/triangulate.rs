@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
 
-use crate::predicates::{circumcenter, circumradius2, distance2, orient2d, pseudo_angle};
+use crate::predicates::{circumcenter, circumradius2, distance2, orient2d, in_circle, pseudo_angle};
 use crate::{Point, PointIndex, EdgeIndex};
 use crate::half::Half;
 
@@ -54,6 +54,10 @@ impl<'a> Triangulation<'a> {
         OrderedFloat(pseudo_angle((p.0 - self.center.0, p.1 - self.center.1)))
     }
 
+    pub fn run(&mut self) {
+        while self.step() {}
+    }
+
     pub fn step(&mut self) -> bool {
         if self.next == self.order.len() {
             return false;
@@ -81,12 +85,8 @@ impl<'a> Triangulation<'a> {
 
         // Sanity-check that p is on the correct side of b->a
         let o = orient2d(self.points[b.0], self.points[a.0], self.points[p.0]);
-        if o == 0.0 {
-            // TODO: implement this
-            panic!("On-line case not yet handled");
-        } else if o < 0.0 {
-            panic!("Tried to place a point inside the hull");
-        }
+        assert!(o != 0.0);
+        assert!(o > 0.0);
 
         let f = self.half.insert(b, a, p, None, None, Some(e));
         let edge_mut = self.half.edge_mut(e);
@@ -97,7 +97,51 @@ impl<'a> Triangulation<'a> {
         self.hull.insert(self.key(a), self.half.next(f));
         self.hull.insert(phi, self.half.prev(f));
 
+        self.legalize(f);
         true
+    }
+
+    fn legalize(&mut self, e_ab: EdgeIndex) {
+        /* We're given this
+         *            c
+         *          /  ^
+         *         /    \
+         *        /      \
+         *       /        \
+         *      V     e    \
+         *     a----------->\
+         *     \<-----------b
+         *      \    f     ^
+         *       \        /
+         *        \      /
+         *         \    /
+         *          V  /
+         *           d
+         *  We check whether d is within the circumcircle of abc.
+         *  If so, then we flip the edge and recurse based on the triangles
+         *  across from edges ad and db.
+         */
+        let edge = self.half.edge(e_ab);
+        let a = edge.src;
+        let b = edge.dst;
+        let c = self.half.edge(self.half.next(e_ab)).dst;
+
+        if edge.buddy.is_none() {
+            return;
+        }
+        let e_ba = edge.buddy.unwrap();
+        let e_ad = self.half.next(e_ba);
+        let d = self.half.edge(e_ad).dst;
+
+        if in_circle(self.points[a.0], self.points[b.0], self.points[c.0],
+                     self.points[d.0]) > 0.0
+        {
+            let e_db = self.half.prev(e_ba);
+
+            self.half.swap(e_ab).expect("Swap failed");
+            self.legalize(e_ad);
+            self.legalize(e_db);
+        }
     }
 
     // Calculates a seed triangle from the given set of points
@@ -232,11 +276,17 @@ mod tests {
         let t = Triangulation::new(&pts);
         assert_eq!(t.order.len(), 1);
         assert_eq!(t.order[0], PointIndex(3));
-        for i in 0..4 {
-            println!("{}: {:?}, {}", i, pts[i], t.key(PointIndex(i)));
-        }
-        println!("{:?}", t.hull.range((std::ops::Bound::Unbounded,
-                std::ops::Bound::Included(t.key(PointIndex(3))))));
-        println!("{}", t.to_svg());
+    }
+
+    #[test]
+    fn inline_pts() {
+        let pts = vec![
+            (0.0, 0.0), (1.0, 0.0), (0.0, 1.0),
+            (0.0, 2.0), (2.0, 0.0), (1.0, 1.0), // <- this is the inline one
+            (-2.0, -2.0), // Tweak bbox center to seed from first three points
+        ];
+        let mut t = Triangulation::new(&pts);
+        while t.step() {}
+        assert!(true);
     }
 }

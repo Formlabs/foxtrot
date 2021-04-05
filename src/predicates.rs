@@ -61,10 +61,10 @@ pub fn distance2(a: Point, b: Point) -> f64 {
     dx*dx + dy*dy
 }
 
-// Re-export with snake_case naming
-pub use geometry_predicates::incircle as in_circle;
+pub fn in_circle(a: Point, b: Point, c: Point, d: Point) -> f64 {
+    geometry_predicates::incircle([a.0, a.1], [b.0, b.1], [c.0, c.1], [d.0, d.1])
+}
 
 pub fn orient2d(a: Point, b: Point, c: Point) -> f64 {
     geometry_predicates::orient2d([a.0, a.1], [b.0, b.1], [c.0, c.1])
 }
-
