@@ -39,6 +39,10 @@ pub fn circumcenter(a: Point, b: Point, c: Point) -> Point {
     (a.0 + d.0, a.1 + d.1)
 }
 
+pub fn centroid(a: Point, b: Point, c: Point) -> Point {
+    ((a.0 + b.0 + c.0) / 3.0, (a.1 + b.1 + c.1) / 3.0)
+}
+
 /// Returns the squared circumradius of a triangle with the given points
 pub fn circumradius2(a: Point, b: Point, c: Point) -> f64 {
     let d = circumdelta(a, b, c);

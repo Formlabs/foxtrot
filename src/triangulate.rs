@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
 
-use crate::predicates::{circumcenter, circumradius2, distance2, orient2d, in_circle, pseudo_angle};
+use crate::predicates::{centroid, circumradius2, distance2, orient2d, in_circle, pseudo_angle};
 use crate::{Point, PointIndex, EdgeIndex};
 use crate::half::Half;
 
@@ -28,7 +28,7 @@ impl<'a> Triangulation<'a> {
         };
 
         let seed = out.seed_triangle();
-        out.center = circumcenter(points[seed.0], points[seed.1], points[seed.2]);
+        out.center = centroid(points[seed.0], points[seed.1], points[seed.2]);
         let mut order: Vec<_> = (0..points.len())
             .filter(|&i| i != seed.0 && i != seed.1 && i != seed.2)
             .map(PointIndex)
