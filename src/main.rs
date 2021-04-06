@@ -1,6 +1,7 @@
 use rand::{Rng, SeedableRng};
 use cdt::triangulate::Triangulation;
 
+#[allow(dead_code)]
 fn benchmark(seed: Option<u64>, n: usize) {
     let seed = seed.unwrap_or_else(|| {
         rand::thread_rng().gen()
@@ -17,6 +18,7 @@ fn benchmark(seed: Option<u64>, n: usize) {
     while t.step() {}
 }
 
+#[allow(dead_code)]
 fn svg(seed: Option<u64>, n: usize) {
     let seed = seed.unwrap_or_else(|| {
         rand::thread_rng().gen()
@@ -34,6 +36,7 @@ fn svg(seed: Option<u64>, n: usize) {
     println!("{}", t.to_svg());
 }
 
+#[allow(dead_code)]
 fn fuzz(n: usize) {
     loop {
         let seed: u64 = rand::thread_rng().gen();
@@ -57,7 +60,7 @@ fn main() {
         None
     };
 
-    benchmark(seed, 1_000_000);
+    //benchmark(seed, 1_000_000);
     //fuzz(100);
-    //svg(seed, 100);
+    svg(seed, 4);
 }

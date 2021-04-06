@@ -72,7 +72,17 @@ impl Half {
             buddy: e_ca
         });
 
+        e_ab.map(|e| self.set_buddy(e, o_ab));
+        e_bc.map(|e| self.set_buddy(e, o_bc));
+        e_ca.map(|e| self.set_buddy(e, o_ca));
+
         o_ab
+    }
+
+    fn set_buddy(&mut self, target: EdgeIndex, buddy: EdgeIndex) {
+        let b = &mut self.edge_mut(target).buddy;
+        assert!(b.is_none());
+        *b = Some(buddy);
     }
 
     /// Returns an iterator over the edges in the data structure

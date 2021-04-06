@@ -1,11 +1,9 @@
-use std::collections::BTreeMap;
-
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
 
-use crate::predicates::{centroid, distance2, orient2d, in_circle, pseudo_angle};
+use crate::predicates::{acute, centroid, distance2, orient2d, in_circle};
 use crate::{Point, PointIndex, EdgeIndex};
-use crate::half::Half;
+use crate::{half::Half, hull::Hull};
 
 #[derive(Default)]
 pub struct Triangulation<'a> {
@@ -16,7 +14,7 @@ pub struct Triangulation<'a> {
 
     // This stores the start of an edge (as a pseudoangle) as an index into
     // the edges array
-    hull: BTreeMap<OrderedFloat<f64>, EdgeIndex>,
+    hull: Hull,
     half: Half,
 }
 
@@ -31,13 +29,15 @@ impl<'a> Triangulation<'a> {
         // seed_triangle() writes out.order and out.center
         let (pa, pb, pc) = out.seed_triangle();
 
+        out.hull = Hull::new(out.center, points);
+
         let e_ab = out.half.insert(pa, pb, pc, None, None, None);
         let e_bc = out.half.next(e_ab);
         let e_ca = out.half.prev(e_ab);
 
-        out.hull.insert(out.key(pa), e_ab);
-        out.hull.insert(out.key(pb), e_bc);
-        out.hull.insert(out.key(pc), e_ca);
+        out.hull.insert_first(pa, e_ab);
+        out.hull.insert(pb, e_bc);
+        out.hull.insert(pc, e_ca);
 
         out.next = 0;
         out
@@ -45,11 +45,6 @@ impl<'a> Triangulation<'a> {
 
     fn point(&self, p: PointIndex) -> Point {
         self.points[p.0]
-    }
-
-    fn key(&self, p: PointIndex) -> OrderedFloat<f64> {
-        let p = self.point(p);
-        OrderedFloat(pseudo_angle((p.0 - self.center.0, p.1 - self.center.1)))
     }
 
     pub fn run(&mut self) {
@@ -66,7 +61,7 @@ impl<'a> Triangulation<'a> {
         self.next += 1;
 
         // Find the hull edge which will be split by this point
-        let (phi, e) = self.get_hull_edge(p);
+        let e_ab = self.hull.get_edge(p);
 
         /*
          *              p [new point]
@@ -77,7 +72,7 @@ impl<'a> Triangulation<'a> {
          *          b<------a [previous hull edge]
          *              e
          */
-        let edge = self.half.edge(e);
+        let edge = self.half.edge(e_ab);
         let a = edge.src;
         let b = edge.dst;
 
@@ -86,16 +81,49 @@ impl<'a> Triangulation<'a> {
         assert!(o != 0.0);
         assert!(o > 0.0);
 
-        let f = self.half.insert(b, a, p, None, None, Some(e));
-        let edge_mut = self.half.edge_mut(e);
-        assert!(edge_mut.buddy.is_none());
-        edge_mut.buddy = Some(f);
+        let f = self.half.insert(b, a, p, None, None, Some(e_ab));
 
         // Replaces the previous item in the hull
-        self.hull.insert(self.key(a), self.half.next(f));
-        self.hull.insert(phi, self.half.prev(f));
+        self.hull.update(a, self.half.next(f));
+
+        // Insert the new edge into the hull
+        self.hull.insert(p, self.half.prev(f));
 
         self.legalize(f);
+
+        /* Now, we search for sharp angles on each side.  The point q
+         * should be the next point along the edge from e
+         *
+         *      q       p [new point]
+         *     | ^     / ^
+         *     |  \   /   \
+         *     |   \ V  f  \
+         *     V    b-------> [new edge]
+         *     ---->.<------a [previous hull edge]
+         *              e
+         */
+        let mut b = b;
+        loop { // Walking CCW around the hull
+            let e_pb = self.hull.edge(p);
+            let e_bq = self.hull.edge(b);
+            let q = self.half.edge(e_bq).dst;
+            if acute(self.point(p), self.point(b), self.point(q)) <= 0.0 {
+                break;
+            }
+            eprintln!("!!");
+
+            // Friendship ended with p->b->q
+            self.hull.erase(b);
+
+            // Now p->q is my new friend
+            let edge_pq = self.half.insert(q, b, p, Some(e_pb), None, Some(e_bq));
+            self.hull.update(p, edge_pq);
+            b = q;
+
+            // Then legalize from the two new triangle edges (bp and qb)
+            // TODO
+        }
+
         true
     }
 
@@ -252,28 +280,11 @@ impl<'a> Triangulation<'a> {
         panic!("Could not find seed triangle");
     }
 
-    /// Returns the edge of the bounding hull which the given point projects
-    /// onto, as an index into self.edges.
-    fn get_hull_edge(&self, p: PointIndex) -> (OrderedFloat<f64>, EdgeIndex) {
-        use std::ops::Bound::*;
-        let k = self.key(p);
-
-        // If we don't find an item in the target range, then it must be below
-        // every other value in the tree, so we return the last item in the
-        // BTreeMap (which is the edge that wraps around from 1 -> 0)
-        let mut r = self.hull.range((Unbounded, Included(k)));
-        let next = r.next_back();
-        match next {
-            Some(e) => (k, *e.1),
-            None => (k, self.hull.iter().next_back().map(|p| *p.1).unwrap()),
-        }
-    }
-
     /// Calculates a bounding box, returning ((xmin, xmax), (ymin, ymax))
     pub fn bbox(&self) -> ((f64, f64), (f64, f64)) {
         let x = self.points.iter().map(|p| p.0).minmax().into_option().unwrap();
         let y = self.points.iter().map(|p| p.1).minmax().into_option().unwrap();
-        return (x, y);
+        (x, y)
     }
 
     pub fn to_svg(&self) -> String {
@@ -308,7 +319,7 @@ impl<'a> Triangulation<'a> {
          }
 
          for e in self.hull.values() {
-             let edge = self.half.edge(*e);
+             let edge = self.half.edge(e);
              let (pa, pb) = (edge.src, edge.dst);
              out.push_str(&format!(
                 r#"
@@ -321,6 +332,13 @@ impl<'a> Triangulation<'a> {
                 dx(self.point(pb).0),
                 dy(self.point(pb).1),
                 line_width, line_width * 2.0))
+         }
+
+         for p in self.points {
+             out.push_str(&format!(
+                r#"
+        <circle cx="{}" cy="{}" r="{}" style="fill:rgb(255,128,128)" />"#,
+                dx(p.0), dy(p.1), line_width));
          }
 
          // Add a circle at the origin
