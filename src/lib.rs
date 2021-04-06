@@ -17,3 +17,4 @@ impl Default for EdgeIndex {
 pub mod predicates;
 pub mod triangulate;
 pub mod half;
+pub mod hull;

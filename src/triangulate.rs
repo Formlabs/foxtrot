@@ -344,7 +344,6 @@ mod tests {
         ];
         let t = Triangulation::new(&pts);
         assert_eq!(t.order.len(), 1);
-        assert_eq!(t.order[0], PointIndex(3));
     }
 
     #[test]

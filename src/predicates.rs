@@ -50,6 +50,21 @@ pub fn circumradius2(a: Point, b: Point, c: Point) -> f64 {
 }
 
 /// Returns a pseudo-angle in the 0-1 range, without expensive trig functions
+///
+/// The angle has the following shape:
+/// ```text
+///              0.75
+///               ^ y
+///               |
+///               |
+///   1           |           x
+///   <-----------o-----------> 0.5
+///   0           |
+///               |
+///               |
+///               v
+///              0.25
+/// ```
 pub fn pseudo_angle(a: Point) -> f64 {
     let p = a.0 / (a.0.abs() + a.1.abs());
     (if a.1 > 0.0 {
