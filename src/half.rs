@@ -31,19 +31,19 @@ impl Half {
     }
 
     pub fn next(&self, e: EdgeIndex) -> EdgeIndex {
-        return self.edges[e.0.get()].next;
+        self.edges[e.0.get()].next
     }
 
     pub fn prev(&self, e: EdgeIndex) -> EdgeIndex {
-        return self.edges[e.0.get()].prev;
+        self.edges[e.0.get()].prev
     }
 
     pub fn edge(&self, e: EdgeIndex) -> Edge {
-        return self.edges[e.0.get()]
+        self.edges[e.0.get()]
     }
 
     pub fn edge_mut(&mut self, e: EdgeIndex) -> &mut Edge {
-        return &mut self.edges[e.0.get()]
+        &mut self.edges[e.0.get()]
     }
 
     /// Inserts a new triangle into the edge map, based on three points
