@@ -107,10 +107,15 @@ impl<'a> Triangulation<'a> {
             let e_pb = self.hull.edge(p);
             let e_bq = self.hull.edge(b);
             let q = self.half.edge(e_bq).dst;
-            if acute(self.point(p), self.point(b), self.point(q)) <= 0.0 {
+
+            // Check that the inner angle is less that pi/2, and that the
+            // inner triangle is correctly wound; if either is not the case,
+            // then break immediately.
+            if acute(self.point(p), self.point(b), self.point(q)) <= 0.0 ||
+               orient2d(self.point(p), self.point(b), self.point(q)) >= 0.0
+            {
                 break;
             }
-            eprintln!("!!");
 
             // Friendship ended with p->b->q
             self.hull.erase(b);
