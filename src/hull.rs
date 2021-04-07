@@ -10,7 +10,7 @@ const EMPTY: PointIndex = PointIndex(std::usize::MAX);
 struct Node {
     // This is the point's absolute ordering.  It is assigned into a bucket
     // based on this order and the total bucket count
-    order: usize,
+    angle: f64,
 
     edge: EdgeIndex,
 
@@ -44,28 +44,16 @@ impl Default for Hull {
 
 impl Hull {
     pub fn new(center: Point, pts: &[Point]) -> Hull {
-        // Sort points by their pseudo-angle
-        let mut scratch: Vec<(usize, f64)> = Vec::with_capacity(pts.len());
-        scratch.extend(pts.iter()
-            .enumerate()
-            .map(|(j, p)|
-                (j, pseudo_angle((p.0 - center.0, p.1 - center.1)))));
-        scratch.sort_unstable_by_key(|k| OrderedFloat(k.1));
-
         // By default, nodes which aren't in the array have both edges linked
         // to EMPTY, so we can detect them when inserting.
-        let d = Node {
-            order: 0,
-            edge: EdgeIndex::default(),
-            prev: EMPTY,
-            next: EMPTY,
-        };
-        let mut data = vec![d; pts.len()];
-
-        // Record the ordering of points into the node data array
-        for (j, (i, _)) in scratch.iter().enumerate() {
-            data[*i].order = j;
-        }
+        let mut data = Vec::with_capacity(pts.len());
+        data.extend(pts.iter()
+            .map(|p| Node {
+                angle: pseudo_angle((p.0 - center.0, p.1 - center.1)),
+                edge: EdgeIndex::default(),
+                prev: EMPTY,
+                next: EMPTY,
+                }));
 
         Hull {
             buckets: [EMPTY; N],
@@ -117,7 +105,7 @@ impl Hull {
             // Loop until we find an item in the linked list which is less
             // that our new point, or we leave this bucket; the latter case
             // handles wrapping around.
-            while self.data[next.0].order < self.data[p.0].order &&
+            while self.data[next.0].angle < self.data[p.0].angle &&
                   self.bucket(next) == b
             {
                 next = self.data[next.0].next;
@@ -158,7 +146,7 @@ impl Hull {
             self.buckets[b] = p;
         }
 
-        // Write all of our new node data, leaving order fixed
+        // Write all of our new node data, leaving angle fixed
         self.data[p.0].edge = e;
         self.data[p.0].next = next;
         self.data[p.0].prev = prev;
@@ -220,7 +208,7 @@ impl Hull {
 
     /// Looks up what bucket a given point will fall into
     fn bucket(&self, p: PointIndex) -> usize {
-        (self.data[p.0].order * self.buckets.len()) / self.data.len()
+        (self.data[p.0].angle * (self.buckets.len() as f64 - 1.0)).round() as usize
     }
 }
 

@@ -37,9 +37,9 @@ fn svg(seed: Option<u64>, n: usize) {
 }
 
 #[allow(dead_code)]
-fn fuzz(n: usize) {
+fn fuzz(seed: Option<u64>, n: usize) {
     loop {
-        let seed: u64 = rand::thread_rng().gen();
+        let seed: u64 = seed.unwrap_or_else(|| rand::thread_rng().gen());
         println!("Got seed {}", seed);
         let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
 
@@ -61,6 +61,6 @@ fn main() {
     };
 
     //benchmark(seed, 1_000_000);
-    //fuzz(100);
-    svg(seed, 4);
+    fuzz(seed, 4);
+    //svg(seed, 64);
 }
