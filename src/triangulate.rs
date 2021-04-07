@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 use crate::predicates::{acute, centroid, distance2, orient2d, in_circle};
 use crate::{Point, PointIndex, EdgeIndex};
-use crate::{half::Half, hull::Hull};
+use crate::{half, half::Half, hull::Hull};
 
 #[derive(Default)]
 pub struct Triangulation<'a> {
@@ -30,7 +30,8 @@ impl<'a> Triangulation<'a> {
 
         out.hull = Hull::new(out.center, points);
 
-        let e_ab = out.half.insert(pa, pb, pc, None, None, None);
+        let e_ab = out.half.insert(pa, pb, pc,
+                                   half::EMPTY, half::EMPTY, half::EMPTY);
         let e_bc = out.half.next(e_ab);
         let e_ca = out.half.prev(e_ab);
 
@@ -80,7 +81,7 @@ impl<'a> Triangulation<'a> {
         assert!(o != 0.0);
         assert!(o > 0.0);
 
-        let f = self.half.insert(b, a, p, None, None, Some(e_ab));
+        let f = self.half.insert(b, a, p, half::EMPTY, half::EMPTY, e_ab);
 
         // Replaces the previous item in the hull
         self.hull.update(a, self.half.next(f));
@@ -120,7 +121,7 @@ impl<'a> Triangulation<'a> {
             self.hull.erase(b);
 
             // Now p->q is my new friend
-            let edge_pq = self.half.insert(p, q, b, Some(e_bq), Some(e_pb), None);
+            let edge_pq = self.half.insert(p, q, b, e_bq, e_pb, half::EMPTY);
             self.hull.update(p, edge_pq);
             b = q;
 
@@ -150,7 +151,7 @@ impl<'a> Triangulation<'a> {
             }
 
             self.hull.erase(a);
-            let edge_qp = self.half.insert(q, p, a, Some(e_ap), Some(e_qa), None);
+            let edge_qp = self.half.insert(q, p, a, e_ap, e_qa, half::EMPTY);
             self.hull.update(q, edge_qp);
             a = q;
 
@@ -182,16 +183,19 @@ impl<'a> Triangulation<'a> {
          *  We check whether d is within the circumcircle of abc.
          *  If so, then we flip the edge and recurse based on the triangles
          *  across from edges ad and db.
+         *
+         *  This function may be called with a half-empty edge, e.g. while
+         *  recursing; in that case, then return immediately.
          */
         let edge = self.half.edge(e_ab);
+        if edge.buddy == half::EMPTY {
+            return;
+        }
         let a = edge.src;
         let b = edge.dst;
         let c = self.half.edge(self.half.next(e_ab)).dst;
 
-        if edge.buddy.is_none() {
-            return;
-        }
-        let e_ba = edge.buddy.unwrap();
+        let e_ba = edge.buddy;
         let e_ad = self.half.next(e_ba);
         let d = self.half.edge(e_ad).dst;
 

@@ -1,5 +1,3 @@
-use std::num::NonZeroUsize;
-
 type Point = (f64, f64);
 
 safe_index::new! {
@@ -10,13 +8,12 @@ impl Default for PointIndex {
     fn default() -> Self { Self::new(0) }
 }
 
-#[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
-pub struct TriangleIndex(usize);
-
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub struct EdgeIndex(NonZeroUsize);
+safe_index::new! {
+    EdgeIndex,
+    map: EdgeVec with iter: EdgeIter
+}
 impl Default for EdgeIndex {
-    fn default() -> Self { EdgeIndex(NonZeroUsize::new(1).unwrap()) }
+    fn default() -> Self { Self::new(0) }
 }
 
 pub mod predicates;
