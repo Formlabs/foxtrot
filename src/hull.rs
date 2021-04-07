@@ -108,11 +108,14 @@ impl Hull {
             while self.data[pos.0].angle < self.data[p.0].angle &&
                   self.bucket(pos) == b
             {
-                let next = self.data[pos.0].next;
-                if next == start {
+                pos  = self.data[pos.0].next;
+                // If we've looped around, it means all points are in the same
+                // bucket *and* the new point is larger than all of them.  This
+                // means it will be insert at the end of the bucket, and will
+                // link back to the first point in the bucket.
+                if pos == start {
                     break;
                 }
-                pos = next;
             }
         }
 
