@@ -121,7 +121,7 @@ impl<'a> Triangulation<'a> {
             self.hull.erase(b);
 
             // Now p->q is my new friend
-            let edge_pq = self.half.insert(q, b, p, Some(e_pb), None, Some(e_bq));
+            let edge_pq = self.half.insert(p, q, b, Some(e_bq), Some(e_pb), None);
             self.hull.update(p, edge_pq);
             b = q;
 
