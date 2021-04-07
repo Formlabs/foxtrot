@@ -126,8 +126,40 @@ impl<'a> Triangulation<'a> {
             b = q;
 
             // Then legalize from the two new triangle edges (bp and qb)
-            // TODO
+            self.legalize(self.half.next(edge_pq));
+            self.legalize(self.half.prev(edge_pq));
         }
+
+        /*  Then ,do the same thing in the other direction
+         *         p        q
+         *        / ^      / \
+         *       /   \    /   \
+         *      V  f  \  v     \
+         *     b------->a       \
+         *     .<-------
+         *          e
+         */
+        let mut a = a;
+        loop {
+            let e_ap = self.hull.edge(a);
+            let e_qa = self.hull.prev_edge(a);
+            let q = self.half.edge(e_qa).src;
+            if acute(self.point(p), self.point(a), self.point(q)) <= 0.0 ||
+               orient2d(self.point(p), self.point(a), self.point(q)) <= 0.0
+            {
+                break;
+            }
+
+            self.hull.erase(a);
+            let edge_qp = self.half.insert(q, p, a, Some(e_ap), Some(e_qa), None);
+            self.hull.update(q, edge_qp);
+            a = q;
+
+            // Then legalize from the two new triangle edges (bp and qb)
+            self.legalize(self.half.next(edge_qp));
+            self.legalize(self.half.prev(edge_qp));
+        }
+
 
         true
     }

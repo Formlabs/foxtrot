@@ -135,10 +135,15 @@ impl Hull {
         self.data[prev.0].edge
     }
 
+    pub fn prev_edge(&self, p: PointIndex) -> EdgeIndex {
+        assert!(self.data[p.0].prev != EMPTY);
+        self.edge(self.data[p.0].prev)
+    }
+
     pub fn edge(&self, p: PointIndex) -> EdgeIndex {
         // Assert that this node is in the array
         assert!(self.data[p.0].next != EMPTY);
-        return self.data[p.0].edge;
+        self.data[p.0].edge
     }
 
     pub fn insert(&mut self, p: PointIndex, e: EdgeIndex) {
