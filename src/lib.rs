@@ -20,3 +20,5 @@ pub mod predicates;
 pub mod triangulate;
 pub mod half;
 pub mod hull;
+
+const CHECK_INVARIANTS: bool = false;

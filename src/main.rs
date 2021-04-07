@@ -32,7 +32,7 @@ fn svg(seed: Option<u64>, n: usize) {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
     let mut t = Triangulation::new(&pts);
-    while t.step() {}
+    t.run();
     println!("{}", t.to_svg());
 }
 

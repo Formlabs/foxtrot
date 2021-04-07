@@ -1,4 +1,4 @@
-use crate::{PointIndex, EdgeIndex, EdgeVec};
+use crate::{PointIndex, EdgeIndex, EdgeVec, CHECK_INVARIANTS};
 
 pub const EMPTY: EdgeIndex = EdgeIndex { val: std::usize::MAX };
 
@@ -38,47 +38,43 @@ impl Half {
         self.edges[e]
     }
 
-    pub fn edge_mut(&mut self, e: EdgeIndex) -> &mut Edge {
-        &mut self.edges[e]
-    }
-
     /// Inserts a new triangle into the edge map, based on three points
     /// and optional paired edges.  Returns the new edge index a->b
     pub fn insert(&mut self, a: PointIndex, b: PointIndex, c: PointIndex,
-                  e_bc: EdgeIndex, e_ca: EdgeIndex, e_ab: EdgeIndex) -> EdgeIndex
+                  e_cb: EdgeIndex, e_ac: EdgeIndex, e_ba: EdgeIndex) -> EdgeIndex
     {
         let i = self.edges.len();
-        let o_ab = EdgeIndex::new(i);
-        let o_bc = EdgeIndex::new(i + 1);
-        let o_ca = EdgeIndex::new(i + 2);
+        let e_ab = EdgeIndex::new(i);
+        let e_bc = EdgeIndex::new(i + 1);
+        let e_ca = EdgeIndex::new(i + 2);
         self.edges.push(Edge {
             src: a, dst: b,
-            prev: o_ca, next: o_bc,
-            buddy: e_ab
+            prev: e_ca, next: e_bc,
+            buddy: e_ba
         });
         self.edges.push(Edge {
             src: b, dst: c,
-            prev: o_ab, next: o_ca,
-            buddy: e_bc
+            prev: e_ab, next: e_ca,
+            buddy: e_cb
         });
         self.edges.push(Edge {
             src: c, dst: a,
-            prev: o_bc, next: o_ab,
-            buddy: e_ca
+            prev: e_bc, next: e_ab,
+            buddy: e_ac
         });
 
-        self.set_buddy(e_ab, o_ab);
-        self.set_buddy(e_bc, o_bc);
-        self.set_buddy(e_ca, o_ca);
+        self.set_buddy(e_ba, e_ab);
+        self.set_buddy(e_cb, e_bc);
+        self.set_buddy(e_ac, e_ca);
 
-        o_ab
+        self.check();
+        e_ab
     }
 
-    fn set_buddy(&mut self, target: EdgeIndex, buddy: EdgeIndex) {
+    fn set_buddy(&mut self, target: EdgeIndex, mut buddy: EdgeIndex) {
         if target != EMPTY {
-            let b = &mut self.edge_mut(target).buddy;
-            assert!(*b == EMPTY);
-            *b = buddy;
+            std::mem::swap(&mut self.edges[target].buddy, &mut buddy);
+            assert!(buddy == EMPTY);
         }
     }
 
@@ -87,9 +83,44 @@ impl Half {
         return self.edges.iter().map(|p| (p.src, p.dst))
     }
 
+    /// Sanity-checks the structure's invariants, raising an assertion if
+    /// any invariants are broken.
+    pub fn check(&self) {
+        if !CHECK_INVARIANTS {
+            return;
+        }
+        for (index, edge) in self.edges.iter().enumerate() {
+            let index = EdgeIndex::new(index);
+            // Check that our relationship with our buddy is good
+            let buddy_index = edge.buddy;
+            if buddy_index != EMPTY {
+                let buddy = self.edge(buddy_index);
+                assert!(edge.src == buddy.dst);
+                assert!(edge.dst == buddy.src);
+                assert!(buddy.buddy == index);
+            }
+            let next_index = edge.next;
+            let next = self.edge(next_index);
+            assert!(next.src == edge.dst);
+            assert!(next.prev == index);
+
+            let prev_index = edge.prev;
+            let prev = self.edge(prev_index);
+            assert!(prev.dst == edge.src);
+            assert!(prev.next == index);
+
+            // Check the third point in the triangle
+            let far = next.dst;
+            assert!(next.dst == far);
+            assert!(prev.src == far);
+            assert!(next.next == prev_index);
+            assert!(prev.prev == next_index);
+        }
+    }
+
     /// Swaps the target edge, which must be have a matched pair.
     /// Returns Ok(()) on success, Err(()) if the edge has no pair.
-    pub fn swap(&mut self, e: EdgeIndex) {
+    pub fn swap(&mut self, e_ba: EdgeIndex) {
         /* Before:
          *           a
          *          /^|^
@@ -101,21 +132,22 @@ impl Half {
          *      \    ||    ^
          *       \   ||   /
          *        \  ||  /
-         *         \ |V /
-         *          V||/
+         *         \ || /
+         *          V|V/
          *           b
          */
-        let edge = self.edge(e);
+        let edge = self.edge(e_ba);
         assert!(edge.buddy != EMPTY);
 
-        let e_ac = self.next(e);
-        let e_cb = self.prev(e);
+        let e_ac = self.next(e_ba);
+        let e_cb = self.prev(e_ba);
         let c = self.edge(e_ac).dst;
 
-        let f = edge.buddy;
-        let e_bd = self.next(f);
-        let e_da = self.prev(f);
-        let d = self.edge(self.next(f)).dst;
+        let e_ab = edge.buddy;
+
+        let e_bd = self.next(e_ab);
+        let d = self.edge(e_bd).dst;
+        let e_da = self.prev(e_ab);
 
         /* After:
          *            a
@@ -133,19 +165,31 @@ impl Half {
          *          V  /
          *           b
          */
-        *self.edge_mut(e) = Edge {
+        self.edges[e_ba] = Edge {
             src: c,
             dst: d,
             prev: e_ac,
             next: e_da,
-            buddy: f,
+            buddy: e_ab,
         };
-        *self.edge_mut(f) = Edge {
+        self.edges[e_ab] = Edge {
             src: d,
             dst: c,
-            prev: e_cb,
-            next: e_bd,
-            buddy: e,
+            prev: e_bd,
+            next: e_cb,
+            buddy: e_ba,
         };
+        // Repair the other edges in the triangle
+        self.edges[e_ac].prev = e_da;
+        self.edges[e_ac].next = e_ba;
+        self.edges[e_cb].prev = e_ab;
+        self.edges[e_cb].next = e_bd;
+
+        self.edges[e_bd].prev = e_cb;
+        self.edges[e_bd].next = e_ab;
+        self.edges[e_da].prev = e_ba;
+        self.edges[e_da].next = e_ac;
+
+        self.check();
     }
 }

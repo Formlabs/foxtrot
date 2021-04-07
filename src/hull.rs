@@ -1,4 +1,4 @@
-use crate::{Point, PointIndex, PointVec, EdgeIndex};
+use crate::{Point, PointIndex, PointVec, EdgeIndex, CHECK_INVARIANTS};
 use crate::predicates::pseudo_angle;
 
 const N: usize = 1 << 10;
@@ -72,6 +72,8 @@ impl Hull {
 
         // Attach the edge index data to this point
         self.data[p].edge = e;
+
+        self.check();
     }
 
     pub fn update(&mut self, p: PointIndex, e: EdgeIndex) {
@@ -125,6 +127,52 @@ impl Hull {
         (prev, pos)
     }
 
+    /// Sanity-checks invariants of the data structure, raising an assertion
+    /// failure if an invariant is broken.
+    pub fn check(&self) {
+        if !CHECK_INVARIANTS {
+            return;
+        }
+        // Find the first non-empty bucket to use as our starting point for
+        // walking around the hull's linked list.
+        let point = self.buckets.iter()
+            .filter(|b| **b != EMPTY)
+            .copied()
+            .next();
+        assert!(point.is_some());
+
+        let start = point.unwrap();
+        assert!(self.buckets[self.bucket(start)] == start);
+
+        let mut index = start;
+        // Walk around the hull, checking that angle is strictly increasing,
+        // edges are correctly stitched together, and buckets are correct.
+        loop {
+            // Assert that the list is correctly stitched together
+            let next = self.data[index].next;
+            assert!(index == self.data[next].prev);
+
+
+            // If this is the first item in a new bucket, it should be at the
+            // head of the bucket's list.
+            let my_bucket = self.bucket(index);
+            let next_bucket = self.bucket(index);
+            if next_bucket != my_bucket {
+                assert!(self.buckets[next_bucket] == next);
+            }
+
+            if next == start {
+                break;
+            } else {
+                // Assert that angles are increasing in the list
+                let my_angle = self.data[index].angle;
+                let next_angle = self.data[next].angle;
+                assert!(next_angle >= my_angle);
+                index = next;
+            }
+        }
+    }
+
     pub fn get_edge(&self, p: PointIndex) -> EdgeIndex {
         let (prev, _) = self.get(p);
         self.data[prev].edge
@@ -163,6 +211,8 @@ impl Hull {
         // Stitch ourselves into the linked list
         self.data[next].prev = p;
         self.data[prev].next = p;
+
+        self.check();
     }
 
     /// Removes the given point from the hull
@@ -188,6 +238,8 @@ impl Hull {
                 self.buckets[b] = EMPTY;
             }
         }
+
+        self.check();
     }
 
     /// Iterates over all edges stored in the Hull, in order
