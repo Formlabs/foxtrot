@@ -1,5 +1,4 @@
 use itertools::Itertools;
-use ordered_float::OrderedFloat;
 
 use crate::predicates::{acute, centroid, distance2, orient2d, in_circle};
 use crate::{Point, PointIndex, EdgeIndex};
@@ -295,7 +294,7 @@ impl<'a> Triangulation<'a> {
                     if k.0 == pa || k.0 == pb || k.0 == pc {
                         std::cmp::Ordering::Less
                     } else {
-                        OrderedFloat(k.1).cmp(&OrderedFloat(r.1))
+                        k.1.partial_cmp(&r.1).unwrap()
                     });
 
                 // reserve + extend is faster than collect, experimentally

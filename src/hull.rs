@@ -1,5 +1,3 @@
-use ordered_float::OrderedFloat;
-
 use crate::{Point, PointIndex, EdgeIndex};
 use crate::predicates::pseudo_angle;
 

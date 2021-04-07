@@ -61,6 +61,6 @@ fn main() {
     };
 
     //benchmark(seed, 1_000_000);
-    fuzz(seed, 4);
-    //svg(seed, 64);
+    //fuzz(seed, 8);
+    svg(seed, 64);
 }
