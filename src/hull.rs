@@ -29,6 +29,7 @@ struct Node {
 /// the highest psuedo-angle that is below P.  When projecting P towards the
 /// triangulation center, it will intersect the edge beginning at Q; this
 /// edge is the one which should be split.
+#[derive(Debug)]
 pub struct Hull {
     buckets: [PointIndex; N],
     data: Vec<Node>,
@@ -103,12 +104,16 @@ impl Hull {
             // linked list until we find the right place to insert.
 
             // Loop until we find an item in the linked list which is less
-            // that our new point, or we leave this bucket; the latter case
-            // handles wrapping around.
+            // that our new point, or we leave this bucket, or we wrap around
+            // while in the same bucket.
+            let start = next;
             while self.data[next.0].angle < self.data[p.0].angle &&
                   self.bucket(next) == b
             {
                 next = self.data[next.0].next;
+                if next == start {
+                    break;
+                }
             }
         }
 
@@ -142,7 +147,9 @@ impl Hull {
 
         // If the target bucket is empty, or the given point is below the first
         // item in the target bucket, then it becomes the bucket's head
-        if self.buckets[b] == EMPTY || self.buckets[b] == next {
+        if self.buckets[b] == EMPTY || (self.buckets[b] == next &&
+            self.data[p.0].angle < self.data[next.0].angle)
+        {
             self.buckets[b] = p;
         }
 
