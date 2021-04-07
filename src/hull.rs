@@ -89,36 +89,37 @@ impl Hull {
         // point.  This is better than searching for the next-lowest point,
         // which requires finding the next-lowest bucket then walking all
         // the way to the end of that bucket's chain.
-        let mut next = self.buckets[b];
-        if next == EMPTY {
+        let mut pos = self.buckets[b];
+        if pos == EMPTY {
             // Find the next filled bucket, which must exist somewhere
             let mut t = b;
             while self.buckets[t] == EMPTY {
                 t = (t + 1) % N;
             }
-            next = self.buckets[t];
+            pos = self.buckets[t];
         } else {
             // This bucket is already occupied, so we'll need to walk its
             // linked list until we find the right place to insert.
 
             // Loop until we find an item in the linked list which is less
-            // that our new point, or we leave this bucket, or we wrap around
-            // while in the same bucket.
-            let start = next;
-            while self.data[next.0].angle < self.data[p.0].angle &&
-                  self.bucket(next) == b
+            // that our new point, or we leave this bucket, or we're about
+            // to wrap around in the same bucket.
+            let start = pos;
+            while self.data[pos.0].angle < self.data[p.0].angle &&
+                  self.bucket(pos) == b
             {
-                next = self.data[next.0].next;
+                let next = self.data[pos.0].next;
                 if next == start {
                     break;
                 }
+                pos = next;
             }
         }
 
         // Walk backwards one step the list to find the previous node, then
         // return its edge data.
-        let prev = self.data[next.0].prev;
-        (prev, next)
+        let prev = self.data[pos.0].prev;
+        (prev, pos)
     }
 
     pub fn get_edge(&self, p: PointIndex) -> EdgeIndex {
