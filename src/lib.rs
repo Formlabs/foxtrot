@@ -2,8 +2,13 @@ use std::num::NonZeroUsize;
 
 type Point = (f64, f64);
 
-#[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
-pub struct PointIndex(usize);
+safe_index::new! {
+    PointIndex,
+    map: PointVec with iter: PointIter
+}
+impl Default for PointIndex {
+    fn default() -> Self { Self::new(0) }
+}
 
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
 pub struct TriangleIndex(usize);

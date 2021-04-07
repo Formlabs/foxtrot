@@ -72,9 +72,9 @@ impl Half {
             buddy: e_ca
         });
 
-        e_ab.map(|e| self.set_buddy(e, o_ab));
-        e_bc.map(|e| self.set_buddy(e, o_bc));
-        e_ca.map(|e| self.set_buddy(e, o_ca));
+        if let Some(e) = e_ab { self.set_buddy(e, o_ab) }
+        if let Some(e) = e_bc { self.set_buddy(e, o_bc) }
+        if let Some(e) = e_ca { self.set_buddy(e, o_ca) }
 
         o_ab
     }
@@ -92,7 +92,7 @@ impl Half {
 
     /// Swaps the target edge, which must be have a matched pair.
     /// Returns Ok(()) on success, Err(()) if the edge has no pair.
-    pub fn swap(&mut self, e: EdgeIndex) -> Result<(), ()> {
+    pub fn swap(&mut self, e: EdgeIndex) {
         /* Before:
          *           a
          *          /^|^
@@ -109,9 +109,7 @@ impl Half {
          *           b
          */
         let edge = self.edge(e);
-        if edge.buddy.is_none() {
-            return Err(());
-        }
+        assert!(!edge.buddy.is_none());
 
         let e_ac = self.next(e);
         let e_cb = self.prev(e);
@@ -152,7 +150,5 @@ impl Half {
             next: e_bd,
             buddy: Some(e),
         };
-
-        Ok(())
     }
 }

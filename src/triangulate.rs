@@ -43,7 +43,7 @@ impl<'a> Triangulation<'a> {
     }
 
     fn point(&self, p: PointIndex) -> Point {
-        self.points[p.0]
+        self.points[p.val]
     }
 
     pub fn run(&mut self) {
@@ -200,7 +200,7 @@ impl<'a> Triangulation<'a> {
         {
             let e_db = self.half.prev(e_ba);
 
-            self.half.swap(e_ab).expect("Swap failed");
+            self.half.swap(e_ab);
             self.legalize(e_ad);
             self.legalize(e_db);
         }
@@ -236,7 +236,7 @@ impl<'a> Triangulation<'a> {
         let mut scratch = Vec::with_capacity(self.points.len());
         scratch.extend(self.points.iter()
             .enumerate()
-            .map(|(j, p)| (PointIndex(j), distance2(self.center, *p))));
+            .map(|(j, p)| (PointIndex::new(j), distance2(self.center, *p))));
 
         // Finds the four points in the given buffer that are closest to the
         // center, returning them in order (so that out[0] is closest).
@@ -244,7 +244,7 @@ impl<'a> Triangulation<'a> {
         // This is faster than sorting the entire array each time to check
         // the four closest distances to a given point.
         let min4 = |buf: &[(PointIndex, f64)]| -> [PointIndex; 4] {
-            let mut array = [(PointIndex(0), std::f64::INFINITY); 4];
+            let mut array = [(PointIndex::default(), std::f64::INFINITY); 4];
             for &(p, score) in buf.iter() {
                 if score >= array[3].1 {
                     continue;
@@ -262,7 +262,7 @@ impl<'a> Triangulation<'a> {
                 }
             }
 
-            let mut out = [PointIndex(0); 4];
+            let mut out = [PointIndex::default(); 4];
             for (i, a) in array.iter().enumerate() {
                 out[i] = a.0;
             }

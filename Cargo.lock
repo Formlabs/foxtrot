@@ -7,6 +7,7 @@ dependencies = [
  "geometry-predicates",
  "itertools",
  "rand",
+ "safe_index",
 ]
 
 [[package]]
@@ -98,6 +99,12 @@ checksum = "3190ef7066a446f2e7f42e239d161e905420ccab01eb967c9eb27d21b2322a73"
 dependencies = [
  "rand_core",
 ]
+
+[[package]]
+name = "safe_index"
+version = "0.9.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "29ef0c54ebf2723c596ae710965f59edeb1e5bb4f6b73f652d7372447c524db2"
 
 [[package]]
 name = "wasi"
