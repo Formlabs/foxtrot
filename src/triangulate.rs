@@ -9,6 +9,11 @@ pub struct Triangulation {
     remap: PointVec<usize>,     // self.points[i] = input[self.remap[i]]
     next: PointIndex,           // Progress of the triangulation
 
+    // If a point p terminates fixed edges, then endings[p] will be a tuple
+    // range into ending_data containing the starting points of those edges.
+    endings: PointVec<(usize, usize)>,
+    ending_data: Vec<PointIndex>,
+
     // This stores the start of an edge (as a pseudoangle) as an index into
     // the edges array
     hull: Hull,
@@ -114,6 +119,10 @@ impl Triangulation {
             center, remap,
             points: sorted_points, // moved out here
             next: PointIndex::new(3), // we've already built a, b, c
+
+            // No points are endings right now
+            endings: PointVec{ vec: vec![(0,0); points.len()] },
+            ending_data: vec![],
         };
 
         let pa = PointIndex::new(0);
