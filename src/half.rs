@@ -90,7 +90,8 @@ impl Half {
     }
 
     /// Sanity-checks the structure's invariants, raising an assertion if
-    /// any invariants are broken.
+    /// any invariants are broken.  This is a no-op if CHECK_INVARIANTS is set
+    /// to false in lib.rs.
     pub fn check(&self) {
         if !CHECK_INVARIANTS {
             return;

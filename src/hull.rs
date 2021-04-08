@@ -120,7 +120,8 @@ impl Hull {
     }
 
     /// Sanity-checks invariants of the data structure, raising an assertion
-    /// failure if an invariant is broken.
+    /// failure if an invariant is broken.  This is a no-op if CHECK_INVARIANTS
+    /// is set to false in lib.rs.
     pub fn check(&self) {
         if !CHECK_INVARIANTS {
             return;
