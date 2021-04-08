@@ -16,11 +16,15 @@ pub struct Edge {
 /// values instead.
 pub struct Half {
     edges: EdgeVec<Edge>,
+    fixed: EdgeVec<bool>,
 }
 
 impl Half {
     pub fn new(max_triangles: usize) -> Half {
-        Half { edges: EdgeVec::with_capacity(max_triangles * 3) }
+        Half {
+            edges: EdgeVec::with_capacity(max_triangles * 3),
+            fixed: EdgeVec::with_capacity(max_triangles * 3),
+        }
     }
 
     pub fn next(&self, e: EdgeIndex) -> EdgeIndex {
@@ -35,6 +39,11 @@ impl Half {
         self.edges[e]
     }
 
+    fn push_edge(&mut self, e: Edge, f: bool) {
+        self.edges.push(e);
+        self.fixed.push(f);
+    }
+
     /// Inserts a new triangle into the edge map, based on three points
     /// and optional paired edges.  Returns the new edge index a->b
     pub fn insert(&mut self, a: PointIndex, b: PointIndex, c: PointIndex,
@@ -44,21 +53,21 @@ impl Half {
         let e_ab = EdgeIndex::new(i);
         let e_bc = EdgeIndex::new(i + 1);
         let e_ca = EdgeIndex::new(i + 2);
-        self.edges.push(Edge {
+        self.push_edge(Edge {
             src: a, dst: b,
             prev: e_ca, next: e_bc,
             buddy: e_ba
-        });
-        self.edges.push(Edge {
+        }, false);
+        self.push_edge(Edge {
             src: b, dst: c,
             prev: e_ab, next: e_ca,
             buddy: e_cb
-        });
-        self.edges.push(Edge {
+        }, false);
+        self.push_edge(Edge {
             src: c, dst: a,
             prev: e_bc, next: e_ab,
             buddy: e_ac
-        });
+        }, false);
 
         self.set_buddy(e_ba, e_ab);
         self.set_buddy(e_cb, e_bc);
