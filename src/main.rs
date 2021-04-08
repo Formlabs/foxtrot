@@ -60,7 +60,7 @@ fn main() {
         None
     };
 
-    //benchmark(seed, 1_000_000);
+    benchmark(seed, 1_000_000);
     //fuzz(seed, 8);
-    svg(seed, 64);
+    //svg(seed, 64);
 }

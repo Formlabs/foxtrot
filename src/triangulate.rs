@@ -1,15 +1,15 @@
 use itertools::Itertools;
 
 use crate::predicates::{acute, centroid, distance2, orient2d, in_circle};
-use crate::{Point, PointIndex, EdgeIndex};
-use crate::{half, half::Half, hull::Hull};
+use crate::{Point, PointIndex, PointVec, EdgeIndex};
+use crate::{half, half::Half, hull::Hull, util::min4};
 
 #[derive(Default)]
-pub struct Triangulation<'a> {
-    points: &'a[Point],
+pub struct Triangulation {
     center: Point,
-    order: Vec<PointIndex>,  // Ordering of the points, from inner to outer
-    next: usize,        // Progress of the triangulation
+    points: PointVec<Point>,    // Sorted in the constructor
+    remap: PointVec<usize>,     // self.points[i] = input[self.remap[i]]
+    next: PointIndex,           // Progress of the triangulation
 
     // This stores the start of an edge (as a pseudoangle) as an index into
     // the edges array
@@ -17,18 +17,19 @@ pub struct Triangulation<'a> {
     half: Half,
 }
 
-impl<'a> Triangulation<'a> {
-    pub fn new(points: &'a [Point]) -> Triangulation<'a> {
+impl Triangulation {
+    pub fn new(points: & [Point]) -> Triangulation {
         let mut out = Triangulation {
-            points,
+            points: PointVec::with_capacity(points.len()),
+            remap: PointVec::with_capacity(points.len()),
             half: Half::new(points.len() * 2 - 5),
             ..Default::default()
         };
 
-        // seed_triangle() writes out.order and out.center
-        let (pa, pb, pc) = out.seed_triangle();
+        // seed_triangle() writes out.points, remap, and next
+        let (pa, pb, pc) = out.seed_triangle(points);
 
-        out.hull = Hull::new(out.center, points);
+        out.hull = Hull::new(out.center, &out.points);
 
         let e_ab = out.half.insert(pa, pb, pc,
                                    half::EMPTY, half::EMPTY, half::EMPTY);
@@ -39,12 +40,7 @@ impl<'a> Triangulation<'a> {
         out.hull.insert(pb, e_bc);
         out.hull.insert(pc, e_ca);
 
-        out.next = 0;
         out
-    }
-
-    fn point(&self, p: PointIndex) -> Point {
-        self.points[p.val]
     }
 
     pub fn run(&mut self) {
@@ -52,13 +48,13 @@ impl<'a> Triangulation<'a> {
     }
 
     pub fn step(&mut self) -> bool {
-        if self.next == self.order.len() {
+        if self.next == self.points.len() {
             return false;
         }
 
         // Pick the next point in our pre-sorted array
-        let p = self.order[self.next];
-        self.next += 1;
+        let p = self.next;
+        self.next += 1usize;
 
         // Find the hull edge which will be split by this point
         let e_ab = self.hull.get_edge(p);
@@ -77,7 +73,7 @@ impl<'a> Triangulation<'a> {
         let b = edge.dst;
 
         // Sanity-check that p is on the correct side of b->a
-        let o = orient2d(self.point(b), self.point(a), self.point(p));
+        let o = orient2d(self.points[b], self.points[a], self.points[p]);
         assert!(o != 0.0);
         assert!(o > 0.0);
 
@@ -111,8 +107,8 @@ impl<'a> Triangulation<'a> {
             // Check that the inner angle is less that pi/2, and that the
             // inner triangle is correctly wound; if either is not the case,
             // then break immediately.
-            if acute(self.point(p), self.point(b), self.point(q)) <= 0.0 ||
-               orient2d(self.point(p), self.point(b), self.point(q)) >= 0.0
+            if acute(self.points[p], self.points[b], self.points[q]) <= 0.0 ||
+               orient2d(self.points[p], self.points[b], self.points[q]) >= 0.0
             {
                 break;
             }
@@ -144,8 +140,8 @@ impl<'a> Triangulation<'a> {
             let e_ap = self.hull.edge(a);
             let e_qa = self.hull.prev_edge(a);
             let q = self.half.edge(e_qa).src;
-            if acute(self.point(p), self.point(a), self.point(q)) <= 0.0 ||
-               orient2d(self.point(p), self.point(a), self.point(q)) <= 0.0
+            if acute(self.points[p], self.points[a], self.points[q]) <= 0.0 ||
+               orient2d(self.points[p], self.points[a], self.points[q]) <= 0.0
             {
                 break;
             }
@@ -199,8 +195,8 @@ impl<'a> Triangulation<'a> {
         let e_ad = self.half.next(e_ba);
         let d = self.half.edge(e_ad).dst;
 
-        if in_circle(self.point(a), self.point(b), self.point(c),
-                     self.point(d)) > 0.0
+        if in_circle(self.points[a], self.points[b], self.points[c],
+                     self.points[d]) > 0.0
         {
             let e_db = self.half.prev(e_ba);
 
@@ -229,49 +225,19 @@ impl<'a> Triangulation<'a> {
     //
     //  We iterate, repeatedly picking a center and checking to see if the
     //  conditions hold; otherwise, we pick a new center and try again.
-    fn seed_triangle(&mut self) -> (PointIndex, PointIndex, PointIndex) {
+    fn seed_triangle(&mut self, points: &[Point]) -> (PointIndex, PointIndex, PointIndex) {
         // Start by picking a center which is at the center of the bbox
-        let (x_bounds, y_bounds) = self.bbox();
+        let (x_bounds, y_bounds) = Self::bbox(points);
         self.center = ((x_bounds.0 + x_bounds.1) / 2.0,
                        (y_bounds.0 + y_bounds.1) / 2.0);
 
         // The scratch buffer contains our points, their indexes, and a distance
         // relative to the current center.
-        let mut scratch = Vec::with_capacity(self.points.len());
-        scratch.extend(self.points.iter()
+        let mut scratch = Vec::with_capacity(points.len());
+        scratch.extend(points.iter()
             .enumerate()
-            .map(|(j, p)| (PointIndex::new(j), distance2(self.center, *p))));
+            .map(|(j, p)| (j, distance2(self.center, *p))));
 
-        // Finds the four points in the given buffer that are closest to the
-        // center, returning them in order (so that out[0] is closest).
-        //
-        // This is faster than sorting the entire array each time to check
-        // the four closest distances to a given point.
-        let min4 = |buf: &[(PointIndex, f64)]| -> [PointIndex; 4] {
-            let mut array = [(PointIndex::default(), std::f64::INFINITY); 4];
-            for &(p, score) in buf.iter() {
-                if score >= array[3].1 {
-                    continue;
-                }
-                for i in 0..4 {
-                    // If the new score is bumping this item out of the array,
-                    // then shift all later items over by one and return.
-                    if score <= array[i].1 {
-                        for j in (i..3).rev() {
-                            array[j + 1] = array[j];
-                        }
-                        array[i] = (p, score);
-                        break;
-                    }
-                }
-            }
-
-            let mut out = [PointIndex::default(); 4];
-            for (i, a) in array.iter().enumerate() {
-                out[i] = a.0;
-            }
-            out
-        };
 
         for _ in 0..100 {
             let arr = min4(&scratch);
@@ -280,16 +246,16 @@ impl<'a> Triangulation<'a> {
             let pa = arr[0];
             let mut pb = arr[1];
             let mut pc = arr[2];
-            if orient2d(self.point(pa), self.point(pb), self.point(pc)) < 0.0 {
+            if orient2d(points[pa], points[pb], points[pc]) < 0.0 {
                 std::mem::swap(&mut pb, &mut pc);
             }
 
             // If the center is contained within the triangle formed by the
             // three closest points, then we're clear to sort the list and
             // return it.
-            if orient2d(self.point(pa), self.point(pb), self.center) > 0.0 &&
-               orient2d(self.point(pb), self.point(pc), self.center) > 0.0 &&
-               orient2d(self.point(pc), self.point(pa), self.center) > 0.0
+            if orient2d(points[pa], points[pb], self.center) > 0.0 &&
+               orient2d(points[pb], points[pc], self.center) > 0.0 &&
+               orient2d(points[pc], points[pa], self.center) > 0.0
             {
                 // Sort with a special comparison function that puts the first
                 // three keys at the start of the list, and uses OrderedFloat
@@ -301,35 +267,42 @@ impl<'a> Triangulation<'a> {
                         k.1.partial_cmp(&r.1).unwrap()
                     });
 
-                // reserve + extend is faster than collect, experimentally
-                self.order.reserve(scratch.len() - 3);
-                self.order.extend(scratch.into_iter()
-                    .skip(3) // Skip [pa, pb, pc], which will be at the start
-                    .map(|p| p.0));
-                return (pa, pb, pc);
+                // Store the first three items in the list in order (which
+                // isn't guaranteed by the sorting)
+                for p in [pa, pb, pc].iter() {
+                    self.points.push(points[*p]);
+                    self.remap.push(*p);
+                }
+
+                for (j, _) in scratch.into_iter().skip(3) {
+                    self.points.push(points[j]);
+                    self.remap.push(j);
+                }
+                self.next = PointIndex::new(3);
+                return (PointIndex::new(0), PointIndex::new(1), PointIndex::new(2));
             } else {
                 // Pick a new centroid, then retry
                 self.center = centroid(
-                    self.point(pa), self.point(pb), self.point(pc));
+                    points[pa], points[pb], points[pc]);
 
                 // Re-calculate distances in the scratch buffer
                 scratch.iter_mut()
-                    .for_each(|p| p.1 = distance2(self.center, self.point(p.0)));
+                    .for_each(|p| p.1 = distance2(self.center, points[p.0]));
             }
         }
         panic!("Could not find seed triangle");
     }
 
     /// Calculates a bounding box, returning ((xmin, xmax), (ymin, ymax))
-    pub fn bbox(&self) -> ((f64, f64), (f64, f64)) {
-        let x = self.points.iter().map(|p| p.0).minmax().into_option().unwrap();
-        let y = self.points.iter().map(|p| p.1).minmax().into_option().unwrap();
+    pub fn bbox(points: &[Point]) -> ((f64, f64), (f64, f64)) {
+        let x = points.iter().map(|p| p.0).minmax().into_option().unwrap();
+        let y = points.iter().map(|p| p.1).minmax().into_option().unwrap();
         (x, y)
     }
 
     pub fn to_svg(&self) -> String {
         const SCALE: f64 = 100.0;
-        let (x_bounds, y_bounds) = self.bbox();
+        let (x_bounds, y_bounds) = Self::bbox(&self.points);
         let line_width = (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0) / 80.0 * SCALE;
         let dx = |x| { SCALE * (x - x_bounds.0) + line_width};
         let dy = |y| { SCALE * (y_bounds.1 - y) + line_width};
@@ -351,10 +324,10 @@ impl<'a> Triangulation<'a> {
      style="stroke:rgb(255,0,0)"
      stroke-width="{}"
      stroke-linecap="round" />"#,
-                dx(self.point(pa).0),
-                dy(self.point(pa).1),
-                dx(self.point(pb).0),
-                dy(self.point(pb).1),
+                dx(self.points[pa].0),
+                dy(self.points[pa].1),
+                dx(self.points[pb].0),
+                dy(self.points[pb].1),
                 line_width))
          }
 
@@ -367,14 +340,14 @@ impl<'a> Triangulation<'a> {
      style="stroke:rgb(255,255,0)"
      stroke-width="{}" stroke-dasharray="{}"
      stroke-linecap="round" />"#,
-                dx(self.point(pa).0),
-                dy(self.point(pa).1),
-                dx(self.point(pb).0),
-                dy(self.point(pb).1),
+                dx(self.points[pa].0),
+                dy(self.points[pa].1),
+                dx(self.points[pb].0),
+                dy(self.points[pb].1),
                 line_width, line_width * 2.0))
          }
 
-         for p in self.points {
+         for p in &self.points {
              out.push_str(&format!(
                 r#"
         <circle cx="{}" cy="{}" r="{}" style="fill:rgb(255,128,128)" />"#,
