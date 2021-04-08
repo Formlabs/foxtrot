@@ -21,7 +21,9 @@ pub struct Triangulation {
 }
 
 impl Triangulation {
-    pub fn new(points: & [Point]) -> Triangulation {
+    pub fn new_with_edges<'a, E>(points: &[Point], edges: E) -> Triangulation
+        where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
+    {
         //  Picking the seed triangle and center point is tricky!
         //
         //  We want a center which is contained within the seed triangle,
@@ -56,7 +58,13 @@ impl Triangulation {
             .map(|(j, p)| (j, distance2(center, *p))));
 
         let mut sorted_points = PointVec::with_capacity(points.len());
-        let mut remap = PointVec::with_capacity(points.len());
+
+        // usize in original array -> PointIndex in sorted array
+        let mut map_forward = vec![PointIndex::new(0); points.len()];
+
+        // PointIndex in sorted array -> usize in original array
+        let mut map_reverse = PointVec::with_capacity(points.len());
+
         for _ in 0..100 {
             let arr = min4(&scratch);
 
@@ -77,7 +85,8 @@ impl Triangulation {
             {
                 // Sort with a special comparison function that puts the first
                 // three keys at the start of the list, and uses OrderedFloat
-                // otherwise.
+                // otherwise.  The order of the first three keys is not
+                // guaranteed, which we fix up below.
                 scratch.sort_unstable_by(|k, r|
                     if k.0 == pa || k.0 == pb || k.0 == pc {
                         std::cmp::Ordering::Less
@@ -85,16 +94,15 @@ impl Triangulation {
                         k.1.partial_cmp(&r.1).unwrap()
                     });
 
-                // Store the first three items in the list in order (which
-                // isn't guaranteed by the sorting)
-                for p in [pa, pb, pc].iter() {
-                    sorted_points.push(points[*p]);
-                    remap.push(*p);
-                }
+                // Apply sorting to initial three points, ignoring distance
+                // values at this point because they're unused.
+                scratch[0].0 = pa;
+                scratch[1].0 = pb;
+                scratch[2].0 = pc;
 
-                for (j, _) in scratch.into_iter().skip(3) {
-                    sorted_points.push(points[j]);
-                    remap.push(j);
+                for p in scratch.into_iter() {
+                    sorted_points.push(points[p.0]);
+                    map_forward[p.0] = map_reverse.push(p.0);
                 }
                 break;
             } else {
@@ -116,8 +124,9 @@ impl Triangulation {
             hull: Hull::new(center, &sorted_points), // borrowed here
             half: Half::new(points.len() * 2 - 5),
 
-            center, remap,
+            center,
             points: sorted_points, // moved out here
+            remap: map_reverse,
             next: PointIndex::new(3), // we've already built a, b, c
 
             // No points are endings right now
@@ -137,7 +146,51 @@ impl Triangulation {
         out.hull.insert(pb, e_bc);
         out.hull.insert(pc, e_ca);
 
+        ////////////////////////////////////////////////////////////////////////
+        // Iterate over edges, counting which points have a termination
+        let mut termination_count = PointVec { vec: vec![0; points.len()] };
+        let edge_iter = || edges.clone()
+            .into_iter()
+            .map(|&(src, dst)| {
+                let src = map_forward[src];
+                let dst = map_forward[dst];
+                if src > dst { (dst, src) } else { (src, dst) }
+            });
+        for (src, dst) in edge_iter() {
+            // Lock any edges that appear in the seed triangle.  Because the
+            // (src, dst) tuple is sorted, there are only three possible
+            // matches here.
+            if (src, dst) == (pa, pb) {
+                out.half.lock(e_ab);
+            } else if (src, dst) == (pa, pc) {
+                out.half.lock(e_ca);
+            } else if (src, dst) == (pb, pc) {
+                out.half.lock(e_bc);
+            }
+            termination_count[dst] += 1;
+        }
+        // Ending data will be tightly packed into the ending_data array; each
+        // point stores its range into that array in self.endings[pt].  If the
+        // point has no endings, then the range is (n,n) for some value n.
+        let mut cumsum = 0;
+        for (dst, t) in termination_count.iter().enumerate() {
+            out.endings[PointIndex::new(dst)] = (cumsum, cumsum);
+            cumsum += t;
+        }
+        out.ending_data.resize(cumsum, PointIndex::new(0));
+        for (src, dst) in edge_iter() {
+            let t = &mut out.endings[dst].1;
+            out.ending_data[*t] = src;
+            *t += 1;
+        }
+
+        // ...and we're done!
         out
+    }
+
+    pub fn new(points: & [Point]) -> Triangulation {
+        let edges: [(usize, usize); 0] = [];
+        return Self::new_with_edges(points, &edges);
     }
 
     pub fn run(&mut self) {
@@ -253,8 +306,45 @@ impl Triangulation {
             self.legalize(self.half.prev(edge_qp));
         }
 
+        // Next, we check whether this point terminates any edges that are
+        // locked in the triangulation (the "constrainted" part of Constrained
+        // Delaunay Triangulation).
+        let (start, end) = self.endings[p];
+        for i in start..end {
+            self.handle_fixed_edge(p, self.ending_data[i], f);
+        }
 
         true
+    }
+
+    fn handle_fixed_edge(&mut self, p: PointIndex, src: PointIndex, e_ba: EdgeIndex) {
+        /* We've just built a triangle that contains a fixed edge.  For example,
+         * it could be here:
+         *            p
+         *          / :^
+         *         / :  \
+         *        /  :   \
+         *       /  :     \
+         *      V   : e_ba \
+         *     b---:------->a
+         *         :
+         *        src
+         *
+         * Or outside the hull!
+         * Or a mix of both (ugh)
+         */
+
+        // First, handle the easy cases, if the source of the fixed edge happens
+        // to line up with one of the points on the newly-added triangle, then
+        // we fix that edge and count our blessings.
+        let edge = self.half.edge(e_ba);
+        if src == edge.src {
+            self.half.lock(edge.prev);
+        } else if src == edge.dst {
+            self.half.lock(edge.next);
+        } else {
+            // TODO
+        }
     }
 
     fn legalize(&mut self, e_ab: EdgeIndex) {
@@ -327,17 +417,19 @@ impl Triangulation {
      dy(y_bounds.0) + line_width));
 
          // Push every edge into the SVG
-         for (pa, pb) in self.half.iter_edges() {
+         for (pa, pb, fixed) in self.half.iter_edges() {
              out.push_str(&format!(
                 r#"
     <line x1="{}" y1="{}" x2="{}" y2="{}"
-     style="stroke:rgb(255,0,0)"
+     style="{}"
      stroke-width="{}"
      stroke-linecap="round" />"#,
                 dx(self.points[pa].0),
                 dy(self.points[pa].1),
                 dx(self.points[pb].0),
                 dy(self.points[pb].1),
+                if fixed { "stroke:rgb(255,255,255)" }
+                    else { "stroke:rgb(255,0,0)" },
                 line_width))
          }
 

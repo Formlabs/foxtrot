@@ -37,6 +37,24 @@ fn svg(seed: Option<u64>, n: usize) {
 }
 
 #[allow(dead_code)]
+fn test_lock(seed: Option<u64>) {
+    let seed = seed.unwrap_or_else(|| {
+        rand::thread_rng().gen()
+    });
+    eprintln!("Seed: {}", seed);
+
+    let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
+
+    let mut pts = Vec::new();
+    for _ in 0..4 {
+        pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
+    }
+    let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
+    t.run();
+    println!("{}", t.to_svg());
+}
+
+#[allow(dead_code)]
 fn fuzz(seed: Option<u64>, n: usize) {
     loop {
         let seed: u64 = seed.unwrap_or_else(|| rand::thread_rng().gen());
@@ -60,7 +78,8 @@ fn main() {
         None
     };
 
-    benchmark(seed, 1_000_000);
+    //benchmark(seed, 1_000_000);
     //fuzz(seed, 8);
     //svg(seed, 64);
+    test_lock(seed);
 }

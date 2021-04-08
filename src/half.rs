@@ -6,8 +6,8 @@ pub const EMPTY: EdgeIndex = EdgeIndex { val: std::usize::MAX };
 pub struct Edge {
     pub src: PointIndex,
     pub dst: PointIndex,
-    prev: EdgeIndex,
-    next: EdgeIndex,
+    pub prev: EdgeIndex,
+    pub next: EdgeIndex,
     pub buddy: EdgeIndex, // EMPTY if empty
 }
 
@@ -27,6 +27,15 @@ impl Half {
         }
     }
 
+    /// Locks an edge and its buddy (if present)
+    pub fn lock(&mut self, e: EdgeIndex) {
+        self.fixed[e] = true;
+        let buddy = self.edges[e].buddy;
+        if buddy != EMPTY {
+            self.fixed[buddy] = true;
+        }
+    }
+
     pub fn next(&self, e: EdgeIndex) -> EdgeIndex {
         self.edges[e].next
     }
@@ -39,9 +48,13 @@ impl Half {
         self.edges[e]
     }
 
-    fn push_edge(&mut self, e: Edge, f: bool) {
-        self.edges.push(e);
-        self.fixed.push(f);
+    fn push_edge(&mut self, edge: Edge) {
+        let mut index = self.edges.push(edge);
+        self.fixed.push(false);
+        if edge.buddy != EMPTY {
+            std::mem::swap(&mut self.edges[edge.buddy].buddy, &mut index);
+            assert!(index == EMPTY);
+        }
     }
 
     /// Inserts a new triangle into the edge map, based on three points
@@ -57,36 +70,25 @@ impl Half {
             src: a, dst: b,
             prev: e_ca, next: e_bc,
             buddy: e_ba
-        }, false);
+        });
         self.push_edge(Edge {
             src: b, dst: c,
             prev: e_ab, next: e_ca,
             buddy: e_cb
-        }, false);
+        });
         self.push_edge(Edge {
             src: c, dst: a,
             prev: e_bc, next: e_ab,
             buddy: e_ac
-        }, false);
-
-        self.set_buddy(e_ba, e_ab);
-        self.set_buddy(e_cb, e_bc);
-        self.set_buddy(e_ac, e_ca);
+        });
 
         self.check();
         e_ab
     }
 
-    fn set_buddy(&mut self, target: EdgeIndex, mut buddy: EdgeIndex) {
-        if target != EMPTY {
-            std::mem::swap(&mut self.edges[target].buddy, &mut buddy);
-            assert!(buddy == EMPTY);
-        }
-    }
-
     /// Returns an iterator over the edges in the data structure
-    pub fn iter_edges(&self) -> impl Iterator<Item=(PointIndex, PointIndex)> + '_ {
-        return self.edges.iter().map(|p| (p.src, p.dst))
+    pub fn iter_edges(&self) -> impl Iterator<Item=(PointIndex, PointIndex, bool)> + '_ {
+        return self.edges.iter().zip(self.fixed.iter()).map(|(p, f)| (p.src, p.dst, *f))
     }
 
     /// Sanity-checks the structure's invariants, raising an assertion if
@@ -105,6 +107,7 @@ impl Half {
                 assert!(edge.src == buddy.dst);
                 assert!(edge.dst == buddy.src);
                 assert!(buddy.buddy == index);
+                assert!(self.fixed[index] == self.fixed[buddy_index]);
             }
             let next_index = edge.next;
             let next = self.edge(next_index);
@@ -126,8 +129,11 @@ impl Half {
     }
 
     /// Swaps the target edge, which must be have a matched pair.
-    /// Returns Ok(()) on success, Err(()) if the edge has no pair.
     pub fn swap(&mut self, e_ba: EdgeIndex) {
+        // We refuse to swap fixed edges, though the caller may ask for it
+        if self.fixed[e_ba] {
+            return;
+        }
         /* Before:
          *           a
          *          /^|^
