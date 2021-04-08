@@ -4,7 +4,7 @@ use crate::predicates::pseudo_angle;
 const N: usize = 1 << 10;
 const EMPTY: PointIndex = PointIndex { val: std::usize::MAX };
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug)]
 struct Node {
     // This is the point's absolute ordering.  It is assigned into a bucket
     // based on this order and the total bucket count
@@ -32,14 +32,6 @@ pub struct Hull {
     buckets: [PointIndex; N],
     data: PointVec<Node>,
 }
-impl Default for Hull {
-    fn default() -> Self {
-        Hull {
-            buckets: [PointIndex::default(); N],
-            data: PointVec::new(),
-        }
-    }
-}
 
 impl Hull {
     pub fn new(center: Point, pts: &[Point]) -> Hull {
@@ -48,7 +40,7 @@ impl Hull {
         let data = pts.iter()
             .map(|p| Node {
                     angle: pseudo_angle((p.0 - center.0, p.1 - center.1)),
-                    edge: EdgeIndex::default(),
+                    edge: crate::half::EMPTY,
                     prev: EMPTY,
                     next: EMPTY,
                 })

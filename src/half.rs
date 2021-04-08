@@ -2,7 +2,7 @@ use crate::{PointIndex, EdgeIndex, EdgeVec, CHECK_INVARIANTS};
 
 pub const EMPTY: EdgeIndex = EdgeIndex { val: std::usize::MAX };
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug)]
 pub struct Edge {
     pub src: PointIndex,
     pub dst: PointIndex,
@@ -16,9 +16,6 @@ pub struct Edge {
 /// values instead.
 pub struct Half {
     edges: EdgeVec<Edge>,
-}
-impl Default for Half {
-    fn default() -> Self { Half::new(0) }
 }
 
 impl Half {
