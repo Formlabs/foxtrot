@@ -176,6 +176,11 @@ impl Hull {
         self.edge(self.data[p].prev)
     }
 
+    pub fn next_edge(&self, p: PointIndex) -> EdgeIndex {
+        assert!(self.data[p].next != EMPTY);
+        self.edge(self.data[p].next)
+    }
+
     pub fn edge(&self, p: PointIndex) -> EdgeIndex {
         // Assert that this node is in the array
         assert!(self.data[p].next != EMPTY);
