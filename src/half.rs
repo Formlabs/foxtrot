@@ -88,7 +88,26 @@ impl Half {
 
     /// Returns an iterator over the edges in the data structure
     pub fn iter_edges(&self) -> impl Iterator<Item=(PointIndex, PointIndex, bool)> + '_ {
-        return self.edges.iter().zip(self.fixed.iter()).map(|(p, f)| (p.src, p.dst, *f))
+        return self.edges.iter()
+            .zip(self.fixed.iter())
+            .map(|(p, f)| (p.src, p.dst, *f))
+    }
+
+    pub fn iter_triangles(&self) -> impl Iterator<Item=(PointIndex, PointIndex, PointIndex)> + '_ {
+        let mut seen = EdgeVec { vec: vec![false; self.edges.len()] };
+        self.edges.iter()
+            .enumerate()
+            .filter_map(move |(index, edge)| {
+                let index = EdgeIndex::new(index);
+                if seen[index] {
+                    None
+                } else {
+                    seen[index] = true;
+                    seen[edge.next] = true;
+                    seen[edge.prev] = true;
+                    Some((edge.src, edge.dst, self.edges[edge.next].dst))
+                }
+            })
     }
 
     /// Sanity-checks the structure's invariants, raising an assertion if

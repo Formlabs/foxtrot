@@ -400,6 +400,12 @@ impl Triangulation {
         (x, y)
     }
 
+    pub fn triangles(&self) -> impl Iterator<Item=(usize, usize, usize)> + '_ {
+        self.half.iter_triangles()
+            .map(move |(a, b, c)|
+                (self.remap[a], self.remap[b], self.remap[c]))
+    }
+
     pub fn to_svg(&self) -> String {
         const SCALE: f64 = 100.0;
         let (x_bounds, y_bounds) = Self::bbox(&self.points);
