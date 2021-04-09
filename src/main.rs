@@ -46,12 +46,60 @@ fn test_lock(seed: Option<u64>) {
     let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
 
     let mut pts = Vec::new();
-    for _ in 0..4 {
+    for _ in 0..16 {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
-    let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
+    let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+    for _ in 0..1 {
+        t.step();
+    }
     t.run();
     println!("{}", t.to_svg());
+}
+
+#[allow(dead_code)]
+fn fuzz_lock(seed: Option<u64>) {
+    eprintln!("Running...");
+    loop {
+        let seed = seed.unwrap_or_else(|| {
+            rand::thread_rng().gen()
+        });
+
+        let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
+
+        let mut pts = Vec::new();
+        for _ in 0..32 {
+            pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
+        }
+        let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+        let result = std::panic::catch_unwind(move || {
+            t.run();
+        });
+        if result.is_err() {
+            let mut safe_steps = 0;
+            for i in 0..pts.len() {
+                let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+                let result = std::panic::catch_unwind(move || {
+                    for _ in 0..i {
+                        t.step();
+                    }
+                });
+                if result.is_ok() {
+                    safe_steps = i;
+                } else {
+                    break;
+                }
+            }
+
+            let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+            for _ in 0..safe_steps {
+                t.step();
+            }
+            println!("{}", t.to_svg());
+            eprintln!("Crashed with seed: {}", seed);
+            break;
+        }
+    }
 }
 
 #[allow(dead_code)]
@@ -81,5 +129,6 @@ fn main() {
     //benchmark(seed, 1_000_000);
     //fuzz(seed, 8);
     //svg(seed, 64);
-    test_lock(seed);
+    //test_lock(seed);
+    fuzz_lock(seed);
 }

@@ -166,7 +166,9 @@ impl Hull {
         }
     }
 
+    /// Finds the preceding edge for a point which is not already in the array
     pub fn get_edge(&self, p: PointIndex) -> EdgeIndex {
+        assert!(self.data[p].next == EMPTY);
         let (prev, _) = self.get(p);
         self.data[prev].edge
     }
