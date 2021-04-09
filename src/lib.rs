@@ -11,9 +11,8 @@ safe_index::new! {
 }
 
 pub mod predicates;
-pub mod triangulate;
 pub mod half;
-pub mod hull;
 pub mod util;
+pub mod sweepcircle;
 
 const CHECK_INVARIANTS: bool = false;
