@@ -45,8 +45,8 @@ impl Triangulation {
         // always guaranteed to be below points in the original set.
         let dx = x_bounds.1 - x_bounds.0;
         let dy = y_bounds.1 - y_bounds.0;
-        let x_bounds = (x_bounds.0 - dx / 4.0, x_bounds.1 + dx / 4.0);
-        let y_lower = y_bounds.0 - dy / 4.0;
+        let x_bounds = (x_bounds.0 - dx / 8.0, x_bounds.1 + dx / 8.0);
+        let y_lower = y_bounds.0 - dy / 8.0;
         sorted_points.push((x_bounds.0, y_lower));
         sorted_points.push((x_bounds.1, y_lower));
         map_reverse.push(0); // Dummy values
@@ -198,10 +198,9 @@ impl Triangulation {
          *              e
          */
         let mut b = b;
-        loop { // Walking CCW around the hull
-            break;
-            let e_pb = self.hull.edge(p);
-            let e_bq = self.hull.edge(b);
+        while b != PointIndex::new(0) { // Walking left around the hull
+            let e_pb = self.hull.edge(b);
+            let e_bq = self.hull.prev_edge(b);
             let q = self.half.edge(e_bq).dst;
 
             // Check that the inner angle is less that pi/2, and that the
@@ -216,7 +215,7 @@ impl Triangulation {
 
             // Now p->q is my new friend
             let edge_pq = self.half.insert(p, q, b, e_bq, e_pb, half::EMPTY);
-            self.hull.update(p, edge_pq);
+            self.hull.update(q, edge_pq);
             b = q;
 
             // Then legalize from the two new triangle edges (bp and qb)
@@ -234,10 +233,9 @@ impl Triangulation {
          *          e
          */
         let mut a = a;
-        loop {
-            break;
-            let e_ap = self.hull.edge(a);
-            let e_qa = self.hull.prev_edge(a);
+        while a != PointIndex::new(1) {
+            let e_ap = self.hull.edge(p);
+            let e_qa = self.hull.next_edge(p);
             let q = self.half.edge(e_qa).src;
             if self.acute(p, a, q) <= 0.0 || self.orient2d(p, a, q) <= 0.0 {
                 break;
@@ -245,7 +243,7 @@ impl Triangulation {
 
             self.hull.erase(a);
             let edge_qp = self.half.insert(q, p, a, e_ap, e_qa, half::EMPTY);
-            self.hull.update(q, edge_qp);
+            self.hull.update(p, edge_qp);
             a = q;
 
             // Then legalize from the two new triangle edges (bp and qb)
