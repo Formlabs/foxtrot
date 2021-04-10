@@ -88,7 +88,7 @@ impl Triangulation {
 
         ////////////////////////////////////////////////////////////////////////
         // Iterate over edges, counting which points have a termination
-        let mut termination_count = PointVec { vec: vec![0; points.len()] };
+        let mut termination_count = PointVec { vec: vec![0; points.len() + 2] };
         let edge_iter = || edges.clone()
             .into_iter()
             .map(|&(src, dst)| {
@@ -251,12 +251,11 @@ impl Triangulation {
             self.legalize(self.half.prev(edge_qp));
         }
 
-        // Next, we check whether this point terminates any edges that are
+        // Finally, we check whether this point terminates any edges that are
         // locked in the triangulation (the "constrainted" part of Constrained
         // Delaunay Triangulation).
         let (start, end) = self.endings[p];
         for i in start..end {
-            break;
             self.handle_fixed_edge(p, self.ending_data[i]);
         }
 
@@ -264,7 +263,6 @@ impl Triangulation {
     }
 
     fn handle_fixed_edge(&mut self, p: PointIndex, src: PointIndex) {
-
         /*  We've just built a triangle that contains a fixed edge, and need
             to walk through the triangulation and implement that edge.
 
@@ -287,8 +285,8 @@ impl Triangulation {
             This triangle may not exist!  For example, if the p->src edge
             remains outside the hull, then we start in Mode::Left
         */
-        let e_left = self.hull.edge(p);
-        let e_right = self.hull.prev_edge(p);
+        let e_right = self.hull.edge(p);
+        let e_left = self.hull.prev_edge(p);
 
         // Note that p-b-a is not necessarily a triangle at this point, it's
         // just a wedge, which could contain multiple triangles.  (For example,
@@ -311,50 +309,23 @@ impl Triangulation {
         assert!(o_left != 0.0);
         assert!(o_right != 0.0);
 
-        // This subroutine is _extremely_ funky.  At certain times, we know
-        // that we've escaped from the triangulation and e is a hull edge, but
-        // we don't know whether we're on the left or right side of the hull.
-        // We walk forward and backwards to see which direction hits src or p
-        // first, which tells us which side we're on.
-        //
-        // TODO: this is O(hull edges), which could be bad, but I'm having
-        // trouble imagining what kind of pathological model you'd need to
-        // trigger quadratic performance.
-        let race = |e: EdgeIndex| {
-            let mut e_next = e;
-            let mut e_prev = e;
-            let out = loop {
-                let edge_n = self.half.edge(e_next);
-                let edge_p = self.half.edge(e_prev);
-
-                if edge_n.dst == src || edge_p.src == p {
-                    break Mode::Left;
-                } else if edge_n.dst == p || edge_p.src == src {
-                    break Mode::Right;
-                }
-                // Walk both fronts along the hull
-                e_next = self.hull.next_edge(edge_n.src);
-                e_prev = self.hull.prev_edge(edge_p.src);
-            };
-            // race should never be called on an edge which is already touching
-            // either p or src, because in that case, we should know better.
-            assert!(e_next != e);
-            assert!(e_prev != e);
-            out
-        };
-
         /*  Now, the fun begins!
 
             We'll be walking along the line from p to src, which will either be
             - Inside the triangulation
             - Outside the triangulation, to the left of the hull
             - Outside the triangulation, to the right of the hull
-
-            (left/right using the picture above; in practice, it's a circle,
-            so we're using clockwise/counter-clockwise predicates)
          */
-        #[derive(Debug)]
+        #[derive(Copy, Clone, Debug, PartialEq)]
         enum Mode { Left, Right, Inside };
+
+        let default_mode = if self.points[src].0 > self.points[p].0 {
+            Mode::Right
+        } else if self.points[src].0 < self.points[p].0 {
+            Mode::Left
+        } else {
+            Mode::Inside
+        };
 
         let (mut mode, mut current_edge_index) = if o_left < 0.0 {
             (Mode::Left, e_left)
@@ -400,15 +371,12 @@ impl Triangulation {
                             :
                            src
                     */
-                    // This edge may open up into another triangle, in which
-                    // case it will have a buddy.  Otherwise, we detect whether
-                    // we're on the left or right edge by racing to see which
-                    // hull direction finds p or src first.
-                    if intersected_edge.buddy != half::EMPTY {
-                        break (Mode::Inside, intersected_edge.buddy);
+                    break if intersected_edge.buddy == half::EMPTY {
+                        assert!(default_mode != Mode::Inside);
+                        (default_mode, intersected_index)
                     } else {
-                        break (race(intersected_index), intersected_index)
-                    }
+                        (Mode::Inside, intersected_edge.buddy)
+                    };
                 } else {
                     /*
                                p
@@ -430,7 +398,6 @@ impl Triangulation {
                 }
             }
         };
-        assert!(current_edge_index != half::EMPTY);
 
         loop {
             match mode {
@@ -450,16 +417,13 @@ impl Triangulation {
                 Mode::Left => {
                     // Check the next hull edge to see if it either intersects
                     // the new line or terminates it.
-                    let next_index = self.hull.next_edge(self.half.edge(current_edge_index).src);
+                    let next_index = self.hull.prev_edge(
+                        self.half.edge(current_edge_index).dst);
                     let next_edge = self.half.edge(next_index);
 
                     // If we've reached the target point, then rejoice!
                     if next_edge.dst == src {
                         break;
-                    }
-                    if p == next_edge.dst {
-                        println!("{}", self.to_svg());
-                        eprintln!("About to crash: {:?}", src);
                     }
                     assert!(p != next_edge.dst);
                     let o = self.orient2d(p, src, next_edge.dst);
@@ -490,7 +454,8 @@ impl Triangulation {
                                               src
                  */
                 Mode::Right => {
-                    let next_index = self.hull.prev_edge(self.half.edge(current_edge_index).src);
+                    let next_index = self.hull.edge(
+                        self.half.edge(current_edge_index).src);
                     let next_edge = self.half.edge(next_index);
 
                     if next_edge.src == src {
@@ -542,7 +507,8 @@ impl Triangulation {
                             current_edge_index = buddy;
                         } else {
                             current_edge_index = e_bc;
-                            mode = race(current_edge_index);
+                            assert!(default_mode != Mode::Inside);
+                            mode = default_mode;
                         }
                     } else if o_psc < 0.0 {
                         // Exiting the c->a edge
@@ -551,7 +517,8 @@ impl Triangulation {
                             current_edge_index = buddy;
                         } else {
                             current_edge_index = e_ca;
-                            mode = race(current_edge_index);
+                            assert!(default_mode != Mode::Inside);
+                            mode = default_mode;
                         }
                     } else {
                         assert!(false); // stabbing c in the heart

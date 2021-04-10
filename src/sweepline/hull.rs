@@ -255,7 +255,6 @@ impl Hull {
             .unwrap();
         // Then, walk the linked list until we hit the starting point again,
         // returning the associated edges at each point.
-        let start = point;
         std::iter::from_fn(move || {
             let out = self.data[point].edge;
             point = self.data[point].next;
