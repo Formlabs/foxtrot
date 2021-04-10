@@ -1,15 +1,16 @@
-use crate::{Point, PointIndex, PointVec, EdgeIndex, CHECK_INVARIANTS};
+use crate::{Point, PointIndex, PointVec, HullVec, HullIndex, EdgeIndex, half, CHECK_INVARIANTS};
 
 const N: usize = 1 << 10;
-const EMPTY: PointIndex = PointIndex { val: std::usize::MAX };
+const EMPTY: HullIndex = HullIndex { val: std::usize::MAX };
 
 #[derive(Clone, Copy, Debug)]
 struct Node {
+    point: PointIndex,
     edge: EdgeIndex,
 
-    // prev and next refer to traveling counterclockwise around the hull
-    prev: PointIndex,
-    next: PointIndex,
+    // prev is leftward, next is rightward
+    left: HullIndex,
+    right: HullIndex,
 }
 
 /// The Hull stores a set of points which form a left-to-right order
@@ -24,21 +25,18 @@ struct Node {
 #[derive(Debug)]
 pub struct Hull {
     position: PointVec<f64>,
-    buckets: [PointIndex; N],
-    data: PointVec<Node>,
+    buckets: [HullIndex; N],
+    data: HullVec<Node>,
 }
 
 impl Hull {
     pub fn new(xmin: f64, xmax: f64, pts: &[Point]) -> Hull {
         // By default, nodes which aren't in the array have both edges linked
         // to EMPTY, so we can detect them when inserting.
-        let position = pts.iter()
+        let position: PointVec<f64> = pts.iter()
             .map(|p| (p.0 - xmin) / (xmax - xmin))
             .collect();
-        let data = PointVec { vec: vec![ Node {
-            edge: crate::half::EMPTY,
-            prev: EMPTY,
-            next: EMPTY }; pts.len()] };
+        let data = HullVec::new();
 
         Hull {
             position, data,
@@ -47,40 +45,40 @@ impl Hull {
     }
 
     // Inserts the first point, along with its associated edge
-    pub fn insert_lower_edge(&mut self, min: PointIndex, max: PointIndex) {
+    pub fn insert_lower_edge(&mut self, min: PointIndex, max: PointIndex, edge: EdgeIndex) -> HullIndex {
         let b = self.bucket(min);
         assert!(b == 0);
         assert!(self.buckets[b] == EMPTY);
-
-        // Assert that this point is disconnected
-        assert!(self.data[min].next == EMPTY);
-        assert!(self.data[min].prev == EMPTY);
-
-        // Store this point in the bucket list
-        self.buckets[b] = min;
-        self.data[min].next = max;
+        self.buckets[b] = self.data.push(
+            Node {
+                point: min,
+                edge,
+                left: EMPTY,
+                right: HullIndex::new(1),
+            });
 
         // Then, do the same for the max point
         let b = self.bucket(max);
         assert!(b == self.buckets.len() - 1);
         assert!(self.buckets[b] == EMPTY);
-        assert!(self.data[max].next == EMPTY);
-        assert!(self.data[max].prev == EMPTY);
-
-        self.buckets[b] = max;
-        self.data[max].prev = min;
+        self.buckets[b] = self.data.push(Node {
+            point: max,
+            edge: half::EMPTY,
+            left: HullIndex::new(0),
+            right: EMPTY,
+        });
 
         self.check();
+        self.buckets[0]
     }
 
-    pub fn update(&mut self, p: PointIndex, e: EdgeIndex) {
-        assert!(self.data[p].next != EMPTY || self.data[p].prev != EMPTY);
-        self.data[p].edge = e;
+    pub fn update(&mut self, h: HullIndex, e: EdgeIndex) {
+        self.data[h].edge = e;
     }
 
-    /// For a given point, returns a (prev, next) pair for the edge which
-    /// that point intersects, when projected towards the triangulation center.
-    pub fn get(&self, p: PointIndex) -> (PointIndex, PointIndex) {
+    /// For a given point, returns the HullIndex which will be split when this
+    /// point is inserted.  Use `Hull::edge` to get the associated EdgeIndex.
+    pub fn get(&self, p: PointIndex) -> HullIndex {
         let b = self.bucket(p);
 
         // If the target bucket is empty, then we should search for the
@@ -103,18 +101,16 @@ impl Hull {
             // Loop until we find an item in the linked list which is less
             // that our new point, or we leave this bucket, or we're about
             // to wrap around in the same bucket.
-            while self.position[pos] < self.position[p] &&
-                  self.bucket(pos) == b
+            while self.position[self.data[pos].point] < self.position[p] &&
+                  self.bucket_h(pos) == b
             {
-                pos = self.data[pos].next;
+                pos = self.data[pos].right;
             }
         }
         assert!(pos != EMPTY);
 
-        // Walk backwards one step the list to find the previous node, then
-        // return its edge data.
-        let prev = self.data[pos].prev;
-        (prev, pos)
+        // Return the HullIndex which will be split by this point
+        self.data[pos].left
     }
 
     /// Sanity-checks invariants of the data structure, raising an assertion
@@ -133,103 +129,94 @@ impl Hull {
         assert!(point.is_some());
 
         let start = point.unwrap();
-        assert!(self.buckets[self.bucket(start)] == start);
+        assert!(self.buckets[self.bucket_h(start)] == start);
 
         let mut index = start;
         // Walk around the hull, checking that position is strictly increasing,
         // edges are correctly stitched together, and buckets are correct.
         loop {
             // Assert that the list is correctly stitched together
-            let next = self.data[index].next;
+            let next = self.data[index].right;
             if next == EMPTY {
                 break;
             }
-            assert!(index == self.data[next].prev);
+            assert!(index == self.data[next].left);
 
             // If this is the first item in a new bucket, it should be at the
             // head of the bucket's list.
-            let my_bucket = self.bucket(index);
-            let next_bucket = self.bucket(next);
+            let my_bucket = self.bucket_h(index);
+            let next_bucket = self.bucket_h(next);
             if next_bucket != my_bucket {
                 assert!(self.buckets[next_bucket] == next);
             }
 
             // Assert that position are increasing in the list
-            let my_position = self.position[index];
-            let next_position = self.position[next];
+            let my_position = self.position[self.data[index].point];
+            let next_position = self.position[self.data[next].point];
             assert!(next_position >= my_position);
             index = next;
         }
     }
 
-    /// Finds the preceding edge for a point which is not already in the array
-    pub fn get_edge(&self, p: PointIndex) -> EdgeIndex {
-        assert!(self.data[p].next == EMPTY);
-        assert!(self.data[p].prev == EMPTY);
-        let (prev, _) = self.get(p);
-        self.data[prev].edge
+    pub fn left_hull(&self, h: HullIndex) -> HullIndex {
+        self.data[h].left
     }
 
-    pub fn prev_edge(&self, p: PointIndex) -> EdgeIndex {
-        assert!(self.data[p].prev != EMPTY);
-        self.edge(self.data[p].prev)
+    pub fn right_hull(&self, h: HullIndex) -> HullIndex {
+        self.data[h].right
     }
 
-    pub fn next_edge(&self, p: PointIndex) -> EdgeIndex {
-        assert!(self.data[p].next != EMPTY);
-        self.edge(self.data[p].next)
+    pub fn edge(&self, h: HullIndex) -> EdgeIndex {
+        self.data[h].edge
     }
 
-    pub fn edge(&self, p: PointIndex) -> EdgeIndex {
-        // Assert that this node is in the array
-        assert!(self.data[p].next != EMPTY);
-        self.data[p].edge
-    }
-
-    pub fn insert(&mut self, p: PointIndex, e: EdgeIndex) {
-        // Assert that this node isn't in the array already
-        assert!(self.data[p].next == EMPTY);
+    /// Insert a new Point-Edge pair into the hull, using a hint to save time
+    /// searching for the new point's position.
+    pub fn insert(&mut self, left: HullIndex, p: PointIndex, e: EdgeIndex) -> HullIndex {
         let b = self.bucket(p);
-        let (prev, next) = self.get(p);
+        let right = self.right_hull(left);
+
+        let h = self.data.push(Node{
+            edge: e,
+            point: p,
+            left, right
+        });
 
         // If the target bucket is empty, or the given point is below the first
         // item in the target bucket, then it becomes the bucket's head
-        if self.buckets[b] == EMPTY || (self.buckets[b] == next &&
-            self.position[p] < self.position[next])
+        if self.buckets[b] == EMPTY || (self.buckets[b] == right &&
+            self.position[p] < self.position[self.data[right].point])
         {
-            self.buckets[b] = p;
+            self.buckets[b] = h;
         }
 
-        // Write all of our new node data, leaving position fixed
-        self.data[p].edge = e;
-        self.data[p].next = next;
-        self.data[p].prev = prev;
-
         // Stitch ourselves into the linked list
-        self.data[next].prev = p;
-        self.data[prev].next = p;
+        self.data[right].left = h;
+        self.data[left].right = h;
 
         self.check();
+
+        h
     }
 
     /// Removes the given point from the hull
-    pub fn erase(&mut self, p: PointIndex) {
-        let b = self.bucket(p);
+    pub fn erase(&mut self, h: HullIndex) {
+        let b = self.bucket_h(h);
 
-        let next = self.data[p].next;
-        let prev = self.data[p].prev;
+        let next = self.data[h].right;
+        let prev = self.data[h].left;
 
         // Cut this node out of the linked list
-        self.data[next].prev = prev;
-        self.data[prev].next = next;
-        self.data[p].next = EMPTY;
-        self.data[p].prev = EMPTY;
+        self.data[next].left = prev;
+        self.data[prev].right = next;
+        self.data[h].right = EMPTY;
+        self.data[h].left = EMPTY;
 
         // If this is the head of the bucket, then replace it with the next
         // item in this bucket chain (assuming it belongs in the same bucket),
         // or EMPTY if the bucket is now completely empty.
-        if self.buckets[b] == p {
-            if self.bucket(next) == b {
+        if self.buckets[b] == h {
+            if self.bucket_h(next) == b {
                 self.buckets[b] = next;
             } else {
                 self.buckets[b] = EMPTY;
@@ -243,7 +230,7 @@ impl Hull {
     pub fn values(&self) -> impl Iterator<Item=EdgeIndex> + '_ {
         // Find the first non-empty bucket to use as our starting point for
         // walking around the hull's linked list.
-        let mut point: PointIndex = self.buckets.iter()
+        let mut point: HullIndex = self.buckets.iter()
             .filter(|b| **b != EMPTY)
             .copied()
             .next()
@@ -252,7 +239,7 @@ impl Hull {
         // returning the associated edges at each point.
         std::iter::from_fn(move || {
             let out = self.data[point].edge;
-            point = self.data[point].next;
+            point = self.data[point].right;
             if point == EMPTY {
                 None
             } else {
@@ -265,6 +252,10 @@ impl Hull {
     fn bucket(&self, p: PointIndex) -> usize {
         (self.position[p] * (self.buckets.len() as f64 - 1.0))
             .round() as usize
+    }
+
+    pub fn bucket_h(&self, h: HullIndex) -> usize {
+        self.bucket(self.data[h].point)
     }
 }
 

@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 use crate::predicates::{acute, orient2d, in_circle};
 use crate::{Point, PointIndex, PointVec, EdgeIndex};
-use crate::{half, half::Half, sweepline::hull::Hull};
+use crate::{half, half::Half, sweepline::hull::Hull, HullIndex};
 
 const TERMINAL_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_RIGHT: PointIndex = PointIndex { val: 1 };
@@ -86,9 +86,8 @@ impl Triangulation {
         let e_bc = out.half.next(e_ab);
         let e_ca = out.half.prev(e_ab);
 
-        out.hull.insert_lower_edge(pa, pb);
-        out.hull.update(pa, e_ca);
-        out.hull.insert(pc, e_bc);
+        let h_lower = out.hull.insert_lower_edge(pa, pb, e_ca);
+        out.hull.insert(h_lower, pc, e_bc);
 
         ////////////////////////////////////////////////////////////////////////
         // Iterate over edges, counting which points have a termination
@@ -159,7 +158,8 @@ impl Triangulation {
         self.next += 1usize;
 
         // Find the hull edge which will be split by this point
-        let e_ab = self.hull.get_edge(p);
+        let h_ab = self.hull.get(p);
+        let e_ab = self.hull.edge(h_ab);
 
         /*
          *              p [new point]
@@ -173,7 +173,6 @@ impl Triangulation {
         let edge = self.half.edge(e_ab);
         let a = edge.src;
         let b = edge.dst;
-        assert!(e_ab == self.hull.edge(b));
 
         // Sanity-check that p is on the correct side of b->a
         let o = self.orient2d(b, a, p);
@@ -183,101 +182,121 @@ impl Triangulation {
         let f = self.half.insert(b, a, p, half::EMPTY, half::EMPTY, e_ab);
 
         // Replaces the previous item in the hull
-        self.hull.update(b, self.half.prev(f));
+        self.hull.update(h_ab, self.half.prev(f));
 
-        // Insert the new edge into the hull
-        self.hull.insert(p, self.half.next(f));
+        // Insert the new edge into the hull, using the previous HullIndex
+        // as a hint to avoid searching for its position.
+        let h_p = self.hull.insert(h_ab, p, self.half.next(f));
 
         self.legalize(f);
 
         // Check and fill acute angles
-        self.check_acute_left(p);
-        self.check_acute_right(p);
-
-        // Check and fill basins
-        //self.check_basin_right(p);
+        self.check_acute_left(p, h_p);
+        self.check_acute_right(p, h_p);
 
         // Finally, we check whether this point terminates any edges that are
         // locked in the triangulation (the "constrainted" part of Constrained
         // Delaunay Triangulation).
         let (start, end) = self.endings[p];
         for i in start..end {
-            self.handle_fixed_edge(p, self.ending_data[i]);
+            //self.handle_fixed_edge(p, self.ending_data[i]);
         }
 
         true
     }
 
-    fn check_acute_left(&mut self, p: PointIndex) {
-        /* Now, we search for sharp angles on each side.  The point q
-         * should be the next point along the edge from e
+    fn check_acute_left(&mut self, p: PointIndex, h_p: HullIndex) {
+        /* Search for sharp angles on the left side.
          *
          *      q       p [new point]
-         *     | ^     / ^
-         *     |  \   /   \
-         *     |   \ V  f  \
-         *     V    b-------> [new edge]
-         *     ---->.<------a [previous hull edge]
-         *              e
+         *     / ^    e/ ^
+         *    /   \   /   \
+         *   /     \ V     \
+         *          b------->
          */
-        let mut b = self.half.edge(self.hull.prev_edge(p)).dst;
-        while b != TERMINAL_LEFT { // Walking left around the hull
-            let e_pb = self.hull.edge(b);
-            let e_bq = self.hull.prev_edge(b);
-            let q = self.half.edge(e_bq).dst;
+        let mut h_b = h_p;
+        loop {
+            // Move one edge to the left.  In the first iteration of the loop,
+            // h_b will be pointing at the b->p edge.
+            h_b = self.hull.left_hull(h_b);
+            let e_pb = self.hull.edge(h_b);
+            let edge_pb = self.half.edge(e_pb);
+            let b = edge_pb.dst;
+            if b == TERMINAL_LEFT {
+                break;
+            }
 
-            // Check that the inner angle is less that pi/2, and that the
-            // inner triangle is correctly wound; if either is not the case,
-            // then break immediately.
+            // Pick out the next item in the list
+            let h_q = self.hull.left_hull(h_b);
+            let e_bq = self.hull.edge(h_q);
+            let edge_bq = self.half.edge(e_bq);
+            let q = edge_bq.dst;
+
+            // Check that the inner angle is less that pi/2, skipping out
+            // of the loop if that's not true.
             if self.acute(p, b, q) <= 0.0 {
                 break;
             }
+            // Sanity-check that the p-b-q triangle is correctly wound, which
+            // should be guaranteed by construction
             assert!(self.orient2d(p, b, q) < 0.0);
 
-            // Friendship ended with p->b->q
-            self.hull.erase(b);
+            // Friendship ended with q-b-p
+            self.hull.erase(h_b);
 
-            // Now p->q is my new friend
-            let edge_pq = self.half.insert(p, q, b, e_bq, e_pb, half::EMPTY);
-            self.hull.update(q, edge_pq);
-            b = q;
+            // Now p-q is my new friend
+            let e_pq = self.half.insert(p, q, b, e_bq, e_pb, half::EMPTY);
+            self.hull.update(h_q, e_pq);
+            h_b = h_p;
 
             // Then legalize from the two new triangle edges (bp and qb)
-            self.legalize(self.half.next(edge_pq));
-            self.legalize(self.half.prev(edge_pq));
+            self.legalize(self.half.next(e_pq));
+            self.legalize(self.half.prev(e_pq));
         }
     }
 
-    fn check_acute_right(&mut self, p: PointIndex) {
-        /*  Rightward equivalent of check_acute_right
+    fn check_acute_right(&mut self, p: PointIndex, h_p: HullIndex) {
+        /*  Rightward equivalent of check_acute_left
          *         p        q
          *        / ^      / \
-         *       /   \    /   \
-         *      V  f  \  v     \
-         *     b------->a       \
-         *     .<-------
-         *          e
+         *       /   \e   /   \
+         *      V     \  v     \
+         *     -------->a       \
          */
-        let mut a = self.half.edge(self.hull.edge(p)).src;
-        while a != TERMINAL_RIGHT {
-            let e_ap = self.hull.edge(p);
-            let e_qa = self.hull.next_edge(p);
-            let q = self.half.edge(e_qa).src;
+        let mut h_a = h_p;
+        loop {
+            // Move one edge to the left.  In the first iteration of the loop,
+            // h_a will be pointing at the p->a edge.
+            let e_ap = self.hull.edge(h_a);
+            let edge_ap = self.half.edge(e_ap);
+            let a = edge_ap.src;
+            if a == TERMINAL_RIGHT {
+                break;
+            }
+
+            // Scoot over by one to look at the a-q edge
+            h_a = self.hull.right_hull(h_a);
+            let e_qa = self.hull.edge(h_a);
+            let edge_qa = self.half.edge(e_qa);
+            let q = edge_qa.src;
+
+            // Check the inner angle against pi/2
             if self.acute(p, a, q) <= 0.0 {
                 break;
             }
             assert!(self.orient2d(p, a, q) > 0.0);
 
-            self.hull.erase(a);
+            self.hull.erase(h_a);
             let edge_qp = self.half.insert(q, p, a, e_ap, e_qa, half::EMPTY);
-            self.hull.update(p, edge_qp);
-            a = q;
+            self.hull.update(h_p, edge_qp);
+            h_a = h_p;
 
             // Then legalize from the two new triangle edges (bp and qb)
             self.legalize(self.half.next(edge_qp));
             self.legalize(self.half.prev(edge_qp));
         }
     }
+    /*
 
     fn handle_fixed_edge(&mut self, p: PointIndex, src: PointIndex) {
         /*  We've just built a triangle that contains a fixed edge, and need
@@ -544,6 +563,7 @@ impl Triangulation {
             }
         }
     }
+    */
 
     fn legalize(&mut self, e_ab: EdgeIndex) {
         /* We're given this

@@ -10,6 +10,11 @@ safe_index::new! {
     map: EdgeVec with iter: EdgeIter
 }
 
+safe_index::new! {
+    HullIndex,
+    map: HullVec with iter: HullIter
+}
+
 pub mod predicates;
 pub mod half;
 pub mod util;
