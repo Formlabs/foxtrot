@@ -65,7 +65,7 @@ impl Triangulation {
 
         ////////////////////////////////////////////////////////////////////////
         let mut out = Triangulation {
-            hull: Hull::new(x_bounds.0, x_bounds.1, &sorted_points),
+            hull: Hull::new(x_bounds.0, x_bounds.1),
             half: Half::new(sorted_points.len() * 2 - 5),
 
             remap: map_reverse,
@@ -86,8 +86,8 @@ impl Triangulation {
         let e_bc = out.half.next(e_ab);
         let e_ca = out.half.prev(e_ab);
 
-        let h_lower = out.hull.insert_lower_edge(pa, pb, e_ca);
-        out.hull.insert(h_lower, pc, e_bc);
+        let h_lower = out.hull.insert_lower_edge(e_ca);
+        out.hull.insert(h_lower, out.points[pc].0, e_bc);
 
         ////////////////////////////////////////////////////////////////////////
         // Iterate over edges, counting which points have a termination
@@ -158,7 +158,7 @@ impl Triangulation {
         self.next += 1usize;
 
         // Find the hull edge which will be split by this point
-        let h_ab = self.hull.get(p);
+        let h_ab = self.hull.get(self.points[p].0);
         let e_ab = self.hull.edge(h_ab);
 
         /*
@@ -186,7 +186,7 @@ impl Triangulation {
 
         // Insert the new edge into the hull, using the previous HullIndex
         // as a hint to avoid searching for its position.
-        let h_p = self.hull.insert(h_ab, p, self.half.next(f));
+        let h_p = self.hull.insert(h_ab, self.points[p].0, self.half.next(f));
 
         self.legalize(f);
 

@@ -1,11 +1,11 @@
-use crate::{Point, PointIndex, PointVec, HullVec, HullIndex, EdgeIndex, half, CHECK_INVARIANTS};
+use crate::{HullVec, HullIndex, EdgeIndex, half, CHECK_INVARIANTS};
 
 const N: usize = 1 << 10;
 const EMPTY: HullIndex = HullIndex { val: std::usize::MAX };
 
 #[derive(Clone, Copy, Debug)]
 struct Node {
-    point: PointIndex,
+    pos_norm: f64,
     edge: EdgeIndex,
 
     // prev is leftward, next is rightward
@@ -24,45 +24,33 @@ struct Node {
 /// which should be split.
 #[derive(Debug)]
 pub struct Hull {
-    position: PointVec<f64>,
     buckets: [HullIndex; N],
     data: HullVec<Node>,
+
+    xmin: f64,
+    dx: f64,
 }
 
 impl Hull {
-    pub fn new(xmin: f64, xmax: f64, pts: &[Point]) -> Hull {
-        // By default, nodes which aren't in the array have both edges linked
-        // to EMPTY, so we can detect them when inserting.
-        let position: PointVec<f64> = pts.iter()
-            .map(|p| (p.0 - xmin) / (xmax - xmin))
-            .collect();
-        let data = HullVec::new();
-
+    pub fn new(xmin: f64, xmax: f64) -> Hull {
         Hull {
-            position, data,
+            data: HullVec::new(),
             buckets: [EMPTY; N],
+            dx: xmax - xmin,
+            xmin,
         }
     }
 
     // Inserts the first point, along with its associated edge
-    pub fn insert_lower_edge(&mut self, min: PointIndex, max: PointIndex, edge: EdgeIndex) -> HullIndex {
-        let b = self.bucket(min);
-        assert!(b == 0);
-        assert!(self.buckets[b] == EMPTY);
-        self.buckets[b] = self.data.push(
-            Node {
-                point: min,
-                edge,
-                left: EMPTY,
-                right: HullIndex::new(1),
-            });
-
-        // Then, do the same for the max point
-        let b = self.bucket(max);
-        assert!(b == self.buckets.len() - 1);
-        assert!(self.buckets[b] == EMPTY);
-        self.buckets[b] = self.data.push(Node {
-            point: max,
+    pub fn insert_lower_edge(&mut self, edge: EdgeIndex) -> HullIndex {
+        self.buckets[0] = self.data.push( Node {
+            pos_norm: 0.0,
+            edge,
+            left: EMPTY,
+            right: HullIndex::new(1),
+        });
+        self.buckets[self.buckets.len() - 1] = self.data.push(Node {
+            pos_norm: 1.0,
             edge: half::EMPTY,
             left: HullIndex::new(0),
             right: EMPTY,
@@ -78,7 +66,8 @@ impl Hull {
 
     /// For a given point, returns the HullIndex which will be split when this
     /// point is inserted.  Use `Hull::edge` to get the associated EdgeIndex.
-    pub fn get(&self, p: PointIndex) -> HullIndex {
+    pub fn get(&self, p: f64) -> HullIndex {
+        let p = self.normalize_pos(p);
         let b = self.bucket(p);
 
         // If the target bucket is empty, then we should search for the
@@ -101,7 +90,7 @@ impl Hull {
             // Loop until we find an item in the linked list which is less
             // that our new point, or we leave this bucket, or we're about
             // to wrap around in the same bucket.
-            while self.position[self.data[pos].point] < self.position[p] &&
+            while self.data[pos].pos_norm < p &&
                   self.bucket_h(pos) == b
             {
                 pos = self.data[pos].right;
@@ -151,8 +140,8 @@ impl Hull {
             }
 
             // Assert that position are increasing in the list
-            let my_position = self.position[self.data[index].point];
-            let next_position = self.position[self.data[next].point];
+            let my_position = self.data[index].pos_norm;
+            let next_position = self.data[next].pos_norm;
             assert!(next_position >= my_position);
             index = next;
         }
@@ -172,20 +161,21 @@ impl Hull {
 
     /// Insert a new Point-Edge pair into the hull, using a hint to save time
     /// searching for the new point's position.
-    pub fn insert(&mut self, left: HullIndex, p: PointIndex, e: EdgeIndex) -> HullIndex {
+    pub fn insert(&mut self, left: HullIndex, p: f64, e: EdgeIndex) -> HullIndex {
+        let p = self.normalize_pos(p);
         let b = self.bucket(p);
         let right = self.right_hull(left);
 
         let h = self.data.push(Node{
+            pos_norm: p,
             edge: e,
-            point: p,
             left, right
         });
 
         // If the target bucket is empty, or the given point is below the first
         // item in the target bucket, then it becomes the bucket's head
         if self.buckets[b] == EMPTY || (self.buckets[b] == right &&
-            self.position[p] < self.position[self.data[right].point])
+            p < self.data[right].pos_norm)
         {
             self.buckets[b] = h;
         }
@@ -248,14 +238,22 @@ impl Hull {
         })
     }
 
-    /// Looks up what bucket a given point will fall into
-    fn bucket(&self, p: PointIndex) -> usize {
-        (self.position[p] * (self.buckets.len() as f64 - 1.0))
+    fn normalize_pos(&self, p: f64) -> f64 {
+        (p - self.xmin) / self.dx
+    }
+
+    /// Looks up what bucket a given normalized position will fall into
+    /// Note that this doesn't work with point coordinates directly;
+    /// call normalize_pos(p) to normalize it.
+    fn bucket(&self, f: f64) -> usize {
+        assert!(f >= 0.0);
+        assert!(f <= 1.0);
+        (f * (self.buckets.len() as f64 - 1.0))
             .round() as usize
     }
 
     pub fn bucket_h(&self, h: HullIndex) -> usize {
-        self.bucket(self.data[h].point)
+        self.bucket(self.data[h].pos_norm)
     }
 }
 
