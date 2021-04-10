@@ -66,7 +66,6 @@ impl Hull {
 
         // Then, do the same for the max point
         let b = self.bucket(max);
-        eprintln!("{}, {:?}", b, self.data[max]);
         assert!(b == self.buckets.len() - 1);
         assert!(self.buckets[b] == EMPTY);
         assert!(self.data[max].next == EMPTY);
