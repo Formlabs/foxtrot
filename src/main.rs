@@ -1,5 +1,5 @@
 use rand::{Rng, SeedableRng};
-use cdt::sweepcircle::triangulate::Triangulation;
+use cdt::sweepline::triangulate::Triangulation;
 
 #[allow(dead_code)]
 fn benchmark(seed: Option<u64>, n: usize) {

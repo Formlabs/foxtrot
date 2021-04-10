@@ -14,5 +14,6 @@ pub mod predicates;
 pub mod half;
 pub mod util;
 pub mod sweepcircle;
+pub mod sweepline;
 
 const CHECK_INVARIANTS: bool = false;
