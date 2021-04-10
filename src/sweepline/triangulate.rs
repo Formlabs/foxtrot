@@ -206,9 +206,10 @@ impl Triangulation {
             // Check that the inner angle is less that pi/2, and that the
             // inner triangle is correctly wound; if either is not the case,
             // then break immediately.
-            if self.acute(p, b, q) <= 0.0 || self.orient2d(p, b, q) >= 0.0 {
+            if self.acute(p, b, q) <= 0.0 {
                 break;
             }
+            assert!(self.orient2d(p, b, q) < 0.0);
 
             // Friendship ended with p->b->q
             self.hull.erase(b);
@@ -237,9 +238,10 @@ impl Triangulation {
             let e_ap = self.hull.edge(p);
             let e_qa = self.hull.next_edge(p);
             let q = self.half.edge(e_qa).src;
-            if self.acute(p, a, q) <= 0.0 || self.orient2d(p, a, q) <= 0.0 {
+            if self.acute(p, a, q) <= 0.0 {
                 break;
             }
+            assert!(self.orient2d(p, a, q) > 0.0);
 
             self.hull.erase(a);
             let edge_qp = self.half.insert(q, p, a, e_ap, e_qa, half::EMPTY);
