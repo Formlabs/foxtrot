@@ -3,6 +3,10 @@ use itertools::Itertools;
 use crate::predicates::{acute, orient2d, in_circle};
 use crate::{Point, PointIndex, PointVec, EdgeIndex};
 use crate::{half, half::Half, sweepline::hull::Hull};
+
+const TERMINAL_LEFT: PointIndex = PointIndex { val: 0 };
+const TERMINAL_RIGHT: PointIndex = PointIndex { val: 1 };
+
 pub struct Triangulation {
     points: PointVec<Point>,    // Sorted in the constructor
     remap: PointVec<usize>,     // self.points[i] = input[self.remap[i]]
@@ -74,8 +78,8 @@ impl Triangulation {
             points: sorted_points, // moved out here
         };
 
-        let pa = PointIndex::new(0);
-        let pb = PointIndex::new(1);
+        let pa = TERMINAL_LEFT;
+        let pb = TERMINAL_RIGHT;
         let pc = PointIndex::new(2);
         let e_ab = out.half.insert(pa, pb, pc,
                                    half::EMPTY, half::EMPTY, half::EMPTY);
@@ -186,6 +190,25 @@ impl Triangulation {
 
         self.legalize(f);
 
+        // Check and fill acute angles
+        self.check_acute_left(p);
+        self.check_acute_right(p);
+
+        // Check and fill basins
+        //self.check_basin_right(p);
+
+        // Finally, we check whether this point terminates any edges that are
+        // locked in the triangulation (the "constrainted" part of Constrained
+        // Delaunay Triangulation).
+        let (start, end) = self.endings[p];
+        for i in start..end {
+            self.handle_fixed_edge(p, self.ending_data[i]);
+        }
+
+        true
+    }
+
+    fn check_acute_left(&mut self, p: PointIndex) {
         /* Now, we search for sharp angles on each side.  The point q
          * should be the next point along the edge from e
          *
@@ -197,8 +220,8 @@ impl Triangulation {
          *     ---->.<------a [previous hull edge]
          *              e
          */
-        let mut b = b;
-        while b != PointIndex::new(0) { // Walking left around the hull
+        let mut b = self.half.edge(self.hull.prev_edge(p)).dst;
+        while b != TERMINAL_LEFT { // Walking left around the hull
             let e_pb = self.hull.edge(b);
             let e_bq = self.hull.prev_edge(b);
             let q = self.half.edge(e_bq).dst;
@@ -223,8 +246,10 @@ impl Triangulation {
             self.legalize(self.half.next(edge_pq));
             self.legalize(self.half.prev(edge_pq));
         }
+    }
 
-        /*  Then ,do the same thing in the other direction
+    fn check_acute_right(&mut self, p: PointIndex) {
+        /*  Rightward equivalent of check_acute_right
          *         p        q
          *        / ^      / \
          *       /   \    /   \
@@ -233,8 +258,8 @@ impl Triangulation {
          *     .<-------
          *          e
          */
-        let mut a = a;
-        while a != PointIndex::new(1) {
+        let mut a = self.half.edge(self.hull.edge(p)).src;
+        while a != TERMINAL_RIGHT {
             let e_ap = self.hull.edge(p);
             let e_qa = self.hull.next_edge(p);
             let q = self.half.edge(e_qa).src;
@@ -252,16 +277,138 @@ impl Triangulation {
             self.legalize(self.half.next(edge_qp));
             self.legalize(self.half.prev(edge_qp));
         }
+    }
 
-        // Finally, we check whether this point terminates any edges that are
-        // locked in the triangulation (the "constrainted" part of Constrained
-        // Delaunay Triangulation).
-        let (start, end) = self.endings[p];
-        for i in start..end {
-            self.handle_fixed_edge(p, self.ending_data[i]);
+    fn check_basin_right(&mut self, p: PointIndex) {
+        /*  Rightward equivalent of check_acute_right
+         *         p
+         *        / ^
+         *       /   \
+         *      /     \                         end
+         *     --------p_r                      /
+         *               ^                     /
+         *                 \                  /
+         *                   \               x
+         *                     p_rplus     /
+         *                      \        /
+         *                        \    /
+         *                         \ /
+         *                          bottom
+         */
+        let p_r = self.half.edge(self.hull.edge(p)).src;
+        if p_r == TERMINAL_RIGHT {
+            return;
+        }
+        let p_rplus = self.half.edge(self.hull.next_edge(p)).src;
+        if p_rplus == TERMINAL_RIGHT {
+            return;
+        }
+        let dx = self.points[p_rplus].0 - self.points[p].0;
+        let dy = self.points[p_rplus].1 - self.points[p].1;
+
+        // This isn't a basin if we're going up, or not going down enough
+        if dy > 0.0 || dy >= -2.0 * dx {
+            return;
         }
 
-        true
+        // Pick whether p_r or p_rplus is starting the basin
+        let o = self.orient2d(p, p_r, p_rplus);
+        let start = if o > 0.0 { p_rplus } else { p_r };
+
+        let mut pos = start;
+        let mut y = self.points[pos].1;
+        let bottom = loop {
+            let next_edge = self.hull.edge(pos);
+            let next_pos = self.half.edge(next_edge).src;
+
+            // If we hit the right edge, then return right away
+            if next_pos == TERMINAL_RIGHT {
+                return;
+            }
+            let next_y = self.points[next_pos].1;
+
+            // Once we start going up, then we're on the opposite
+            // side of the basin
+            if next_y > y {
+                break pos;
+            }
+            pos = next_pos;
+            y = next_y;
+        };
+        if bottom == start {
+            return;
+        }
+        let end = loop {
+            // We don't worry about hitting TERMINAL_RIGHT here because it's
+            // guaranteed to have a Y value below the rest of the points,
+            // so we'll break in the conditional below.
+            let next_edge = self.hull.edge(pos);
+            let next_pos = self.half.edge(next_edge).src;
+            let next_y = self.points[next_pos].1;
+            if next_y < y {
+                break pos;
+            }
+            pos = next_pos;
+            y = next_y;
+        };
+        if end == start {
+            return;
+        }
+        self.fill_basin(start, bottom, end);
+    }
+
+    fn fill_basin(&mut self, a: PointIndex, b: PointIndex, c: PointIndex) {
+        /*  We walk up the basin from b, adding and checking triangles as
+         *  we go:
+                                                 c
+                        a                       /
+                         ^                     /
+                           \                  v
+                             \               x
+                              x            /
+                                ^        /
+                                  \    /
+                                   \ v
+                                    b
+        */
+        // Store the a-ward and b-ward points, which we'll walk
+        let mut to_a = self.half.edge(self.hull.prev_edge(b)).dst;
+        let mut to_c = self.half.edge(self.hull.edge(b)).src;
+        let mut bottom = b;
+
+        // Loop until we've hit both ends
+        loop {
+            // Insert a new triangle, remove the old edge from the hull, then
+            // patch in the new hull edge.
+            let e = self.half.insert(to_c, to_a, bottom,
+                self.hull.edge(to_a),
+                self.hull.edge(bottom),
+                half::EMPTY);
+            self.hull.update(to_a, e);
+            self.hull.erase(bottom);
+
+            self.legalize(self.half.edge(e).prev);
+            self.legalize(self.half.edge(e).next);
+
+            // If both sides have reached the top, then we're done!
+            if to_c == c && to_a == a {
+                break;
+            }
+            // Walk up the towards-a side if the towards-c side is finished
+            // or the towards-a side is unfinished and lower
+            else if to_c == c ||
+                (to_a != a && self.points[to_a].1 < self.points[to_c].1)
+            {
+                bottom = to_a;
+                to_a = self.half.edge(self.hull.prev_edge(to_a)).dst;
+            }
+            // Otherwise, walk up the C-ward side
+            else {
+                assert!(to_c != c);
+                bottom = to_c;
+                to_c = self.half.edge(self.hull.edge(to_c)).src;
+            }
+        }
     }
 
     fn handle_fixed_edge(&mut self, p: PointIndex, src: PointIndex) {

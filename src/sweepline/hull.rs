@@ -5,10 +5,6 @@ const EMPTY: PointIndex = PointIndex { val: std::usize::MAX };
 
 #[derive(Clone, Copy, Debug)]
 struct Node {
-    // This is the point's absolute ordering.  It is assigned into a bucket
-    // based on this order and the total bucket count
-    position: f64,
-
     edge: EdgeIndex,
 
     // prev and next refer to traveling counterclockwise around the hull
@@ -27,6 +23,7 @@ struct Node {
 /// which should be split.
 #[derive(Debug)]
 pub struct Hull {
+    position: PointVec<f64>,
     buckets: [PointIndex; N],
     data: PointVec<Node>,
 }
@@ -35,18 +32,17 @@ impl Hull {
     pub fn new(xmin: f64, xmax: f64, pts: &[Point]) -> Hull {
         // By default, nodes which aren't in the array have both edges linked
         // to EMPTY, so we can detect them when inserting.
-        let data = pts.iter()
-            .map(|p| Node {
-                    position: (p.0 - xmin) / (xmax - xmin),
-                    edge: crate::half::EMPTY,
-                    prev: EMPTY,
-                    next: EMPTY,
-                })
+        let position = pts.iter()
+            .map(|p| (p.0 - xmin) / (xmax - xmin))
             .collect();
+        let data = PointVec { vec: vec![ Node {
+            edge: crate::half::EMPTY,
+            prev: EMPTY,
+            next: EMPTY }; pts.len()] };
 
         Hull {
+            position, data,
             buckets: [EMPTY; N],
-            data,
         }
     }
 
@@ -107,7 +103,7 @@ impl Hull {
             // Loop until we find an item in the linked list which is less
             // that our new point, or we leave this bucket, or we're about
             // to wrap around in the same bucket.
-            while self.data[pos].position < self.data[p].position &&
+            while self.position[pos] < self.position[p] &&
                   self.bucket(pos) == b
             {
                 pos = self.data[pos].next;
@@ -145,6 +141,9 @@ impl Hull {
         loop {
             // Assert that the list is correctly stitched together
             let next = self.data[index].next;
+            if next == EMPTY {
+                break;
+            }
             assert!(index == self.data[next].prev);
 
             // If this is the first item in a new bucket, it should be at the
@@ -155,15 +154,11 @@ impl Hull {
                 assert!(self.buckets[next_bucket] == next);
             }
 
-            if next == EMPTY {
-                break;
-            } else {
-                // Assert that position are increasing in the list
-                let my_position = self.data[index].position;
-                let next_position = self.data[next].position;
-                assert!(next_position >= my_position);
-                index = next;
-            }
+            // Assert that position are increasing in the list
+            let my_position = self.position[index];
+            let next_position = self.position[next];
+            assert!(next_position >= my_position);
+            index = next;
         }
     }
 
@@ -200,7 +195,7 @@ impl Hull {
         // If the target bucket is empty, or the given point is below the first
         // item in the target bucket, then it becomes the bucket's head
         if self.buckets[b] == EMPTY || (self.buckets[b] == next &&
-            self.data[p].position < self.data[next].position)
+            self.position[p] < self.position[next])
         {
             self.buckets[b] = p;
         }
@@ -268,7 +263,7 @@ impl Hull {
 
     /// Looks up what bucket a given point will fall into
     fn bucket(&self, p: PointIndex) -> usize {
-        (self.data[p].position * (self.buckets.len() as f64 - 1.0))
+        (self.position[p] * (self.buckets.len() as f64 - 1.0))
             .round() as usize
     }
 }
