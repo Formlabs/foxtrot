@@ -49,12 +49,14 @@ impl Half {
     }
 
     fn push_edge(&mut self, edge: Edge) {
+        let prev_capacity = self.edges.capacity();
         let mut index = self.edges.push(edge);
         self.fixed.push(false);
         if edge.buddy != EMPTY {
             std::mem::swap(&mut self.edges[edge.buddy].buddy, &mut index);
             assert!(index == EMPTY);
         }
+        assert!(self.edges.capacity() == prev_capacity);
     }
 
     /// Inserts a new triangle into the edge map, based on three points
