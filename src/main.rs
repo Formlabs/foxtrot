@@ -103,7 +103,7 @@ fn fuzz_lock(seed: Option<u64>) {
 fn fuzz(seed: Option<u64>, n: usize) {
     loop {
         let seed: u64 = seed.unwrap_or_else(|| rand::thread_rng().gen());
-        println!("Got seed {}", seed);
+        eprintln!("Got seed {}", seed);
         let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
 
         let mut pts = Vec::new();
