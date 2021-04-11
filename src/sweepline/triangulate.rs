@@ -7,6 +7,10 @@ use crate::{half, half::Half, sweepline::hull::Hull, HullIndex};
 const TERMINAL_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_RIGHT: PointIndex = PointIndex { val: 1 };
 
+enum WalkMode {
+    Left(HullIndex), Right(HullIndex), Inside(EdgeIndex), Done(EdgeIndex),
+}
+
 pub struct Triangulation {
     points: PointVec<Point>,    // Sorted in the constructor
     remap: PointVec<usize>,     // self.points[i] = input[self.remap[i]]
@@ -199,7 +203,7 @@ impl Triangulation {
         // Delaunay Triangulation).
         let (start, end) = self.endings[p];
         for i in start..end {
-            //self.handle_fixed_edge(p, self.ending_data[i]);
+            self.handle_fixed_edge(h_p, p, self.ending_data[i]);
         }
 
         true
@@ -296,9 +300,178 @@ impl Triangulation {
             self.legalize(self.half.prev(edge_qp));
         }
     }
-    /*
 
-    fn handle_fixed_edge(&mut self, p: PointIndex, src: PointIndex) {
+    /// Searches left from a hull edge to find the next hull edge that matches
+    /// the target edge.
+    fn get_left_hull(&self, mut h: HullIndex, target: EdgeIndex) -> HullIndex {
+        while self.hull.edge(h) != target {
+            h = self.hull.left_hull(h);
+        }
+        h
+    }
+
+    /// Searches left from a hull edge to find the next hull edge that matches
+    /// the target edge.
+    fn get_right_hull(&self, mut h: HullIndex, target: EdgeIndex) -> HullIndex {
+        while self.hull.edge(h) != target {
+            h = self.hull.right_hull(h);
+        }
+        h
+    }
+
+    fn find_walk_edge(&self, h: HullIndex, src: PointIndex, dst: PointIndex)
+        -> WalkMode {
+        /*  We've just built a triangle that contains a fixed edge, and need
+            to walk through the triangulation and implement that edge.
+
+            The only thing we know going in is that point src is on the hull of
+            the triangulation with HullIndex h.
+
+            We start by finding the triangle a->src->b which contains the edge
+            src->dst, e.g.
+
+                     src
+                     / :^
+                    / :  \
+                   /  :   \
+                  /  :     \
+                 V   :      \
+                b---:------->a
+                    :
+                   dst
+
+            This triangle may not exist!  For example, if the p->src edge
+            remains outside the hull on the left, then we start in Mode::Left
+        */
+        let e_right = self.hull.edge(h);
+        let h_left = self.hull.left_hull(h);
+        let e_left = self.hull.edge(h_left);
+
+        // Note that e_right-e_left may be a wedge that contains multiple
+        // triangles (for example, this would be the case if there was an edge
+        // flip of b->a)
+        let wedge_left = self.half.edge(e_left).dst;
+        let wedge_right = self.half.edge(e_right).src;
+
+        // If the fixed edge is directly attached to src, then we can declare
+        // that we're done right away (and the caller will lock the edge)
+        if dst == wedge_left {
+            return WalkMode::Done(e_left);
+        } else if dst == wedge_right {
+            return WalkMode::Done(e_right);
+        }
+
+        // Otherwise, check the winding to see which side we're on.
+        let o_left = self.orient2d(src, wedge_left, dst);
+        let o_right = self.orient2d(src, dst, wedge_right);
+
+        // For now, we don't handle cases where fixed edges have coincident
+        // points that are not the start/end of the fixed edge.
+        assert!(o_left != 0.0);
+        assert!(o_right != 0.0);
+
+        // Easy cases: we're outside the wedge on one side or the other
+        if o_left < 0.0 {
+            return WalkMode::Left(h_left);
+        } else if o_right < 0.0 {
+            return WalkMode::Right(h);
+        }
+
+        // Walk the inside of the wedge until we find the
+        // subtriangle which captures the p-src line.
+        let mut index_a_src = self.half.edge(e_left).prev;
+
+        loop {
+            let edge_a_src = self.half.edge(index_a_src);
+            let a = edge_a_src.src;
+            if a == dst {
+                /* Lucky break: the src point is one of the edges directly
+                   within the wedge, e.g.:
+                          src
+                         / ^\
+                        /  | \
+                       /   |  \
+                      /    |   \
+                     V     |    \
+                    ------>a------ (a == dst)
+                */
+                return WalkMode::Done(index_a_src);
+            }
+
+            // Keep walking through the fan
+            let intersected_index = edge_a_src.prev;
+            let intersected_edge = self.half.edge(intersected_index);
+
+            let o = self.orient2d(src, dst, a);
+            assert!(o != 0.0);
+            // If we've found the intersection point, then we check whether
+            // we're inside or outside, then return the new edge
+            if o > 0.0 {
+                /*
+                          src
+                         /:^\
+                        / :| \
+                       /  :|  \
+                      /  : |   \
+                     V   : |    \
+                    ----:->a------
+                        :
+                       dst
+                */
+                if intersected_edge.buddy == half::EMPTY {
+                    if self.points[dst].0 < self.points[src].0 {
+                        return WalkMode::Left(
+                            self.get_left_hull(h, intersected_index))
+                    } else {
+                        return WalkMode::Right(
+                            self.get_right_hull(h, intersected_index))
+                    }
+                } else {
+                    return WalkMode::Inside(intersected_edge.buddy);
+                };
+            } else {
+                /*  Sorry, Mario; your src-dst line is in another triangle
+
+                          src
+                         / ^:\
+                        /  |: \
+                       /   | : \
+                      /    | :  \
+                     V     |  :  \
+                    ------>a--:---
+                              :
+                              dst
+
+                    (so keep going through the triangle)
+                */
+                let buddy = edge_a_src.buddy;
+
+                // We can't have walked out of the wedge, because otherwise
+                // o_right would be < 0.0 and we wouldn't be in this branch
+                assert!(buddy != half::EMPTY);
+                index_a_src = self.half.edge(buddy).prev;
+            }
+        }
+    }
+
+    fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) {
+        /*
+                      src
+                     / :^
+                    / :  \h
+                   /  :   \
+                  /  :     \
+                 V   :      \
+                ----:------->\
+                    :
+                   dst
+        */
+        let mut mode = self.find_walk_edge(h, src, dst);
+        if let WalkMode::Done(e) = mode {
+            return self.half.lock(e);
+        }
+
+    /*
         /*  We've just built a triangle that contains a fixed edge, and need
             to walk through the triangulation and implement that edge.
 
@@ -319,10 +492,10 @@ impl Triangulation {
                    src
 
             This triangle may not exist!  For example, if the p->src edge
-            remains outside the hull, then we start in Mode::Left
+            remains outside the hull on the left, then we start in Mode::Left
         */
-        let e_right = self.hull.edge(p);
-        let e_left = self.hull.prev_edge(p);
+        let e_right = self.hull.edge(h);
+        let e_left = self.hull.edge(self.hull.left_hull(h));
 
         // Note that p-b-a is not necessarily a triangle at this point, it's
         // just a wedge, which could contain multiple triangles.  (For example,
@@ -562,8 +735,8 @@ impl Triangulation {
                 }
             }
         }
-    }
     */
+    }
 
     fn legalize(&mut self, e_ab: EdgeIndex) {
         /* We're given this

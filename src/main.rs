@@ -124,8 +124,8 @@ fn main() {
     };
 
     //benchmark(seed, 1_000_000);
-    //fuzz(seed, 8);
-    //svg(seed, 64);
+    //fuzz(seed, 5);
+    //svg(seed, 1024);
     //test_lock(seed);
     fuzz_lock(seed);
 }
