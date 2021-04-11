@@ -8,8 +8,8 @@ const TERMINAL_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_RIGHT: PointIndex = PointIndex { val: 1 };
 
 enum WalkMode {
-    Left(HullIndex),
-    Right(HullIndex),
+    Left(HullIndex, HullIndex),
+    Right(HullIndex, HullIndex),
     Inside(EdgeIndex, HullIndex),
     Exit(EdgeIndex, HullIndex),
     Done(EdgeIndex),
@@ -379,9 +379,9 @@ impl Triangulation {
 
         // Easy cases: we're outside the wedge on one side or the other
         if o_left < 0.0 {
-            return WalkMode::Left(h_left);
+            return WalkMode::Left(h_left, h_left);
         } else if o_right < 0.0 {
-            return WalkMode::Right(h);
+            return WalkMode::Right(h, h);
         }
 
         // Walk the inside of the wedge until we find the
@@ -457,12 +457,57 @@ impl Triangulation {
     fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) {
         let mut mode = self.find_walk_mode(h, src, dst);
 
+        enum AboveStep {
+            OutsideJump(HullIndex, HullIndex),
+            InsideEdge(EdgeIndex),
+        }
+        enum BelowStep {
+            OutsideEdge(HullIndex),
+            InsideEdge(EdgeIndex),
+        }
+        enum Direction {
+            Left, Right
+        }
+
+        let direction = if self.points[dst].0 < self.points[src].0 {
+            Direction::Left
+        } else {
+            Direction::Right
+        };
+        let mut steps_above = Vec::new();
+        let mut steps_below = Vec::new();
+
+        // Push the initial Step based on walking from src
+        match mode {
+            // Easy mode: the fixed edge is directly connected to the new
+            // point, so we lock it and return imemdiately.
+            WalkMode::Done(e) => return self.half.lock(e),
+
+            // Otherwise, push the two interior triangle edges
+            WalkMode::Exit(e, _h) => {
+                let edge = self.half.edge(e);
+                match direction {
+                    Direction::Left => {
+                        steps_above.push(AboveStep::InsideEdge(edge.prev));
+                        steps_below.push(BelowStep::InsideEdge(edge.next));
+                    },
+                    Direction::Right => {
+                        steps_below.push(BelowStep::InsideEdge(edge.prev));
+                        steps_above.push(AboveStep::InsideEdge(edge.next));
+                    }
+                }
+            }
+
+            WalkMode::Inside(_e, _h) => panic!("Invalid initial state"),
+            WalkMode::Left(_, _) | WalkMode::Right(_, _) => (),
+        }
+
         loop {
             match mode {
                 // Easy mode: the fixed edge is directly connected to the new
                 // point, so we lock it and return imemdiately.
-                WalkMode::Done(e) => return self.half.lock(e),
-                WalkMode::Left(h) => {
+                WalkMode::Done(_) => panic!("Invalid state (Done)"),
+                WalkMode::Left(h, orig) => {
                     /*
                                      /src
                                    / /  ^
@@ -479,30 +524,34 @@ impl Triangulation {
 
                     // Check the next hull edge to see if it either intersects
                     // the new line or terminates it.
-                    let left_hull = self.hull.left_hull(h);
-                    let next_index = self.hull.edge(left_hull);
-                    let next_edge = self.half.edge(next_index);
+                    let index = self.hull.edge(h);
+                    let edge = self.half.edge(index);
 
                     // If we've reached the target point, then rejoice!
-                    if next_edge.dst == dst {
+                    if edge.dst == dst {
+                        steps_below.push(BelowStep::OutsideEdge(h));
                         break;
                     }
-                    assert!(src != next_edge.dst);
+                    assert!(src != edge.dst);
 
-                    let o = self.orient2d(src, dst, next_edge.dst);
-                    // If we're still outside the triangulation, then update
-                    // the hull and continue
+                    let o = self.orient2d(src, dst, edge.dst);
                     if o > 0.0 {
-                        mode = WalkMode::Left(left_hull);
+                        // If we're still outside the triangulation, then keep
+                        // walking along the hull
+                        mode = WalkMode::Left(self.hull.left_hull(h), orig);
+                        steps_below.push(BelowStep::OutsideEdge(h));
                     } else if o < 0.0 {
-                        mode = WalkMode::Inside(next_index, left_hull);
+                        // If we're intersecting this edge, then switch to
+                        // walking the triangulation
+                        mode = WalkMode::Inside(index, h);
+                        steps_above.push(AboveStep::OutsideJump(h, orig));
                     } else {
                         // Lightly brushing by the point on the hull
                         assert!(false);
                     }
                 },
 
-                WalkMode::Right(h) => {
+                WalkMode::Right(h, orig) => {
                     /*
                                  src
                                 /  ^ \
@@ -510,26 +559,25 @@ impl Triangulation {
                               /      \   \
                              /       h\    \
                             V          \     \
-                           ------------>\      \
+                           ------------->      \
                                                  \
-                                                  dst
+                                                 dst
                      */
-                    let right_hull = self.hull.right_hull(h);
-                    let next_index = self.hull.edge(right_hull);
-                    let next_edge = self.half.edge(next_index);
+                    let index = self.hull.edge(h);
+                    let edge = self.half.edge(index);
 
-                    if next_edge.src == dst {
-                        break; // rejoice!
+                    if edge.src == dst {
+                        break;
                     }
-                    assert!(src != next_edge.dst);
+                    assert!(src != edge.src);
 
-                    let o = self.orient2d(src, next_edge.src, dst);
+                    let o = self.orient2d(src, edge.src, dst);
                     if o > 0.0 {
-                        // Keep going around the hull
-                        mode = WalkMode::Right(right_hull);
+                        mode = WalkMode::Right(self.hull.right_hull(h), orig);
+                        steps_below.push(BelowStep::OutsideEdge(h));
                     } else if o < 0.0 {
-                        // Enter the triangulation
-                        mode = WalkMode::Inside(next_index, right_hull);
+                        mode = WalkMode::Inside(index, h);
+                        steps_above.push(AboveStep::OutsideJump(h, orig));
                     } else {
                         assert!(false); // stabbing the hull point
                     }
@@ -564,8 +612,20 @@ impl Triangulation {
                     let o_psc = self.orient2d(src, dst, c);
                     if o_psc > 0.0 {
                         mode = WalkMode::Exit(e_bc, h);
+                        match direction {
+                            Direction::Left =>
+                                steps_below.push(BelowStep::InsideEdge(e_ca)),
+                            Direction::Right =>
+                                steps_above.push(AboveStep::InsideEdge(e_ca)),
+                        }
                     } else if o_psc < 0.0 {
                         mode = WalkMode::Exit(e_ca, h);
+                        match direction {
+                            Direction::Left =>
+                                steps_above.push(AboveStep::InsideEdge(e_bc)),
+                            Direction::Right =>
+                                steps_below.push(BelowStep::InsideEdge(e_bc)),
+                        }
                     } else {
                         assert!(false); // stabbing c in the heart
                     }
@@ -575,11 +635,11 @@ impl Triangulation {
                     /*
                               src
                              /:^\
-                           h/ :| \
-                           /  :|  \
-                          /  : |   \
-                         V e : |    \
-                        ----:->|------
+                           h/ :  \
+                           /  :   \
+                          /  :     \
+                         V   :  e   \
+                        ----:-------->
                             :
                            dst
                     */
@@ -592,9 +652,11 @@ impl Triangulation {
                     if edge.buddy != half::EMPTY {
                         mode = WalkMode::Inside(edge.buddy, h);
                     } else if self.points[dst].0 < self.points[src].0 {
-                        mode = WalkMode::Left(self.get_left_hull(h, e));
+                        let h = self.get_left_hull(h, e);
+                        mode = WalkMode::Left(h, h);
                     } else {
-                        mode = WalkMode::Right(self.get_right_hull(h, e));
+                        let h = self.get_right_hull(h, e);
+                        mode = WalkMode::Right(h, h);
                     }
                 }
             }
