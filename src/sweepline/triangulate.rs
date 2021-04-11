@@ -8,7 +8,11 @@ const TERMINAL_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_RIGHT: PointIndex = PointIndex { val: 1 };
 
 enum WalkMode {
-    Left(HullIndex), Right(HullIndex), Inside(EdgeIndex), Done(EdgeIndex),
+    Left(HullIndex),
+    Right(HullIndex),
+    Inside(EdgeIndex, HullIndex),
+    Exit(EdgeIndex, HullIndex),
+    Done(EdgeIndex),
 }
 
 pub struct Triangulation {
@@ -319,7 +323,10 @@ impl Triangulation {
         h
     }
 
-    fn find_walk_edge(&self, h: HullIndex, src: PointIndex, dst: PointIndex)
+    /// Finds which mode to begin walking through the triangulation when
+    /// inserting a fixed edge.  h is a HullIndex equivalent to the src point,
+    /// and dst is the destination of the new fixed edge.
+    fn find_walk_mode(&self, h: HullIndex, src: PointIndex, dst: PointIndex)
         -> WalkMode {
         /*  We've just built a triangle that contains a fixed edge, and need
             to walk through the triangulation and implement that edge.
@@ -400,12 +407,12 @@ impl Triangulation {
 
             // Keep walking through the fan
             let intersected_index = edge_a_src.prev;
-            let intersected_edge = self.half.edge(intersected_index);
 
             let o = self.orient2d(src, dst, a);
             assert!(o != 0.0);
-            // If we've found the intersection point, then we check whether
-            // we're inside or outside, then return the new edge
+            // If we've found the intersection point, then we return the new
+            // (inner) edge.  The walking loop will transition to Left or Right
+            // if this edge doesn't have a buddy.
             if o > 0.0 {
                 /*
                           src
@@ -418,17 +425,10 @@ impl Triangulation {
                         :
                        dst
                 */
-                if intersected_edge.buddy == half::EMPTY {
-                    if self.points[dst].0 < self.points[src].0 {
-                        return WalkMode::Left(
-                            self.get_left_hull(h, intersected_index))
-                    } else {
-                        return WalkMode::Right(
-                            self.get_right_hull(h, intersected_index))
-                    }
-                } else {
-                    return WalkMode::Inside(intersected_edge.buddy);
-                };
+                // We may exit either into another interior triangle or
+                // leave the triangulation and walk the hull, but we don't
+                // need to decide that right now.
+                return WalkMode::Exit(intersected_index, h);
             } else {
                 /*  Sorry, Mario; your src-dst line is in another triangle
 
@@ -455,287 +455,150 @@ impl Triangulation {
     }
 
     fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) {
-        /*
-                      src
-                     / :^
-                    / :  \h
-                   /  :   \
-                  /  :     \
-                 V   :      \
-                ----:------->\
-                    :
-                   dst
-        */
-        let mut mode = self.find_walk_edge(h, src, dst);
-        if let WalkMode::Done(e) = mode {
-            return self.half.lock(e);
-        }
-
-    /*
-        /*  We've just built a triangle that contains a fixed edge, and need
-            to walk through the triangulation and implement that edge.
-
-            The only thing we know going in is that point p is on the hull of
-            the triangulation.
-
-            We start by finding the triangle a->p->b which contains the edge
-            p->src, e.g.
-
-                       p
-                     / :^
-                    / :  \
-                   /  :   \
-                  /  :     \
-                 V   :      \
-                b---:------->a
-                    :
-                   src
-
-            This triangle may not exist!  For example, if the p->src edge
-            remains outside the hull on the left, then we start in Mode::Left
-        */
-        let e_right = self.hull.edge(h);
-        let e_left = self.hull.edge(self.hull.left_hull(h));
-
-        // Note that p-b-a is not necessarily a triangle at this point, it's
-        // just a wedge, which could contain multiple triangles.  (For example,
-        // this would be the case if there was an edge flip of b->a)
-        let wedge_left = self.half.edge(e_left).dst;
-        let wedge_right = self.half.edge(e_right).src;
-
-        // Easy cases: the fixed edge is the same as the hull edge
-        if src == wedge_left {
-            return self.half.lock(e_left);
-        } else if src == wedge_right {
-            return self.half.lock(e_right);
-        }
-
-        let o_left = self.orient2d(p, wedge_left, src);
-        let o_right = self.orient2d(p, src, wedge_right);
-
-        // For now, we don't handle cases where fixed edges have coincident
-        // points that are not the start/end of the fixed edge.
-        assert!(o_left != 0.0);
-        assert!(o_right != 0.0);
-
-        /*  Now, the fun begins!
-
-            We'll be walking along the line from p to src, which will either be
-            - Inside the triangulation
-            - Outside the triangulation, to the left of the hull
-            - Outside the triangulation, to the right of the hull
-         */
-        #[derive(Copy, Clone, Debug, PartialEq)]
-        enum Mode { Left, Right, Inside };
-
-        let default_mode = if self.points[src].0 > self.points[p].0 {
-            Mode::Right
-        } else if self.points[src].0 < self.points[p].0 {
-            Mode::Left
-        } else {
-            Mode::Inside
-        };
-
-        let (mut mode, mut current_edge_index) = if o_left < 0.0 {
-            (Mode::Left, e_left)
-        } else if o_right < 0.0 {
-            (Mode::Right, e_right)
-        } else {
-            // Walk the inside of the wedge until we find the
-            // subtriangle which captures the p-src line.
-            let mut e_ap = self.half.edge(e_left).prev;
-
-            loop {
-                let edge_ap = self.half.edge(e_ap);
-                let a = edge_ap.src;
-                if a == src {
-                    /* Lucky break: the src point is one of the edges directly
-                       within the wedge, e.g.:
-                               p
-                             / ^\
-                            /  | \
-                           /   |  \
-                          /    |   \
-                         V     |    \
-                        ------>a------ (a == src)
-                    */
-                    self.half.lock(e_ap);
-                    return;
-                }
-
-                let intersected_index = edge_ap.prev;
-                let intersected_edge = self.half.edge(intersected_index);
-
-                let o = self.orient2d(p, src, a);
-                assert!(o != 0.0);
-                if o > 0.0 {
-                    /*
-                               p
-                             /:^\
-                            / :| \
-                           /  :|  \
-                          /  : |   \
-                         V   : |    \
-                        ----:->a------
-                            :
-                           src
-                    */
-                    break if intersected_edge.buddy == half::EMPTY {
-                        assert!(default_mode != Mode::Inside);
-                        (default_mode, intersected_index)
-                    } else {
-                        (Mode::Inside, intersected_edge.buddy)
-                    };
-                } else {
-                    /*
-                               p
-                             / ^:\
-                            /  |: \
-                           /   | : \
-                          /    | :  \
-                         V     |  :  \
-                        ------>a--:---
-                                  :
-                                  src
-                    */
-                    let buddy = edge_ap.buddy;
-
-                    // We can't have walked out of the wedge, because otherwise
-                    // o_right would be < 0.0 and we wouldn't be in this branch
-                    assert!(buddy != half::EMPTY);
-                    e_ap = self.half.edge(buddy).prev;
-                }
-            }
-        };
+        let mut mode = self.find_walk_mode(h, src, dst);
 
         loop {
             match mode {
-                /*
-                                 / p
-                               / /  ^
-                             /  /    \
-                           /   /e     \
-                          /   /        \
-                        /    V          \
-                      /     ------------>\
-                    src
+                // Easy mode: the fixed edge is directly connected to the new
+                // point, so we lock it and return imemdiately.
+                WalkMode::Done(e) => return self.half.lock(e),
+                WalkMode::Left(h) => {
+                    /*
+                                     /src
+                                   / /  ^
+                                 /  /    \
+                               /   /h     \
+                              /   /        \
+                            /    V          \
+                          /     ------------>\
+                        dst
 
-                    (as the loop runs, e may not start at point p, but it
-                    will be the most recent hull edge)
-                 */
-                Mode::Left => {
+                        (as the loop runs, e may not start at point p, but it
+                        will be the most recent hull edge)
+                     */
+
                     // Check the next hull edge to see if it either intersects
                     // the new line or terminates it.
-                    let next_index = self.hull.prev_edge(
-                        self.half.edge(current_edge_index).dst);
+                    let left_hull = self.hull.left_hull(h);
+                    let next_index = self.hull.edge(left_hull);
                     let next_edge = self.half.edge(next_index);
 
                     // If we've reached the target point, then rejoice!
-                    if next_edge.dst == src {
+                    if next_edge.dst == dst {
                         break;
                     }
-                    assert!(p != next_edge.dst);
-                    let o = self.orient2d(p, src, next_edge.dst);
+                    assert!(src != next_edge.dst);
+
+                    let o = self.orient2d(src, dst, next_edge.dst);
                     // If we're still outside the triangulation, then update
-                    // the edge and continue
+                    // the hull and continue
                     if o > 0.0 {
-                        current_edge_index = next_index;
+                        mode = WalkMode::Left(left_hull);
                     } else if o < 0.0 {
-                        // Otherwise, we've crossed over and now need to run
-                        // in the inside-the-triangulation mode.
-                        current_edge_index = next_index;
-                        mode = Mode::Inside;
+                        mode = WalkMode::Inside(next_index, left_hull);
                     } else {
                         // Lightly brushing by the point on the hull
                         assert!(false);
                     }
-                }
+                },
 
-                /*
-                              p\
-                            /  ^ \
-                           /    \  \
-                          /      \   \
-                         /       e\    \
-                        V          \     \
-                       ------------>\      \
-                                             \
-                                              src
-                 */
-                Mode::Right => {
-                    let next_index = self.hull.edge(
-                        self.half.edge(current_edge_index).src);
+                WalkMode::Right(h) => {
+                    /*
+                                 src
+                                /  ^ \
+                               /    \  \
+                              /      \   \
+                             /       h\    \
+                            V          \     \
+                           ------------>\      \
+                                                 \
+                                                  dst
+                     */
+                    let right_hull = self.hull.right_hull(h);
+                    let next_index = self.hull.edge(right_hull);
                     let next_edge = self.half.edge(next_index);
 
-                    if next_edge.src == src {
+                    if next_edge.src == dst {
                         break; // rejoice!
                     }
-                    assert!(p != next_edge.src);
-                    let o = self.orient2d(p, next_edge.src, src);
+                    assert!(src != next_edge.dst);
+
+                    let o = self.orient2d(src, next_edge.src, dst);
                     if o > 0.0 {
-                        current_edge_index = next_index;
+                        // Keep going around the hull
+                        mode = WalkMode::Right(right_hull);
                     } else if o < 0.0 {
-                        current_edge_index = next_index;
-                        mode = Mode::Inside;
+                        // Enter the triangulation
+                        mode = WalkMode::Inside(next_index, right_hull);
                     } else {
-                        // TODO
                         assert!(false); // stabbing the hull point
                     }
-                }
+                },
 
-                /*            p
-                             :
-                            :
-                       b<--:-------a
-                        \ :    e   ^
-                         :\      /
-                        :   v  /
-                       :     c
-                      src
-                 */
-                Mode::Inside => {
-                    // There has been a p->src intersection with edge e,
+                WalkMode::Inside(e, h) => {
+                    /*            src
+                                 :
+                                :
+                           b<--:-------a
+                            \ :    e   ^
+                             :\      /
+                            :   v  /
+                           :     c
+                          dst
+                     */
+                    // There has been a src->dst intersection with edge e,
                     // and we're now within a particular triangle.  We
-                    // check which edge we exit along, and whether we exit
-                    // into another triangle or back onto the hull
-                    let edge_ab = self.half.edge(current_edge_index);
+                    // check which edge we exit along; delegating the decision
+                    // whether we stay in the triangulation or not to
+                    // WalkMode::Exit.
+                    let edge_ab = self.half.edge(e);
                     let e_bc = edge_ab.next;
                     let e_ca = edge_ab.prev;
 
                     let c = self.half.edge(e_bc).dst;
 
-                    if c == src {
+                    if c == dst {
                         break; // rejoice!
                     }
 
-                    let o_psc = self.orient2d(p, src, c);
+                    let o_psc = self.orient2d(src, dst, c);
                     if o_psc > 0.0 {
-                        // Exiting the b->c edge
-                        let buddy = self.half.edge(e_bc).buddy;
-                        if buddy != half::EMPTY {
-                            current_edge_index = buddy;
-                        } else {
-                            current_edge_index = e_bc;
-                            assert!(default_mode != Mode::Inside);
-                            mode = default_mode;
-                        }
+                        mode = WalkMode::Exit(e_bc, h);
                     } else if o_psc < 0.0 {
-                        // Exiting the c->a edge
-                        let buddy = self.half.edge(e_ca).buddy;
-                        if buddy != half::EMPTY {
-                            current_edge_index = buddy;
-                        } else {
-                            current_edge_index = e_ca;
-                            assert!(default_mode != Mode::Inside);
-                            mode = default_mode;
-                        }
+                        mode = WalkMode::Exit(e_ca, h);
                     } else {
                         assert!(false); // stabbing c in the heart
+                    }
+                },
+
+                WalkMode::Exit(e, h) => {
+                    /*
+                              src
+                             /:^\
+                           h/ :| \
+                           /  :|  \
+                          /  : |   \
+                         V e : |    \
+                        ----:->|------
+                            :
+                           dst
+                    */
+
+                    // We are exiting a triangle along edge e, with the last
+                    // known hull edge being h.  If e has a buddy, then this
+                    // is easy: we stay within the triangulation.  Otherwise,
+                    // we search along the hull to find where we've exited.
+                    let edge = self.half.edge(e);
+                    if edge.buddy != half::EMPTY {
+                        mode = WalkMode::Inside(edge.buddy, h);
+                    } else if self.points[dst].0 < self.points[src].0 {
+                        mode = WalkMode::Left(self.get_left_hull(h, e));
+                    } else {
+                        mode = WalkMode::Right(self.get_right_hull(h, e));
                     }
                 }
             }
         }
-    */
     }
 
     fn legalize(&mut self, e_ab: EdgeIndex) {
