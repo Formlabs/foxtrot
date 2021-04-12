@@ -450,8 +450,9 @@ impl Triangulation {
         }
     }
 
-    fn walk_fill_left(&mut self, src: PointIndex, dst: PointIndex, mut h: HullIndex) -> bool {
+    fn walk_fill_left(&mut self, src: PointIndex, dst: PointIndex, start: HullIndex) -> bool {
         let mut steps_below: Vec<HullIndex> = Vec::new();
+        let mut h = start;
         loop {
             /*
                              /src
@@ -467,6 +468,9 @@ impl Triangulation {
                 will be the most recent hull edge)
              */
             steps_below.push(h);
+            if h != start {
+                self.hull.erase(h);
+            }
 
             // Check the next hull edge to see if it either intersects
             // the new line or terminates it.
@@ -490,12 +494,27 @@ impl Triangulation {
                 return false;
             }
         }
+
+        // Unpack from a list of hull points to triangulation points
+        // (and their buddies), in a left-to-right order.
+        let pts: Vec<(PointIndex, EdgeIndex)> = steps_below.iter()
+            .rev()
+            .map(|h| {
+                let e = self.hull.edge(*h);
+                let edge = self.half.edge(e);
+                assert!(edge.buddy != half::EMPTY);
+                (edge.dst, edge.buddy)
+            })
+            .chain(std::iter::once((dst, half::EMPTY)))
+            .collect();
         // TODO: triangulate
+        self.hull.update(h, unimplemented!());
         true
     }
 
-    fn walk_fill_right(&mut self, src: PointIndex, dst: PointIndex, mut h: HullIndex) -> bool {
+    fn walk_fill_right(&mut self, src: PointIndex, dst: PointIndex, start: HullIndex) -> bool {
         let mut steps_below: Vec<HullIndex> = Vec::new();
+        let mut h = start;
         loop {
             /*
                          src
@@ -509,6 +528,9 @@ impl Triangulation {
                                          dst
              */
             steps_below.push(h);
+            if h != start {
+                self.hull.erase(h);
+            }
 
             let index = self.hull.edge(h);
             let edge = self.half.edge(index);
@@ -525,7 +547,19 @@ impl Triangulation {
                 return false;
             }
         }
-        // TODO: triangulate
+
+        let pts: Vec<(PointIndex, EdgeIndex)> = steps_below.iter()
+            .map(|h| {
+                let e = self.hull.edge(*h);
+                let edge = self.half.edge(e);
+                assert!(edge.buddy != half::EMPTY);
+                (edge.dst, edge.buddy)
+            })
+            .chain(std::iter::once((dst, half::EMPTY)))
+            .collect();
+
+        // TODO: triangulate and assign the new edge to the hull
+        self.hull.update(start, unimplemented!());
         true
     }
 
