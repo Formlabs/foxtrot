@@ -12,7 +12,6 @@ enum WalkMode {
     Right(HullIndex),
     Inside(EdgeIndex),
     Done(EdgeIndex),
-    Nope,
 }
 
 pub struct Triangulation {
@@ -208,16 +207,17 @@ impl Triangulation {
         // by handle_fixed_edge), then we swap it to the back of the
         // list and reduce the number of edges associated with this point;
         // otherwise, we'll deal with it later.
-        let (start, end) = self.endings[p];
+        let (start, mut end) = self.endings[p];
         let mut i = start;
         while i != end {
             if self.handle_fixed_edge(h_p, p, self.ending_data[i]) {
-                self.ending_data.swap(i, end - 1);
-                self.endings[p].1 -= 1;
+                end -= 1;
+                self.ending_data.swap(i, end);
             } else {
                 i += 1;
             }
         }
+        self.endings[p].1 = end;
 
         true
     }
@@ -419,12 +419,7 @@ impl Triangulation {
                 // We may exit either into another interior triangle or
                 // leave the triangulation and walk the hull, but we don't
                 // need to decide that right now.
-                let intersected_edge = self.half.edge(intersected_index);
-                if intersected_edge.buddy == half::EMPTY {
-                    return WalkMode::Nope;
-                } else {
-                    return WalkMode::Inside(intersected_edge.buddy);
-                }
+                return WalkMode::Inside(intersected_index);
             } else {
                 /*  Sorry, Mario; your src-dst line is in another triangle
 
@@ -467,15 +462,11 @@ impl Triangulation {
                 (as the loop runs, e may not start at src, but it
                 will be the most recent hull edge)
              */
-            steps_below.push(h);
-            if h != start {
-                self.hull.erase(h);
-            }
-
             // Check the next hull edge to see if it either intersects
             // the new line or terminates it.
             let index = self.hull.edge(h);
             let edge = self.half.edge(index);
+            steps_below.push(h);
 
             // If we've reached the target point, then rejoice!
             if edge.dst == dst {
@@ -483,32 +474,38 @@ impl Triangulation {
             }
             assert!(src != edge.dst);
 
-            let o = self.orient2d(src, dst, edge.dst);
-            if o > 0.0 {
-                // If we're still outside the triangulation, then keep
-                // walking along the hull
-                h = self.hull.left_hull(h);
-            } else {
-                // If we're intersecting this edge, then it's too hard
-                // to handle now, and we'll do it later.
+            // If we're intersecting this edge, then it's too hard
+            // to handle now, and we'll do it later.
+            if self.orient2d(src, dst, edge.dst) <= 0.0 {
                 return false;
             }
+
+            // If we're still outside the triangulation, then keep
+            // walking along the hull
+            h = self.hull.left_hull(h);
         }
 
-        // Unpack from a list of hull points to triangulation points
-        // (and their buddies), in a left-to-right order.
         let pts: Vec<(PointIndex, EdgeIndex)> = steps_below.iter()
             .rev()
             .map(|h| {
                 let e = self.hull.edge(*h);
                 let edge = self.half.edge(e);
-                assert!(edge.buddy != half::EMPTY);
-                (edge.dst, edge.buddy)
+                let pt = edge.dst;
+                if pt != dst {
+                    self.hull.erase(*h);
+                }
+                (pt, e)
             })
-            .chain(std::iter::once((dst, half::EMPTY)))
+            .chain(std::iter::once((src, half::EMPTY)))
             .collect();
-        // TODO: triangulate
-        self.hull.update(h, unimplemented!());
+
+        // Fill this polygon, returning the new edge
+        let new_edge = self.fill_monotone(&pts);
+        assert!(self.half.edge(new_edge).src == src);
+        assert!(self.half.edge(new_edge).dst == dst);
+
+        self.hull.update(h, new_edge);
+        self.half.lock(new_edge);
         true
     }
 
@@ -527,46 +524,79 @@ impl Triangulation {
                                          \
                                          dst
              */
-            steps_below.push(h);
-            if h != start {
-                self.hull.erase(h);
-            }
-
             let index = self.hull.edge(h);
             let edge = self.half.edge(index);
+            steps_below.push(h);
 
             if edge.src == dst {
                 break;
             }
             assert!(src != edge.src);
 
-            let o = self.orient2d(src, edge.src, dst);
-            if o > 0.0 {
-                h = self.hull.right_hull(h);
-            } else {
+            if self.orient2d(src, edge.src, dst) <= 0.0 {
                 return false;
             }
+            h = self.hull.right_hull(h);
         }
-
         let pts: Vec<(PointIndex, EdgeIndex)> = steps_below.iter()
             .map(|h| {
                 let e = self.hull.edge(*h);
                 let edge = self.half.edge(e);
-                assert!(edge.buddy != half::EMPTY);
-                (edge.dst, edge.buddy)
+                let pt = edge.dst;
+                if pt != src {
+                    self.hull.erase(*h);
+                }
+                (pt, e)
             })
             .chain(std::iter::once((dst, half::EMPTY)))
             .collect();
 
-        // TODO: triangulate and assign the new edge to the hull
-        self.hull.update(start, unimplemented!());
+        // Fill this polygon, returning the new edge
+        let new_edge = self.fill_monotone(&pts);
+        assert!(self.half.edge(new_edge).src == dst);
+        assert!(self.half.edge(new_edge).dst == src);
+
+        self.hull.update(start, new_edge);
+        self.half.lock(new_edge);
         true
     }
 
     fn walk_fill_inside(&mut self, src: PointIndex, dst: PointIndex, mut e: EdgeIndex) -> bool {
         let mut steps_left: Vec<EdgeIndex> = Vec::new();
         let mut steps_right: Vec<EdgeIndex> = Vec::new();
+        let mut triangles: Vec<EdgeIndex> = Vec::new();
+
+        /*
+                     src
+                     / :^
+                    / :  \
+                   /  :   \
+                  /  :     \
+                 V   :  e   \
+                b---:------->a
+                    :
+                   dst
+         */
+        let edge = self.half.edge(e);
+        let buddy_left = self.half.edge(edge.prev).buddy;
+        if buddy_left == half::EMPTY {
+            return false;
+        }
+        steps_left.push(buddy_left);
+
+        let buddy_right = self.half.edge(edge.next).buddy;
+        if buddy_right == half::EMPTY {
+            return false;
+        }
+        steps_right.push(buddy_right);
+
+        triangles.push(e);
+        e = edge.buddy; // If we exit the triangle, then we'll catch it below
+
         loop {
+            if e == half::EMPTY {
+                return false;
+            }
             /*            src
                          :
                         :
@@ -585,48 +615,95 @@ impl Triangulation {
             let edge_ab = self.half.edge(e);
             let e_bc = edge_ab.next;
             let e_ca = edge_ab.prev;
+            triangles.push(e);
 
             let c = self.half.edge(e_bc).dst;
 
             if c == dst {
+                let e_bc_buddy = self.half.edge(e_bc).buddy;
+                if e_bc_buddy == half::EMPTY {
+                    return false;
+                }
+                steps_left.push(e_bc_buddy);
+
+                let e_ca_buddy = self.half.edge(e_ca).buddy;
+                if e_ca_buddy == half::EMPTY {
+                    return false;
+                }
+                steps_right.push(e_ca_buddy);
+
                 break; // rejoice!
             }
 
             let o_psc = self.orient2d(src, dst, c);
             if o_psc > 0.0 {
+                // Store the c-a edge as our buddy
+                let e_ca_buddy = self.half.edge(e_ca).buddy;
+                if e_ca_buddy == half::EMPTY {
+                    return false;
+                }
+                steps_right.push(e_ca_buddy);
+
                 // Exiting the triangle via b-c
-                let buddy = self.half.edge(e_bc).buddy;
-                if buddy == half::EMPTY {
-                    return false;
-                }
-                e = buddy;
-                steps_right.push(e_ca);
+                e = self.half.edge(e_bc).buddy;
             } else if o_psc < 0.0 {
-                let buddy = self.half.edge(e_ca).buddy;
-                if buddy == half::EMPTY {
+                // Store the b-c edge as our buddy
+                let e_bc_buddy = self.half.edge(e_bc).buddy;
+                if e_bc_buddy == half::EMPTY {
                     return false;
                 }
-                e = buddy;
-                steps_left.push(e_bc);
+                steps_left.push(e_bc_buddy);
+
+                // Exit the triangle via c-a
+                e = self.half.edge(e_ca).buddy;
             } else {
                 return false; // Direct hit on c, deal with it later
             }
         }
-        // TODO: triangulate
+
+        let pts_left: Vec<(PointIndex, EdgeIndex)> = steps_left.iter()
+            .map(|e| (self.half.edge(*e).dst, *e))
+            .chain(std::iter::once((dst, half::EMPTY)))
+            .collect();
+        let pts_right: Vec<(PointIndex, EdgeIndex)> = steps_right.iter()
+            .rev()
+            .map(|e| (self.half.edge(*e).dst, *e))
+            .chain(std::iter::once((src, half::EMPTY)))
+            .collect();
+
+        // Destroy every triangle that we happen to be passing through
+        // At this point, none of them are hull triangles (since we didn't
+        // allow for triangles with missing buddies), so we don't need to
+        // worry about those invariants
+        for e in triangles.into_iter() {
+            self.half.erase(e);
+        }
+
+        // Triangulate the left and right pseudopolygons
+        let new_edge_left = self.fill_monotone(&pts_left);
+        assert!(self.half.edge(new_edge_left).src == dst);
+        assert!(self.half.edge(new_edge_left).dst == src);
+        self.half.lock(new_edge_left);
+
+        let new_edge_right = self.fill_monotone(&pts_right);
+        assert!(self.half.edge(new_edge_right).src == src);
+        assert!(self.half.edge(new_edge_right).dst == dst);
+        self.half.lock(new_edge_right);
+
+        // Set them as each other's buddies
+        self.half.link(new_edge_left, new_edge_right);
+
         true
     }
 
     fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) -> bool {
         match self.find_walk_mode(h, src, dst) {
             // Easy mode: the fixed edge is directly connected to the new
-            // point, so we lock it and return imemdiately.
+            // point, so we lock it and return immediately.
             WalkMode::Done(e) => {
                 self.half.lock(e);
                 true
             },
-            // Hard mode: the fxed edge emerges from a mid-wedge triangle,
-            // and we don't want to deal with that right now.
-            WalkMode::Nope => false,
 
             // Otherwise, record the direction and continue
             WalkMode::Left(h) => self.walk_fill_left(src, dst, h),
@@ -635,13 +712,36 @@ impl Triangulation {
         }
     }
 
-    fn fill_monotone_mountain(&mut self, pts: &[PointIndex]) -> EdgeIndex {
-        // Based on "Triangulating Monotone Mountains",
-        // http://www.ams.sunysb.edu/~jsbm/courses/345/13/triangulating-monotone-mountains.pdf
-        //
-        // pts sould be a left-to-right set of Y-monotone points
+    fn fill_monotone(&mut self, pts: &[(PointIndex, EdgeIndex)]) -> EdgeIndex {
+        /*  Based on "Triangulating Monotone Mountains",
+            http://www.ams.sunysb.edu/~jsbm/courses/345/13/triangulating-monotone-mountains.pdf
+
+            pts should be a left-to-right set of Y-monotone points, such that
+            the edge pts[0]->pts[pts.len() - 1] is above all points in the list.
+
+            0----------------------------end
+             \                          /
+            b0\      ^x                /
+               \    /  \b2            /
+                v  /b1  vx---------->x
+                 x/
+
+            Alternatively, this will also work on a right-to-left mountain
+
+                 x^         b1
+                /  \    /x<----------x
+               /    \  /b2            ^
+              /      xv                \b0
+             v                          \
+          end--------------------------->0
+
+            Each point is associated with a buddy edge, shown as b0... in the
+            sketches above.  This edge is used to link us into the half-edge
+            data structure.
+        */
 
         // Build a tiny flat pseudo-linked list representing the contour
+        #[derive(Debug)]
         struct Node {
             prev: usize,
             next: usize,
@@ -649,29 +749,45 @@ impl Triangulation {
             buddy: EdgeIndex,
         }
         let mut pts: Vec<Node> = pts.iter().enumerate()
-            .map(|(i, p)| Node {
-                prev: if i == 0 { usize::MAX } else { i - 1 },
-                next: if i == pts.len() - 1 { i + 1 } else { usize::MAX },
-                pt: *p,
-                buddy: half::EMPTY,
-            })
-            .collect();
+            .map(|(i, p)| {
+                // "Do you have your exit buddy?"
+                //  (Finding Nemo, 2003)
+                if i != pts.len() - 1 {
+                    assert!(p.1 != half::EMPTY);
+                }
+
+                // Build a node in the pseudo-linked list
+                Node {
+                    prev: if i == 0 { usize::MAX } else { i - 1 },
+                    next: if i == pts.len() - 1 { usize::MAX } else { i + 1 },
+                    pt: p.0,
+                    buddy: p.1,
+                }
+            }).collect();
 
         let mut i = 1;
         // Run until the last triangle is flattened out
         while pts[0].next != pts.len() - 1 {
             let prev = pts[i].prev;
             let next = pts[i].next;
-            // If this ear is strictly convex, then clip it!
-            if self.orient2d(pts[prev].pt, pts[next].pt, pts[i].pt) > 0.0 {
+            /*
+              prev
+                 \       next
+                  \      ^
+                   \    /
+                    \  /
+                     v/
+                     i
+
+                If this ear is strictly convex, then clip it!
+            */
+            if self.orient2d(pts[prev].pt, pts[i].pt, pts[next].pt) > 0.0 {
                 // Write a new triangle and record its inside edge as a new
                 // buddy for the earliest point in the ear, overwriting the
                 // previous buddy (which may have been an external edge)
-                let prev = pts[i].prev;
-                let next = pts[i].next;
                 let e = self.half.insert(
-                    pts[prev].pt, pts[next].pt, pts[i].pt,
-                    pts[i].buddy, pts[prev].buddy, half::EMPTY);
+                    pts[next].pt, pts[prev].pt, pts[i].pt,
+                    pts[prev].buddy, pts[i].buddy, half::EMPTY);
                 pts[prev].buddy = e;
 
                 // Remove point i out of the linked list
@@ -715,7 +831,7 @@ impl Triangulation {
          *  recursing; in that case, then return immediately.
          */
         let edge = self.half.edge(e_ab);
-        if edge.buddy == half::EMPTY {
+        if edge.fixed || edge.buddy == half::EMPTY {
             return;
         }
         let a = edge.src;
@@ -762,7 +878,7 @@ impl Triangulation {
          out.push_str(&format!(
             r#"<svg viewbox="auto" xmlns="http://www.w3.org/2000/svg">
     <rect x="0" y="0" width="{}" height="{}"
-     style="fill:none" />"#,
+     style="fill:rgb(0,0,0)" />"#,
      dx(x_bounds.1) + line_width,
      dy(y_bounds.0) + line_width));
 
@@ -804,10 +920,28 @@ impl Triangulation {
                 r#"
         <circle cx="{}" cy="{}" r="{}" style="fill:rgb(255,128,128)" />"#,
                 dx(p.0), dy(p.1), line_width));
-         }
+        }
 
-         out.push_str("\n</svg>");
-         out
+        // Draw remaining endings in green
+        for (p, (start, end)) in self.endings.iter().enumerate() {
+            for i in *start..*end {
+                let dst = PointIndex::new(p);
+                let src = self.ending_data[i];
+                 out.push_str(&format!(
+                    r#"
+        <line x1="{}" y1="{}" x2="{}" y2="{}"
+         style="stroke:rgb(0,255,0)"
+         stroke-width="{}" stroke-linecap="round" />"#,
+                    dx(self.points[src].0),
+                    dy(self.points[src].1),
+                    dx(self.points[dst].0),
+                    dy(self.points[dst].1),
+                    line_width));
+            }
+        }
+
+        out.push_str("\n</svg>");
+        out
     }
 }
 

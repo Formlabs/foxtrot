@@ -46,7 +46,7 @@ fn test_lock(seed: Option<u64>) {
     let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
 
     let mut pts = Vec::new();
-    for _ in 0..64 {
+    for _ in 0..32 {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
     let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
@@ -63,6 +63,7 @@ fn fuzz_lock(seed: Option<u64>) {
         });
 
         let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
+        eprintln!("Seed: {}", seed);
 
         let mut pts = Vec::new();
         for _ in 0..32 {
@@ -89,11 +90,13 @@ fn fuzz_lock(seed: Option<u64>) {
             }
 
             let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+            eprintln!("\n\n");
             for _ in 0..safe_steps {
                 t.step();
             }
             println!("{}", t.to_svg());
             eprintln!("Crashed with seed: {}", seed);
+            t.step(); // Triggers the crash again
             break;
         }
     }
@@ -125,7 +128,7 @@ fn main() {
 
     //benchmark(seed, 1_000_000);
     //fuzz(seed, 5);
-    //svg(seed, 1024);
+    //svg(seed, 64);
     //test_lock(seed);
     fuzz_lock(seed);
 }
