@@ -46,7 +46,7 @@ fn test_lock(seed: Option<u64>) {
     let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
 
     let mut pts = Vec::new();
-    for _ in 0..4 {
+    for _ in 0..64 {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
     let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);

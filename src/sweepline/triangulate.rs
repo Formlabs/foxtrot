@@ -661,6 +661,69 @@ impl Triangulation {
                 }
             }
         }
+
+        match direction {
+            Direction::Left => {
+            }
+            Direction::Right => {
+            }
+        }
+    }
+
+    fn fill_monotone_mountain(&mut self, pts: &[PointIndex]) -> EdgeIndex {
+        // Based on "Triangulating Monotone Mountains",
+        // http://www.ams.sunysb.edu/~jsbm/courses/345/13/triangulating-monotone-mountains.pdf
+        //
+        // pts sould be a left-to-right set of Y-monotone points
+
+        // Build a tiny flat pseudo-linked list representing the contour
+        struct Node {
+            prev: usize,
+            next: usize,
+            pt: PointIndex,
+            buddy: EdgeIndex,
+        }
+        let mut pts: Vec<Node> = pts.iter().enumerate()
+            .map(|(i, p)| Node {
+                prev: if i == 0 { usize::MAX } else { i - 1 },
+                next: if i == pts.len() - 1 { i + 1 } else { usize::MAX },
+                pt: *p,
+                buddy: half::EMPTY,
+            })
+            .collect();
+
+        let mut i = 1;
+        // Run until the last triangle is flattened out
+        while pts[0].next != pts.len() - 1 {
+            let prev = pts[i].prev;
+            let next = pts[i].next;
+            // If this ear is strictly convex, then clip it!
+            if self.orient2d(pts[prev].pt, pts[next].pt, pts[i].pt) > 0.0 {
+                // Write a new triangle and record its inside edge as a new
+                // buddy for the earliest point in the ear, overwriting the
+                // previous buddy (which may have been an external edge)
+                let prev = pts[i].prev;
+                let next = pts[i].next;
+                let e = self.half.insert(
+                    pts[prev].pt, pts[next].pt, pts[i].pt,
+                    pts[i].buddy, pts[prev].buddy, half::EMPTY);
+                pts[prev].buddy = e;
+
+                // Remove point i out of the linked list
+                pts[prev].next = next;
+                pts[next].prev = prev;
+
+                // Backtrack, unless the previous point is the head of the
+                // list.  It's not guaranteed that we've unlocked another
+                // convex point, but this is innocuous, since if it's not
+                // convex, then we'll walk forward in the next iteration.
+                i = if prev != 0 { prev } else { next };
+            } else {
+                i = next;
+            }
+        }
+        assert!(pts[0].buddy != half::EMPTY);
+        pts[0].buddy
     }
 
     fn legalize(&mut self, e_ab: EdgeIndex) {
