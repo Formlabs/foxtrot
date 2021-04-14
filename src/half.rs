@@ -122,9 +122,6 @@ impl Half {
         }
         for (index, edge) in self.edges.iter().enumerate() {
             if edge.next == EMPTY {
-                if edge.buddy != EMPTY {
-                    eprintln!("About to abort: {:?}, {:?}, {}", edge.buddy, edge, index);
-                }
                 assert!(edge.prev == EMPTY);
                 assert!(edge.buddy == EMPTY);
                 continue;
@@ -252,9 +249,6 @@ impl Half {
         let e_ca = self.edges[e_ab].prev;
 
         for &e in &[e_ab, e_bc, e_ca] {
-            if e == EdgeIndex::new(120) {
-                eprintln!("Erasing {:?}", self.edges[e]);
-            }
             let buddy = self.edges[e].buddy;
             if buddy != EMPTY {
                 self.edges[buddy].buddy = EMPTY;
@@ -262,9 +256,6 @@ impl Half {
             self.edges[e].next = EMPTY;
             self.edges[e].prev = EMPTY;
             self.edges[e].buddy = EMPTY;
-            if e.val == 120 {
-                eprintln!("    lol erased {:?}", self.edges[e]);
-            }
         }
         // TODO: reuse edges once they're erased
         self.check();
@@ -274,9 +265,6 @@ impl Half {
         assert!(self.edges[a].buddy == EMPTY);
         assert!(self.edges[b].buddy == EMPTY);
         assert!(self.edges[a].fixed == self.edges[b].fixed);
-        if a.val == 120 || b.val == 120 {
-            eprintln!("Setting buddy to {:?} {:?}",  a, b);
-        }
         self.edges[a].buddy = b;
         self.edges[b].buddy = a;
     }

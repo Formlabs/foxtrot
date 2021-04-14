@@ -562,6 +562,7 @@ impl Triangulation {
     }
 
     fn walk_fill_inside(&mut self, src: PointIndex, dst: PointIndex, mut e: EdgeIndex) -> bool {
+        #[derive(Debug, Copy, Clone)]
         enum Step {
             Start,
             Left,
@@ -658,7 +659,9 @@ impl Triangulation {
         //////////////////////////////////////////////////////////////////////
         let mut pts_left: Vec<(PointIndex, EdgeIndex)> = Vec::new();
         let mut pts_right: Vec<(PointIndex, EdgeIndex)> = Vec::new();
-        for (s, e) in steps {
+        let mut i = 0;
+        while i < steps.len() {
+            let (s, e) = steps[i].clone();
             match s {
                 Step::Start => {
                     let edge = self.half.edge(e);
@@ -683,22 +686,24 @@ impl Triangulation {
                         // We handle this by constructing a triangle that
                         // reattaches that point to the wall of the pseudo-
                         // polygon, then adjusting the wall accordingly.
-                        pts_right.pop().expect("Could not pop dummy edge");
-                        let e_wall = pts_right.pop()
-                            .expect("Failed to get wall edge").1;
+                        pts_right.pop().expect("Could not pop orphan edge");
+                        let (_, e_wall) = pts_right.pop()
+                            .expect("Failed to get wall edge");
                         let wall_edge = self.half.edge(e_wall);
-                        eprintln!("{:?} {:?} {:?}",
-                            wall_edge.dst, wall_edge.src, right_edge.dst);
-                        let new_edge = self.half.insert(
+                        let new_edge_index = self.half.insert(
                             wall_edge.dst,
                             wall_edge.src,
                             right_edge.dst,
                             half::EMPTY,
                             half::EMPTY,
                             e_wall);
-                        let new_edge = self.half.edge(new_edge);
-                        pts_right.push((wall_edge.dst, new_edge.prev));
+                        let new_edge = self.half.edge(new_edge_index);
                         pts_right.push((right_edge.dst, new_edge.next));
+                        self.half.link(e, new_edge.prev);
+                        self.legalize(new_edge_index);
+
+                        // Revisit this triangle now that its edge has a buddy
+                        continue;
                     } else {
                         pts_right.push((right_edge.src, right_edge.buddy));
                     }
@@ -706,15 +711,30 @@ impl Triangulation {
                 Step::Left => {
                     let left_edge = self.half.edge(e);
                     if left_edge.buddy == half::EMPTY {
-                        // TODO
-                        assert!(false);
+                        pts_left.pop().expect("Could not pop orphan edge");
+                        let (_, e_wall) = pts_left.pop()
+                            .expect("Failed to get wall edge");
+                        let wall_edge = self.half.edge(e_wall);
+                        let new_edge_index = self.half.insert(
+                            wall_edge.dst,
+                            wall_edge.src,
+                            left_edge.src,
+                            half::EMPTY,
+                            half::EMPTY,
+                            e_wall);
+                        let new_edge = self.half.edge(new_edge_index);
+                        pts_left.push((wall_edge.dst, new_edge.prev));
+                        self.half.link(e, new_edge.next);
+                        self.legalize(new_edge_index);
+                        continue;
+                    } else {
+                        pts_left.push((left_edge.src, left_edge.buddy));
                     }
-                    pts_left.push((left_edge.dst, left_edge.buddy));
                 }
             }
             self.half.erase(e);
+            i += 1;
         }
-        println!("{}", self.to_svg());
         pts_left.push((dst, half::EMPTY));
         pts_right.reverse();
         pts_right.push((src, half::EMPTY));
