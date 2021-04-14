@@ -49,7 +49,7 @@ fn test_lock(seed: Option<u64>) {
     for _ in 0..32 {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
-    let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+    let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
     t.run();
     println!("{}", t.to_svg());
 }
@@ -89,7 +89,7 @@ fn fuzz_lock(seed: Option<u64>) {
                 }
             }
 
-            let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+            let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
             eprintln!("\n\n");
             for _ in 0..safe_steps {
                 t.step();
