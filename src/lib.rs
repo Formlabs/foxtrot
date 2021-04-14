@@ -21,4 +21,4 @@ pub mod util;
 pub mod sweepcircle;
 pub mod sweepline;
 
-const CHECK_INVARIANTS: bool = false;
+const CHECK_INVARIANTS: bool = true;

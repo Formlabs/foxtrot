@@ -562,9 +562,12 @@ impl Triangulation {
     }
 
     fn walk_fill_inside(&mut self, src: PointIndex, dst: PointIndex, mut e: EdgeIndex) -> bool {
-        let mut steps_left: Vec<EdgeIndex> = Vec::new();
-        let mut steps_right: Vec<EdgeIndex> = Vec::new();
-        let mut triangles: Vec<EdgeIndex> = Vec::new();
+        enum Step {
+            Start,
+            Left,
+            Right,
+            End,
+        }
 
         /*
                      src
@@ -578,19 +581,15 @@ impl Triangulation {
                    dst
          */
         let edge = self.half.edge(e);
-        let buddy_left = self.half.edge(edge.prev).buddy;
-        if buddy_left == half::EMPTY {
+        if self.half.edge(edge.prev).buddy == half::EMPTY {
             return false;
         }
-        steps_left.push(buddy_left);
 
-        let buddy_right = self.half.edge(edge.next).buddy;
-        if buddy_right == half::EMPTY {
+        if self.half.edge(edge.next).buddy == half::EMPTY {
             return false;
         }
-        steps_right.push(buddy_right);
 
-        triangles.push(e);
+        let mut steps: Vec<(Step, EdgeIndex)> = vec![(Step::Start, e)];
         e = edge.buddy; // If we exit the triangle, then we'll catch it below
 
         loop {
@@ -615,7 +614,6 @@ impl Triangulation {
             let edge_ab = self.half.edge(e);
             let e_bc = edge_ab.next;
             let e_ca = edge_ab.prev;
-            triangles.push(e);
 
             let c = self.half.edge(e_bc).dst;
 
@@ -624,35 +622,31 @@ impl Triangulation {
                 if e_bc_buddy == half::EMPTY {
                     return false;
                 }
-                steps_left.push(e_bc_buddy);
 
                 let e_ca_buddy = self.half.edge(e_ca).buddy;
                 if e_ca_buddy == half::EMPTY {
                     return false;
                 }
-                steps_right.push(e_ca_buddy);
-
+                steps.push((Step::End, e));
                 break; // rejoice!
             }
 
             let o_psc = self.orient2d(src, dst, c);
             if o_psc > 0.0 {
                 // Store the c-a edge as our buddy
-                let e_ca_buddy = self.half.edge(e_ca).buddy;
-                if e_ca_buddy == half::EMPTY {
+                if self.half.edge(e_ca).buddy == half::EMPTY {
                     return false;
                 }
-                steps_right.push(e_ca_buddy);
+                steps.push((Step::Right, e_ca));
 
                 // Exiting the triangle via b-c
                 e = self.half.edge(e_bc).buddy;
             } else if o_psc < 0.0 {
                 // Store the b-c edge as our buddy
-                let e_bc_buddy = self.half.edge(e_bc).buddy;
-                if e_bc_buddy == half::EMPTY {
+                if self.half.edge(e_bc).buddy == half::EMPTY {
                     return false;
                 }
-                steps_left.push(e_bc_buddy);
+                steps.push((Step::Left, e_bc));
 
                 // Exit the triangle via c-a
                 e = self.half.edge(e_ca).buddy;
@@ -661,23 +655,69 @@ impl Triangulation {
             }
         }
 
-        let pts_left: Vec<(PointIndex, EdgeIndex)> = steps_left.iter()
-            .map(|e| (self.half.edge(*e).dst, *e))
-            .chain(std::iter::once((dst, half::EMPTY)))
-            .collect();
-        let pts_right: Vec<(PointIndex, EdgeIndex)> = steps_right.iter()
-            .rev()
-            .map(|e| (self.half.edge(*e).dst, *e))
-            .chain(std::iter::once((src, half::EMPTY)))
-            .collect();
-
-        // Destroy every triangle that we happen to be passing through
-        // At this point, none of them are hull triangles (since we didn't
-        // allow for triangles with missing buddies), so we don't need to
-        // worry about those invariants
-        for e in triangles.into_iter() {
+        //////////////////////////////////////////////////////////////////////
+        let mut pts_left: Vec<(PointIndex, EdgeIndex)> = Vec::new();
+        let mut pts_right: Vec<(PointIndex, EdgeIndex)> = Vec::new();
+        for (s, e) in steps {
+            match s {
+                Step::Start => {
+                    let edge = self.half.edge(e);
+                    let left_edge = self.half.edge(edge.prev);
+                    let right_edge = self.half.edge(edge.next);
+                    pts_left.push((left_edge.src, left_edge.buddy));
+                    pts_right.push((right_edge.src, right_edge.buddy));
+                },
+                Step::End => {
+                    let edge = self.half.edge(e);
+                    let left_edge = self.half.edge(edge.next);
+                    let right_edge = self.half.edge(edge.prev);
+                    pts_left.push((left_edge.src, left_edge.buddy));
+                    pts_right.push((right_edge.src, right_edge.buddy));
+                },
+                Step::Right => {
+                    let right_edge = self.half.edge(e);
+                    if right_edge.buddy == half::EMPTY {
+                        // In certain rare cases, deleting interior triangles
+                        // during this walk step can leave a point orphaned.
+                        //
+                        // We handle this by constructing a triangle that
+                        // reattaches that point to the wall of the pseudo-
+                        // polygon, then adjusting the wall accordingly.
+                        pts_right.pop().expect("Could not pop dummy edge");
+                        let e_wall = pts_right.pop()
+                            .expect("Failed to get wall edge").1;
+                        let wall_edge = self.half.edge(e_wall);
+                        eprintln!("{:?} {:?} {:?}",
+                            wall_edge.dst, wall_edge.src, right_edge.dst);
+                        let new_edge = self.half.insert(
+                            wall_edge.dst,
+                            wall_edge.src,
+                            right_edge.dst,
+                            half::EMPTY,
+                            half::EMPTY,
+                            e_wall);
+                        let new_edge = self.half.edge(new_edge);
+                        pts_right.push((wall_edge.dst, new_edge.prev));
+                        pts_right.push((right_edge.dst, new_edge.next));
+                    } else {
+                        pts_right.push((right_edge.src, right_edge.buddy));
+                    }
+                }
+                Step::Left => {
+                    let left_edge = self.half.edge(e);
+                    if left_edge.buddy == half::EMPTY {
+                        // TODO
+                        assert!(false);
+                    }
+                    pts_left.push((left_edge.dst, left_edge.buddy));
+                }
+            }
             self.half.erase(e);
         }
+        println!("{}", self.to_svg());
+        pts_left.push((dst, half::EMPTY));
+        pts_right.reverse();
+        pts_right.push((src, half::EMPTY));
 
         // Triangulate the left and right pseudopolygons
         let new_edge_left = self.fill_monotone(&pts_left);
@@ -713,6 +753,7 @@ impl Triangulation {
     }
 
     fn fill_monotone(&mut self, pts: &[(PointIndex, EdgeIndex)]) -> EdgeIndex {
+
         /*  Based on "Triangulating Monotone Mountains",
             http://www.ams.sunysb.edu/~jsbm/courses/345/13/triangulating-monotone-mountains.pdf
 

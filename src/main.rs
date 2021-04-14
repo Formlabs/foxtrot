@@ -94,7 +94,7 @@ fn fuzz_lock(seed: Option<u64>) {
             for _ in 0..safe_steps {
                 t.step();
             }
-            println!("{}", t.to_svg());
+            //println!("{}", t.to_svg());
             eprintln!("Crashed with seed: {}", seed);
             t.step(); // Triggers the crash again
             break;
