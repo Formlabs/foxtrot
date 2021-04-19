@@ -1,5 +1,5 @@
 use rand::{Rng, SeedableRng};
-use cdt::sweepline::triangulate::Triangulation;
+use cdt::triangulate::Triangulation;
 
 #[allow(dead_code)]
 fn benchmark(seed: Option<u64>, n: usize) {
@@ -74,7 +74,6 @@ fn fuzz_lock(seed: Option<u64>) {
             t.run();
         });
         if result.is_err() {
-            break;
             let mut safe_steps = 0;
             for i in 0..pts.len() {
                 let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);

@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 use crate::predicates::{acute, orient2d, in_circle};
 use crate::{Point, PointIndex, PointVec, EdgeIndex};
-use crate::{half, half::Half, sweepline::hull::Hull, HullIndex};
+use crate::{half, half::Half, hull::Hull, HullIndex};
 
 const TERMINAL_LOWER_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_LOWER_RIGHT: PointIndex = PointIndex { val: 1 };
