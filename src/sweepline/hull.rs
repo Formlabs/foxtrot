@@ -216,6 +216,14 @@ impl Hull {
         self.check();
     }
 
+    pub fn start(&self) -> HullIndex {
+        self.buckets.iter()
+            .filter(|b| **b != EMPTY)
+            .copied()
+            .next()
+            .unwrap()
+    }
+
     /// Iterates over all edges stored in the Hull, in order
     pub fn values(&self) -> impl Iterator<Item=EdgeIndex> + '_ {
         // Find the first non-empty bucket to use as our starting point for

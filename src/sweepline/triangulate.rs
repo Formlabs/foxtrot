@@ -4,8 +4,8 @@ use crate::predicates::{acute, orient2d, in_circle};
 use crate::{Point, PointIndex, PointVec, EdgeIndex};
 use crate::{half, half::Half, sweepline::hull::Hull, HullIndex};
 
-const TERMINAL_LEFT: PointIndex = PointIndex { val: 0 };
-const TERMINAL_RIGHT: PointIndex = PointIndex { val: 1 };
+const TERMINAL_LOWER_LEFT: PointIndex = PointIndex { val: 0 };
+const TERMINAL_LOWER_RIGHT: PointIndex = PointIndex { val: 1 };
 
 enum WalkMode {
     Left(HullIndex),
@@ -28,6 +28,9 @@ pub struct Triangulation {
     // the edges array
     hull: Hull,
     half: Half,
+
+    x_bounds: (f64, f64),
+    y_bounds: (f64, f64),
 }
 
 impl Triangulation {
@@ -57,11 +60,11 @@ impl Triangulation {
         let dx = x_bounds.1 - x_bounds.0;
         let dy = y_bounds.1 - y_bounds.0;
         let x_bounds = (x_bounds.0 - dx / 8.0, x_bounds.1 + dx / 8.0);
-        let y_lower = y_bounds.0 - dy / 8.0;
-        sorted_points.push((x_bounds.0, y_lower));
-        sorted_points.push((x_bounds.1, y_lower));
-        map_reverse.push(0); // Dummy values
-        map_reverse.push(0);
+        let y_bounds = (y_bounds.0 - dy / 8.0, y_bounds.1 + dy / 8.0);
+        sorted_points.push((x_bounds.0, y_bounds.0));
+        sorted_points.push((x_bounds.1, y_bounds.0));
+        map_reverse.push(usize::MAX); // Dummy values
+        map_reverse.push(usize::MAX);
 
         // Then, copy the rest of the sorted points into sorted_points and
         // store the full maps.
@@ -70,26 +73,39 @@ impl Triangulation {
             map_forward[p.0] = map_reverse.push(p.0);
         }
 
+        // If we have fixed edges, then add *another* two phantom points to
+        // the top of the model, so that we can fully close it off and
+        // guarantee that it's convex.
+        if edges.clone().into_iter().next().is_some() {
+            sorted_points.push((x_bounds.0 + dx / 16.0, y_bounds.1));
+            sorted_points.push((x_bounds.1 - dx / 16.0, y_bounds.1));
+            map_reverse.push(usize::MAX); // Dummy value
+            map_reverse.push(usize::MAX);
+        }
+
         ////////////////////////////////////////////////////////////////////////
         let mut out = Triangulation {
             hull: Hull::new(x_bounds.0, x_bounds.1),
-            half: Half::new(sorted_points.len() * 2 - 5),
+            half: Half::new(sorted_points.len()),
 
             remap: map_reverse,
             next: PointIndex::new(3), // we've already built a, b, c
 
             // Endings are assigned later
-            endings: PointVec{ vec: vec![(0,0); sorted_points.len() + 2] },
+            endings: PointVec{ vec: vec![(0,0); sorted_points.len()] },
             ending_data: vec![],
 
             points: sorted_points, // moved out here
+            x_bounds, y_bounds,
         };
 
-        let pa = TERMINAL_LEFT;
-        let pb = TERMINAL_RIGHT;
+        let pa = TERMINAL_LOWER_LEFT;
+        let pb = TERMINAL_LOWER_RIGHT;
         let pc = PointIndex::new(2);
+
         let e_ab = out.half.insert(pa, pb, pc,
                                    half::EMPTY, half::EMPTY, half::EMPTY);
+        assert!(e_ab == EdgeIndex::new(0));
         let e_bc = out.half.next(e_ab);
         let e_ca = out.half.prev(e_ab);
 
@@ -98,12 +114,15 @@ impl Triangulation {
 
         ////////////////////////////////////////////////////////////////////////
         // Iterate over edges, counting which points have a termination
-        let mut termination_count = PointVec { vec: vec![0; points.len() + 2] };
+        let mut termination_count = PointVec { vec: vec![0; out.points.len()] };
         let edge_iter = || edges.clone()
             .into_iter()
             .map(|&(src, dst)| {
                 let src = map_forward[src];
                 let dst = map_forward[dst];
+                assert!(src != usize::MAX);
+                assert!(dst != usize::MAX);
+
                 if src > dst { (dst, src) } else { (src, dst) }
             });
         for (src, dst) in edge_iter() {
@@ -147,6 +166,118 @@ impl Triangulation {
         while self.step() {}
     }
 
+    pub fn finalize_edges(&mut self) {
+        // Put a roof over the hull, to ensure that it's convex and all edges
+        // will walk completely inside of the triangulation.
+        let h = self.hull.right_hull(self.hull.start());
+        self.walk_fill_right(
+            PointIndex::new(self.points.len() - 2),
+            PointIndex::new(self.points.len() - 1),
+            h);
+        self.half.unlock(self.hull.edge(h));
+
+        // Now, let's add bonus points so that every edge that the triangulation
+        // may try to delete has a buddy.  This is basically injecting a diamond
+        // shape around the square of the bounding box
+        let dx = (self.x_bounds.1 - self.x_bounds.0) / 8.0;
+        let x_mid = (self.x_bounds.0 + self.x_bounds.1) / 2.0;
+        let dy = (self.y_bounds.1 - self.y_bounds.0) / 8.0;
+        let y_mid = (self.y_bounds.0 + self.y_bounds.1) / 2.0;
+        {
+            let e_lower = EdgeIndex::new(0);
+            let edge_lower = self.half.edge(e_lower);
+            let pt_lower = self.points.push((x_mid, self.y_bounds.0 - dy));
+            self.half.insert(edge_lower.dst, edge_lower.src, pt_lower,
+                             half::EMPTY, half::EMPTY, EdgeIndex::new(0));
+        }
+        {
+            let e_left = self.hull.edge(self.hull.start());
+            let edge_left = self.half.edge(e_left);
+            let pt_left = self.points.push((self.x_bounds.0 - dx, y_mid));
+            self.half.insert(edge_left.dst, edge_left.src, pt_left,
+                             half::EMPTY, half::EMPTY, e_left);
+        }
+        {
+            let e_top = self.hull.edge(h);
+            let edge_top = self.half.edge(e_top);
+            let pt_top = self.points.push((x_mid, self.y_bounds.1 + dy));
+            self.half.insert(edge_top.dst, edge_top.src, pt_top,
+                             half::EMPTY, half::EMPTY, e_top);
+        }
+        {
+            let e_right = self.hull.edge(self.hull.right_hull(h));
+            let edge_right = self.half.edge(e_right);
+            let pt_right = self.points.push((self.x_bounds.1 + dx, y_mid));
+            self.half.insert(edge_right.dst, edge_right.src, pt_right,
+                             half::EMPTY, half::EMPTY, e_right);
+        }
+
+        // Steal the PointVec of endings from &self, so we can call mutable
+        // functions later on inside the loop.  Don't worry, we'll give it back.
+        let mut endings = PointVec::new();
+        std::mem::swap(&mut endings, &mut self.endings);
+
+        for (pt, (start, end)) in endings.iter_mut().enumerate() {
+            let pt = PointIndex::new(pt);
+            for i in (*start..*end).rev() {
+                let e = self.half.edge_index(pt);
+                assert!(e != half::EMPTY);
+                let edge = self.half.edge(e);
+                assert!(edge.src == pt);
+                let r = self.finalize_fixed_edge(pt, self.ending_data[i], edge.next);
+                assert!(r);
+            }
+            *end = *start;
+        }
+        std::mem::swap(&mut endings, &mut self.endings);
+    }
+
+    /// Finalizes a fixed edge in a fully connected (convex) model
+    /// e is an edge opposite src; dst is the end of the fixed edge
+    pub fn finalize_fixed_edge(&mut self, src: PointIndex, dst: PointIndex, mut e: EdgeIndex) -> bool {
+        /*
+                     src
+                     / :^
+                    / :  \
+                   /  :   \
+                  /  :     \
+                 V   : e    \
+                a---:------->b
+                    :
+                   dst
+        */
+        // Find the edge which contains the src-dst line, by walking around
+        // the triangulation
+        loop {
+            let edge = self.half.edge(e);
+            let a = edge.src;
+            let b = edge.dst;
+
+            // Easy mode: the triangle is directly connected
+            if a == dst {
+                self.half.lock(edge.prev);
+                return true;
+            } else if b == dst {
+                self.half.lock(edge.next);
+                return true;
+            }
+
+            let oa = self.orient2d(src, a, dst);
+            let ob = self.orient2d(src, dst, b);
+            assert!(oa != 0.0);
+            assert!(ob != 0.0);
+            if oa > 0.0 && ob >= 0.0 {
+                return self.walk_fill_inside(src, dst, e);
+            } else {
+                // Keep walking arorund the triangle fan
+               let b = self.half.edge(edge.next).buddy;
+               assert!(b != half::EMPTY);
+               e = self.half.edge(b).next;
+               assert!(e != half::EMPTY);
+            }
+        }
+    }
+
     fn orient2d(&self, pa: PointIndex, pb: PointIndex, pc: PointIndex) -> f64 {
         orient2d(self.points[pa], self.points[pb], self.points[pc])
     }
@@ -157,6 +288,7 @@ impl Triangulation {
 
     pub fn step(&mut self) -> bool {
         if self.next == self.points.len() {
+            self.finalize_edges();
             return false;
         }
 
@@ -239,7 +371,7 @@ impl Triangulation {
             let e_pb = self.hull.edge(h_b);
             let edge_pb = self.half.edge(e_pb);
             let b = edge_pb.dst;
-            if b == TERMINAL_LEFT {
+            if b == TERMINAL_LOWER_LEFT {
                 break;
             }
 
@@ -287,7 +419,7 @@ impl Triangulation {
             let e_ap = self.hull.edge(h_a);
             let edge_ap = self.half.edge(e_ap);
             let a = edge_ap.src;
-            if a == TERMINAL_RIGHT {
+            if a == TERMINAL_LOWER_RIGHT {
                 break;
             }
 
@@ -317,7 +449,7 @@ impl Triangulation {
     /// Finds which mode to begin walking through the triangulation when
     /// inserting a fixed edge.  h is a HullIndex equivalent to the src point,
     /// and dst is the destination of the new fixed edge.
-    fn find_walk_mode(&self, h: HullIndex, src: PointIndex, dst: PointIndex)
+    fn find_hull_walk_mode(&self, h: HullIndex, src: PointIndex, dst: PointIndex)
         -> WalkMode {
         /*  We've just built a triangle that contains a fixed edge, and need
             to walk through the triangulation and implement that edge.
@@ -585,7 +717,6 @@ impl Triangulation {
         if self.half.edge(edge.prev).buddy == half::EMPTY {
             return false;
         }
-
         if self.half.edge(edge.next).buddy == half::EMPTY {
             return false;
         }
@@ -660,6 +791,7 @@ impl Triangulation {
         let mut pts_left: Vec<(PointIndex, EdgeIndex)> = Vec::new();
         let mut pts_right: Vec<(PointIndex, EdgeIndex)> = Vec::new();
         let mut i = 0;
+        println!("{}", self.to_svg());
         while i < steps.len() {
             let (s, e) = steps[i].clone();
             match s {
@@ -745,6 +877,7 @@ impl Triangulation {
         assert!(self.half.edge(new_edge_left).dst == src);
         self.half.lock(new_edge_left);
 
+        println!("{}", self.to_svg());
         let new_edge_right = self.fill_monotone(&pts_right);
         assert!(self.half.edge(new_edge_right).src == src);
         assert!(self.half.edge(new_edge_right).dst == dst);
@@ -757,7 +890,7 @@ impl Triangulation {
     }
 
     fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) -> bool {
-        match self.find_walk_mode(h, src, dst) {
+        match self.find_hull_walk_mode(h, src, dst) {
             // Easy mode: the fixed edge is directly connected to the new
             // point, so we lock it and return immediately.
             WalkMode::Done(e) => {
@@ -930,7 +1063,8 @@ impl Triangulation {
     pub fn to_svg(&self) -> String {
         const SCALE: f64 = 250.0;
         let (x_bounds, y_bounds) = Self::bbox(&self.points);
-        let line_width = (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0) / 250.0 * SCALE;
+        let line_width = (x_bounds.1 - x_bounds.0)
+            .max(y_bounds.1 - y_bounds.0) / 250.0 * SCALE;
         let dx = |x| { SCALE * (x - x_bounds.0) + line_width};
         let dy = |y| { SCALE * (y_bounds.1 - y) + line_width};
 

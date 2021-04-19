@@ -69,14 +69,15 @@ fn fuzz_lock(seed: Option<u64>) {
         for _ in 0..32 {
             pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
         }
-        let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+        let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
         let result = std::panic::catch_unwind(move || {
             t.run();
         });
         if result.is_err() {
+            break;
             let mut safe_steps = 0;
             for i in 0..pts.len() {
-                let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+                let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
                 let result = std::panic::catch_unwind(move || {
                     for _ in 0..i {
                         t.step();
