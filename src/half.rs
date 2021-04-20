@@ -310,6 +310,9 @@ impl Half {
         assert!(self.edges[a].buddy == EMPTY);
         assert!(self.edges[b].buddy == EMPTY);
         assert!(self.edges[a].fixed == self.edges[b].fixed);
+        assert!(self.edges[a].src == self.edges[b].dst);
+        assert!(self.edges[a].dst == self.edges[b].src);
+
         self.edges[a].buddy = b;
         self.edges[b].buddy = a;
     }
