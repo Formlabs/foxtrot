@@ -7,10 +7,9 @@ use crate::{half, half::Half, hull::Hull, HullIndex};
 const TERMINAL_LOWER_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_LOWER_RIGHT: PointIndex = PointIndex { val: 1 };
 
-enum WalkMode {
-    Left(HullIndex),
-    Right(HullIndex),
-    Inside(EdgeIndex),
+enum Walk {
+    Outside(HullIndex),
+    Inside(EdgeIndex, HullIndex),
     Done(EdgeIndex),
 }
 
@@ -28,9 +27,6 @@ pub struct Triangulation {
     // the edges array
     pub hull: Hull,
     pub half: Half,
-
-    x_bounds: (f64, f64),
-    y_bounds: (f64, f64),
 }
 
 impl Triangulation {
@@ -96,7 +92,6 @@ impl Triangulation {
             ending_data: vec![],
 
             points: sorted_points, // moved out here
-            x_bounds, y_bounds,
         };
 
         let pa = TERMINAL_LOWER_LEFT;
@@ -166,118 +161,6 @@ impl Triangulation {
         while self.step() {}
     }
 
-    pub fn finalize_edges(&mut self) {
-        // Put a roof over the hull, to ensure that it's convex and all edges
-        // will walk completely inside of the triangulation.
-        let h = self.hull.right_hull(self.hull.start());
-        self.walk_fill_right(
-            PointIndex::new(self.points.len() - 2),
-            PointIndex::new(self.points.len() - 1),
-            h);
-        self.half.unlock(self.hull.edge(h));
-
-        // Now, let's add bonus points so that every edge that the triangulation
-        // may try to delete has a buddy.  This is basically injecting a diamond
-        // shape around the square of the bounding box
-        let dx = (self.x_bounds.1 - self.x_bounds.0) / 8.0;
-        let x_mid = (self.x_bounds.0 + self.x_bounds.1) / 2.0;
-        let dy = (self.y_bounds.1 - self.y_bounds.0) / 8.0;
-        let y_mid = (self.y_bounds.0 + self.y_bounds.1) / 2.0;
-        {
-            let e_lower = EdgeIndex::new(0);
-            let edge_lower = self.half.edge(e_lower);
-            let pt_lower = self.points.push((x_mid, self.y_bounds.0 - dy));
-            self.half.insert(edge_lower.dst, edge_lower.src, pt_lower,
-                             half::EMPTY, half::EMPTY, EdgeIndex::new(0));
-        }
-        {
-            let e_left = self.hull.edge(self.hull.start());
-            let edge_left = self.half.edge(e_left);
-            let pt_left = self.points.push((self.x_bounds.0 - dx, y_mid));
-            self.half.insert(edge_left.dst, edge_left.src, pt_left,
-                             half::EMPTY, half::EMPTY, e_left);
-        }
-        {
-            let e_top = self.hull.edge(h);
-            let edge_top = self.half.edge(e_top);
-            let pt_top = self.points.push((x_mid, self.y_bounds.1 + dy));
-            self.half.insert(edge_top.dst, edge_top.src, pt_top,
-                             half::EMPTY, half::EMPTY, e_top);
-        }
-        {
-            let e_right = self.hull.edge(self.hull.right_hull(h));
-            let edge_right = self.half.edge(e_right);
-            let pt_right = self.points.push((self.x_bounds.1 + dx, y_mid));
-            self.half.insert(edge_right.dst, edge_right.src, pt_right,
-                             half::EMPTY, half::EMPTY, e_right);
-        }
-
-        // Steal the PointVec of endings from &self, so we can call mutable
-        // functions later on inside the loop.  Don't worry, we'll give it back.
-        let mut endings = PointVec::new();
-        std::mem::swap(&mut endings, &mut self.endings);
-
-        for (pt, (start, end)) in endings.iter_mut().enumerate() {
-            let pt = PointIndex::new(pt);
-            for i in (*start..*end).rev() {
-                let e = self.half.edge_index(pt);
-                assert!(e != half::EMPTY);
-                let edge = self.half.edge(e);
-                assert!(edge.src == pt);
-                let r = self.finalize_fixed_edge(pt, self.ending_data[i], edge.next);
-                assert!(r);
-            }
-            *end = *start;
-        }
-        std::mem::swap(&mut endings, &mut self.endings);
-    }
-
-    /// Finalizes a fixed edge in a fully connected (convex) model
-    /// e is an edge opposite src; dst is the end of the fixed edge
-    pub fn finalize_fixed_edge(&mut self, src: PointIndex, dst: PointIndex, mut e: EdgeIndex) -> bool {
-        /*
-                     src
-                     / :^
-                    / :  \
-                   /  :   \
-                  /  :     \
-                 V   : e    \
-                a---:------->b
-                    :
-                   dst
-        */
-        // Find the edge which contains the src-dst line, by walking around
-        // the triangulation
-        loop {
-            let edge = self.half.edge(e);
-            let a = edge.src;
-            let b = edge.dst;
-
-            // Easy mode: the triangle is directly connected
-            if a == dst {
-                self.half.lock(edge.prev);
-                return true;
-            } else if b == dst {
-                self.half.lock(edge.next);
-                return true;
-            }
-
-            let oa = self.orient2d(src, a, dst);
-            let ob = self.orient2d(src, dst, b);
-            assert!(oa != 0.0);
-            assert!(ob != 0.0);
-            if oa > 0.0 && ob >= 0.0 {
-                return self.walk_fill_inside(src, dst, e);
-            } else {
-                // Keep walking arorund the triangle fan
-               let b = self.half.edge(edge.next).buddy;
-               assert!(b != half::EMPTY);
-               e = self.half.edge(b).next;
-               assert!(e != half::EMPTY);
-            }
-        }
-    }
-
     pub fn orient2d(&self, pa: PointIndex, pb: PointIndex, pc: PointIndex) -> f64 {
         orient2d(self.points[pa], self.points[pb], self.points[pc])
     }
@@ -288,7 +171,6 @@ impl Triangulation {
 
     pub fn step(&mut self) -> bool {
         if self.next == self.points.len() {
-            self.finalize_edges();
             return false;
         }
 
@@ -335,21 +217,11 @@ impl Triangulation {
 
         // Finally, we check whether this point terminates any edges that are
         // locked in the triangulation (the "constrainted" part of Constrained
-        // Delaunay Triangulation).  If this is an easy point (i.e. handled
-        // by handle_fixed_edge), then we swap it to the back of the
-        // list and reduce the number of edges associated with this point;
-        // otherwise, we'll deal with it later.
-        let (start, mut end) = self.endings[p];
-        let mut i = start;
-        while i != end {
-            if self.handle_fixed_edge(h_p, p, self.ending_data[i]) {
-                end -= 1;
-                self.ending_data.swap(i, end);
-            } else {
-                i += 1;
-            }
+        // Delaunay Triangulation).
+        let (start, end) = self.endings[p];
+        for i in start..end {
+            self.handle_fixed_edge(h_p, p, self.ending_data[i]);
         }
-        self.endings[p].1 = end;
 
         true
     }
@@ -450,7 +322,7 @@ impl Triangulation {
     /// inserting a fixed edge.  h is a HullIndex equivalent to the src point,
     /// and dst is the destination of the new fixed edge.
     fn find_hull_walk_mode(&self, h: HullIndex, src: PointIndex, dst: PointIndex)
-        -> WalkMode {
+        -> Walk {
         /*  We've just built a triangle that contains a fixed edge, and need
             to walk through the triangulation and implement that edge.
 
@@ -471,7 +343,7 @@ impl Triangulation {
                    dst
 
             This triangle may not exist!  For example, if the p->src edge
-            remains outside the hull on the left, then we start in Mode::Left
+            remains outside the hull on the left, then we start in Walk::Outside
         */
         let e_right = self.hull.edge(h);
         let h_left = self.hull.left_hull(h);
@@ -486,9 +358,9 @@ impl Triangulation {
         // If the fixed edge is directly attached to src, then we can declare
         // that we're done right away (and the caller will lock the edge)
         if dst == wedge_left {
-            return WalkMode::Done(e_left);
+            return Walk::Done(e_left);
         } else if dst == wedge_right {
-            return WalkMode::Done(e_right);
+            return Walk::Done(e_right);
         }
 
         // Otherwise, check the winding to see which side we're on.
@@ -502,9 +374,9 @@ impl Triangulation {
 
         // Easy cases: we're outside the wedge on one side or the other
         if o_left < 0.0 {
-            return WalkMode::Left(h_left);
+            return Walk::Outside(h_left);
         } else if o_right < 0.0 {
-            return WalkMode::Right(h);
+            return Walk::Outside(h);
         }
 
         // Walk the inside of the wedge until we find the
@@ -525,7 +397,7 @@ impl Triangulation {
                      V     |    \
                     ------>a------ (a == dst)
                 */
-                return WalkMode::Done(index_a_src);
+                return Walk::Done(index_a_src);
             }
 
             // Keep walking through the fan
@@ -551,7 +423,7 @@ impl Triangulation {
                 // We may exit either into another interior triangle or
                 // leave the triangulation and walk the hull, but we don't
                 // need to decide that right now.
-                return WalkMode::Inside(intersected_index);
+                return Walk::Inside(intersected_index, h);
             } else {
                 /*  Sorry, Mario; your src-dst line is in another triangle
 
@@ -577,8 +449,9 @@ impl Triangulation {
         }
     }
 
-    fn walk_fill_left(&mut self, src: PointIndex, dst: PointIndex, start: HullIndex) -> bool {
+    fn walk_fill_left(&mut self, src: PointIndex, dst: PointIndex, m: Walk) {
         let mut steps_below: Vec<HullIndex> = Vec::new();
+        /*
         let mut h = start;
         loop {
             /*
@@ -638,10 +511,11 @@ impl Triangulation {
 
         self.hull.update(h, new_edge);
         self.half.lock(new_edge);
-        true
+        */
     }
 
-    fn walk_fill_right(&mut self, src: PointIndex, dst: PointIndex, start: HullIndex) -> bool {
+    fn walk_fill_right(&mut self, src: PointIndex, dst: PointIndex, m: Walk) {
+        /*
         let mut steps_below: Vec<HullIndex> = Vec::new();
         let mut h = start;
         loop {
@@ -690,10 +564,11 @@ impl Triangulation {
 
         self.hull.update(start, new_edge);
         self.half.lock(new_edge);
-        true
+        */
     }
 
-    fn walk_fill_inside(&mut self, src: PointIndex, dst: PointIndex, mut e: EdgeIndex) -> bool {
+    /*
+    fn walk_fill_inside(&mut self, src: PointIndex, dst: PointIndex, mut e: EdgeIndex) {
         #[derive(Debug, Copy, Clone)]
         enum Step {
             Start,
@@ -791,7 +666,6 @@ impl Triangulation {
         let mut pts_left: Vec<(PointIndex, EdgeIndex)> = Vec::new();
         let mut pts_right: Vec<(PointIndex, EdgeIndex)> = Vec::new();
         let mut i = 0;
-        println!("{}", self.to_svg());
         while i < steps.len() {
             let (s, e) = steps[i].clone();
             match s {
@@ -888,117 +762,19 @@ impl Triangulation {
 
         true
     }
+    */
 
-    fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) -> bool {
+    fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) {
         match self.find_hull_walk_mode(h, src, dst) {
             // Easy mode: the fixed edge is directly connected to the new
             // point, so we lock it and return immediately.
-            WalkMode::Done(e) => {
-                self.half.lock(e);
-                true
-            },
-
-            // Otherwise, record the direction and continue
-            WalkMode::Left(h) => self.walk_fill_left(src, dst, h),
-            WalkMode::Right(h) => self.walk_fill_right(src, dst, h),
-            WalkMode::Inside(e) => self.walk_fill_inside(src, dst, e),
-        }
-    }
-
-    fn fill_monotone(&mut self, pts: &[(PointIndex, EdgeIndex)]) -> EdgeIndex {
-
-        /*  Based on "Triangulating Monotone Mountains",
-            http://www.ams.sunysb.edu/~jsbm/courses/345/13/triangulating-monotone-mountains.pdf
-
-            pts should be a left-to-right set of Y-monotone points, such that
-            the edge pts[0]->pts[pts.len() - 1] is above all points in the list.
-
-            0----------------------------end
-             \                          /
-            b0\      ^x                /
-               \    /  \b2            /
-                v  /b1  vx---------->x
-                 x/
-
-            Alternatively, this will also work on a right-to-left mountain
-
-                 x^         b1
-                /  \    /x<----------x
-               /    \  /b2            ^
-              /      xv                \b0
-             v                          \
-          end--------------------------->0
-
-            Each point is associated with a buddy edge, shown as b0... in the
-            sketches above.  This edge is used to link us into the half-edge
-            data structure.
-        */
-
-        // Build a tiny flat pseudo-linked list representing the contour
-        #[derive(Debug)]
-        struct Node {
-            prev: usize,
-            next: usize,
-            pt: PointIndex,
-            buddy: EdgeIndex,
-        }
-        let mut pts: Vec<Node> = pts.iter().enumerate()
-            .map(|(i, p)| {
-                // "Do you have your exit buddy?"
-                //  (Finding Nemo, 2003)
-                if i != pts.len() - 1 {
-                    assert!(p.1 != half::EMPTY);
-                }
-
-                // Build a node in the pseudo-linked list
-                Node {
-                    prev: if i == 0 { usize::MAX } else { i - 1 },
-                    next: if i == pts.len() - 1 { usize::MAX } else { i + 1 },
-                    pt: p.0,
-                    buddy: p.1,
-                }
-            }).collect();
-
-        let mut i = 1;
-        // Run until the last triangle is flattened out
-        while pts[0].next != pts.len() - 1 {
-            let prev = pts[i].prev;
-            let next = pts[i].next;
-            /*
-              prev
-                 \       next
-                  \      ^
-                   \    /
-                    \  /
-                     v/
-                     i
-
-                If this ear is strictly convex, then clip it!
-            */
-            if self.orient2d(pts[prev].pt, pts[i].pt, pts[next].pt) > 0.0 {
-                // Write a new triangle and record its inside edge as a new
-                // buddy for the earliest point in the ear, overwriting the
-                // previous buddy (which may have been an external edge)
-                let e = self.half.insert(
-                    pts[next].pt, pts[prev].pt, pts[i].pt,
-                    pts[prev].buddy, pts[i].buddy, half::EMPTY);
-                pts[prev].buddy = e;
-
-                // Remove point i out of the linked list
-                pts[prev].next = next;
-                pts[next].prev = prev;
-
-                // Backtrack, unless the previous point is the head of the
-                // list.  It's not guaranteed that we've unlocked another
-                // convex point, but this is innocuous, since if it's not
-                // convex, then we'll walk forward in the next iteration.
-                i = if prev != 0 { prev } else { next };
+            Walk::Done(e) => self.half.lock(e),
+            m => if self.points[dst].0 < self.points[src].0 {
+                self.walk_fill_left(src, dst, m)
             } else {
-                i = next;
-            }
+                self.walk_fill_right(src, dst, m)
+            },
         }
-        assert!(pts[0].buddy != half::EMPTY);
-        pts[0].buddy
     }
 
     fn legalize(&mut self, e_ab: EdgeIndex) {
