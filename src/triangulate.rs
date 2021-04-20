@@ -15,9 +15,9 @@ enum WalkMode {
 }
 
 pub struct Triangulation {
-    points: PointVec<Point>,    // Sorted in the constructor
-    remap: PointVec<usize>,     // self.points[i] = input[self.remap[i]]
-    next: PointIndex,           // Progress of the triangulation
+    pub points: PointVec<Point>,    // Sorted in the constructor
+    remap: PointVec<usize>,         // self.points[i] = input[self.remap[i]]
+    next: PointIndex,               // Progress of the triangulation
 
     // If a point p terminates fixed edges, then endings[p] will be a tuple
     // range into ending_data containing the starting points of those edges.
@@ -26,8 +26,8 @@ pub struct Triangulation {
 
     // This stores the start of an edge (as a pseudoangle) as an index into
     // the edges array
-    hull: Hull,
-    half: Half,
+    pub hull: Hull,
+    pub half: Half,
 
     x_bounds: (f64, f64),
     y_bounds: (f64, f64),
@@ -278,7 +278,7 @@ impl Triangulation {
         }
     }
 
-    fn orient2d(&self, pa: PointIndex, pb: PointIndex, pc: PointIndex) -> f64 {
+    pub fn orient2d(&self, pa: PointIndex, pb: PointIndex, pc: PointIndex) -> f64 {
         orient2d(self.points[pa], self.points[pb], self.points[pc])
     }
 

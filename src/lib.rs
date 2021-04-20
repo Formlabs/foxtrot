@@ -15,6 +15,7 @@ safe_index::new! {
     map: HullVec with iter: HullIter
 }
 
+pub mod contour;
 pub mod predicates;
 pub mod half;
 pub mod util;
