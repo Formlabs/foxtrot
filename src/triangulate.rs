@@ -706,9 +706,14 @@ impl Triangulation {
             // Easy mode: the fixed edge is directly connected to the new
             // point, so we lock it and return immediately.
             Walk::Done(e) => self.half.lock(e),
+
+            // Otherwise, walk either to the left or the right depending on
+            // the positions of src and dst.
             m => if self.points[dst].0 < self.points[src].0 {
+                eprintln!("Walking left");
                 self.walk_fill_left(src, dst, m)
             } else {
+                eprintln!("Walking right");
                 self.walk_fill_right(src, dst, m)
             },
         }
