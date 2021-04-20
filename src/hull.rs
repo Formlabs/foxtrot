@@ -159,6 +159,24 @@ impl Hull {
         self.data[h].edge
     }
 
+    /// Searches left along the hull for a hull point with the associated edge
+    pub fn search_left(&self, mut h: HullIndex, e: EdgeIndex) -> HullIndex {
+        while self.edge(h) != e {
+            h = self.left_hull(h);
+            assert!(h != EMPTY);
+        }
+        h
+    }
+
+    /// Searches right along the hull for a hull point with the associated edge
+    pub fn search_right(&self, mut h: HullIndex, e: EdgeIndex) -> HullIndex {
+        while self.edge(h) != e {
+            h = self.right_hull(h);
+            assert!(h != EMPTY);
+        }
+        h
+    }
+
     /// Insert a new Point-Edge pair into the hull, using a hint to save time
     /// searching for the new point's position.
     pub fn insert(&mut self, left: HullIndex, p: f64, e: EdgeIndex) -> HullIndex {
