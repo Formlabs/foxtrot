@@ -442,42 +442,55 @@ impl Triangulation {
 
     fn walk_fill_left(&mut self, src: PointIndex, dst: PointIndex, mut m: Walk) {
         let mut steps_above = Contour::new_pos(src, ContourData::None);
-        let mut steps_below = Contour::new_neg(src, match m {
-            /*
-                             /src
-                           / /  ^
-                         /  /    \
-                       /   /h     \
-                      /   /        \
-                    /    V          \
-                  /     ------------>\
-                dst
-             */
-            Walk::Outside(h) => ContourData::Buddy(self.hull.edge(h)),
+        let mut steps_below = Contour::new_neg(src, ContourData::None);
 
+        // If we start inside a triangle, then escape it right away, because
+        // Walk::Inside typically means means we've _entered_ through edge
+        // `e`.
+        if let Walk::Inside(e_ba, h) = m {
             /*
                          src
                          / :^
                         / :  \
-                      h/  :   \hr
+                     hl/  :   \h
                       /  :     \
                      V   :  e   \
                     b---:------->a
                         :
                        dst
              */
-            Walk::Inside(e, h) => {
-                let e_ac = self.half.edge(e).next;
-                let edge_ac = self.half.edge(e_ac);
+            let edge_ba = self.half.edge(e_ba);
+            let e_ac = edge_ba.next;
+            let e_cb = edge_ba.prev;
+            let edge_ac = self.half.edge(e_ac);
+            let edge_cb = self.half.edge(e_cb);
+
+            // Delete this triangle from the triangulation; it will be
+            // reconstructed later in a more perfect form.
+            self.half.erase(e_ba);
+
+            steps_above.push(self, edge_ba.src,
+                if edge_cb.buddy != half::EMPTY {
+                    ContourData::Buddy(edge_cb.buddy)
+                } else {
+                    let hl = self.hull.left_hull(h);
+                    ContourData::Hull(hl)
+                });
+            steps_below.push(self, edge_ba.dst,
                 if edge_ac.buddy != half::EMPTY {
                     ContourData::Buddy(edge_ac.buddy)
                 } else {
-                    let hr = self.hull.right_hull(h);
-                    ContourData::Hull(hr)
-                }
-            },
-            _ => panic!("Invalid walk mode"),
-        });
+                    ContourData::Hull(h)
+                });
+
+            // Exit this triangle, either onto the hull or continuing inside
+            // the triangulation.
+            if edge_ba.buddy == half::EMPTY {
+                m = Walk::Outside(self.hull.search_left(h, e_ba));
+            } else {
+                m = Walk::Inside(edge_ba.buddy, h);
+            }
+        }
 
         loop {
             match m {
@@ -504,11 +517,29 @@ impl Triangulation {
                     // last point pushed to the contour should terminate the
                     // hull.
                     if edge.dst == dst {
-                        steps_below.push(self, dst,
-                                               ContourData::Hull(h));
-                        // TODO: also push steps_above, which may or may not
-                        // create a triangle
-                        // TODO fix this new edge
+                        let e_src_dst = steps_below.push(
+                                self, dst, ContourData::Buddy(edge_index))
+                            .expect("Failed to push last edge");
+
+                        // This should have terminated the lower contour
+                        assert!(self.half.edge(e_src_dst).src == src);
+                        assert!(self.half.edge(e_src_dst).dst == dst);
+
+                        // If we entered then exited the contour, then we'll
+                        // triangulate an edge when pushing to steps_above;
+                        // otherwise, we've only got two points in steps_above,
+                        // and our newest edge is on the hull.
+                        if let Some(e_dst_src) = steps_above.push(
+                            self, dst, ContourData::Hull(h))
+                        {
+                            assert!(self.half.edge(e_dst_src).src == dst);
+                            assert!(self.half.edge(e_dst_src).dst == src);
+                            self.half.link(e_src_dst, e_dst_src);
+                            self.half.lock(e_src_dst);
+                        } else {
+                            self.hull.update(h, e_src_dst);
+                        }
+
                         break;
                     }
                     assert!(src != edge.dst);
@@ -518,12 +549,15 @@ impl Triangulation {
                         steps_above.push(self, edge.dst,
                                          ContourData::Hull(h));
                         m = Walk::Inside(edge_index, h);
+                        // We leave this hull intact, because it will be updated
+                        // once the triangulation reaches it.
                     } else {
                         // If we're still outside the triangulation, then keep
                         // walking along the hull
                         steps_below.push(self, edge.dst,
-                                               ContourData::Buddy(edge_index));
+                                         ContourData::Buddy(edge_index));
                         m = Walk::Outside(self.hull.left_hull(h));
+                        self.hull.erase(h);
                     }
                 }
                 Walk::Inside(e_ab, h) => {
@@ -596,7 +630,10 @@ impl Triangulation {
                         // Exit the triangle, either onto the hull or staying
                         // in the triangulation
                         m = if edge_bc.buddy == half::EMPTY {
-                            Walk::Outside(self.hull.search_left(h, e_bc))
+                            let h = self.hull.search_left(h, e_bc);
+                            let hl = self.hull.left_hull(h);
+                            self.hull.erase(h);
+                            Walk::Outside(hl)
                         } else {
                             Walk::Inside(edge_bc.buddy, h)
                         };
@@ -621,8 +658,9 @@ impl Triangulation {
                                 // Notice that this modifies h (which is stored
                                 // into m below), so that we don't walk as far
                                 // next time.
-                                h = self.hull.search_left(h, e_bc);
-                                ContourData::Hull(h)
+                                let h_c = self.hull.search_left(h, e_bc);
+                                h = self.hull.left_hull(h_c);
+                                ContourData::Hull(h_c)
                             } else {
                                 ContourData::Buddy(edge_bc.buddy)
                             });
@@ -700,10 +738,8 @@ impl Triangulation {
             // Otherwise, walk either to the left or the right depending on
             // the positions of src and dst.
             m => if self.points[dst].0 < self.points[src].0 {
-                eprintln!("Walking left");
                 self.walk_fill_left(src, dst, m)
             } else {
-                eprintln!("Walking right");
                 self.walk_fill_right(src, dst, m)
             },
         }
@@ -768,6 +804,11 @@ impl Triangulation {
                 (self.remap[a], self.remap[b], self.remap[c]))
     }
 
+    pub fn save_svg(&self, filename: &str) {
+        std::fs::write(filename, self.to_svg())
+            .expect("Failed to write file");
+    }
+
     pub fn to_svg(&self) -> String {
         const SCALE: f64 = 250.0;
         let (x_bounds, y_bounds) = Self::bbox(&self.points);
@@ -784,6 +825,25 @@ impl Triangulation {
      style="fill:rgb(0,0,0)" />"#,
      dx(x_bounds.1) + line_width,
      dy(y_bounds.0) + line_width));
+
+        // Draw endings in green (they will be overdrawn in white if they're
+        // included in the triangulation).
+        for (p, (start, end)) in self.endings.iter().enumerate() {
+            for i in *start..*end {
+                let dst = PointIndex::new(p);
+                let src = self.ending_data[i];
+                 out.push_str(&format!(
+                    r#"
+        <line x1="{}" y1="{}" x2="{}" y2="{}"
+         style="stroke:rgb(0,255,0)"
+         stroke-width="{}" stroke-linecap="round" />"#,
+                    dx(self.points[src].0),
+                    dy(self.points[src].1),
+                    dx(self.points[dst].0),
+                    dy(self.points[dst].1),
+                    line_width));
+            }
+        }
 
          // Push every edge into the SVG
          for (pa, pb, fixed) in self.half.iter_edges() {
@@ -825,23 +885,6 @@ impl Triangulation {
                 dx(p.0), dy(p.1), line_width));
         }
 
-        // Draw remaining endings in green
-        for (p, (start, end)) in self.endings.iter().enumerate() {
-            for i in *start..*end {
-                let dst = PointIndex::new(p);
-                let src = self.ending_data[i];
-                 out.push_str(&format!(
-                    r#"
-        <line x1="{}" y1="{}" x2="{}" y2="{}"
-         style="stroke:rgb(0,255,0)"
-         stroke-width="{}" stroke-linecap="round" />"#,
-                    dx(self.points[src].0),
-                    dy(self.points[src].1),
-                    dx(self.points[dst].0),
-                    dy(self.points[dst].1),
-                    line_width));
-            }
-        }
 
         out.push_str("\n</svg>");
         out
