@@ -326,7 +326,7 @@ impl Triangulation {
                      src
                      / :^
                     / :  \
-                   /  :   \
+                   /  :   \h
                   /  :     \
                  V   :      \
                 b---:------->a
