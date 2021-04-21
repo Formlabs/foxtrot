@@ -631,14 +631,14 @@ impl Triangulation {
                     if o_psc > 0.0 {
                         // Store the c-a edge as our buddy, and exit via b-c
                         // (unless c-a is the 0th edge, which has no buddy)
-                        if e_ca != EdgeIndex::new(0) {
-                            assert!(edge_ca.buddy != half::EMPTY);
-                            steps_below.push(self, c,
-                                             ContourData::Buddy(edge_ca.buddy));
-                        } else {
-                            steps_below.push(self, c, ContourData::None);
-                        }
-
+                        steps_below.push(self, c,
+                            if e_ca == EdgeIndex::new(0) {
+                                ContourData::None
+                            } else if edge_ca.buddy == half::EMPTY {
+                                ContourData::Hull(self.hull.search_right(h, e_ca))
+                            } else {
+                                ContourData::Buddy(edge_ca.buddy)
+                            });
 
                         // Exit the triangle, either onto the hull or staying
                         // in the triangulation
@@ -671,9 +671,8 @@ impl Triangulation {
                                 // Notice that this modifies h (which is stored
                                 // into m below), so that we don't walk as far
                                 // next time.
-                                let h_c = self.hull.search_left(h, e_bc);
-                                h = self.hull.left_hull(h_c);
-                                ContourData::Hull(h_c)
+                                h = self.hull.search_left(h, e_bc);
+                                ContourData::Hull(h)
                             } else {
                                 ContourData::Buddy(edge_bc.buddy)
                             });
