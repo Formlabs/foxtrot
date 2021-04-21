@@ -624,9 +624,6 @@ impl Triangulation {
                         self.half.link(e_src_dst, e_dst_src);
                         self.half.lock(e_src_dst); // locks both sides
 
-                        self.save_svg(&format!("out{}.svg", i));
-                        i += 1;
-
                         break;
                     }
 
