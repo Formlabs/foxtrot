@@ -46,7 +46,7 @@ fn test_lock(seed: Option<u64>) {
     let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
 
     let mut pts = Vec::new();
-    for _ in 0..32 {
+    for _ in 0..5 {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
     let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
@@ -66,17 +66,20 @@ fn fuzz_lock(seed: Option<u64>) {
         eprintln!("Seed: {}", seed);
 
         let mut pts = Vec::new();
-        for _ in 0..32 {
+        for _ in 0..6 {
             pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
         }
-        let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
+
+        // Generator to build the triangulation
+        let gen = || Triangulation::new_with_edges(&pts, &[(0, 1)]);
+        let mut t = gen();
         let result = std::panic::catch_unwind(move || {
             t.run();
         });
         if result.is_err() {
             let mut safe_steps = 0;
             for i in 0..pts.len() {
-                let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
+                let mut t = gen();
                 let result = std::panic::catch_unwind(move || {
                     for _ in 0..i {
                         t.step();
@@ -89,8 +92,7 @@ fn fuzz_lock(seed: Option<u64>) {
                 }
             }
 
-            let mut t = Triangulation::new_with_edges(&pts, &[(0, 1), (1, 2), (2, 0)]);
-            eprintln!("\n\n");
+            let mut t = gen();
             for _ in 0..safe_steps {
                 t.step();
             }
@@ -129,6 +131,6 @@ fn main() {
     //benchmark(seed, 1_000_000);
     //fuzz(seed, 5);
     //svg(seed, 64);
-    test_lock(seed);
-    //fuzz_lock(seed);
+    //test_lock(seed);
+    fuzz_lock(seed);
 }
