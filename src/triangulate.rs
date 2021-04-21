@@ -70,16 +70,6 @@ impl Triangulation {
             map_forward[p.0] = map_reverse.push(p.0);
         }
 
-        // If we have fixed edges, then add *another* two phantom points to
-        // the top of the model, so that we can fully close it off and
-        // guarantee that it's convex.
-        if edges.clone().into_iter().next().is_some() {
-            sorted_points.push((x_bounds.0 + dx / 16.0, y_bounds.1));
-            sorted_points.push((x_bounds.1 - dx / 16.0, y_bounds.1));
-            map_reverse.push(usize::MAX); // Dummy value
-            map_reverse.push(usize::MAX);
-        }
-
         ////////////////////////////////////////////////////////////////////////
         let mut out = Triangulation {
             hull: Hull::new(x_bounds.0, x_bounds.1),
