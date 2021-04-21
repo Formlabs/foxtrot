@@ -598,9 +598,6 @@ impl Triangulation {
                                 ContourData::Buddy(edge_bc.buddy)
                             }).expect("Failed to create fixed edge");
 
-                        self.save_svg(&format!("out{}.svg", i));
-                        i += 1;
-
                         // This better have terminated the triangulation of
                         // the upper contour with a dst-src edge
                         assert!(self.half.edge(e_dst_src).dst == src);
