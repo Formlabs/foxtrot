@@ -680,8 +680,14 @@ impl Triangulation {
                                 ContourData::Buddy(edge_bc.buddy)
                             });
 
-                        assert!(edge_ca.buddy != half::EMPTY);
-                        m = Walk::Inside(edge_ca.buddy, h);
+                        m = if edge_ca.buddy == half::EMPTY {
+                            let h = self.hull.search_left(h, e_ca);
+                            let hl = self.hull.left_hull(h);
+                            self.hull.erase(h);
+                            Walk::Outside(hl)
+                        } else {
+                            Walk::Inside(edge_ca.buddy, h)
+                        };
                     } else {
                         assert!(false);
                     }
