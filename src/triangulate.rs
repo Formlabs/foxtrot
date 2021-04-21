@@ -624,15 +624,24 @@ impl Triangulation {
                         self.half.link(e_src_dst, e_dst_src);
                         self.half.lock(e_src_dst); // locks both sides
 
+                        self.save_svg(&format!("out{}.svg", i));
+                        i += 1;
+
                         break;
                     }
 
                     let o_psc = self.orient2d(src, dst, c);
                     if o_psc > 0.0 {
                         // Store the c-a edge as our buddy, and exit via b-c
-                        assert!(edge_ca.buddy != half::EMPTY);
-                        steps_below.push(self, c,
-                                         ContourData::Buddy(edge_ca.buddy));
+                        // (unless c-a is the 0th edge, which has no buddy)
+                        if e_ca != EdgeIndex::new(0) {
+                            assert!(edge_ca.buddy != half::EMPTY);
+                            steps_below.push(self, c,
+                                             ContourData::Buddy(edge_ca.buddy));
+                        } else {
+                            steps_below.push(self, c, ContourData::None);
+                        }
+
 
                         // Exit the triangle, either onto the hull or staying
                         // in the triangulation
