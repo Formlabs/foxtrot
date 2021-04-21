@@ -120,8 +120,12 @@ impl Contour {
     /// Returns the new edge and retreats self.index on success.
     fn try_clip(&mut self, t: &mut Triangulation) -> Option<EdgeIndex> {
         let c = self.pts[self.index];
-        assert!(c.prev != EMPTY);
-        if c.next == EMPTY {
+        // If we're at the start of the list, we can't triangulate, and
+        // the caller will shuffle self.index forward.  We're not allowed
+        // to be at the end of the list, since this must be called right
+        // after push() extends the list without moving self.index
+        assert!(c.next != EMPTY);
+        if c.prev == EMPTY {
             return None;
         }
 
