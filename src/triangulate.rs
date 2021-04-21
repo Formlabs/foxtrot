@@ -486,7 +486,10 @@ impl Triangulation {
             // Exit this triangle, either onto the hull or continuing inside
             // the triangulation.
             if edge_ba.buddy == half::EMPTY {
-                m = Walk::Outside(self.hull.search_left(h, e_ba));
+                let h = self.hull.search_left(h, e_ba);
+                let hl = self.hull.left_hull(h);
+                self.hull.erase(h);
+                m = Walk::Outside(hl);
             } else {
                 m = Walk::Inside(edge_ba.buddy, h);
             }
