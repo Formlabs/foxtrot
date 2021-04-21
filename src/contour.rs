@@ -103,6 +103,7 @@ impl Contour {
         let i = self.pts.push(Node {
             point, data, next: EMPTY, prev: self.end
         });
+        assert!(self.pts[self.end].next == EMPTY);
         self.pts[self.end].next = i;
         self.end = i;
 
