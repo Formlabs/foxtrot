@@ -306,6 +306,16 @@ impl Half {
         self.check();
     }
 
+    /// Links a new edge in the triangulation, copying the value of fixed
+    /// from the old edge which is its buddy.  This differs from link(), which
+    /// checks that the fixed-ness matches.
+    pub fn link_new(&mut self, old: EdgeIndex, new: EdgeIndex) {
+        self.edges[new].fixed = self.edges[old].fixed;
+        self.link(old, new)
+    }
+
+    /// Sets a pair of edges as each others buddies.  They must have matching
+    /// src/dst and the same value for fixed.
     pub fn link(&mut self, a: EdgeIndex, b: EdgeIndex) {
         assert!(self.edges[a].buddy == EMPTY);
         assert!(self.edges[b].buddy == EMPTY);

@@ -37,6 +37,9 @@ fn svg(seed: Option<u64>, n: usize) {
 }
 
 #[allow(dead_code)]
+const FUZZ_COUNT: usize = 32;
+const FUZZ_EDGES: [(usize, usize); 3] = [(0, 1), (1, 2), (2, 0)];
+
 fn test_lock(seed: Option<u64>) {
     let seed = seed.unwrap_or_else(|| {
         rand::thread_rng().gen()
@@ -46,10 +49,10 @@ fn test_lock(seed: Option<u64>) {
     let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
 
     let mut pts = Vec::new();
-    for _ in 0..5 {
+    for _ in 0..FUZZ_COUNT {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
-    let mut t = Triangulation::new_with_edges(&pts, &[(0, 1)]);
+    let mut t = Triangulation::new_with_edges(&pts, &FUZZ_EDGES);
     t.run();
     println!("{}", t.to_svg());
 }
@@ -66,12 +69,12 @@ fn fuzz_lock(seed: Option<u64>) {
         eprintln!("Seed: {}", seed);
 
         let mut pts = Vec::new();
-        for _ in 0..6 {
+        for _ in 0..FUZZ_COUNT {
             pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
         }
 
         // Generator to build the triangulation
-        let gen = || Triangulation::new_with_edges(&pts, &[(0, 1)]);
+        let gen = || Triangulation::new_with_edges(&pts, &FUZZ_EDGES);
         let mut t = gen();
         let result = std::panic::catch_unwind(move || {
             t.run();
@@ -131,6 +134,6 @@ fn main() {
     //benchmark(seed, 1_000_000);
     //fuzz(seed, 5);
     //svg(seed, 64);
-    //test_lock(seed);
-    fuzz_lock(seed);
+    test_lock(seed);
+    //fuzz_lock(seed);
 }

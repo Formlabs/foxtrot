@@ -162,12 +162,12 @@ impl Contour {
             match a.data {
                 ContourData::None => (),
                 ContourData::Hull(h) => t.hull.update(h, e_ca),
-                ContourData::Buddy(b) => t.half.link(b, e_ca),
+                ContourData::Buddy(b) => t.half.link_new(b, e_ca),
             };
             match c.data {
                 ContourData::None => (),
                 ContourData::Hull(h) => t.hull.update(h, e_bc),
-                ContourData::Buddy(b) => t.half.link(b, e_bc),
+                ContourData::Buddy(b) => t.half.link_new(b, e_bc),
             };
 
             e_ab
@@ -206,15 +206,17 @@ impl Contour {
             match a.data {
                 ContourData::None => (),
                 ContourData::Hull(h) => t.hull.update(h, e_ac),
-                ContourData::Buddy(b) => t.half.link(b, e_ac),
+                ContourData::Buddy(b) => t.half.link_new(b, e_ac),
             };
             match c.data {
                 ContourData::None => (),
                 ContourData::Hull(h) => t.hull.update(h, e_cb),
-                ContourData::Buddy(b) => t.half.link(b, e_cb),
+                ContourData::Buddy(b) => t.half.link_new(b, e_cb),
             };
             e_ba
         };
+
+        // TODO: legalize the new edge unless it's terminal
 
         // Stitch the index out of the list
         self.pts[self.index] = Node {
