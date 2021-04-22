@@ -187,6 +187,9 @@ impl Contour {
                 e_ba is a new edge inserted here
              */
             let (a, b) = (self.pts[c.next], self.pts[c.prev]);
+            assert!(a.point != b.point);
+            assert!(a.point != c.point);
+            assert!(b.point != c.point);
 
             // If the ear isn't strictly convex, then return immediately
             if t.orient2d(a.point, c.point, b.point) <= 0.0 {

@@ -23,3 +23,4 @@ pub mod triangulate;
 pub mod hull;
 
 const CHECK_INVARIANTS: bool = true;
+const SAVE_DEBUG_SVGS: bool = false;

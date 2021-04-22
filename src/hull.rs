@@ -1,4 +1,4 @@
-use crate::{HullVec, HullIndex, EdgeIndex, half, CHECK_INVARIANTS};
+use crate::{PointVec, PointIndex, HullVec, HullIndex, EdgeIndex, half, CHECK_INVARIANTS};
 
 const N: usize = 1 << 10;
 const EMPTY: HullIndex = HullIndex { val: std::usize::MAX };
@@ -22,27 +22,32 @@ struct Node {
 /// the highest X value that is below P.  When projecting P towards the
 /// sweepline, it will intersect the edge beginning at Q; this edge is the one
 /// which should be split.
+///
+/// In addition, the Hull stores a random-access map from PointIndex to
+/// HullIndex (if present), for fast lookups without hash traversal.
 #[derive(Debug)]
 pub struct Hull {
     buckets: [HullIndex; N],
     data: HullVec<Node>,
+    points: PointVec<HullIndex>,
 
     xmin: f64,
     dx: f64,
 }
 
 impl Hull {
-    pub fn new(xmin: f64, xmax: f64) -> Hull {
+    pub fn new(num_points: usize, xmin: f64, xmax: f64) -> Hull {
         Hull {
             data: HullVec::new(),
             buckets: [EMPTY; N],
+            points: PointVec { vec: vec![EMPTY; num_points] },
             dx: xmax - xmin,
             xmin,
         }
     }
 
     // Inserts the first point, along with its associated edge
-    pub fn insert_lower_edge(&mut self, edge: EdgeIndex) -> HullIndex {
+    pub fn insert_lower_edge(&mut self, p: PointIndex, edge: EdgeIndex) -> HullIndex {
         self.buckets[0] = self.data.push( Node {
             pos_norm: 0.0,
             edge,
@@ -55,8 +60,10 @@ impl Hull {
             left: HullIndex::new(0),
             right: EMPTY,
         });
+        self.points[p] = self.buckets[0];
 
         self.check();
+
         self.buckets[0]
     }
 
@@ -160,30 +167,19 @@ impl Hull {
     }
 
     /// Searches left along the hull for a hull point with the associated edge
-    pub fn search_left(&self, mut h: HullIndex, e: EdgeIndex) -> HullIndex {
-        while self.edge(h) != e {
-            h = self.left_hull(h);
-            assert!(h != EMPTY);
-        }
-        h
-    }
-
-    /// Searches right along the hull for a hull point with the associated edge
-    pub fn search_right(&self, mut h: HullIndex, e: EdgeIndex) -> HullIndex {
-        while self.edge(h) != e {
-            h = self.right_hull(h);
-            assert!(h != EMPTY);
-        }
+    pub fn index_of(&self, p: PointIndex) -> HullIndex {
+        let h = self.points[p];
+        assert!(h != EMPTY);
+        assert!(self.data[h].left != EMPTY || self.data[h].right != EMPTY);
         h
     }
 
     /// Insert a new Point-Edge pair into the hull, using a hint to save time
     /// searching for the new point's position.
-    pub fn insert(&mut self, left: HullIndex, p: f64, e: EdgeIndex) -> HullIndex {
-        let p = self.normalize_pos(p);
-        let b = self.bucket(p);
+    pub fn insert(&mut self, left: HullIndex, p: f64, point: PointIndex, e: EdgeIndex) -> HullIndex {
         let right = self.right_hull(left);
 
+        let p = self.normalize_pos(p);
         let h = self.data.push(Node{
             pos_norm: p,
             edge: e,
@@ -192,6 +188,7 @@ impl Hull {
 
         // If the target bucket is empty, or the given point is below the first
         // item in the target bucket, then it becomes the bucket's head
+        let b = self.bucket(p);
         if self.buckets[b] == EMPTY || (self.buckets[b] == right &&
             p < self.data[right].pos_norm)
         {
@@ -201,6 +198,8 @@ impl Hull {
         // Stitch ourselves into the linked list
         self.data[right].left = h;
         self.data[left].right = h;
+
+        self.points[point] = h;
 
         self.check();
 
@@ -230,6 +229,8 @@ impl Hull {
                 self.buckets[b] = EMPTY;
             }
         }
+
+        // TODO: reuse this slot
 
         self.check();
     }
@@ -274,8 +275,7 @@ impl Hull {
     fn bucket(&self, f: f64) -> usize {
         assert!(f >= 0.0);
         assert!(f <= 1.0);
-        (f * (self.buckets.len() as f64 - 1.0))
-            .round() as usize
+        (f * (self.buckets.len() as f64 - 1.0)).round() as usize
     }
 
     pub fn bucket_h(&self, h: HullIndex) -> usize {

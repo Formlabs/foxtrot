@@ -3,14 +3,14 @@ use itertools::Itertools;
 use crate::predicates::{acute, orient2d, in_circle};
 use crate::{Point, PointIndex, PointVec, EdgeIndex};
 use crate::contour::{Contour, ContourData};
-use crate::{half, half::Half, hull::Hull, HullIndex};
+use crate::{half, half::Half, hull::Hull, HullIndex, SAVE_DEBUG_SVGS};
 
 const TERMINAL_LOWER_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_LOWER_RIGHT: PointIndex = PointIndex { val: 1 };
 
 enum Walk {
     Outside(HullIndex),
-    Inside(EdgeIndex, HullIndex),
+    Inside(EdgeIndex),
     Done(EdgeIndex),
 }
 
@@ -28,6 +28,8 @@ pub struct Triangulation {
     // the edges array
     pub hull: Hull,
     pub half: Half,
+
+    debug_index: usize, // auto-incrementing index of saved SVGs
 }
 
 impl Triangulation {
@@ -72,7 +74,7 @@ impl Triangulation {
 
         ////////////////////////////////////////////////////////////////////////
         let mut out = Triangulation {
-            hull: Hull::new(x_bounds.0, x_bounds.1),
+            hull: Hull::new(sorted_points.len(), x_bounds.0, x_bounds.1),
             half: Half::new(sorted_points.len()),
 
             remap: map_reverse,
@@ -83,6 +85,7 @@ impl Triangulation {
             ending_data: vec![],
 
             points: sorted_points, // moved out here
+            debug_index: 0,
         };
 
         let pa = TERMINAL_LOWER_LEFT;
@@ -95,8 +98,8 @@ impl Triangulation {
         let e_bc = out.half.next(e_ab);
         let e_ca = out.half.prev(e_ab);
 
-        let h_lower = out.hull.insert_lower_edge(e_ca);
-        out.hull.insert(h_lower, out.points[pc].0, e_bc);
+        let h_lower = out.hull.insert_lower_edge(pa, e_ca);
+        out.hull.insert(h_lower, out.points[pc].0, pc, e_bc);
 
         ////////////////////////////////////////////////////////////////////////
         // Iterate over edges, counting which points have a termination
@@ -198,7 +201,7 @@ impl Triangulation {
 
         // Insert the new edge into the hull, using the previous HullIndex
         // as a hint to avoid searching for its position.
-        let h_p = self.hull.insert(h_ab, self.points[p].0, self.half.next(f));
+        let h_p = self.hull.insert(h_ab, self.points[p].0, p, self.half.next(f));
 
         self.legalize(f);
 
@@ -414,7 +417,7 @@ impl Triangulation {
                 // We may exit either into another interior triangle or
                 // leave the triangulation and walk the hull, but we don't
                 // need to decide that right now.
-                return Walk::Inside(intersected_index, h);
+                return Walk::Inside(intersected_index);
             } else {
                 /*  Sorry, Mario; your src-dst line is in another triangle
 
@@ -447,12 +450,13 @@ impl Triangulation {
         // If we start inside a triangle, then escape it right away, because
         // Walk::Inside typically means means we've _entered_ through edge
         // `e`.
-        if let Walk::Inside(e_ba, h) = m {
+        self.save_debug_svg();
+        if let Walk::Inside(e_ba) = m {
             /*
                          src
                          / :^
                         / :  \
-                     hl/  :   \h
+                     hl/  :   \hr
                       /  :     \
                      V   :  e   \
                     b---:------->a
@@ -473,29 +477,35 @@ impl Triangulation {
                 if edge_cb.buddy != half::EMPTY {
                     ContourData::Buddy(edge_cb.buddy)
                 } else {
-                    let hl = self.hull.left_hull(h);
+                    let hl = self.hull.index_of(edge_cb.dst);
+                    assert!(self.hull.edge(hl) == e_cb);
                     ContourData::Hull(hl)
                 });
             steps_below.push(self, edge_ba.dst,
                 if edge_ac.buddy != half::EMPTY {
                     ContourData::Buddy(edge_ac.buddy)
                 } else {
-                    ContourData::Hull(h)
+                    let hr = self.hull.index_of(edge_ac.dst);
+                    assert!(self.hull.edge(hr) == e_ac);
+                    ContourData::Hull(hr)
                 });
 
             // Exit this triangle, either onto the hull or continuing inside
             // the triangulation.
             if edge_ba.buddy == half::EMPTY {
-                let h = self.hull.search_left(h, e_ba);
+                let h = self.hull.index_of(edge_ba.dst);
+                assert!(self.hull.edge(h) == e_ba);
                 let hl = self.hull.left_hull(h);
                 self.hull.erase(h);
                 m = Walk::Outside(hl);
             } else {
-                m = Walk::Inside(edge_ba.buddy, h);
+                m = Walk::Inside(edge_ba.buddy);
             }
         }
 
+
         loop {
+            self.save_debug_svg();
             match m {
                 Walk::Outside(h) => {
                     /*
@@ -549,9 +559,8 @@ impl Triangulation {
 
                     // If we're intersecting this edge, then things get tricky
                     if self.orient2d(src, dst, edge.dst) <= 0.0 {
-                        steps_above.push(self, edge.dst,
-                                         ContourData::Hull(h));
-                        m = Walk::Inside(edge_index, h);
+                        steps_above.push(self, edge.dst, ContourData::Hull(h));
+                        m = Walk::Inside(edge_index);
                         // We leave this hull intact, because it will be updated
                         // once the triangulation reaches it.
                     } else {
@@ -563,7 +572,7 @@ impl Triangulation {
                         self.hull.erase(h);
                     }
                 }
-                Walk::Inside(e_ab, h) => {
+                Walk::Inside(e_ab) => {
                         /*            src
                                      :
                                b<--:-------a
@@ -574,8 +583,6 @@ impl Triangulation {
                               dst
                          */
                     let edge_ab = self.half.edge(e_ab);
-                    let a = edge_ab.src;
-                    let b = edge_ab.dst;
                     let e_bc = edge_ab.next;
                     let e_ca = edge_ab.prev;
                     let edge_bc = self.half.edge(e_bc);
@@ -589,14 +596,17 @@ impl Triangulation {
                     // we stored them all above.
                     self.half.erase(e_ab);
 
+                    self.save_debug_svg();
+
                     // Handle the termination case, if c is the destination
                     if c == dst {
                         // The left (above) contour is either on the hull
                         // (if no buddy is present) or inside the triangulation
                         let e_dst_src = steps_above.push(self, c,
                             if edge_bc.buddy == half::EMPTY {
-                                ContourData::Hull(
-                                    self.hull.search_left(h, e_bc))
+                                let h = self.hull.index_of(edge_bc.dst);
+                                assert!(self.hull.edge(h) == e_bc);
+                                ContourData::Hull(h)
                             } else {
                                 ContourData::Buddy(edge_bc.buddy)
                             }).expect("Failed to create fixed edge");
@@ -606,18 +616,23 @@ impl Triangulation {
                         assert!(self.half.edge(e_dst_src).dst == src);
                         assert!(self.half.edge(e_dst_src).src == dst);
 
+                        self.save_debug_svg();
+
                         // The other contour will finish up with the other
                         // half of the fixed edge as its buddy.  This edge
                         // could also be on the hull, so we do the same check
                         // as above.
                         let e_src_dst = steps_below.push(self, c,
                             if edge_ca.buddy == half::EMPTY {
-                                ContourData::Hull(
-                                    self.hull.search_left(h, e_ca))
+                                let h = self.hull.index_of(edge_ca.dst);
+                                assert!(self.hull.edge(h) == e_ca);
+                                ContourData::Hull(h)
                             } else {
                                 ContourData::Buddy(edge_ca.buddy)
                             })
                             .expect("Failed to create second fixed edge");
+
+                        self.save_debug_svg();
 
                         // Similarly, this better have terminated the
                         // triangulation of the lower contour.
@@ -638,7 +653,9 @@ impl Triangulation {
                             if e_ca == EdgeIndex::new(0) {
                                 ContourData::None
                             } else if edge_ca.buddy == half::EMPTY {
-                                ContourData::Hull(self.hull.search_right(h, e_ca))
+                                let h = self.hull.index_of(edge_ca.dst);
+                                assert!(self.hull.edge(h) == e_ca);
+                                ContourData::Hull(h)
                             } else {
                                 ContourData::Buddy(edge_ca.buddy)
                             });
@@ -646,12 +663,13 @@ impl Triangulation {
                         // Exit the triangle, either onto the hull or staying
                         // in the triangulation
                         m = if edge_bc.buddy == half::EMPTY {
-                            let h = self.hull.search_left(h, e_bc);
+                            let h = self.hull.index_of(edge_bc.dst);
+                            assert!(self.hull.edge(h) == e_bc);
                             let hl = self.hull.left_hull(h);
                             self.hull.erase(h);
                             Walk::Outside(hl)
                         } else {
-                            Walk::Inside(edge_bc.buddy, h)
+                            Walk::Inside(edge_bc.buddy)
                         };
                     } else if o_psc < 0.0 {
                         /*         src
@@ -668,25 +686,23 @@ impl Triangulation {
                         // which is guaranteed to stay in the triangulation
                         //
                         // (c-b may be a hull edge, so we check for that)
-                        let mut h = h;
                         steps_above.push(self, c,
                             if edge_bc.buddy == half::EMPTY {
-                                // Notice that this modifies h (which is stored
-                                // into m below), so that we don't walk as far
-                                // next time.
-                                h = self.hull.search_left(h, e_bc);
+                                let h = self.hull.index_of(edge_bc.dst);
+                                assert!(self.hull.edge(h) == e_bc);
                                 ContourData::Hull(h)
                             } else {
                                 ContourData::Buddy(edge_bc.buddy)
                             });
 
                         m = if edge_ca.buddy == half::EMPTY {
-                            let h = self.hull.search_left(h, e_ca);
+                            let h = self.hull.index_of(edge_ca.dst);
+                            assert!(self.hull.edge(h) == e_ca);
                             let hl = self.hull.left_hull(h);
                             self.hull.erase(h);
                             Walk::Outside(hl)
                         } else {
-                            Walk::Inside(edge_ca.buddy, h)
+                            Walk::Inside(edge_ca.buddy)
                         };
                     } else {
                         assert!(false);
@@ -823,6 +839,13 @@ impl Triangulation {
         self.half.iter_triangles()
             .map(move |(a, b, c)|
                 (self.remap[a], self.remap[b], self.remap[c]))
+    }
+
+    fn save_debug_svg(&mut self) {
+        if SAVE_DEBUG_SVGS {
+            self.debug_index += 1;
+            self.save_svg(&format!("out{}.svg", self.debug_index));
+        }
     }
 
     pub fn save_svg(&self, filename: &str) {
