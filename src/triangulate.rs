@@ -1,9 +1,10 @@
 use itertools::Itertools;
 
-use crate::predicates::{acute, orient2d, in_circle};
-use crate::{Point, PointIndex, PointVec, EdgeIndex};
-use crate::contour::{Contour, ContourData};
-use crate::{half, half::Half, hull::Hull, HullIndex, SAVE_DEBUG_SVGS};
+use crate::{
+    contour::{Contour, ContourData},
+    predicates::{acute, orient2d, in_circle},
+    Point, PointIndex, PointVec, EdgeIndex, Error,
+    half, half::Half, hull::Hull, HullIndex, SAVE_DEBUG_SVGS};
 
 const TERMINAL_LOWER_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_LOWER_RIGHT: PointIndex = PointIndex { val: 1 };
@@ -152,8 +153,11 @@ impl Triangulation {
         Self::new_with_edges(points, &edges)
     }
 
-    pub fn run(&mut self) {
-        while self.step() {}
+    pub fn run(&mut self) -> Result<(), Error> {
+        while !self.done() {
+            self.step()?;
+        }
+        Ok(())
     }
 
     pub fn orient2d(&self, pa: PointIndex, pb: PointIndex, pc: PointIndex) -> f64 {
@@ -164,10 +168,14 @@ impl Triangulation {
         acute(self.points[pa], self.points[pb], self.points[pc])
     }
 
-    pub fn step(&mut self) -> bool {
-        if self.next == self.points.len() {
+    pub fn done(&self) -> bool {
+        self.next == self.points.len()
+    }
+
+    pub fn step(&mut self) -> Result<(), Error> {
+        if self.done() {
             self.save_debug_svg();
-            return false;
+            return Err(Error::NoMorePoints);
         }
 
         // Pick the next point in our pre-sorted array
@@ -220,10 +228,10 @@ impl Triangulation {
         // Delaunay Triangulation).
         let (start, end) = self.endings[p];
         for i in start..end {
-            self.handle_fixed_edge(h_p, p, self.ending_data[i]);
+            self.handle_fixed_edge(h_p, p, self.ending_data[i])?;
         }
 
-        true
+        Ok(())
     }
 
     fn check_acute_left(&mut self, p: PointIndex, h_p: HullIndex) {
@@ -449,7 +457,7 @@ impl Triangulation {
         }
     }
 
-    fn walk_fill_left(&mut self, src: PointIndex, dst: PointIndex, mut m: Walk) {
+    fn walk_fill_left(&mut self, src: PointIndex, dst: PointIndex, mut m: Walk) -> Result<(), Error> {
         let mut steps_above = Contour::new_pos(src, ContourData::None);
         let mut steps_below = Contour::new_neg(src, ContourData::None);
 
@@ -710,15 +718,16 @@ impl Triangulation {
                             Walk::Inside(edge_ca.buddy)
                         };
                     } else {
-                        assert!(false);
+                        return Err(Error::PointOnFixedEdge);
                     }
                 }
                 _ => panic!("Invalid walk mode"),
             }
         }
+        Ok(())
     }
 
-    fn walk_fill_right(&mut self, src: PointIndex, dst: PointIndex, mut m: Walk) {
+    fn walk_fill_right(&mut self, src: PointIndex, dst: PointIndex, mut m: Walk) -> Result<(), Error> {
         let mut steps_above = Contour::new_neg(src, ContourData::None);
         let mut steps_below = Contour::new_pos(src, ContourData::None);
 
@@ -980,20 +989,21 @@ impl Triangulation {
                             Walk::Inside(edge_ca.buddy)
                         };
                     } else {
-                        assert!(false);
+                        return Err(Error::PointOnFixedEdge);
                     }
                 }
                 _ => panic!("Invalid walk mode"),
             }
         }
         self.save_debug_svg();
+        Ok(())
     }
 
-    fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) {
+    fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) -> Result<(), Error> {
         match self.find_hull_walk_mode(h, src, dst) {
             // Easy mode: the fixed edge is directly connected to the new
             // point, so we lock it and return immediately.
-            Walk::Done(e) => self.half.lock(e),
+            Walk::Done(e) => { self.half.lock(e); Ok(()) },
 
             // Otherwise, walk either to the left or the right depending on
             // the positions of src and dst.

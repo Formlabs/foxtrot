@@ -24,3 +24,12 @@ pub mod hull;
 
 const CHECK_INVARIANTS: bool = true;
 const SAVE_DEBUG_SVGS: bool = false;
+
+#[derive(thiserror::Error, Debug)]
+pub enum Error {
+    #[error("Point is located on a fixed edge but is not its endpoint")]
+    PointOnFixedEdge,
+
+    #[error("There are no more points left to triangulate")]
+    NoMorePoints,
+}

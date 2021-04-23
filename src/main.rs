@@ -15,7 +15,7 @@ fn benchmark(seed: Option<u64>, n: usize) {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
     let mut t = Triangulation::new(&pts);
-    while t.step() {}
+    t.run().expect("Failed to triangulate");
 }
 
 #[allow(dead_code)]
@@ -32,7 +32,7 @@ fn svg(seed: Option<u64>, n: usize) {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
     let mut t = Triangulation::new(&pts);
-    t.run();
+    t.run().expect("Failed to triangulate");
     println!("{}", t.to_svg());
 }
 
@@ -53,7 +53,7 @@ fn test_lock(seed: Option<u64>) {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
     let mut t = Triangulation::new_with_edges(&pts, &FUZZ_EDGES);
-    t.run();
+    t.run().expect("Failed to triangulate");
     println!("{}", t.to_svg());
 }
 
@@ -77,7 +77,7 @@ fn fuzz_lock(seed: Option<u64>) {
         let gen = || Triangulation::new_with_edges(&pts, &FUZZ_EDGES);
         let mut t = gen();
         let result = std::panic::catch_unwind(move || {
-            t.run();
+            t.run().expect("Could not triangulate")
         });
         if result.is_err() {
             let mut safe_steps = 0;
@@ -85,7 +85,7 @@ fn fuzz_lock(seed: Option<u64>) {
                 let mut t = gen();
                 let result = std::panic::catch_unwind(move || {
                     for _ in 0..i {
-                        t.step();
+                        t.step().expect("oh no");
                     }
                 });
                 if result.is_ok() {
@@ -97,11 +97,11 @@ fn fuzz_lock(seed: Option<u64>) {
 
             let mut t = gen();
             for _ in 0..safe_steps {
-                t.step();
+                t.step().expect("oh no");
             }
             println!("{}", t.to_svg());
             eprintln!("Crashed with seed: {}", seed);
-            t.step(); // Triggers the crash again
+            t.step().expect("uh oh"); // Triggers the crash again
             break;
         }
     }
@@ -119,7 +119,7 @@ fn fuzz(seed: Option<u64>, n: usize) {
             pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
         }
         let mut t = Triangulation::new(&pts);
-        while t.step() {}
+        t.run().expect("Failed to triangulate");
     }
 }
 
