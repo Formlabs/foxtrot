@@ -14,7 +14,8 @@ fn benchmark(seed: Option<u64>, n: usize) {
     for _ in 0..n {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
-    let mut t = Triangulation::new(&pts);
+    let mut t = Triangulation::new(&pts)
+        .expect("Failed to make triangulation");
     t.run().expect("Failed to triangulate");
 }
 
@@ -31,7 +32,7 @@ fn svg(seed: Option<u64>, n: usize) {
     for _ in 0..n {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
-    let mut t = Triangulation::new(&pts);
+    let mut t = Triangulation::new(&pts).expect("Failed to make triangulation");
     t.run().expect("Failed to triangulate");
     println!("{}", t.to_svg());
 }
@@ -52,7 +53,8 @@ fn test_lock(seed: Option<u64>) {
     for _ in 0..FUZZ_COUNT {
         pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
     }
-    let mut t = Triangulation::new_with_edges(&pts, &FUZZ_EDGES);
+    let mut t = Triangulation::new_with_edges(&pts, &FUZZ_EDGES)
+        .expect("Failed to make triangulation");
     t.run().expect("Failed to triangulate");
     println!("{}", t.to_svg());
 }
@@ -74,7 +76,8 @@ fn fuzz_lock(seed: Option<u64>) {
         }
 
         // Generator to build the triangulation
-        let gen = || Triangulation::new_with_edges(&pts, &FUZZ_EDGES);
+        let gen = || Triangulation::new_with_edges(&pts, &FUZZ_EDGES)
+            .expect("Failed to make triangulation");
         let mut t = gen();
         let result = std::panic::catch_unwind(move || {
             t.run().expect("Could not triangulate")
@@ -118,7 +121,8 @@ fn fuzz(seed: Option<u64>, n: usize) {
         for _ in 0..n {
             pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
         }
-        let mut t = Triangulation::new(&pts);
+        let mut t = Triangulation::new(&pts)
+            .expect("Failed to make triangulation");
         t.run().expect("Failed to triangulate");
     }
 }

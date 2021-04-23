@@ -35,9 +35,12 @@ pub struct Triangulation {
 }
 
 impl Triangulation {
-    pub fn new_with_edges<'a, E>(points: &[Point], edges: E) -> Triangulation
+    pub fn new_with_edges<'a, E>(points: &[Point], edges: E) -> Result<Triangulation, Error>
         where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
     {
+        if points.is_empty() {
+            return Err(Error::EmptyInput);
+        }
         let (x_bounds, y_bounds) = Self::bbox(points);
 
         // The scratch buffer contains point orders and their y coordinates
@@ -145,10 +148,10 @@ impl Triangulation {
         }
 
         // ...and we're done!
-        out
+        Ok(out)
     }
 
-    pub fn new(points: & [Point]) -> Triangulation {
+    pub fn new(points: & [Point]) -> Result<Triangulation, Error> {
         let edges: [(usize, usize); 0] = [];
         Self::new_with_edges(points, &edges)
     }

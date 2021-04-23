@@ -35,4 +35,7 @@ pub enum Error {
 
     #[error("Fixed edges cross each other")]
     CrossingFixedEdge,
+
+    #[error("input cannot be empty")]
+    EmptyInput,
 }
