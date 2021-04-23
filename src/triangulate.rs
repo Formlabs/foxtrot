@@ -493,7 +493,7 @@ impl Triangulation {
                 } else {
                     let hl = self.hull.index_of(edge_cb.dst);
                     assert!(self.hull.edge(hl) == e_cb);
-                    ContourData::Hull(hl)
+                    ContourData::Hull(hl, edge_cb.fixed)
                 });
             steps_below.push(self, edge_ba.dst,
                 if edge_ac.buddy != half::EMPTY {
@@ -501,7 +501,7 @@ impl Triangulation {
                 } else {
                     let hr = self.hull.index_of(edge_ac.dst);
                     assert!(self.hull.edge(hr) == e_ac);
-                    ContourData::Hull(hr)
+                    ContourData::Hull(hr, edge_ac.fixed)
                 });
 
             // Exit this triangle, either onto the hull or continuing inside
@@ -556,8 +556,8 @@ impl Triangulation {
                         // triangulate an edge when pushing to steps_above;
                         // otherwise, we've only got two points in steps_above,
                         // and our newest edge is on the hull.
-                        if let Some(e_dst_src) = steps_above.push(
-                            self, dst, ContourData::Hull(h))
+                        if let Some(e_dst_src) = steps_above.push(self, dst,
+                            ContourData::Hull(h, false))
                         {
                             assert!(self.half.edge(e_dst_src).src == dst);
                             assert!(self.half.edge(e_dst_src).dst == src);
@@ -573,7 +573,9 @@ impl Triangulation {
 
                     // If we're intersecting this edge, then things get tricky
                     if self.orient2d(src, dst, edge.dst) <= 0.0 {
-                        steps_above.push(self, edge.dst, ContourData::Hull(h));
+                        assert!(edge.fixed);
+                        steps_above.push(self, edge.dst,
+                                         ContourData::Hull(h, false));
                         m = Walk::Inside(edge_index);
                         // We leave this hull intact, because it will be updated
                         // once the triangulation reaches it.
@@ -620,7 +622,7 @@ impl Triangulation {
                             if edge_bc.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_bc.dst);
                                 assert!(self.hull.edge(h) == e_bc);
-                                ContourData::Hull(h)
+                                ContourData::Hull(h, edge_bc.fixed)
                             } else {
                                 ContourData::Buddy(edge_bc.buddy)
                             }).expect("Failed to create fixed edge");
@@ -640,7 +642,7 @@ impl Triangulation {
                             if edge_ca.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_ca.dst);
                                 assert!(self.hull.edge(h) == e_ca);
-                                ContourData::Hull(h)
+                                ContourData::Hull(h, edge_ca.fixed)
                             } else {
                                 ContourData::Buddy(edge_ca.buddy)
                             })
@@ -669,7 +671,7 @@ impl Triangulation {
                             } else if edge_ca.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_ca.dst);
                                 assert!(self.hull.edge(h) == e_ca);
-                                ContourData::Hull(h)
+                                ContourData::Hull(h, edge_ca.fixed)
                             } else {
                                 ContourData::Buddy(edge_ca.buddy)
                             });
@@ -703,7 +705,7 @@ impl Triangulation {
                             if edge_bc.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_bc.dst);
                                 assert!(self.hull.edge(h) == e_bc);
-                                ContourData::Hull(h)
+                                ContourData::Hull(h, edge_bc.fixed)
                             } else {
                                 ContourData::Buddy(edge_bc.buddy)
                             });
@@ -764,7 +766,7 @@ impl Triangulation {
                 } else {
                     let hl = self.hull.index_of(edge_cb.dst);
                     assert!(self.hull.edge(hl) == e_cb);
-                    ContourData::Hull(hl)
+                    ContourData::Hull(hl, edge_cb.fixed)
                 });
             steps_above.push(self, edge_ba.dst,
                 if edge_ac.buddy != half::EMPTY {
@@ -772,7 +774,7 @@ impl Triangulation {
                 } else {
                     let hr = self.hull.index_of(edge_ac.dst);
                     assert!(self.hull.edge(hr) == e_ac);
-                    ContourData::Hull(hr)
+                    ContourData::Hull(hr, edge_ac.fixed)
                 });
 
             // Exit this triangle, either onto the hull or continuing inside
@@ -823,8 +825,8 @@ impl Triangulation {
                         // triangulate an edge when pushing to steps_above;
                         // otherwise, we've only got two points in steps_above,
                         // and our newest edge is on the hull.
-                        if let Some(e_src_dst) = steps_above.push(
-                            self, dst, ContourData::Hull(self.hull.left_hull(h)))
+                        if let Some(e_src_dst) = steps_above.push(self, dst,
+                            ContourData::Hull(self.hull.left_hull(h), false))
                         {
                             assert!(self.half.edge(e_src_dst).src == src);
                             assert!(self.half.edge(e_src_dst).dst == dst);
@@ -843,7 +845,8 @@ impl Triangulation {
                     // If we're intersecting this edge, then things get tricky
                     if self.orient2d(src, dst, edge.src) >= 0.0 {
                         let hl = self.hull.left_hull(h);
-                        steps_above.push(self, edge.src, ContourData::Hull(hl));
+                        steps_above.push(self, edge.src,
+                                         ContourData::Hull(hl, false));
                         m = Walk::Inside(edge_index);
                     } else {
                         steps_below.push(self, edge.src,
@@ -890,7 +893,7 @@ impl Triangulation {
                             if edge_ca.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_ca.dst);
                                 assert!(self.hull.edge(h) == e_ca);
-                                ContourData::Hull(h)
+                                ContourData::Hull(h, edge_ca.fixed)
                             } else {
                                 ContourData::Buddy(edge_ca.buddy)
                             }).expect("Failed to create fixed edge");
@@ -910,7 +913,7 @@ impl Triangulation {
                             if edge_bc.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_bc.dst);
                                 assert!(self.hull.edge(h) == e_bc);
-                                ContourData::Hull(h)
+                                ContourData::Hull(h, edge_bc.fixed)
                             } else {
                                 ContourData::Buddy(edge_bc.buddy)
                             })
@@ -939,7 +942,7 @@ impl Triangulation {
                             } else if edge_ca.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_ca.dst);
                                 assert!(self.hull.edge(h) == e_ca);
-                                ContourData::Hull(h)
+                                ContourData::Hull(h, edge_ca.fixed)
                             } else {
                                 ContourData::Buddy(edge_ca.buddy)
                             });
@@ -975,7 +978,7 @@ impl Triangulation {
                             } else if edge_bc.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_bc.dst);
                                 assert!(self.hull.edge(h) == e_bc);
-                                ContourData::Hull(h)
+                                ContourData::Hull(h, edge_bc.fixed)
                             } else {
                                 ContourData::Buddy(edge_bc.buddy)
                             });

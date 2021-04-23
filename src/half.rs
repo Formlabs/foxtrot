@@ -42,7 +42,7 @@ impl Half {
         self.set_lock(e, false);
     }
 
-    fn set_lock(&mut self, e: EdgeIndex, v: bool) {
+    pub fn set_lock(&mut self, e: EdgeIndex, v: bool) {
         self.edges[e].fixed = v;
         let buddy = self.edges[e].buddy;
         if buddy != EMPTY {

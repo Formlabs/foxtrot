@@ -10,7 +10,7 @@ const EMPTY: ContourIndex = ContourIndex { val: std::usize::MAX };
 pub enum ContourData {
     None,
     Buddy(EdgeIndex),
-    Hull(HullIndex),
+    Hull(HullIndex, bool), // record whether this edge was fixed
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -161,12 +161,18 @@ impl Contour {
             let e_bc = edge_ab.next;
             match a.data {
                 ContourData::None => (),
-                ContourData::Hull(h) => t.hull.update(h, e_ca),
+                ContourData::Hull(hull_index, fixed) => {
+                    t.hull.update(hull_index, e_ca);
+                    t.half.set_lock(e_bc, fixed);
+                },
                 ContourData::Buddy(b) => t.half.link_new(b, e_ca),
             };
             match c.data {
                 ContourData::None => (),
-                ContourData::Hull(h) => t.hull.update(h, e_bc),
+                ContourData::Hull(hull_index, fixed) => {
+                    t.hull.update(hull_index, e_bc);
+                    t.half.set_lock(e_bc, fixed);
+                },
                 ContourData::Buddy(b) => t.half.link_new(b, e_bc),
             };
 
@@ -205,12 +211,18 @@ impl Contour {
             let e_ac = edge_ba.next;
             match a.data {
                 ContourData::None => (),
-                ContourData::Hull(h) => t.hull.update(h, e_ac),
+                ContourData::Hull(hull_index, fixed) => {
+                    t.hull.update(hull_index, e_ac);
+                    t.half.set_lock(e_ac, fixed);
+                },
                 ContourData::Buddy(b) => t.half.link_new(b, e_ac),
             };
             match c.data {
                 ContourData::None => (),
-                ContourData::Hull(h) => t.hull.update(h, e_cb),
+                ContourData::Hull(hull_index, fixed) => {
+                    t.hull.update(hull_index, e_cb);
+                    t.half.set_lock(e_cb, fixed);
+                },
                 ContourData::Buddy(b) => t.half.link_new(b, e_cb),
             };
             e_ba
