@@ -149,7 +149,7 @@ impl Triangulation {
 
     pub fn new(points: & [Point]) -> Triangulation {
         let edges: [(usize, usize); 0] = [];
-        return Self::new_with_edges(points, &edges);
+        Self::new_with_edges(points, &edges)
     }
 
     pub fn run(&mut self) {
