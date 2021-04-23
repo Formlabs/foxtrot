@@ -38,4 +38,10 @@ pub enum Error {
 
     #[error("input cannot be empty")]
     EmptyInput,
+
+    #[error("input cannot contain NaN or infinity")]
+    InvalidInput,
+
+    #[error("edge must index into point array and have different src and dst")]
+    InvalidEdge,
 }

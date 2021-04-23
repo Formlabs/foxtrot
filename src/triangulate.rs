@@ -41,6 +41,16 @@ impl Triangulation {
         if points.is_empty() {
             return Err(Error::EmptyInput);
         }
+        if points.iter().any(|p| p.0.is_nan() || p.0.is_infinite() ||
+                                 p.1.is_nan() || p.1.is_infinite()) {
+            return Err(Error::InvalidInput);
+        }
+        if edges.clone().into_iter().any(|e| e.0 >= points.len() ||
+                                             e.1 >= points.len() ||
+                                             e.0 == e.1) {
+            return Err(Error::InvalidEdge);
+        }
+
         let (x_bounds, y_bounds) = Self::bbox(points);
 
         // The scratch buffer contains point orders and their y coordinates
