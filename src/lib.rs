@@ -32,4 +32,7 @@ pub enum Error {
 
     #[error("There are no more points left to triangulate")]
     NoMorePoints,
+
+    #[error("Fixed edges cross each other")]
+    CrossingFixedEdge,
 }

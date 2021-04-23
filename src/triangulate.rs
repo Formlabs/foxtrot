@@ -228,6 +228,7 @@ impl Triangulation {
         // Delaunay Triangulation).
         let (start, end) = self.endings[p];
         for i in start..end {
+            eprintln!("Fixing edge!");
             self.handle_fixed_edge(h_p, p, self.ending_data[i])?;
         }
 
@@ -506,6 +507,9 @@ impl Triangulation {
 
             // Exit this triangle, either onto the hull or continuing inside
             // the triangulation.
+            if edge_ba.fixed {
+                return Err(Error::CrossingFixedEdge);
+            }
             if edge_ba.buddy == half::EMPTY {
                 let h = self.hull.index_of(edge_ba.dst);
                 assert!(self.hull.edge(h) == e_ba);
@@ -573,7 +577,9 @@ impl Triangulation {
 
                     // If we're intersecting this edge, then things get tricky
                     if self.orient2d(src, dst, edge.dst) <= 0.0 {
-                        assert!(edge.fixed);
+                        if edge.fixed {
+                            return Err(Error::CrossingFixedEdge);
+                        }
                         steps_above.push(self, edge.dst,
                                          ContourData::Hull(h, false));
                         m = Walk::Inside(edge_index);
@@ -678,6 +684,9 @@ impl Triangulation {
 
                         // Exit the triangle, either onto the hull or staying
                         // in the triangulation
+                        if edge_bc.fixed {
+                            return Err(Error::CrossingFixedEdge);
+                        }
                         m = if edge_bc.buddy == half::EMPTY {
                             let h = self.hull.index_of(edge_bc.dst);
                             assert!(self.hull.edge(h) == e_bc);
@@ -710,6 +719,9 @@ impl Triangulation {
                                 ContourData::Buddy(edge_bc.buddy)
                             });
 
+                        if edge_ca.fixed {
+                            return Err(Error::CrossingFixedEdge);
+                        }
                         m = if edge_ca.buddy == half::EMPTY {
                             let h = self.hull.index_of(edge_ca.dst);
                             assert!(self.hull.edge(h) == e_ca);
@@ -779,6 +791,9 @@ impl Triangulation {
 
             // Exit this triangle, either onto the hull or continuing inside
             // the triangulation.
+            if edge_ba.fixed {
+                return Err(Error::CrossingFixedEdge);
+            }
             if edge_ba.buddy == half::EMPTY {
                 let h = self.hull.index_of(edge_ba.dst);
                 assert!(self.hull.edge(h) == e_ba);
@@ -844,6 +859,9 @@ impl Triangulation {
 
                     // If we're intersecting this edge, then things get tricky
                     if self.orient2d(src, dst, edge.src) >= 0.0 {
+                        if edge.fixed {
+                            return Err(Error::CrossingFixedEdge);
+                        }
                         let hl = self.hull.left_hull(h);
                         steps_above.push(self, edge.src,
                                          ContourData::Hull(hl, false));
@@ -949,6 +967,9 @@ impl Triangulation {
 
                         // Exit the triangle, either onto the hull or staying
                         // in the triangulation
+                        if edge_bc.fixed {
+                            return Err(Error::CrossingFixedEdge);
+                        }
                         m = if edge_bc.buddy == half::EMPTY {
                             let h = self.hull.index_of(edge_bc.dst);
                             assert!(self.hull.edge(h) == e_bc);
@@ -983,6 +1004,9 @@ impl Triangulation {
                                 ContourData::Buddy(edge_bc.buddy)
                             });
 
+                        if edge_ca.fixed {
+                            return Err(Error::CrossingFixedEdge);
+                        }
                         m = if edge_ca.buddy == half::EMPTY {
                             let h = self.hull.index_of(edge_ca.dst);
                             assert!(self.hull.edge(h) == e_ca);
