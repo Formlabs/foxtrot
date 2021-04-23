@@ -62,13 +62,17 @@ fn test_lock(seed: Option<u64>) {
 #[allow(dead_code)]
 fn fuzz_lock(seed: Option<u64>) {
     eprintln!("Running...");
+    let mut i = 0;
     loop {
         let seed = seed.unwrap_or_else(|| {
             rand::thread_rng().gen()
         });
 
         let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
-        eprintln!("Seed: {}", seed);
+        if i % 1000 == 0 {
+            eprintln!("{}", i);
+        }
+        i += 1;
 
         let mut pts = Vec::new();
         for _ in 0..FUZZ_COUNT {

@@ -152,6 +152,7 @@ impl Hull {
             assert!(next_position >= my_position);
             index = next;
         }
+        assert!(self.data[index].pos_norm == 1.0);
     }
 
     pub fn left_hull(&self, h: HullIndex) -> HullIndex {

@@ -241,7 +241,6 @@ impl Triangulation {
         // Delaunay Triangulation).
         let (start, end) = self.endings[p];
         for i in start..end {
-            eprintln!("Fixing edge!");
             self.handle_fixed_edge(h_p, p, self.ending_data[i])?;
         }
 
@@ -685,7 +684,9 @@ impl Triangulation {
                         // Store the c-a edge as our buddy, and exit via b-c
                         // (unless c-a is the 0th edge, which has no buddy)
                         steps_below.push(self, c,
-                            if e_ca == EdgeIndex::new(0) {
+                            if edge_ca.src == TERMINAL_LOWER_LEFT &&
+                               edge_ca.dst == TERMINAL_LOWER_RIGHT
+                            {
                                 ContourData::None
                             } else if edge_ca.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_ca.dst);
@@ -968,7 +969,9 @@ impl Triangulation {
                         // Store the c-a edge as our buddy, and exit via b-c
                         // (unless c-a is the 0th edge, which has no buddy)
                         steps_above.push(self, c,
-                            if e_ca == EdgeIndex::new(0) {
+                            if edge_ca.src == TERMINAL_LOWER_LEFT &&
+                               edge_ca.dst == TERMINAL_LOWER_RIGHT
+                            {
                                 ContourData::None
                             } else if edge_ca.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_ca.dst);
@@ -987,7 +990,6 @@ impl Triangulation {
                             let h = self.hull.index_of(edge_bc.dst);
                             assert!(self.hull.edge(h) == e_bc);
                             let hr = self.hull.right_hull(h);
-                            self.hull.erase(h);
                             Walk::Outside(hr)
                         } else {
                             Walk::Inside(edge_bc.buddy)
@@ -1007,7 +1009,9 @@ impl Triangulation {
                         //
                         // (c-b may be a hull edge, so we check for that)
                         steps_below.push(self, c,
-                            if e_bc == EdgeIndex::new(0) {
+                            if edge_bc.src == TERMINAL_LOWER_LEFT &&
+                               edge_bc.dst == TERMINAL_LOWER_RIGHT
+                            {
                                 ContourData::None
                             } else if edge_bc.buddy == half::EMPTY {
                                 let h = self.hull.index_of(edge_bc.dst);
