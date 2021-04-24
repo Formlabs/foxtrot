@@ -186,6 +186,23 @@ impl Triangulation {
     }
 
     fn finalize(&mut self) -> Result<(), Error> {
+        // TODO: make hull filled
+        let h = self.hull.index_of(TERMINAL_LOWER_LEFT);
+        let mut e = self.hull.edge(h);
+        let mut er = e;
+        while e != half::EMPTY {
+            let edge = self.half.edge(e);
+            let next = self.half.edge(edge.next).buddy;
+            er = self.half.edge(edge.prev).buddy;
+            self.half.erase(e);
+            e = next;
+        }
+        while er != half::EMPTY {
+            let edge = self.half.edge(er);
+            let next = self.half.edge(edge.next).buddy;
+            self.half.erase(er);
+            er = next;
+        }
         Ok(())
     }
 
@@ -194,6 +211,7 @@ impl Triangulation {
             self.save_debug_svg();
             return Err(Error::NoMorePoints);
         } else if self.next == self.points.len() {
+            self.next += 1usize;
             return self.finalize();
         }
 
