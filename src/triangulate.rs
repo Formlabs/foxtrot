@@ -182,13 +182,19 @@ impl Triangulation {
     }
 
     pub fn done(&self) -> bool {
-        self.next == self.points.len()
+        self.next == self.points.len() + 1
+    }
+
+    fn finalize(&mut self) -> Result<(), Error> {
+        Ok(())
     }
 
     pub fn step(&mut self) -> Result<(), Error> {
         if self.done() {
             self.save_debug_svg();
             return Err(Error::NoMorePoints);
+        } else if self.next == self.points.len() {
+            return self.finalize();
         }
 
         // Pick the next point in our pre-sorted array
