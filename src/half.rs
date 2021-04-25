@@ -1,4 +1,4 @@
-use crate::{PointIndex, PointVec, EdgeIndex, EdgeVec, CHECK_INVARIANTS};
+use crate::{PointIndex, EdgeIndex, EdgeVec, CHECK_INVARIANTS};
 
 pub const EMPTY: EdgeIndex = EdgeIndex { val: std::usize::MAX };
 
@@ -19,17 +19,12 @@ pub struct Half {
     /// The half-edge data structure is stored as a bunch of edges in a flat
     /// array, indexed by the type-safe EdgeIndex key
     edges: EdgeVec<Edge>,
-
-    /// Each point stores an EdgeIndex for which it is the src, or EMPTY.
-    /// This lets us do random look-up into the edges list by PointIndex.
-    points: PointVec<EdgeIndex>,
 }
 
 impl Half {
     pub fn new(num_points: usize) -> Half {
         Half {
             edges: EdgeVec::with_capacity((num_points * 2 - 5) * 3),
-            points: PointVec { vec: vec![EMPTY; num_points + 4] },
         }
     }
 
@@ -64,11 +59,6 @@ impl Half {
 
     fn push_edge(&mut self, edge: Edge) {
         let mut index = self.edges.push(edge);
-
-        // Store the index of this edge in the point array
-        if self.points[edge.src] == EMPTY {
-            self.points[edge.src] = index;
-        }
 
         // Link against a buddy if present, copying its fixed value
         if edge.buddy != EMPTY {
@@ -134,21 +124,12 @@ impl Half {
             })
     }
 
-    pub fn edge_index(&self, p: PointIndex) -> EdgeIndex {
-        self.points[p]
-    }
-
     /// Sanity-checks the structure's invariants, raising an assertion if
     /// any invariants are broken.  This is a no-op if CHECK_INVARIANTS is set
     /// to false in lib.rs.
     pub fn check(&self) {
         if !CHECK_INVARIANTS {
             return;
-        }
-        for (point, e) in self.points.iter().enumerate() {
-            if *e != EMPTY {
-                assert!(self.edges[*e].src == point);
-            }
         }
         for (index, edge) in self.edges.iter().enumerate() {
             if edge.next == EMPTY {
@@ -262,10 +243,6 @@ impl Half {
         self.edges[e_da].prev = e_ba;
         self.edges[e_da].next = e_ac;
 
-        // Reassign points which could have been pointing to the swapped edge
-        self.points[edge.src] = e_bd;
-        self.points[edge.dst] = e_ac;
-
         self.check();
     }
 
@@ -284,14 +261,6 @@ impl Half {
 
         // We're about to delete this triangle.  If its edges were the canonical
         // edge for some point, then swap for the appropriate buddy.
-        //
-        // The point will be orphaned if this is EMPTY.
-        for &e in &[e_ab, e_bc, e_ca] {
-            let edge = self.edges[e];
-            if self.points[edge.src] == e {
-                self.points[edge.src] = self.edges[edge.prev].buddy;
-            }
-        }
 
         for &e in &[e_ab, e_bc, e_ca] {
             let buddy = self.edges[e].buddy;
