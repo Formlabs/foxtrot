@@ -200,6 +200,7 @@ impl Triangulation {
             */
             let el = self.hull.edge(hl);
             let er = self.hull.edge(hr);
+
             // The last hull index has an empty edge attached
             if er == half::EMPTY {
                 break;

@@ -30,6 +30,7 @@ pub struct Hull {
     buckets: [HullIndex; N],
     data: HullVec<Node>,
     points: PointVec<HullIndex>,
+    empty: Vec<HullIndex>, // spare slots
 
     xmin: f64,
     dx: f64,
@@ -41,6 +42,7 @@ impl Hull {
             data: HullVec::new(),
             buckets: [EMPTY; N],
             points: PointVec { vec: vec![EMPTY; num_points] },
+            empty: Vec::new(),
             dx: xmax - xmin,
             xmin,
         }
@@ -181,11 +183,20 @@ impl Hull {
         let right = self.right_hull(left);
 
         let p = self.normalize_pos(p);
-        let h = self.data.push(Node{
-            pos_norm: p,
-            edge: e,
-            left, right
-        });
+        let h = if let Some(h) = self.empty.pop() {
+            self.data[h] = Node {
+                pos_norm: p,
+                edge: e,
+                left, right
+            };
+            h
+        } else {
+            self.data.push(Node{
+                pos_norm: p,
+                edge: e,
+                left, right
+            })
+        };
 
         // If the target bucket is empty, or the given point is below the first
         // item in the target bucket, then it becomes the bucket's head
@@ -209,8 +220,6 @@ impl Hull {
 
     /// Removes the given point from the hull
     pub fn erase(&mut self, h: HullIndex) {
-        let b = self.bucket_h(h);
-
         let next = self.data[h].right;
         let prev = self.data[h].left;
 
@@ -223,6 +232,7 @@ impl Hull {
         // If this is the head of the bucket, then replace it with the next
         // item in this bucket chain (assuming it belongs in the same bucket),
         // or EMPTY if the bucket is now completely empty.
+        let b = self.bucket_h(h);
         if self.buckets[b] == h {
             if self.bucket_h(next) == b {
                 self.buckets[b] = next;
@@ -231,8 +241,7 @@ impl Hull {
             }
         }
 
-        // TODO: reuse this slot
-
+        self.empty.push(h);
         self.check();
     }
 
