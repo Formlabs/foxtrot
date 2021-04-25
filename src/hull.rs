@@ -169,7 +169,7 @@ impl Hull {
         self.data[h].edge
     }
 
-    /// Searches left along the hull for a hull point with the associated edge
+    /// Returns the hull index associated with the given point
     pub fn index_of(&self, p: PointIndex) -> HullIndex {
         let h = self.points[p];
         assert!(h != EMPTY);
