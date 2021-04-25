@@ -4,7 +4,7 @@ use crate::{
     contour::{Contour, ContourData},
     predicates::{acute, orient2d, in_circle},
     Point, PointIndex, PointVec, EdgeIndex, Error,
-    half, half::Half, hull::Hull, HullIndex, SAVE_DEBUG_SVGS};
+    half, half::Half, hull, hull::Hull, HullIndex, SAVE_DEBUG_SVGS};
 
 const TERMINAL_LOWER_LEFT: PointIndex = PointIndex { val: 0 };
 const TERMINAL_LOWER_RIGHT: PointIndex = PointIndex { val: 1 };
@@ -186,6 +186,52 @@ impl Triangulation {
     }
 
     fn finalize(&mut self) -> Result<(), Error> {
+        // Walk the hull from left to right, flattening any convex regions
+        let mut hl = self.hull.index_of(TERMINAL_LOWER_LEFT);
+        let mut hr = self.hull.right_hull(hl);
+        loop {
+            /*
+                ^
+                 \
+                  \el/hl
+                   \
+                    <-------------
+                        er/hr
+            */
+            let el = self.hull.edge(hl);
+            let er = self.hull.edge(hr);
+            // The last hull index has an empty edge attached
+            if er == half::EMPTY {
+                break;
+            }
+            let edge_l = self.half.edge(el);
+            let edge_r = self.half.edge(er);
+            assert!(edge_r.dst == edge_l.src);
+
+            // If this triangle on the hull is strictly convex, fill it
+            if self.orient2d(edge_l.dst, edge_l.src, edge_r.src) > 0.0 {
+                self.hull.erase(hr);
+                let new_edge = self.half.insert(
+                    edge_r.src, edge_l.dst, edge_l.src,
+                    el, er, half::EMPTY);
+                self.hull.update(hl, new_edge);
+
+                // Try stepping back in case this reveals another convex tri
+                let prev = self.hull.left_hull(hl);
+                if prev == hull::EMPTY {
+                    hr = self.hull.right_hull(hl);
+                } else {
+                    hr = hl;
+                    hl = prev;
+                }
+            } else {
+                // Continue walking along the hull
+                let next = self.hull.right_hull(hr);
+                hl = hr;
+                hr = next;
+            }
+        }
+
         // TODO: make hull filled
         let h = self.hull.index_of(TERMINAL_LOWER_LEFT);
         let mut e = self.hull.edge(h);

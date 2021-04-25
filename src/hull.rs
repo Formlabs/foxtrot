@@ -1,7 +1,7 @@
 use crate::{PointVec, PointIndex, HullVec, HullIndex, EdgeIndex, half, CHECK_INVARIANTS};
 
 const N: usize = 1 << 10;
-const EMPTY: HullIndex = HullIndex { val: std::usize::MAX };
+pub const EMPTY: HullIndex = HullIndex { val: std::usize::MAX };
 
 #[derive(Clone, Copy, Debug)]
 struct Node {
