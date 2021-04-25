@@ -228,7 +228,11 @@ impl Contour {
             e_ba
         };
 
-        // TODO: legalize the new edge unless it's terminal
+        {   // Legalize the two outer edges of the new triangle
+            let edge = t.half.edge(new_edge);
+            t.legalize(edge.next);
+            t.legalize(edge.prev);
+        }
 
         // Stitch the index out of the list
         self.pts[self.index] = Node {

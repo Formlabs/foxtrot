@@ -1130,7 +1130,7 @@ impl Triangulation {
         }
     }
 
-    fn legalize(&mut self, e_ab: EdgeIndex) {
+    pub fn legalize(&mut self, e_ab: EdgeIndex) {
         /* We're given this
          *            c
          *          /  ^
