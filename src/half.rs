@@ -124,6 +124,35 @@ impl Half {
             })
     }
 
+    /// Performs a flood fill from e, which is presumed to be outside the
+    /// triangulation.  Every triangle outside the boundary is removed,
+    /// using odd-even counting (i.e. we switch from outside to inside every
+    /// time we cross a fixed edge).
+    pub fn flood_erase_from(&mut self, e: EdgeIndex) {
+        let mut seen = EdgeVec { vec: vec![false; self.edges.len()] };
+        let mut todo = vec![(e, false)];
+        while let Some((e, inside)) = todo.pop() {
+            if e == EMPTY || seen[e] {
+                continue;
+            }
+            let edge = self.edge(e);
+
+            assert!(seen[edge.next] == false);
+            assert!(seen[edge.prev] == false);
+            seen[e] = true;
+            seen[edge.next] = true;
+            seen[edge.prev] = true;
+
+            let next = self.edge(edge.next);
+            let prev = self.edge(edge.prev);
+            todo.push((next.buddy, inside ^ next.fixed));
+            todo.push((prev.buddy, inside ^ prev.fixed));
+            if !inside {
+                self.erase(e);
+            }
+        }
+    }
+
     /// Sanity-checks the structure's invariants, raising an assertion if
     /// any invariants are broken.  This is a no-op if CHECK_INVARIANTS is set
     /// to false in lib.rs.

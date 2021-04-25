@@ -287,8 +287,18 @@ impl Triangulation {
     fn finalize(&mut self) {
         assert!(self.next == self.points.len());
 
-        self.make_upper_hull_convex();
-        self.erase_dummy_points();
+        if self.ending_data.is_empty() {
+            // For an unconstrained triangulation, remove the dummy points and
+            // make the top and bottom hulls convex.
+            self.make_upper_hull_convex();
+            self.erase_dummy_points();
+        } else {
+            // For a constrained triangulation, flood fill and erase triangles
+            // that are outside the shape boundaries.
+            let h = self.hull.index_of(TERMINAL_LOWER_LEFT);
+            let e = self.hull.edge(h);
+            self.half.flood_erase_from(e);
+        }
 
         self.next += 1usize;
     }
