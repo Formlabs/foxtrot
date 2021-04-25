@@ -185,8 +185,11 @@ impl Triangulation {
         self.next == self.points.len() + 1
     }
 
-    fn finalize(&mut self) -> Result<(), Error> {
+    /// Walks the upper hull, making it convex.
+    /// This should only be called once from `finalize()`.
+    fn make_upper_hull_convex(&mut self) {
         // Walk the hull from left to right, flattening any convex regions
+        assert!(self.next == self.points.len());
         let mut hl = self.hull.index_of(TERMINAL_LOWER_LEFT);
         let mut hr = self.hull.right_hull(hl);
         loop {
@@ -232,25 +235,62 @@ impl Triangulation {
                 hr = next;
             }
         }
+    }
 
-        // TODO: make hull filled
+    /// Erases the `TERMINAL_LOWER_LEFT` and `TERMINAL_LOWER_RIGHT` and makes
+    /// the lower hull convex.  This should only be called once in `finalize()`
+    fn erase_dummy_points(&mut self) {
+        assert!(self.next == self.points.len());
+        /*
+            <-----<---<----<----
+            |    ^    ^\   \   ^
+            |   /   /    \  \  |
+            |  /  /        \ \ |
+            | / /            vv|
+            v//
+        */
         let h = self.hull.index_of(TERMINAL_LOWER_LEFT);
+
         let mut e = self.hull.edge(h);
-        let mut er = e;
+        let mut contour = Contour::new_neg(
+            self.half.edge(e).src, ContourData::None);
         while e != half::EMPTY {
+            self.save_debug_svg();
             let edge = self.half.edge(e);
-            let next = self.half.edge(edge.next).buddy;
-            er = self.half.edge(edge.prev).buddy;
+            let next = self.half.edge(edge.next);
+            let prev = self.half.edge(edge.prev);
             self.half.erase(e);
-            e = next;
+            /* Handle the crossing-over point:
+
+                       /^
+                     e/  \
+                     /    \ prev
+                    v      \
+                   0------->1
+                     next
+             */
+            e = if next.buddy == half::EMPTY &&
+                   next.src != TERMINAL_LOWER_RIGHT {
+                prev.buddy
+            } else {
+                contour.push(self, prev.src, ContourData::Buddy(prev.buddy));
+
+                // This will break us out of the loop after the final hull
+                // edge, which will leave e set to half::EMPTY
+                next.buddy
+            }
         }
-        while er != half::EMPTY {
-            let edge = self.half.edge(er);
-            let next = self.half.edge(edge.next).buddy;
-            self.half.erase(er);
-            er = next;
-        }
-        Ok(())
+    }
+
+    /// Finalizes the triangulation by making the upper and lower hull convex,
+    /// then removing any triangles attached to the dummy points.
+    fn finalize(&mut self) {
+        assert!(self.next == self.points.len());
+
+        self.make_upper_hull_convex();
+        self.erase_dummy_points();
+
+        self.next += 1usize;
     }
 
     pub fn step(&mut self) -> Result<(), Error> {
@@ -258,8 +298,8 @@ impl Triangulation {
             self.save_debug_svg();
             return Err(Error::NoMorePoints);
         } else if self.next == self.points.len() {
-            self.next += 1usize;
-            return self.finalize();
+            self.finalize();
+            return Ok(());
         }
 
         // Pick the next point in our pre-sorted array
