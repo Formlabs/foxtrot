@@ -73,10 +73,9 @@ impl Half {
     pub fn insert(&mut self, a: PointIndex, b: PointIndex, c: PointIndex,
                   e_cb: EdgeIndex, e_ac: EdgeIndex, e_ba: EdgeIndex) -> EdgeIndex
     {
-        let i = self.edges.len();
-        let e_ab = EdgeIndex::new(i);
-        let e_bc = EdgeIndex::new(i + 1);
-        let e_ca = EdgeIndex::new(i + 2);
+        let e_ab = self.edges.next_index();
+        let e_bc = e_ab + 1usize;
+        let e_ca = e_ab + 2usize;
         self.push_edge(Edge {
             src: a, dst: b,
             prev: e_ca, next: e_bc,
