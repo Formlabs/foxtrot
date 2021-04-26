@@ -292,30 +292,3 @@ impl Hull {
         self.bucket(self.data[h].pos_norm)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::num::NonZeroUsize;
-    use rand::seq::SliceRandom;
-
-    #[test]
-    fn circular_hull() {
-        let mut pts = Vec::new();
-        let num = 1_000_000;
-        for i in 0..num {
-            let angle = i as f64 * 2.0 * std::f64::consts::PI / (num as f64);
-            pts.push((angle.cos(), angle.sin()));
-        }
-        pts.shuffle(&mut rand::thread_rng());
-
-        let mut h = Hull::new((0.0, 0.0), &pts);
-        h.insert_first(PointIndex(0), EdgeIndex(NonZeroUsize::new(1).unwrap()));
-        for i in 1..num {
-            if i % 1000 == 0 {
-                eprintln!("{}", i);
-            }
-            h.insert(PointIndex(i), EdgeIndex(NonZeroUsize::new(2).unwrap()));
-        }
-    }
-}

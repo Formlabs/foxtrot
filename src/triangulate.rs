@@ -1332,29 +1332,3 @@ impl Triangulation {
         out
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn basics() {
-        let pts = vec![
-            (0.0, 0.0), (1.0, 0.0), (0.0, 1.0), (2.0, 2.0)
-        ];
-        let t = Triangulation::new(&pts);
-        assert_eq!(t.order.len(), 1);
-    }
-
-    #[test]
-    fn inline_pts() {
-        let pts = vec![
-            (0.0, 0.0), (1.0, 0.0), (0.0, 1.0),
-            (0.0, 2.0), (2.0, 0.0), (1.0, 1.0), // <- this is the inline one
-            (-2.0, -2.0), // Tweak bbox center to seed from first three points
-        ];
-        let mut t = Triangulation::new(&pts);
-        while t.step() {}
-        assert!(true);
-    }
-}
