@@ -17,7 +17,7 @@ enum Walk {
 }
 
 pub struct Triangulation {
-    pub points: PointVec<Point>,    // Sorted in the constructor
+    pub(crate) points: PointVec<Point>,    // Sorted in the constructor
     remap: PointVec<usize>,         // self.points[i] = input[self.remap[i]]
     next: PointIndex,               // Progress of the triangulation
 
@@ -28,8 +28,8 @@ pub struct Triangulation {
 
     // This stores the start of an edge (as a pseudoangle) as an index into
     // the edges array
-    pub hull: Hull,
-    pub half: Half,
+    pub(crate) hull: Hull,
+    pub(crate) half: Half,
 
     debug_index: usize, // auto-incrementing index of saved SVGs
 }
@@ -173,7 +173,7 @@ impl Triangulation {
         Ok(())
     }
 
-    pub fn orient2d(&self, pa: PointIndex, pb: PointIndex, pc: PointIndex) -> f64 {
+    pub(crate) fn orient2d(&self, pa: PointIndex, pb: PointIndex, pc: PointIndex) -> f64 {
         orient2d(self.points[pa], self.points[pb], self.points[pc])
     }
 
@@ -1180,7 +1180,7 @@ impl Triangulation {
         }
     }
 
-    pub fn legalize(&mut self, e_ab: EdgeIndex) {
+    pub(crate) fn legalize(&mut self, e_ab: EdgeIndex) {
         /* We're given this
          *            c
          *          /  ^
@@ -1241,14 +1241,14 @@ impl Triangulation {
 
     fn save_debug_svg(&mut self) {
         if SAVE_DEBUG_SVGS {
-            self.save_svg(&format!("out{}.svg", self.debug_index));
+            self.save_svg(&format!("out{}.svg", self.debug_index))
+                .expect("Failed to save debug SVG");
             self.debug_index += 1;
         }
     }
 
-    pub fn save_svg(&self, filename: &str) {
+    pub fn save_svg(&self, filename: &str) -> std::io::Result<()> {
         std::fs::write(filename, self.to_svg())
-            .expect("Failed to write file");
     }
 
     pub fn to_svg(&self) -> String {
@@ -1326,7 +1326,6 @@ impl Triangulation {
         <circle cx="{}" cy="{}" r="{}" style="fill:rgb(255,128,128)" />"#,
                 dx(p.0), dy(p.1), line_width));
         }
-
 
         out.push_str("\n</svg>");
         out
