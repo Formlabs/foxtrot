@@ -2,42 +2,6 @@ use rand::{Rng, SeedableRng};
 use cdt::triangulate::Triangulation;
 
 #[allow(dead_code)]
-fn benchmark(seed: Option<u64>, n: usize) {
-    let seed = seed.unwrap_or_else(|| {
-        rand::thread_rng().gen()
-    });
-    eprintln!("Seed: {}", seed);
-
-    let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
-
-    let mut pts = Vec::new();
-    for _ in 0..n {
-        pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
-    }
-    let mut t = Triangulation::new(&pts)
-        .expect("Failed to make triangulation");
-    t.run().expect("Failed to triangulate");
-}
-
-#[allow(dead_code)]
-fn svg(seed: Option<u64>, n: usize) {
-    let seed = seed.unwrap_or_else(|| {
-        rand::thread_rng().gen()
-    });
-    eprintln!("Seed: {}", seed);
-
-    let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
-
-    let mut pts = Vec::new();
-    for _ in 0..n {
-        pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
-    }
-    let mut t = Triangulation::new(&pts).expect("Failed to make triangulation");
-    t.run().expect("Failed to triangulate");
-    println!("{}", t.to_svg());
-}
-
-#[allow(dead_code)]
 const FUZZ_COUNT: usize = 32;
 const FUZZ_EDGES: [(usize, usize); 3] = [(0, 1), (1, 2), (2, 0)];
 
@@ -114,23 +78,6 @@ fn fuzz_lock(seed: Option<u64>) {
     }
 }
 
-#[allow(dead_code)]
-fn fuzz(seed: Option<u64>, n: usize) {
-    loop {
-        let seed: u64 = seed.unwrap_or_else(|| rand::thread_rng().gen());
-        eprintln!("Got seed {}", seed);
-        let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
-
-        let mut pts = Vec::new();
-        for _ in 0..n {
-            pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
-        }
-        let mut t = Triangulation::new(&pts)
-            .expect("Failed to make triangulation");
-        t.run().expect("Failed to triangulate");
-    }
-}
-
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let seed: Option<u64> = if args.len() == 2 {
@@ -139,9 +86,6 @@ fn main() {
         None
     };
 
-    //benchmark(seed, 1_000_000);
-    //fuzz(seed, 5);
-    //svg(seed, 64);
     test_lock(seed);
     //fuzz_lock(seed);
 }

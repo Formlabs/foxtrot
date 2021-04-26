@@ -1,2 +1,3 @@
 /target
 *.svg
+.DS_Store
