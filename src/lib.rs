@@ -7,7 +7,6 @@ const SAVE_DEBUG_SVGS: bool = false;
 pub mod contour;
 pub mod predicates;
 pub mod half;
-pub mod util;
 pub mod triangulate;
 pub mod hull;
 
