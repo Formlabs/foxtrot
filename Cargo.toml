@@ -6,11 +6,11 @@ edition = "2018"
 
 [dependencies]
 geometry-predicates = "0.3.0"
-itertools = "0.10.0"
-rand = "0.8.3"
 thiserror = "1.0"
 safe_index = "0.9.6"
 
 [dev-dependencies]
 clap = "2.33"
+itertools = "0.10.0"
+rand = "0.8.3"
 rand_chacha = "0.3.0"

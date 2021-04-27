@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 use crate::{
     contour::{Contour, ContourData},
     predicates::{acute, orient2d, in_circle},
@@ -1229,9 +1227,15 @@ impl Triangulation {
 
     /// Calculates a bounding box, returning ((xmin, xmax), (ymin, ymax))
     pub fn bbox(points: &[Point]) -> ((f64, f64), (f64, f64)) {
-        let x = points.iter().map(|p| p.0).minmax().into_option().unwrap();
-        let y = points.iter().map(|p| p.1).minmax().into_option().unwrap();
-        (x, y)
+        let (mut xmin, mut xmax) = (std::f64::INFINITY, -std::f64::INFINITY);
+        let (mut ymin, mut ymax) = (std::f64::INFINITY, -std::f64::INFINITY);
+        for (px, py) in points.iter() {
+            xmin = px.min(xmin);
+            ymin = py.min(ymin);
+            xmax = px.max(xmax);
+            ymax = py.max(ymax);
+        }
+        ((xmin, xmax), (ymin, ymax))
     }
 
     pub fn triangles(&self) -> impl Iterator<Item=(usize, usize, usize)> + '_ {
