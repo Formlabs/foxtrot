@@ -35,7 +35,8 @@ pub struct Triangulation {
 }
 
 impl Triangulation {
-    pub fn new_with_edges<'a, E>(points: &[Point], edges: E) -> Result<Triangulation, Error>
+    pub fn new_with_edges<'a, E>(points: &[Point], edges: E)
+        -> Result<Triangulation, Error>
         where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
     {
         if points.is_empty() {

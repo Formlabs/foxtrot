@@ -44,8 +44,24 @@ pub enum Error {
 
 ////////////////////////////////////////////////////////////////////////////////
 // User-friendly exported functions
+
+/// Triangulates a set of points, returning triangles as triples of indexes
+/// into the original points list.  The resulting triangulation has a convex
+/// hull.
 pub fn triangulate(pts: &[Point]) -> Result<Vec<(usize, usize, usize)>, Error> {
     let mut t = triangulate::Triangulation::new(&pts)?;
+    t.run()?;
+    Ok(t.triangles().collect())
+}
+
+/// Triangulates a set of points with certain fixed edges.  The edges are
+/// assumed to form closed boundaries; only triangles within those boundaries
+/// will be returned.
+pub fn triangulate_with_edges<'a, E>(pts: &[Point], edges: E)
+    -> Result<Vec<(usize, usize, usize)>, Error>
+    where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
+{
+    let mut t = triangulate::Triangulation::new_with_edges(&pts, edges)?;
     t.run()?;
     Ok(t.triangles().collect())
 }

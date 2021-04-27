@@ -5,24 +5,6 @@ use cdt::triangulate::Triangulation;
 const FUZZ_COUNT: usize = 32;
 const FUZZ_EDGES: [(usize, usize); 3] = [(0, 1), (1, 2), (2, 0)];
 
-fn test_lock(seed: Option<u64>) {
-    let seed = seed.unwrap_or_else(|| {
-        rand::thread_rng().gen()
-    });
-    eprintln!("Seed: {}", seed);
-
-    let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
-
-    let mut pts = Vec::new();
-    for _ in 0..FUZZ_COUNT {
-        pts.push((rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
-    }
-    let mut t = Triangulation::new_with_edges(&pts, &FUZZ_EDGES)
-        .expect("Failed to make triangulation");
-    t.run().expect("Failed to triangulate");
-    println!("{}", t.to_svg());
-}
-
 #[allow(dead_code)]
 fn fuzz_lock(seed: Option<u64>) {
     eprintln!("Running...");
