@@ -20,6 +20,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .long("out")
             .help("svg file to target")
             .takes_value(true))
+        .arg(Arg::with_name("lock")
+            .short("l")
+            .long("lock")
+            .help("lock three edges to test constrained triangulation"))
         .get_matches();
 
     let num = matches.value_of("num")
@@ -41,10 +45,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .collect();
 
         // Generator to build the triangulation
-        let gen = || cdt::triangulate::Triangulation::new(&points)
-            .expect("Failed to make triangulation");
+        let gen = || if matches.is_present("lock") {
+            cdt::triangulate::Triangulation::new_with_edges(&points,
+                &[(0, 1), (1, 2), (2, 0)])
+        } else {
+            cdt::triangulate::Triangulation::new(&points)
+        };
 
-        let mut t = gen();
+        let mut t = gen()?;
         let result = std::panic::catch_unwind(move || {
             t.run().expect("Could not triangulate")
         });
@@ -53,7 +61,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if result.is_err() {
             let mut safe_steps = 0;
             for i in 0..points.len() {
-                let mut t = gen();
+                let mut t = gen()?;
                 let result = std::panic::catch_unwind(move || {
                     for _ in 0..i {
                         t.step().expect("oh no");
@@ -66,7 +74,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
 
-            let mut t = gen();
+            let mut t = gen()?;
             for _ in 0..safe_steps {
                 t.step().expect("Failed too early");
             }
