@@ -39,7 +39,7 @@ impl Contour {
     fn new(point: PointIndex, data: ContourData, sign: bool) -> Self {
         let n = Node { point, data, prev: EMPTY, next: EMPTY };
         Contour {
-            pts: ContourVec { vec: vec![n] },
+            pts: ContourVec::of(vec![n]),
             end: ContourIndex::new(0),
             index: ContourIndex::new(0),
             sign,

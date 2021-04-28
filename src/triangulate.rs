@@ -93,7 +93,7 @@ impl Triangulation {
             next: PointIndex::new(3), // we've already built a, b, c
 
             // Endings are assigned later
-            endings: PointVec{ vec: vec![(0,0); sorted_points.len()] },
+            endings: PointVec::of(vec![(0,0); sorted_points.len()]),
             ending_data: vec![],
 
             points: sorted_points, // moved out here
@@ -114,7 +114,7 @@ impl Triangulation {
 
         ////////////////////////////////////////////////////////////////////////
         // Iterate over edges, counting which points have a termination
-        let mut termination_count = PointVec { vec: vec![0; out.points.len()] };
+        let mut termination_count = PointVec::of(vec![0; out.points.len()]);
         let edge_iter = || edges.clone()
             .into_iter()
             .map(|&(src, dst)| {
@@ -1207,7 +1207,7 @@ impl Triangulation {
         }
     }
 
-    /// Calculates a bounding box, returning ((xmin, xmax), (ymin, ymax))
+    /// Calculates a bounding box, returning `((xmin, xmax), (ymin, ymax))`
     pub fn bbox(points: &[Point]) -> ((f64, f64), (f64, f64)) {
         let (mut xmin, mut xmax) = (std::f64::INFINITY, -std::f64::INFINITY);
         let (mut ymin, mut ymax) = (std::f64::INFINITY, -std::f64::INFINITY);

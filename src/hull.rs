@@ -41,7 +41,7 @@ impl Hull {
         Hull {
             data: HullVec::new(),
             buckets: [EMPTY; N],
-            points: PointVec { vec: vec![EMPTY; num_points] },
+            points: PointVec::of(vec![EMPTY; num_points]),
             empty: Vec::new(),
             dx: xmax - xmin,
             xmin,

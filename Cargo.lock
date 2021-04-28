@@ -173,9 +173,9 @@ dependencies = [
 
 [[package]]
 name = "safe_index"
-version = "0.9.6"
+version = "0.9.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29ef0c54ebf2723c596ae710965f59edeb1e5bb4f6b73f652d7372447c524db2"
+checksum = "76d3d19713121fade4869212101329182546b02d6a81b19ebf83434fc9fb2782"
 
 [[package]]
 name = "strsim"

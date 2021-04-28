@@ -13,7 +13,7 @@ pub struct Edge {
 }
 
 /// Half is a half-edge graph structure, implicitly storing triangles.
-/// It is agnostic to actual point locations, using abstract PointIndex
+/// It is agnostic to actual point locations, using abstract [`PointIndex`]
 /// values instead.
 pub struct Half {
     /// The half-edge data structure is stored as a bunch of edges in a flat
@@ -105,7 +105,7 @@ impl Half {
     }
 
     pub fn iter_triangles(&self) -> impl Iterator<Item=(PointIndex, PointIndex, PointIndex)> + '_ {
-        let mut seen = EdgeVec { vec: vec![false; self.edges.len()] };
+        let mut seen = EdgeVec::of(vec![false; self.edges.len()]);
         self.edges.iter()
             .filter(|e| e.next != EMPTY)
             .enumerate()
@@ -127,7 +127,7 @@ impl Half {
     /// using odd-even counting (i.e. we switch from outside to inside every
     /// time we cross a fixed edge).
     pub fn flood_erase_from(&mut self, e: EdgeIndex) {
-        let mut seen = EdgeVec { vec: vec![false; self.edges.len()] };
+        let mut seen = EdgeVec::of(vec![false; self.edges.len()]);
         let mut todo = vec![(e, false)];
         while let Some((e, inside)) = todo.pop() {
             if e == EMPTY || seen[e] {
