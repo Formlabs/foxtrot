@@ -1,9 +1,3 @@
-// TODO: move these to crate flags
-const CHECK_INVARIANTS: bool = false;
-const SAVE_DEBUG_SVGS: bool = false;
-
-////////////////////////////////////////////////////////////////////////////////
-
 pub mod contour;
 pub mod predicates;
 pub mod half;

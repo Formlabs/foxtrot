@@ -1,4 +1,4 @@
-use crate::{PointIndex, EdgeIndex, EdgeVec, CHECK_INVARIANTS};
+use crate::{PointIndex, EdgeIndex, EdgeVec};
 
 pub const EMPTY: EdgeIndex = EdgeIndex { val: std::usize::MAX };
 
@@ -95,7 +95,6 @@ impl Half {
             fixed: false,
         });
 
-        self.check();
         e_ab
     }
 
@@ -153,12 +152,9 @@ impl Half {
     }
 
     /// Sanity-checks the structure's invariants, raising an assertion if
-    /// any invariants are broken.  This is a no-op if CHECK_INVARIANTS is set
-    /// to false in lib.rs.
+    /// any invariants are broken.  This is a slow operation and should only
+    /// be run in a debugging context.
     pub fn check(&self) {
-        if !CHECK_INVARIANTS {
-            return;
-        }
         for (index, edge) in self.edges.iter().enumerate() {
             if edge.next == EMPTY {
                 assert!(edge.prev == EMPTY);
@@ -270,8 +266,6 @@ impl Half {
         self.edges[e_bd].next = e_ab;
         self.edges[e_da].prev = e_ba;
         self.edges[e_da].next = e_ac;
-
-        self.check();
     }
 
     /// Erases a triangle, clearing its neighbors buddies
@@ -300,7 +294,6 @@ impl Half {
             self.edges[e].buddy = EMPTY;
         }
         // TODO: reuse edges once they're erased
-        self.check();
     }
 
     /// Links a new edge in the triangulation, copying the value of fixed

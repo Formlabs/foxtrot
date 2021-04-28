@@ -20,6 +20,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .long("out")
             .help("svg file to target")
             .takes_value(true))
+        .arg(Arg::with_name("check")
+            .short("c")
+            .long("check")
+            .help("check invariants after each step (slow)"))
         .arg(Arg::with_name("lock")
             .short("l")
             .long("lock")
@@ -29,6 +33,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let num = matches.value_of("num")
         .map(|s| s.parse())
         .unwrap_or(Ok(N))?;
+
+    let check = matches.is_present("check");
 
     let mut i = 0;
     loop {
@@ -54,7 +60,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let mut t = gen()?;
         let result = std::panic::catch_unwind(move || {
-            t.run().expect("Could not triangulate")
+            while !t.done() {
+                t.step().expect("Could not triangulate");
+                if check {
+                    t.check();
+                }
+            }
         });
 
         // Count how many steps we can do before failure
@@ -65,6 +76,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let result = std::panic::catch_unwind(move || {
                     for _ in 0..i {
                         t.step().expect("oh no");
+                        if check {
+                            t.check();
+                        }
                     }
                 });
                 if result.is_ok() {

@@ -1,4 +1,4 @@
-use crate::{PointVec, PointIndex, HullVec, HullIndex, EdgeIndex, half, CHECK_INVARIANTS};
+use crate::{PointVec, PointIndex, HullVec, HullIndex, EdgeIndex, half};
 
 const N: usize = 1 << 10;
 pub const EMPTY: HullIndex = HullIndex { val: std::usize::MAX };
@@ -64,8 +64,6 @@ impl Hull {
         });
         self.points[p] = self.buckets[0];
 
-        self.check();
-
         self.buckets[0]
     }
 
@@ -112,12 +110,9 @@ impl Hull {
     }
 
     /// Sanity-checks invariants of the data structure, raising an assertion
-    /// failure if an invariant is broken.  This is a no-op if CHECK_INVARIANTS
-    /// is set to false in lib.rs.
+    /// failure if an invariant is broken.  This is a slow operation and should
+    /// only be run in a debugging context.
     pub fn check(&self) {
-        if !CHECK_INVARIANTS {
-            return;
-        }
         // Find the first non-empty bucket to use as our starting point for
         // walking around the hull's linked list.
         let point = self.buckets.iter()
@@ -213,8 +208,6 @@ impl Hull {
 
         self.points[point] = h;
 
-        self.check();
-
         h
     }
 
@@ -242,7 +235,6 @@ impl Hull {
         }
 
         self.empty.push(h);
-        self.check();
     }
 
     pub fn start(&self) -> HullIndex {

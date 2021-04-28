@@ -20,6 +20,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .long("out")
             .help("svg file to target")
             .takes_value(true))
+        .arg(Arg::with_name("check")
+            .short("c")
+            .long("check")
+            .help("check invariants after each step (slow)"))
         .arg(Arg::with_name("seed")
             .short("s")
             .long("seed")
@@ -46,7 +50,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let now = std::time::Instant::now();
     let mut t = cdt::triangulate::Triangulation::new_with_edges(&points,
         &[(0, 1), (1, 2), (2, 0)])?;
-    t.run()?;
+    while !t.done() {
+        t.step()?;
+        if matches.is_present("check") {
+            t.check();
+        }
+    }
     let result = t.triangles().collect::<Vec<_>>();
     let elapsed = now.elapsed();
 
