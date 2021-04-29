@@ -52,10 +52,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // Generator to build the triangulation
         let gen = || if matches.is_present("lock") {
-            cdt::triangulate::Triangulation::new_with_edges(&points,
+            cdt::Triangulation::new_with_edges(&points,
                 &[(0, 1), (1, 2), (2, 0)])
         } else {
-            cdt::triangulate::Triangulation::new(&points)
+            cdt::Triangulation::new(&points)
         };
 
         let mut t = gen()?;

@@ -1,16 +1,14 @@
-pub mod contour;
-pub mod predicates;
-pub mod half;
-pub mod triangulate;
-pub mod hull;
+pub(crate) mod contour;
+pub(crate) mod predicates;
+pub(crate) mod half;
+pub(crate) mod hull;
+pub(crate) mod indexes;
+pub(crate) mod triangulate;
+pub use triangulate::Triangulation;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Common types for points and strongly-typed vectors
 type Point = (f64, f64);
-
-safe_index::new! { PointIndex, map: PointVec with iter: PointIter }
-safe_index::new! { EdgeIndex, map: EdgeVec with iter: EdgeIter }
-safe_index::new! { HullIndex, map: HullVec with iter: HullIter }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Single error type for the whole crate

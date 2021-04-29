@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     eprintln!("Running with seed {}", seed);
     let now = std::time::Instant::now();
-    let mut t = cdt::triangulate::Triangulation::new(&points)?;
+    let mut t = cdt::Triangulation::new(&points)?;
     while !t.done() {
         t.step()?;
         if matches.is_present("check") {

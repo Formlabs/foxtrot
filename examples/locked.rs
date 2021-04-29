@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     eprintln!("Running with seed {}", seed);
     let now = std::time::Instant::now();
-    let mut t = cdt::triangulate::Triangulation::new_with_edges(&points,
+    let mut t = cdt::Triangulation::new_with_edges(&points,
         &[(0, 1), (1, 2), (2, 0)])?;
     while !t.done() {
         t.step()?;

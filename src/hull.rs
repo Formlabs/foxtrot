@@ -1,7 +1,8 @@
-use crate::{PointVec, PointIndex, HullVec, HullIndex, EdgeIndex, half};
+use crate::{
+    indexes::{PointVec, PointIndex, HullVec, HullIndex, EdgeIndex, EMPTY_EDGE, EMPTY_HULL},
+};
 
 const N: usize = 1 << 10;
-pub const EMPTY: HullIndex = HullIndex { val: std::usize::MAX };
 
 #[derive(Clone, Copy, Debug)]
 struct Node {
@@ -26,7 +27,7 @@ struct Node {
 /// In addition, the Hull stores a random-access map from PointIndex to
 /// HullIndex (if present), for fast lookups without hash traversal.
 #[derive(Debug)]
-pub(crate) struct Hull {
+pub struct Hull {
     buckets: [HullIndex; N],
     data: HullVec<Node>,
     points: PointVec<HullIndex>,
@@ -40,8 +41,8 @@ impl Hull {
     pub fn new(num_points: usize, xmin: f64, xmax: f64) -> Hull {
         Hull {
             data: HullVec::new(),
-            buckets: [EMPTY; N],
-            points: PointVec::of(vec![EMPTY; num_points]),
+            buckets: [EMPTY_HULL; N],
+            points: PointVec::of(vec![EMPTY_HULL; num_points]),
             empty: Vec::new(),
             dx: xmax - xmin,
             xmin,
@@ -53,14 +54,14 @@ impl Hull {
         self.buckets[0] = self.data.push( Node {
             pos_norm: 0.0,
             edge,
-            left: EMPTY,
+            left: EMPTY_HULL,
             right: HullIndex::new(1),
         });
         self.buckets[self.buckets.len() - 1] = self.data.push(Node {
             pos_norm: 1.0,
-            edge: half::EMPTY,
+            edge: EMPTY_EDGE,
             left: HullIndex::new(0),
-            right: EMPTY,
+            right: EMPTY_HULL,
         });
         self.points[p] = self.buckets[0];
 
@@ -83,10 +84,10 @@ impl Hull {
         // which requires finding the next-lowest bucket then walking all
         // the way to the end of that bucket's chain.
         let mut pos = self.buckets[b];
-        if pos == EMPTY {
+        if pos == EMPTY_HULL {
             // Find the next filled bucket, which must exist somewhere
             let mut t = b;
-            while self.buckets[t] == EMPTY {
+            while self.buckets[t] == EMPTY_HULL {
                 t = (t + 1) % N;
             }
             pos = self.buckets[t];
@@ -103,7 +104,7 @@ impl Hull {
                 pos = self.data[pos].right;
             }
         }
-        assert!(pos != EMPTY);
+        assert!(pos != EMPTY_HULL);
 
         // Return the HullIndex which will be split by this point
         self.data[pos].left
@@ -116,7 +117,7 @@ impl Hull {
         // Find the first non-empty bucket to use as our starting point for
         // walking around the hull's linked list.
         let point = self.buckets.iter()
-            .filter(|b| **b != EMPTY)
+            .filter(|b| **b != EMPTY_HULL)
             .copied()
             .next();
         assert!(point.is_some());
@@ -130,7 +131,7 @@ impl Hull {
         loop {
             // Assert that the list is correctly stitched together
             let next = self.data[index].right;
-            if next == EMPTY {
+            if next == EMPTY_HULL {
                 break;
             }
             assert!(index == self.data[next].left);
@@ -167,8 +168,8 @@ impl Hull {
     /// Returns the hull index associated with the given point
     pub fn index_of(&self, p: PointIndex) -> HullIndex {
         let h = self.points[p];
-        assert!(h != EMPTY);
-        assert!(self.data[h].left != EMPTY || self.data[h].right != EMPTY);
+        assert!(h != EMPTY_HULL);
+        assert!(self.data[h].left != EMPTY_HULL || self.data[h].right != EMPTY_HULL);
         h
     }
 
@@ -196,7 +197,7 @@ impl Hull {
         // If the target bucket is empty, or the given point is below the first
         // item in the target bucket, then it becomes the bucket's head
         let b = self.bucket(p);
-        if self.buckets[b] == EMPTY || (self.buckets[b] == right &&
+        if self.buckets[b] == EMPTY_HULL || (self.buckets[b] == right &&
             p < self.data[right].pos_norm)
         {
             self.buckets[b] = h;
@@ -219,18 +220,18 @@ impl Hull {
         // Cut this node out of the linked list
         self.data[next].left = prev;
         self.data[prev].right = next;
-        self.data[h].right = EMPTY;
-        self.data[h].left = EMPTY;
+        self.data[h].right = EMPTY_HULL;
+        self.data[h].left = EMPTY_HULL;
 
         // If this is the head of the bucket, then replace it with the next
         // item in this bucket chain (assuming it belongs in the same bucket),
-        // or EMPTY if the bucket is now completely empty.
+        // or EMPTY_HULL if the bucket is now completely empty.
         let b = self.bucket_h(h);
         if self.buckets[b] == h {
             if self.bucket_h(next) == b {
                 self.buckets[b] = next;
             } else {
-                self.buckets[b] = EMPTY;
+                self.buckets[b] = EMPTY_HULL;
             }
         }
 
@@ -242,7 +243,7 @@ impl Hull {
         // Find the first non-empty bucket to use as our starting point for
         // walking around the hull's linked list.
         let mut point: HullIndex = self.buckets.iter()
-            .filter(|b| **b != EMPTY)
+            .filter(|b| **b != EMPTY_HULL)
             .copied()
             .next()
             .unwrap();
@@ -251,7 +252,7 @@ impl Hull {
         std::iter::from_fn(move || {
             let out = self.data[point].edge;
             point = self.data[point].right;
-            if point == EMPTY {
+            if point == EMPTY_HULL {
                 None
             } else {
                 Some(out)

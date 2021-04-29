@@ -1,23 +1,28 @@
-use crate::{PointIndex, EdgeIndex, EdgeVec};
+use crate::indexes::{PointIndex, EdgeIndex, EdgeVec, EMPTY_EDGE};
 
-pub const EMPTY: EdgeIndex = EdgeIndex { val: std::usize::MAX };
-
+/// Represents a directed edge in a triangle graph.
 #[derive(Copy, Clone, Debug)]
 pub struct Edge {
+    /// Source of the directed edge
     pub src: PointIndex,
+    /// Destination of the directed edge
     pub dst: PointIndex,
+    /// Previous edge in the triangle
     pub prev: EdgeIndex,
+    /// Next edge in the triangle
     pub next: EdgeIndex,
-    pub buddy: EdgeIndex, // EMPTY if empty
+    /// Matched edge in the graph, [`EMPTY_EDGE`] if empty
+    pub buddy: EdgeIndex,
+    /// Marks whether this edge is fixed in the triangulation
     pub fixed: bool,
 }
 
-/// Half is a half-edge graph structure, implicitly storing triangles.
+/// A half-edge graph structure, implicitly storing triangles.
 /// It is agnostic to actual point locations, using abstract [`PointIndex`]
 /// values instead.
 pub struct Half {
     /// The half-edge data structure is stored as a bunch of edges in a flat
-    /// array, indexed by the type-safe EdgeIndex key
+    /// array, indexed by the type-safe [`EdgeIndex`] key
     edges: EdgeVec<Edge>,
 }
 
@@ -33,14 +38,10 @@ impl Half {
         self.set_lock(e, true);
     }
 
-    pub fn unlock(&mut self, e: EdgeIndex) {
-        self.set_lock(e, false);
-    }
-
     pub fn set_lock(&mut self, e: EdgeIndex, v: bool) {
         self.edges[e].fixed = v;
         let buddy = self.edges[e].buddy;
-        if buddy != EMPTY {
+        if buddy != EMPTY_EDGE {
             self.edges[buddy].fixed = v;
         }
     }
@@ -61,15 +62,15 @@ impl Half {
         let mut index = self.edges.push(edge);
 
         // Link against a buddy if present, copying its fixed value
-        if edge.buddy != EMPTY {
+        if edge.buddy != EMPTY_EDGE {
             self.edges[index].fixed = self.edges[edge.buddy].fixed;
             std::mem::swap(&mut self.edges[edge.buddy].buddy, &mut index);
-            assert!(index == EMPTY);
+            assert!(index == EMPTY_EDGE);
         }
     }
 
     /// Inserts a new triangle into the edge map, based on three points
-    /// and optional paired edges.  Returns the new edge index a->b
+    /// and optional paired edges.  Returns the new edge index `a → b`
     pub fn insert(&mut self, a: PointIndex, b: PointIndex, c: PointIndex,
                   e_cb: EdgeIndex, e_ac: EdgeIndex, e_ba: EdgeIndex) -> EdgeIndex
     {
@@ -100,14 +101,14 @@ impl Half {
 
     pub fn iter_edges(&self) -> impl Iterator<Item=(PointIndex, PointIndex, bool)> + '_ {
         return self.edges.iter()
-            .filter(|e| e.next != EMPTY)
+            .filter(|e| e.next != EMPTY_EDGE)
             .map(|e| (e.src, e.dst, e.fixed))
     }
 
     pub fn iter_triangles(&self) -> impl Iterator<Item=(PointIndex, PointIndex, PointIndex)> + '_ {
         let mut seen = EdgeVec::of(vec![false; self.edges.len()]);
         self.edges.iter()
-            .filter(|e| e.next != EMPTY)
+            .filter(|e| e.next != EMPTY_EDGE)
             .enumerate()
             .filter_map(move |(index, edge)| {
                 let index = EdgeIndex::new(index);
@@ -122,7 +123,7 @@ impl Half {
             })
     }
 
-    /// Performs a flood fill from e, which is presumed to be outside the
+    /// Performs a flood fill from `e`, which is presumed to be outside the
     /// triangulation.  Every triangle outside the boundary is removed,
     /// using odd-even counting (i.e. we switch from outside to inside every
     /// time we cross a fixed edge).
@@ -130,13 +131,13 @@ impl Half {
         let mut seen = EdgeVec::of(vec![false; self.edges.len()]);
         let mut todo = vec![(e, false)];
         while let Some((e, inside)) = todo.pop() {
-            if e == EMPTY || seen[e] {
+            if e == EMPTY_EDGE || seen[e] {
                 continue;
             }
             let edge = self.edge(e);
 
-            assert!(seen[edge.next] == false);
-            assert!(seen[edge.prev] == false);
+            assert!(!seen[edge.next]);
+            assert!(!seen[edge.prev]);
             seen[e] = true;
             seen[edge.next] = true;
             seen[edge.prev] = true;
@@ -156,15 +157,15 @@ impl Half {
     /// be run in a debugging context.
     pub fn check(&self) {
         for (index, edge) in self.edges.iter().enumerate() {
-            if edge.next == EMPTY {
-                assert!(edge.prev == EMPTY);
-                assert!(edge.buddy == EMPTY);
+            if edge.next == EMPTY_EDGE {
+                assert!(edge.prev == EMPTY_EDGE);
+                assert!(edge.buddy == EMPTY_EDGE);
                 continue;
             }
             // Check that our relationship with our buddy is good
             let index = EdgeIndex::new(index);
             let buddy_index = edge.buddy;
-            if buddy_index != EMPTY {
+            if buddy_index != EMPTY_EDGE {
                 let buddy = self.edge(buddy_index);
                 assert!(edge.src == buddy.dst);
                 assert!(edge.dst == buddy.src);
@@ -212,7 +213,7 @@ impl Half {
          *           b
          */
         let edge = self.edge(e_ba);
-        assert!(edge.buddy != EMPTY);
+        assert!(edge.buddy != EMPTY_EDGE);
 
         let e_ac = self.next(e_ba);
         let e_cb = self.prev(e_ba);
@@ -286,29 +287,33 @@ impl Half {
 
         for &e in &[e_ab, e_bc, e_ca] {
             let buddy = self.edges[e].buddy;
-            if buddy != EMPTY {
-                self.edges[buddy].buddy = EMPTY;
+            if buddy != EMPTY_EDGE {
+                self.edges[buddy].buddy = EMPTY_EDGE;
             }
-            self.edges[e].next = EMPTY;
-            self.edges[e].prev = EMPTY;
-            self.edges[e].buddy = EMPTY;
+            self.edges[e].next = EMPTY_EDGE;
+            self.edges[e].prev = EMPTY_EDGE;
+            self.edges[e].buddy = EMPTY_EDGE;
         }
         // TODO: reuse edges once they're erased
     }
 
-    /// Links a new edge in the triangulation, copying the value of fixed
-    /// from the old edge which is its buddy.  This differs from link(), which
+    /// Links a new edge in the triangulation, copying the value of `fixed`
+    /// from the old edge which is its buddy.  This differs from [`Half::link`], which
     /// checks that the fixed-ness matches.
+    ///
+    /// The `old` and `new` edges must have compatible `src` and `dst` values
+    /// and no pre-existing buddies; otherwise, this will panic.
     pub fn link_new(&mut self, old: EdgeIndex, new: EdgeIndex) {
         self.edges[new].fixed = self.edges[old].fixed;
         self.link(old, new)
     }
 
-    /// Sets a pair of edges as each others buddies.  They must have matching
-    /// src/dst and the same value for fixed.
+    /// Sets a pair of edges as each others buddies.  They must have compatible
+    /// `src`/`dst` values, no pre-existing buddies, and the same value for
+    /// `fixed`; otherwise, it will panic.
     pub fn link(&mut self, a: EdgeIndex, b: EdgeIndex) {
-        assert!(self.edges[a].buddy == EMPTY);
-        assert!(self.edges[b].buddy == EMPTY);
+        assert!(self.edges[a].buddy == EMPTY_EDGE);
+        assert!(self.edges[b].buddy == EMPTY_EDGE);
         assert!(self.edges[a].fixed == self.edges[b].fixed);
         assert!(self.edges[a].src == self.edges[b].dst);
         assert!(self.edges[a].dst == self.edges[b].src);

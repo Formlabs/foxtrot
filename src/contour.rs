@@ -1,10 +1,13 @@
-use crate::{PointIndex, EdgeIndex, HullIndex, half, triangulate::Triangulation};
+use crate::{
+    indexes::{PointIndex, EdgeIndex, HullIndex, EMPTY_EDGE},
+    triangulate::Triangulation,
+};
 
 safe_index::new! {
     ContourIndex,
     map: ContourVec with iter: ContourIter
 }
-const EMPTY: ContourIndex = ContourIndex { val: std::usize::MAX };
+const EMPTY_CONTOUR: ContourIndex = ContourIndex { val: std::usize::MAX };
 
 #[derive(Copy, Clone, Debug)]
 pub enum ContourData {
@@ -37,7 +40,7 @@ pub struct Contour {
 /// Triangulation is based on ["Triangulating Monotone Mountains"](http://www.ams.sunysb.edu/~jsbm/courses/345/13/triangulating-monotone-mountains.pdf)
 impl Contour {
     fn new(point: PointIndex, data: ContourData, sign: bool) -> Self {
-        let n = Node { point, data, prev: EMPTY, next: EMPTY };
+        let n = Node { point, data, prev: EMPTY_CONTOUR, next: EMPTY_CONTOUR };
         Contour {
             pts: ContourVec::of(vec![n]),
             end: ContourIndex::new(0),
@@ -101,9 +104,9 @@ impl Contour {
     pub fn push(&mut self, t: &mut Triangulation,
                 point: PointIndex, data: ContourData) -> Option<EdgeIndex> {
         let i = self.pts.push(Node {
-            point, data, next: EMPTY, prev: self.end
+            point, data, next: EMPTY_CONTOUR, prev: self.end
         });
-        assert!(self.pts[self.end].next == EMPTY);
+        assert!(self.pts[self.end].next == EMPTY_CONTOUR);
         self.pts[self.end].next = i;
         self.end = i;
 
@@ -113,7 +116,7 @@ impl Contour {
         }
         // Advance to the end of the triangulation
         self.index = self.pts[self.index].next;
-        assert!(self.pts[self.index].next == EMPTY);
+        assert!(self.pts[self.index].next == EMPTY_CONTOUR);
         out
     }
 
@@ -125,8 +128,8 @@ impl Contour {
         // the caller will shuffle self.index forward.  We're not allowed
         // to be at the end of the list, since this must be called right
         // after push() extends the list without moving self.index
-        assert!(c.next != EMPTY);
-        if c.prev == EMPTY {
+        assert!(c.next != EMPTY_CONTOUR);
+        if c.prev == EMPTY_CONTOUR {
             return None;
         }
 
@@ -154,7 +157,7 @@ impl Contour {
 
             // Insert the new triangle
             let e_ab = t.half.insert(a.point, b.point, c.point,
-                                     half::EMPTY, half::EMPTY, half::EMPTY);
+                                     EMPTY_EDGE, EMPTY_EDGE, EMPTY_EDGE);
             // Link the new triangle with buddies or hull edges
             let edge_ab = t.half.edge(e_ab);
             let e_ca = edge_ab.prev;
@@ -204,7 +207,7 @@ impl Contour {
 
             // Insert the new triangle
             let e_ba = t.half.insert(b.point, a.point, c.point,
-                                     half::EMPTY, half::EMPTY, half::EMPTY);
+                                     EMPTY_EDGE, EMPTY_EDGE, EMPTY_EDGE);
             // Link the new triangle with buddies or hull edges
             let edge_ba = t.half.edge(e_ba);
             let e_cb = edge_ba.prev;
@@ -238,7 +241,7 @@ impl Contour {
         self.pts[self.index] = Node {
             point: PointIndex::new(0),
             data: ContourData::None,
-            prev: EMPTY, next: EMPTY
+            prev: EMPTY_CONTOUR, next: EMPTY_CONTOUR
         };
         self.pts[c.next].prev = c.prev;
         self.pts[c.prev].next = c.next;

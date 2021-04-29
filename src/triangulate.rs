@@ -1,11 +1,14 @@
 use crate::{
     contour::{Contour, ContourData},
+    Error, Point,
+    half::Half, hull::Hull,
+    indexes::{PointIndex, PointVec, EdgeIndex, HullIndex,
+              EMPTY_EDGE, EMPTY_HULL, POINT_INDEX_ZERO, POINT_INDEX_ONE},
     predicates::{acute, orient2d, in_circle},
-    Point, PointIndex, PointVec, EdgeIndex, Error,
-    half, half::Half, hull, hull::Hull, HullIndex};
+};
 
-const TERMINAL_LOWER_LEFT: PointIndex = PointIndex { val: 0 };
-const TERMINAL_LOWER_RIGHT: PointIndex = PointIndex { val: 1 };
+const TERMINAL_LOWER_LEFT: PointIndex = POINT_INDEX_ZERO;
+const TERMINAL_LOWER_RIGHT: PointIndex = POINT_INDEX_ONE;
 
 #[derive(Debug)]
 enum Walk {
@@ -14,6 +17,10 @@ enum Walk {
     Done(EdgeIndex),
 }
 
+/// This `struct` contains all of the data needed to generate a (constrained)
+/// Delaunay triangulation of a set of input points and edges.  It is a
+/// **low-level** API; consider using the module-level functions if you don't
+/// need total control.
 pub struct Triangulation {
     pub(crate) points: PointVec<Point>,    // Sorted in the constructor
     remap: PointVec<usize>,         // self.points[i] = input[self.remap[i]]
@@ -31,6 +38,12 @@ pub struct Triangulation {
 }
 
 impl Triangulation {
+    /// Constructs a new triangulation of the given points.  The points are a
+    /// flat array of positions in 2D spaces; edges are undirected and expressed
+    /// as indexes into the `points` list.
+    ///
+    /// The triangulation is not actually run in this constructor; use
+    /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate.
     pub fn new_with_edges<'a, E>(points: &[Point], edges: E)
         -> Result<Triangulation, Error>
         where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
@@ -104,7 +117,7 @@ impl Triangulation {
         let pc = PointIndex::new(2);
 
         let e_ab = out.half.insert(pa, pb, pc,
-                                   half::EMPTY, half::EMPTY, half::EMPTY);
+                                   EMPTY_EDGE, EMPTY_EDGE, EMPTY_EDGE);
         assert!(e_ab == EdgeIndex::new(0));
         let e_bc = out.half.next(e_ab);
         let e_ca = out.half.prev(e_ab);
@@ -157,11 +170,16 @@ impl Triangulation {
         Ok(out)
     }
 
+    /// Constructs a new unconstrained triangulation
+    ///
+    /// The triangulation is not actually run in this constructor; use
+    /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate.
     pub fn new(points: & [Point]) -> Result<Triangulation, Error> {
         let edges: [(usize, usize); 0] = [];
         Self::new_with_edges(points, &edges)
     }
 
+    /// Runs the triangulation algorithm until completion
     pub fn run(&mut self) -> Result<(), Error> {
         while !self.done() {
             self.step()?;
@@ -177,6 +195,7 @@ impl Triangulation {
         acute(self.points[pa], self.points[pb], self.points[pc])
     }
 
+    /// Checks whether the triangulation is done
     pub fn done(&self) -> bool {
         self.next == self.points.len() + 1
     }
@@ -201,7 +220,7 @@ impl Triangulation {
             let er = self.hull.edge(hr);
 
             // The last hull index has an empty edge attached
-            if er == half::EMPTY {
+            if er == EMPTY_EDGE {
                 break;
             }
             let edge_l = self.half.edge(el);
@@ -213,12 +232,12 @@ impl Triangulation {
                 self.hull.erase(hr);
                 let new_edge = self.half.insert(
                     edge_r.src, edge_l.dst, edge_l.src,
-                    el, er, half::EMPTY);
+                    el, er, EMPTY_EDGE);
                 self.hull.update(hl, new_edge);
 
                 // Try stepping back in case this reveals another convex tri
                 let prev = self.hull.left_hull(hl);
-                if prev == hull::EMPTY {
+                if prev == EMPTY_HULL {
                     hr = self.hull.right_hull(hl);
                 } else {
                     hr = hl;
@@ -250,7 +269,7 @@ impl Triangulation {
         let mut e = self.hull.edge(h);
         let mut contour = Contour::new_neg(
             self.half.edge(e).src, ContourData::None);
-        while e != half::EMPTY {
+        while e != EMPTY_EDGE {
             let edge = self.half.edge(e);
             let next = self.half.edge(edge.next);
             let prev = self.half.edge(edge.prev);
@@ -264,14 +283,14 @@ impl Triangulation {
                    0------->1
                      next
              */
-            e = if next.buddy == half::EMPTY &&
+            e = if next.buddy == EMPTY_EDGE &&
                    next.src != TERMINAL_LOWER_RIGHT {
                 prev.buddy
             } else {
                 contour.push(self, prev.src, ContourData::Buddy(prev.buddy));
 
                 // This will break us out of the loop after the final hull
-                // edge, which will leave e set to half::EMPTY
+                // edge, which will leave e set to EMPTY_EDGE
                 next.buddy
             }
         }
@@ -298,11 +317,15 @@ impl Triangulation {
         self.next += 1usize;
     }
 
+    /// Checks that invariants of the algorithm are maintained, panicking
+    /// otherwise.  This is a slow operation and should only be used for
+    /// debugging.
     pub fn check(&mut self) {
         self.hull.check();
         self.half.check();
     }
 
+    /// Advances the triangulation by one step.
     pub fn step(&mut self) -> Result<(), Error> {
         if self.done() {
             return Err(Error::NoMorePoints);
@@ -341,7 +364,7 @@ impl Triangulation {
         assert!(o != 0.0);
         assert!(o > 0.0);
 
-        let f = self.half.insert(b, a, p, half::EMPTY, half::EMPTY, e_ab);
+        let f = self.half.insert(b, a, p, EMPTY_EDGE, EMPTY_EDGE, e_ab);
 
         // Replaces the previous item in the hull
         self.hull.update(h_ab, self.half.prev(f));
@@ -407,7 +430,7 @@ impl Triangulation {
             self.hull.erase(h_b);
 
             // Now p-q is my new friend
-            let e_pq = self.half.insert(p, q, b, e_bq, e_pb, half::EMPTY);
+            let e_pq = self.half.insert(p, q, b, e_bq, e_pb, EMPTY_EDGE);
             self.hull.update(h_q, e_pq);
             h_b = h_p;
 
@@ -449,7 +472,7 @@ impl Triangulation {
             assert!(self.orient2d(p, a, q) > 0.0);
 
             self.hull.erase(h_a);
-            let edge_qp = self.half.insert(q, p, a, e_ap, e_qa, half::EMPTY);
+            let edge_qp = self.half.insert(q, p, a, e_ap, e_qa, EMPTY_EDGE);
             self.hull.update(h_p, edge_qp);
             h_a = h_p;
 
@@ -460,8 +483,8 @@ impl Triangulation {
     }
 
     /// Finds which mode to begin walking through the triangulation when
-    /// inserting a fixed edge.  h is a HullIndex equivalent to the src point,
-    /// and dst is the destination of the new fixed edge.
+    /// inserting a fixed edge.  h is a [`HullIndex`] equivalent to the `src`
+    /// point, and `dst` is the destination of the new fixed edge.
     fn find_hull_walk_mode(&self, h: HullIndex, src: PointIndex, dst: PointIndex)
         -> Walk {
         /*  We've just built a triangle that contains a fixed edge, and need
@@ -584,7 +607,7 @@ impl Triangulation {
 
                 // We can't have walked out of the wedge, because otherwise
                 // o_right would be < 0.0 and we wouldn't be in this branch
-                assert!(buddy != half::EMPTY);
+                assert!(buddy != EMPTY_EDGE);
                 index_a_src = self.half.edge(buddy).prev;
             }
         }
@@ -620,7 +643,7 @@ impl Triangulation {
             self.half.erase(e_ba);
 
             steps_above.push(self, edge_ba.src,
-                if edge_cb.buddy != half::EMPTY {
+                if edge_cb.buddy != EMPTY_EDGE {
                     ContourData::Buddy(edge_cb.buddy)
                 } else {
                     let hl = self.hull.index_of(edge_cb.dst);
@@ -628,7 +651,7 @@ impl Triangulation {
                     ContourData::Hull(hl, edge_cb.fixed)
                 });
             steps_below.push(self, edge_ba.dst,
-                if edge_ac.buddy != half::EMPTY {
+                if edge_ac.buddy != EMPTY_EDGE {
                     ContourData::Buddy(edge_ac.buddy)
                 } else {
                     let hr = self.hull.index_of(edge_ac.dst);
@@ -641,7 +664,7 @@ impl Triangulation {
             if edge_ba.fixed {
                 return Err(Error::CrossingFixedEdge);
             }
-            if edge_ba.buddy == half::EMPTY {
+            if edge_ba.buddy == EMPTY_EDGE {
                 let h = self.hull.index_of(edge_ba.dst);
                 assert!(self.hull.edge(h) == e_ba);
                 let hl = self.hull.left_hull(h);
@@ -753,7 +776,7 @@ impl Triangulation {
                         // The left (above) contour is either on the hull
                         // (if no buddy is present) or inside the triangulation
                         let e_dst_src = steps_above.push(self, c,
-                            if edge_bc.buddy == half::EMPTY {
+                            if edge_bc.buddy == EMPTY_EDGE {
                                 let h = self.hull.index_of(edge_bc.dst);
                                 assert!(self.hull.edge(h) == e_bc);
                                 ContourData::Hull(h, edge_bc.fixed)
@@ -771,7 +794,7 @@ impl Triangulation {
                         // could also be on the hull, so we do the same check
                         // as above.
                         let e_src_dst = steps_below.push(self, c,
-                            if edge_ca.buddy == half::EMPTY {
+                            if edge_ca.buddy == EMPTY_EDGE {
                                 let h = self.hull.index_of(edge_ca.dst);
                                 assert!(self.hull.edge(h) == e_ca);
                                 ContourData::Hull(h, edge_ca.fixed)
@@ -800,7 +823,7 @@ impl Triangulation {
                                edge_ca.dst == TERMINAL_LOWER_RIGHT
                             {
                                 ContourData::None
-                            } else if edge_ca.buddy == half::EMPTY {
+                            } else if edge_ca.buddy == EMPTY_EDGE {
                                 let h = self.hull.index_of(edge_ca.dst);
                                 assert!(self.hull.edge(h) == e_ca);
                                 ContourData::Hull(h, edge_ca.fixed)
@@ -813,7 +836,7 @@ impl Triangulation {
                         if edge_bc.fixed {
                             return Err(Error::CrossingFixedEdge);
                         }
-                        m = if edge_bc.buddy == half::EMPTY {
+                        m = if edge_bc.buddy == EMPTY_EDGE {
                             let h = self.hull.index_of(edge_bc.dst);
                             assert!(self.hull.edge(h) == e_bc);
                             let hl = self.hull.left_hull(h);
@@ -837,7 +860,7 @@ impl Triangulation {
                         //
                         // (c-b may be a hull edge, so we check for that)
                         steps_above.push(self, c,
-                            if edge_bc.buddy == half::EMPTY {
+                            if edge_bc.buddy == EMPTY_EDGE {
                                 let h = self.hull.index_of(edge_bc.dst);
                                 assert!(self.hull.edge(h) == e_bc);
                                 ContourData::Hull(h, edge_bc.fixed)
@@ -848,7 +871,7 @@ impl Triangulation {
                         if edge_ca.fixed {
                             return Err(Error::CrossingFixedEdge);
                         }
-                        m = if edge_ca.buddy == half::EMPTY {
+                        m = if edge_ca.buddy == EMPTY_EDGE {
                             let h = self.hull.index_of(edge_ca.dst);
                             assert!(self.hull.edge(h) == e_ca);
                             let hl = self.hull.left_hull(h);
@@ -897,7 +920,7 @@ impl Triangulation {
             self.half.erase(e_ba);
 
             steps_below.push(self, edge_ba.src,
-                if edge_cb.buddy != half::EMPTY {
+                if edge_cb.buddy != EMPTY_EDGE {
                     ContourData::Buddy(edge_cb.buddy)
                 } else {
                     let hl = self.hull.index_of(edge_cb.dst);
@@ -905,7 +928,7 @@ impl Triangulation {
                     ContourData::Hull(hl, edge_cb.fixed)
                 });
             steps_above.push(self, edge_ba.dst,
-                if edge_ac.buddy != half::EMPTY {
+                if edge_ac.buddy != EMPTY_EDGE {
                     ContourData::Buddy(edge_ac.buddy)
                 } else {
                     let hr = self.hull.index_of(edge_ac.dst);
@@ -918,7 +941,7 @@ impl Triangulation {
             if edge_ba.fixed {
                 return Err(Error::CrossingFixedEdge);
             }
-            if edge_ba.buddy == half::EMPTY {
+            if edge_ba.buddy == EMPTY_EDGE {
                 let h = self.hull.index_of(edge_ba.dst);
                 assert!(self.hull.edge(h) == e_ba);
                 let hr = self.hull.right_hull(h);
@@ -1029,7 +1052,7 @@ impl Triangulation {
                         // The right (above) contour is either on the hull
                         // (if no buddy is present) or inside the triangulation
                         let e_src_dst = steps_above.push(self, c,
-                            if edge_ca.buddy == half::EMPTY {
+                            if edge_ca.buddy == EMPTY_EDGE {
                                 let h = self.hull.index_of(edge_ca.dst);
                                 assert!(self.hull.edge(h) == e_ca);
                                 ContourData::Hull(h, edge_ca.fixed)
@@ -1047,7 +1070,7 @@ impl Triangulation {
                         // could also be on the hull, so we do the same check
                         // as above.
                         let e_dst_src = steps_below.push(self, c,
-                            if edge_bc.buddy == half::EMPTY {
+                            if edge_bc.buddy == EMPTY_EDGE {
                                 let h = self.hull.index_of(edge_bc.dst);
                                 assert!(self.hull.edge(h) == e_bc);
                                 ContourData::Hull(h, edge_bc.fixed)
@@ -1076,7 +1099,7 @@ impl Triangulation {
                                edge_ca.dst == TERMINAL_LOWER_RIGHT
                             {
                                 ContourData::None
-                            } else if edge_ca.buddy == half::EMPTY {
+                            } else if edge_ca.buddy == EMPTY_EDGE {
                                 let h = self.hull.index_of(edge_ca.dst);
                                 assert!(self.hull.edge(h) == e_ca);
                                 ContourData::Hull(h, edge_ca.fixed)
@@ -1089,7 +1112,7 @@ impl Triangulation {
                         if edge_bc.fixed {
                             return Err(Error::CrossingFixedEdge);
                         }
-                        m = if edge_bc.buddy == half::EMPTY {
+                        m = if edge_bc.buddy == EMPTY_EDGE {
                             let h = self.hull.index_of(edge_bc.dst);
                             assert!(self.hull.edge(h) == e_bc);
                             let hr = self.hull.right_hull(h);
@@ -1116,7 +1139,7 @@ impl Triangulation {
                                edge_bc.dst == TERMINAL_LOWER_RIGHT
                             {
                                 ContourData::None
-                            } else if edge_bc.buddy == half::EMPTY {
+                            } else if edge_bc.buddy == EMPTY_EDGE {
                                 let h = self.hull.index_of(edge_bc.dst);
                                 assert!(self.hull.edge(h) == e_bc);
                                 ContourData::Hull(h, edge_bc.fixed)
@@ -1127,7 +1150,7 @@ impl Triangulation {
                         if edge_ca.fixed {
                             return Err(Error::CrossingFixedEdge);
                         }
-                        m = if edge_ca.buddy == half::EMPTY {
+                        m = if edge_ca.buddy == EMPTY_EDGE {
                             let h = self.hull.index_of(edge_ca.dst);
                             assert!(self.hull.edge(h) == e_ca);
                             let hr = self.hull.right_hull(h);
@@ -1185,7 +1208,7 @@ impl Triangulation {
          *  recursing; in that case, then return immediately.
          */
         let edge = self.half.edge(e_ab);
-        if edge.fixed || edge.buddy == half::EMPTY {
+        if edge.fixed || edge.buddy == EMPTY_EDGE {
             return;
         }
         let a = edge.src;
@@ -1208,7 +1231,7 @@ impl Triangulation {
     }
 
     /// Calculates a bounding box, returning `((xmin, xmax), (ymin, ymax))`
-    pub fn bbox(points: &[Point]) -> ((f64, f64), (f64, f64)) {
+    pub(crate) fn bbox(points: &[Point]) -> ((f64, f64), (f64, f64)) {
         let (mut xmin, mut xmax) = (std::f64::INFINITY, -std::f64::INFINITY);
         let (mut ymin, mut ymax) = (std::f64::INFINITY, -std::f64::INFINITY);
         for (px, py) in points.iter() {
@@ -1220,16 +1243,32 @@ impl Triangulation {
         ((xmin, xmax), (ymin, ymax))
     }
 
+    /// Returns all of the resulting triangles, as indexes into the original
+    /// `points` array from the constructor.
     pub fn triangles(&self) -> impl Iterator<Item=(usize, usize, usize)> + '_ {
         self.half.iter_triangles()
             .map(move |(a, b, c)|
                 (self.remap[a], self.remap[b], self.remap[c]))
     }
 
+    /// Checks whether the given point is inside or outside the triangulation.
+    /// This is extremely inefficient, and should only be used for debugging
+    /// or unit tests.
+    pub fn inside(&self, p: Point) -> bool {
+        self.half.iter_triangles()
+            .any(|(a, b, c)| {
+                orient2d(self.points[a], self.points[b], p) >= 0.0 &&
+                orient2d(self.points[b], self.points[c], p) >= 0.0 &&
+                orient2d(self.points[c], self.points[a], p) >= 0.0
+            })
+    }
+
+    /// Writes the current state of the triangulation to an SVG file
     pub fn save_svg(&self, filename: &str) -> std::io::Result<()> {
         std::fs::write(filename, self.to_svg())
     }
 
+    /// Converts the current state of the triangulation to an SVG
     pub fn to_svg(&self) -> String {
         const SCALE: f64 = 250.0;
         let (x_bounds, y_bounds) = Self::bbox(&self.points);
@@ -1308,5 +1347,19 @@ impl Triangulation {
 
         out.push_str("\n</svg>");
         out
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn simple_triangle() {
+        let pts = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
+        let mut t = Triangulation::new(&pts[0..]).expect("Could not construct");
+        t.run().expect("Could not run");
+        t.save_svg("out.svg");
+        assert!(t.inside((0.5, 0.5)));
     }
 }
