@@ -26,7 +26,7 @@ struct Node {
 /// In addition, the Hull stores a random-access map from PointIndex to
 /// HullIndex (if present), for fast lookups without hash traversal.
 #[derive(Debug)]
-pub struct Hull {
+pub(crate) struct Hull {
     buckets: [HullIndex; N],
     data: HullVec<Node>,
     points: PointVec<HullIndex>,
@@ -235,14 +235,6 @@ impl Hull {
         }
 
         self.empty.push(h);
-    }
-
-    pub fn start(&self) -> HullIndex {
-        self.buckets.iter()
-            .filter(|b| **b != EMPTY)
-            .copied()
-            .next()
-            .unwrap()
     }
 
     /// Iterates over all edges stored in the Hull, in order
