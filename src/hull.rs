@@ -113,6 +113,9 @@ impl Hull {
     /// Sanity-checks invariants of the data structure, raising an assertion
     /// failure if an invariant is broken.  This is a slow operation and should
     /// only be run in a debugging context.
+    ///
+    /// # Panics
+    /// Panics if the invariants are broken.
     pub fn check(&self) {
         // Find the first non-empty bucket to use as our starting point for
         // walking around the hull's linked list.

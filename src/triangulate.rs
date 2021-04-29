@@ -317,9 +317,11 @@ impl Triangulation {
         self.next += 1usize;
     }
 
-    /// Checks that invariants of the algorithm are maintained, panicking
-    /// otherwise.  This is a slow operation and should only be used for
-    /// debugging.
+    /// Checks that invariants of the algorithm are maintained. This is a slow
+    /// operation and should only be used for debugging.
+    ///
+    /// # Panics
+    /// Panics if invariants are not correct
     pub fn check(&mut self) {
         self.hull.check();
         self.half.check();

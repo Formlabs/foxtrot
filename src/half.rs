@@ -155,6 +155,9 @@ impl Half {
     /// Sanity-checks the structure's invariants, raising an assertion if
     /// any invariants are broken.  This is a slow operation and should only
     /// be run in a debugging context.
+    ///
+    /// # Panics
+    /// Panics if the invariants are broken.
     pub fn check(&self) {
         for (index, edge) in self.edges.iter().enumerate() {
             if edge.next == EMPTY_EDGE {
@@ -302,7 +305,10 @@ impl Half {
     /// checks that the fixed-ness matches.
     ///
     /// The `old` and `new` edges must have compatible `src` and `dst` values
-    /// and no pre-existing buddies; otherwise, this will panic.
+    /// and no pre-existing buddies.
+    ///
+    /// # Panics
+    /// Panics if the edges are not compatible or already have buddies.
     pub fn link_new(&mut self, old: EdgeIndex, new: EdgeIndex) {
         self.edges[new].fixed = self.edges[old].fixed;
         self.link(old, new)
@@ -311,6 +317,9 @@ impl Half {
     /// Sets a pair of edges as each others buddies.  They must have compatible
     /// `src`/`dst` values, no pre-existing buddies, and the same value for
     /// `fixed`; otherwise, it will panic.
+    ///
+    /// # Panics
+    /// Panics if the edges are not compatible or already have buddies.
     pub fn link(&mut self, a: EdgeIndex, b: EdgeIndex) {
         assert!(self.edges[a].buddy == EMPTY_EDGE);
         assert!(self.edges[b].buddy == EMPTY_EDGE);
