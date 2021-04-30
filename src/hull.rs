@@ -30,19 +30,32 @@ struct Node {
 pub struct Hull {
     buckets: [HullIndex; N],
     data: HullVec<Node>,
-    points: PointVec<HullIndex>,
-    empty: Vec<HullIndex>, // spare slots
 
+    /// Random-access lookup of point->hull; this is only needed when doing
+    /// *constrained* Delaunay triangulation and is empty otherwise
+    points: PointVec<HullIndex>,
+
+    /// Spare slots in the [`Hull::data`] array, to keep it small
+    empty: Vec<HullIndex>,
+
+    /// Offset factor to normalize coordinates
     xmin: f64,
+
+    /// Scale factor to normalize coordinates
     dx: f64,
 }
 
 impl Hull {
-    pub fn new(num_points: usize, xmin: f64, xmax: f64) -> Hull {
+    pub fn new(num_points: usize, constrained: bool,
+               xmin: f64, xmax: f64) -> Hull {
         Hull {
             data: HullVec::new(),
             buckets: [EMPTY_HULL; N],
-            points: PointVec::of(vec![EMPTY_HULL; num_points]),
+            points: if constrained {
+                PointVec::of(vec![EMPTY_HULL; num_points])
+            } else {
+                PointVec::new()
+            },
             empty: Vec::new(),
             dx: xmax - xmin,
             xmin,
@@ -63,7 +76,9 @@ impl Hull {
             left: HullIndex::new(0),
             right: EMPTY_HULL,
         });
-        self.points[p] = self.buckets[0];
+        if !self.points.is_empty() {
+            self.points[p] = self.buckets[0];
+        }
 
         self.buckets[0]
     }
@@ -108,6 +123,14 @@ impl Hull {
 
         // Return the HullIndex which will be split by this point
         self.data[pos].left
+    }
+
+    pub fn start(&self) -> HullIndex {
+        self.buckets.iter()
+            .filter(|b| **b != EMPTY_HULL)
+            .copied()
+            .next()
+            .unwrap()
     }
 
     /// Sanity-checks invariants of the data structure, raising an assertion
@@ -170,6 +193,7 @@ impl Hull {
 
     /// Returns the hull index associated with the given point
     pub fn index_of(&self, p: PointIndex) -> HullIndex {
+        assert!(!self.points.is_empty());
         let h = self.points[p];
         assert!(h != EMPTY_HULL);
         assert!(self.data[h].left != EMPTY_HULL || self.data[h].right != EMPTY_HULL);
@@ -210,7 +234,9 @@ impl Hull {
         self.data[right].left = h;
         self.data[left].right = h;
 
-        self.points[point] = h;
+        if !self.points.is_empty() {
+            self.points[point] = h;
+        }
 
         h
     }

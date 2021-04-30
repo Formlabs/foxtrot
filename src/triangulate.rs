@@ -128,8 +128,10 @@ impl Triangulation {
         }
 
         ////////////////////////////////////////////////////////////////////////
+        let has_edges = edges.clone().into_iter().count() > 0;
         let mut out = Triangulation {
-            hull: Hull::new(sorted_points.len(), x_bounds.0, x_bounds.1),
+            hull: Hull::new(sorted_points.len(), has_edges,
+                            x_bounds.0, x_bounds.1),
             half: Half::new(sorted_points.len()),
 
             remap: map_reverse,
@@ -235,7 +237,8 @@ impl Triangulation {
     fn make_upper_hull_convex(&mut self) {
         // Walk the hull from left to right, flattening any convex regions
         assert!(self.next == self.points.len());
-        let mut hl = self.hull.index_of(TERMINAL_LOWER_LEFT);
+        let mut hl = self.hull.start();
+        assert!(self.half.edge(self.hull.edge(hl)).dst == TERMINAL_LOWER_LEFT);
         let mut hr = self.hull.right_hull(hl);
         loop {
             /*
@@ -294,7 +297,8 @@ impl Triangulation {
             | / /            vv|
             v//
         */
-        let h = self.hull.index_of(TERMINAL_LOWER_LEFT);
+        let h = self.hull.start();
+        assert!(self.half.edge(self.hull.edge(h)).dst == TERMINAL_LOWER_LEFT);
 
         let mut e = self.hull.edge(h);
         let mut contour = Contour::new_neg(
