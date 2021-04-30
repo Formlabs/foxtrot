@@ -44,6 +44,11 @@ impl Triangulation {
     ///
     /// The triangulation is not actually run in this constructor; use
     /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate.
+    ///
+    /// # Errors
+    /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
+    /// [`Error::InvalidEdge`], or [`Error::DuplicatePoint`] if the input is
+    /// invalid.
     pub fn new_with_edges<'a, E>(points: &[Point], edges: E)
         -> Result<Triangulation, Error>
         where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
@@ -206,6 +211,10 @@ impl Triangulation {
     ///
     /// The triangulation is not actually run in this constructor; use
     /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate.
+    ///
+    /// # Errors
+    /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`], or
+    /// [`Error::DuplicatePoint`] if the input is invalid.
     pub fn new(points: & [Point]) -> Result<Triangulation, Error> {
         let edges: [(usize, usize); 0] = [];
         Self::new_with_edges(points, &edges)
