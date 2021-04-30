@@ -221,6 +221,10 @@ impl Triangulation {
     }
 
     /// Runs the triangulation algorithm until completion
+    ///
+    /// # Errors
+    /// This may return [`Error::PointOnFixedEdge`], [`Error::NoMorePoints`],
+    /// or [`Error::CrossingFixedEdge`] if those error conditions are met.
     pub fn run(&mut self) -> Result<(), Error> {
         while !self.done() {
             self.step()?;
@@ -371,6 +375,10 @@ impl Triangulation {
     }
 
     /// Advances the triangulation by one step.
+    ///
+    /// # Errors
+    /// This may return [`Error::PointOnFixedEdge`], [`Error::NoMorePoints`],
+    /// or [`Error::CrossingFixedEdge`] if those error conditions are met.
     pub fn step(&mut self) -> Result<(), Error> {
         if self.done() {
             return Err(Error::NoMorePoints);
