@@ -63,12 +63,50 @@ impl Triangulation {
 
         let (x_bounds, y_bounds) = Self::bbox(points);
 
-        // The scratch buffer contains point orders and their y coordinates
+        // The scratch buffer contains point orders and their y coordinates,
+        // for fast sorting and building a forward/backward mapping.
         let mut scratch = Vec::with_capacity(points.len());
         scratch.extend(points.iter()
             .enumerate()
             .map(|(j, p)| (j, p.1)));
+        // Sort by y then x, using a benchmarked strategy of local vs lookup
+        scratch.sort_unstable_by(
+            |k, r| {
+                let yk = k.1;
+                let yr = r.1;
+                // In most cases, we expect the y coordinates to be unique,
+                // so we store them in the scratch array for better data
+                // locality.
+                if yk != yr {
+                    yk.partial_cmp(&yr)
+                } else {
+                    // If the y coordinates are the same, then sort by the
+                    // x coordinate; we keep this in the original array to
+                    // keep the size of scratch small (since this should be
+                    // rare).
+                    points[k.0].0.partial_cmp(&points[r.0].0)
+                }.unwrap()
+        });
 
+        // Check that sorted points are unique
+        for i in 1..scratch.len() {
+            let pa = points[scratch[i - 1].0];
+            let pb = points[scratch[i].0];
+            if (pa.0 - pb.0).abs() < f64::EPSILON &&
+               (pa.1 - pb.1).abs() < f64::EPSILON
+            {
+                return Err(Error::DuplicatePoint);
+            }
+        }
+
+        // Add two phantom points to the point list, so that the hull is
+        // always guaranteed to be below points in the original set.
+        let dx = x_bounds.1 - x_bounds.0;
+        let dy = y_bounds.1 - y_bounds.0;
+        let x_bounds = (x_bounds.0 - dx / 8.0, x_bounds.1 + dx / 8.0);
+        let y_bounds = (y_bounds.0 - dy / 8.0, y_bounds.1 + dy / 8.0);
+
+        // These are the points used in the Triangulation struct
         let mut sorted_points = PointVec::with_capacity(points.len());
 
         // usize in original array -> PointIndex in sorted array
@@ -77,14 +115,6 @@ impl Triangulation {
         // PointIndex in sorted array -> usize in original array
         let mut map_reverse = PointVec::with_capacity(points.len());
 
-        scratch.sort_unstable_by(|k, r| k.1.partial_cmp(&r.1).unwrap());
-
-        // Add two phantom points to the point list, so that the hull is
-        // always guaranteed to be below points in the original set.
-        let dx = x_bounds.1 - x_bounds.0;
-        let dy = y_bounds.1 - y_bounds.0;
-        let x_bounds = (x_bounds.0 - dx / 8.0, x_bounds.1 + dx / 8.0);
-        let y_bounds = (y_bounds.0 - dy / 8.0, y_bounds.1 + dy / 8.0);
         sorted_points.push((x_bounds.0, y_bounds.0));
         sorted_points.push((x_bounds.1, y_bounds.0));
         map_reverse.push(usize::MAX); // Dummy values
@@ -1361,7 +1391,16 @@ mod tests {
         let pts = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
         let mut t = Triangulation::new(&pts[0..]).expect("Could not construct");
         t.run().expect("Could not run");
-        t.save_svg("out.svg");
         assert!(t.inside((0.5, 0.5)));
+    }
+
+    #[test]
+    fn duplicate_point() {
+        let pts = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 0.0)];
+        let t = Triangulation::new(&pts[0..]);
+        assert!(t.is_err());
+        if let Err(err) = t {
+            assert!(err == Error::DuplicatePoint);
+        }
     }
 }

@@ -16,7 +16,7 @@ type Point = (f64, f64);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Single error type for the whole crate
-#[derive(thiserror::Error, Debug)]
+#[derive(thiserror::Error, Debug, Eq, PartialEq)]
 pub enum Error {
     #[error("Point is located on a fixed edge but is not its endpoint")]
     PointOnFixedEdge,
@@ -35,6 +35,9 @@ pub enum Error {
 
     #[error("edge must index into point array and have different src and dst")]
     InvalidEdge,
+
+    #[error("points may not include duplicates")]
+    DuplicatePoint,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
