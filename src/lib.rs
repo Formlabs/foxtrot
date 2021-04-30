@@ -1,3 +1,7 @@
+//! `cdt` is a library for calculating
+//! [Delaunay](https://en.wikipedia.org/wiki/Delaunay_triangulation) and
+//! [constrained Delaunay](https://en.wikipedia.org/wiki/Constrained_Delaunay_triangulation)
+//! triangulations.
 pub(crate) mod contour;
 pub(crate) mod predicates;
 pub(crate) mod half;
