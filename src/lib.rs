@@ -2,6 +2,8 @@
 //! [Delaunay](https://en.wikipedia.org/wiki/Delaunay_triangulation) and
 //! [constrained Delaunay](https://en.wikipedia.org/wiki/Constrained_Delaunay_triangulation)
 //! triangulations.
+//
+#![warn(missing_docs)]
 pub(crate) mod contour;
 pub(crate) mod predicates;
 pub(crate) mod half;
@@ -57,7 +59,7 @@ pub enum Error {
 /// Triangulates a set of points, returning triangles as triples of indexes
 /// into the original points list.  The resulting triangulation has a convex
 /// hull.
-pub fn triangulate(pts: &[Point]) -> Result<Vec<(usize, usize, usize)>, Error> {
+pub fn triangulate_points(pts: &[Point]) -> Result<Vec<(usize, usize, usize)>, Error> {
     let mut t = triangulate::Triangulation::new(&pts)?;
     t.run()?;
     Ok(t.triangles().collect())

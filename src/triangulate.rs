@@ -1456,8 +1456,7 @@ mod tests {
     #[test]
     fn simple_triangle() {
         let pts = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
-        let mut t = Triangulation::new(&pts[0..]).expect("Could not construct");
-        t.run().expect("Could not run");
+        let t = Triangulation::build(&pts[0..]).expect("Could not construct");
         assert!(t.inside((0.5, 0.5)));
     }
 
@@ -1469,5 +1468,23 @@ mod tests {
         if let Err(err) = t {
             assert!(err == Error::DuplicatePoint);
         }
+    }
+
+    #[test]
+    fn simple_circle() {
+        let mut edges = Vec::new();
+        let mut points = Vec::new();
+        const N: usize = 22;
+        for i in 0..N {
+            let a = (i as f64) / (N as f64) * core::f64::consts::PI * 2.0;
+            let x = a.cos();
+            let y = a.sin();
+            points.push((x, y));
+            edges.push((i, (i + 1) % N));
+        }
+        let t = Triangulation::build_with_edges(&points, &edges)
+            .expect("Could not build triangulation");
+        assert!(t.inside((0.0, 0.0)));
+        assert!(!t.inside((1.01, 0.0)));
     }
 }

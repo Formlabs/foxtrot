@@ -108,8 +108,8 @@ impl Half {
     pub fn iter_triangles(&self) -> impl Iterator<Item=(PointIndex, PointIndex, PointIndex)> + '_ {
         let mut seen = EdgeVec::of(vec![false; self.edges.len()]);
         self.edges.iter()
-            .filter(|e| e.next != EMPTY_EDGE)
             .enumerate()
+            .filter(|(_i, e)| e.next != EMPTY_EDGE)
             .filter_map(move |(index, edge)| {
                 let index = EdgeIndex::new(index);
                 if seen[index] {
