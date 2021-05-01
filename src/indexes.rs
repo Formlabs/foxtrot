@@ -43,6 +43,10 @@ impl<P> std::cmp::PartialEq<usize> for TypedIndex<P> {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+/// This represents a strongly-typed `Vec<T>` which can only be accessed by
+/// a [`TypedIndex`] parameterized with the same `PhantomData`.
 #[derive(Debug)]
 pub struct TypedVec<T, P>(Vec<T>, std::marker::PhantomData<*const P>);
 
