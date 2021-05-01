@@ -280,6 +280,8 @@ impl Triangulation {
                     edge_r.src, edge_l.dst, edge_l.src,
                     el, er, EMPTY_EDGE);
                 self.hull.update(hl, new_edge);
+                self.legalize(self.half.next(new_edge));
+                self.legalize(self.half.prev(new_edge));
 
                 // Try stepping back in case this reveals another convex tri
                 let prev = self.hull.left_hull(hl);
