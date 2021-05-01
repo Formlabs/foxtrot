@@ -8,6 +8,9 @@ edition = "2018"
 geometry-predicates = "0.3.0"
 thiserror = "1.0"
 
+[features]
+long-indexes = []
+
 [dev-dependencies]
 clap = "2.33"
 itertools = "0.10.0"

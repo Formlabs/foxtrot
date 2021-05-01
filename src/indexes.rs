@@ -1,18 +1,25 @@
 use std::convert::TryInto;
 
-type IndexNum = u32;
+#[cfg(feature = "long-indexes")]
+type Index = usize;
+#[cfg(not(feature = "long-indexes"))]
+type Index = u32;
 
+////////////////////////////////////////////////////////////////////////////////
+
+/// This represents a strongly-typed index into a [`TypedVec`] parameterized
+/// with the same `PhantomData`.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd)]
-pub struct TypedIndex<P>(IndexNum, std::marker::PhantomData<*const P>);
+pub struct TypedIndex<P>(Index, std::marker::PhantomData<*const P>);
 impl<P> TypedIndex<P> {
     pub fn new(i: usize) -> Self {
         Self::const_new(i.try_into().unwrap())
     }
-    pub const fn const_new(i: IndexNum) -> Self {
+    pub const fn const_new(i: Index) -> Self {
         Self(i, std::marker::PhantomData)
     }
     pub const fn empty() -> Self {
-        Self::const_new(IndexNum::MAX)
+        Self::const_new(Index::MAX)
     }
 }
 
@@ -25,15 +32,14 @@ impl<P> std::ops::Add<usize> for TypedIndex<P> {
 
 impl<P> std::ops::AddAssign<usize> for TypedIndex<P> {
     fn add_assign(&mut self, i: usize) {
-        let i: IndexNum = i.try_into().unwrap();
+        let i: Index = i.try_into().unwrap();
         self.0 = self.0.checked_add(i).unwrap();
     }
 }
 
 impl<P> std::cmp::PartialEq<usize> for TypedIndex<P> {
     fn eq(&self, i: &usize) -> bool {
-        let i: IndexNum = (*i).try_into().unwrap();
-        self.0.eq(&i)
+        (self.0 as usize).eq(i)
     }
 }
 
@@ -52,6 +58,7 @@ impl<T, P> std::ops::IndexMut<TypedIndex<P>> for TypedVec<T, P> {
         self.0.index_mut(index.0 as usize)
     }
 }
+
 impl<T, P> std::ops::Deref for TypedVec<T, P> {
     type Target = Vec<T> ;
     fn deref(&self) -> &Vec<T> {
@@ -77,15 +84,6 @@ impl<T, P> TypedVec<T, P> {
     pub fn next_index(&self) -> TypedIndex<P> {
         TypedIndex::new(self.0.len())
     }
-    pub fn len(&self) -> usize {
-        self.0.len()
-    }
-    pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
-    }
-    pub fn iter(&self) -> impl Iterator<Item=&T> {
-        self.0.iter()
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -109,6 +107,8 @@ pub type PointVec<T> = TypedVec<T, PointTag>;
 pub struct ContourTag {}
 pub type ContourIndex = TypedIndex<ContourTag>;
 pub type ContourVec<T> = TypedVec<T, ContourTag>;
+
+////////////////////////////////////////////////////////////////////////////////
 
 pub const EMPTY_EDGE: EdgeIndex = EdgeIndex::empty();
 pub const EMPTY_HULL: HullIndex = HullIndex::empty();
