@@ -1555,4 +1555,59 @@ mod tests {
         assert!(t.inside((0.0, 0.0)));
         assert!(!t.inside((1.01, 0.0)));
     }
+
+    #[test]
+    fn spiral_circle() {
+        let mut edges = Vec::new();
+        let mut points = Vec::new();
+        const N: usize = 16;
+        for i in 0..N {
+            let a = (i as f64) / (N as f64) * core::f64::consts::PI * 2.0;
+            let x = a.cos();
+            let y = a.sin();
+            points.push((x, y));
+            edges.push((i, (i + 1) % N));
+        }
+        const M: usize = 32;
+        for i in 0..(2*M) {
+            let a = (i as f64) / (M as f64) * core::f64::consts::PI * 2.0;
+            let scale = (i as f64 + 1.1).powf(0.2);
+            let x = a.cos() / scale;
+            let y = a.sin() / scale;
+            points.push((x, y));
+        }
+
+        let t = Triangulation::build_with_edges(&points, &edges)
+            .expect("Could not build triangulation");
+        assert!(t.inside((0.0, 0.0)));
+        assert!(!t.inside((1.01, 0.0)));
+    }
+    #[test]
+    fn nested_circles() {
+        let mut edges = Vec::new();
+        let mut points = Vec::new();
+        const N: usize = 32;
+        for i in 0..N {
+            let a = (i as f64) / (N as f64) * core::f64::consts::PI * 2.0;
+            let x = a.cos();
+            let y = a.sin();
+            points.push((x, y));
+            edges.push((i, (i + 1) % N));
+        }
+        for i in 0..N {
+            let a = (i as f64) / (N as f64) * core::f64::consts::PI * 2.0;
+            let x = a.cos() / 2.0;
+            let y = a.sin() / 2.0;
+            points.push((x, y));
+            edges.push((N + i, N + (i + 1) % N));
+        }
+
+        let t = Triangulation::build_with_edges(&points, &edges)
+            .expect("Could not build triangulation");
+        t.save_svg("out.svg");
+        assert!(!t.inside((0.0, 0.0)));
+        assert!(!t.inside((1.01, 0.0)));
+        assert!(t.inside((0.75, 0.0)));
+        assert!(t.inside((0.0, 0.8)));
+    }
 }
