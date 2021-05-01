@@ -6,7 +6,7 @@ const N: usize = 1 << 10;
 
 #[derive(Clone, Copy, Debug)]
 struct Node {
-    pos_norm: f64,
+    pos: f64,
     edge: EdgeIndex,
 
     // prev is leftward, next is rightward
@@ -63,15 +63,17 @@ impl Hull {
     }
 
     // Inserts the first point, along with its associated edge
-    pub fn insert_lower_edge(&mut self, p: PointIndex, edge: EdgeIndex) -> HullIndex {
+    pub fn insert_lower_edge(&mut self, p: PointIndex, edge: EdgeIndex)
+        -> HullIndex
+    {
         self.buckets[0] = self.data.push( Node {
-            pos_norm: 0.0,
+            pos: self.xmin,
             edge,
             left: EMPTY_HULL,
             right: HullIndex::new(1),
         });
         self.buckets[self.buckets.len() - 1] = self.data.push(Node {
-            pos_norm: 1.0,
+            pos: self.dx + self.xmin,
             edge: EMPTY_EDGE,
             left: HullIndex::new(0),
             right: EMPTY_HULL,
@@ -90,7 +92,6 @@ impl Hull {
     /// For a given point, returns the HullIndex which will be split when this
     /// point is inserted.  Use `Hull::edge` to get the associated EdgeIndex.
     pub fn get(&self, p: f64) -> HullIndex {
-        let p = self.normalize_pos(p);
         let b = self.bucket(p);
 
         // If the target bucket is empty, then we should search for the
@@ -113,7 +114,7 @@ impl Hull {
             // Loop until we find an item in the linked list which is less
             // that our new point, or we leave this bucket, or we're about
             // to wrap around in the same bucket.
-            while self.data[pos].pos_norm < p &&
+            while self.data[pos].pos < p &&
                   self.bucket_h(pos) == b
             {
                 pos = self.data[pos].right;
@@ -171,12 +172,12 @@ impl Hull {
             }
 
             // Assert that position are increasing in the list
-            let my_position = self.data[index].pos_norm;
-            let next_position = self.data[next].pos_norm;
+            let my_position = self.data[index].pos;
+            let next_position = self.data[next].pos;
             assert!(next_position >= my_position);
             index = next;
         }
-        assert!(self.data[index].pos_norm == 1.0);
+        assert!(self.data[index].pos == self.dx + self.xmin);
     }
 
     pub fn left_hull(&self, h: HullIndex) -> HullIndex {
@@ -196,7 +197,8 @@ impl Hull {
         assert!(!self.points.is_empty());
         let h = self.points[p];
         assert!(h != EMPTY_HULL);
-        assert!(self.data[h].left != EMPTY_HULL || self.data[h].right != EMPTY_HULL);
+        assert!(self.data[h].left != EMPTY_HULL ||
+                self.data[h].right != EMPTY_HULL);
         h
     }
 
@@ -211,20 +213,20 @@ impl Hull {
 
     /// Insert a new Point-Edge pair into the hull, using a hint to save time
     /// searching for the new point's position.
-    pub fn insert(&mut self, left: HullIndex, p: f64, point: PointIndex, e: EdgeIndex) -> HullIndex {
+    pub fn insert(&mut self, left: HullIndex, p: f64,
+                  point: PointIndex, e: EdgeIndex) -> HullIndex {
         let right = self.right_hull(left);
 
-        let p = self.normalize_pos(p);
         let h = if let Some(h) = self.empty.pop() {
             self.data[h] = Node {
-                pos_norm: p,
+                pos: p,
                 edge: e,
                 left, right
             };
             h
         } else {
             self.data.push(Node{
-                pos_norm: p,
+                pos: p,
                 edge: e,
                 left, right
             })
@@ -234,7 +236,7 @@ impl Hull {
         // item in the target bucket, then it becomes the bucket's head
         let b = self.bucket(p);
         if self.buckets[b] == EMPTY_HULL || (self.buckets[b] == right &&
-            p < self.data[right].pos_norm)
+                                             p < self.data[right].pos)
         {
             self.buckets[b] = h;
         }
@@ -298,20 +300,15 @@ impl Hull {
         })
     }
 
-    fn normalize_pos(&self, p: f64) -> f64 {
-        (p - self.xmin) / self.dx
-    }
-
-    /// Looks up what bucket a given normalized position will fall into
-    /// Note that this doesn't work with point coordinates directly;
-    /// call normalize_pos(p) to normalize it.
+    /// Looks up what bucket a given position will fall into.
     fn bucket(&self, f: f64) -> usize {
-        assert!(f >= 0.0);
-        assert!(f <= 1.0);
-        (f * (self.buckets.len() as f64 - 1.0)).round() as usize
+        let p = (f - self.xmin) / self.dx;
+        assert!(p >= 0.0);
+        assert!(p <= 1.0);
+        (p * (self.buckets.len() as f64 - 1.0)).round() as usize
     }
 
     pub fn bucket_h(&self, h: HullIndex) -> usize {
-        self.bucket(self.data[h].pos_norm)
+        self.bucket(self.data[h].pos)
     }
 }

@@ -455,9 +455,8 @@ impl Triangulation {
         // Replaces the previous item in the hull
         self.hull.update(h_ab, self.half.prev(f));
 
-        // We compare the points using > rather than != because normalization
-        // in the Hull may mess up ordering.
-        let h_p = if self.points[a].0 > self.points[p].0 {
+        assert!(self.points[a].0 >= self.points[p].0);
+        let h_p = if self.points[a].0 != self.points[p].0 {
             // Insert the new edge into the hull, using the previous
             // HullIndex as a hint to avoid searching for its position.
             let h_bp = self.hull.insert(
