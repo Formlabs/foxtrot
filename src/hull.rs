@@ -200,6 +200,15 @@ impl Hull {
         h
     }
 
+    /// Transitions the point -> hull random lookup from `old` to `new`.  This
+    /// is required when two points have the exact same X coordinate.
+    pub fn move_point(&mut self, old: PointIndex, new: PointIndex) {
+        if !self.points.is_empty() {
+            self.points[new] = self.points[old];
+            self.points[old] = EMPTY_HULL;
+        }
+    }
+
     /// Insert a new Point-Edge pair into the hull, using a hint to save time
     /// searching for the new point's position.
     pub fn insert(&mut self, left: HullIndex, p: f64, point: PointIndex, e: EdgeIndex) -> HullIndex {

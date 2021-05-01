@@ -455,11 +455,42 @@ impl Triangulation {
         // Replaces the previous item in the hull
         self.hull.update(h_ab, self.half.prev(f));
 
-        // Insert the new edge into the hull, using the previous HullIndex
-        // as a hint to avoid searching for its position.
-        let h_p = self.hull.insert(h_ab, self.points[p].0, p, self.half.next(f));
-
         self.legalize(f);
+
+        let h_p = if self.points[a].0 != self.points[p].0 {
+            // Insert the new edge into the hull, using the previous
+            // HullIndex as a hint to avoid searching for its position.
+            self.hull.insert(h_ab, self.points[p].0, p, self.half.next(f))
+        } else {
+            /*  Rare case when p and a are in a perfect vertical line:
+             *
+             *  We already inserted the left triangle and attached p-b to
+             *  the hull index.  We insert a bonus right triangle here and
+             *  attach c-p to to p's hull index, rather than splitting a-b inn
+             *  the hull.
+             *
+             *                 /p [new point]
+             *               /  | ^
+             *             /    |   \
+             *           V      |  g  \
+             *          -------->------>\
+             *          b<------a<------c [previous hull edge]
+             *              e
+             */
+            let h_ca = self.hull.right_hull(h_ab);
+            let e_ca = self.hull.edge(h_ca);
+            let edge_ca = self.half.edge(e_ca);
+            assert!(a == edge_ca.dst);
+            let c = edge_ca.src;
+            let g = self.half.insert(a, c, p,
+                EMPTY_EDGE, self.half.next(f), e_ca);
+
+            // h_ca has the same X position as c-p, so we update the same slot
+            // in the hull, then move the point in the look-up table.
+            self.hull.update(h_ca, self.half.next(g));
+            self.hull.move_point(a, p);
+            h_ca
+        };
 
         // Check and fill acute angles
         self.check_acute_left(p, h_p);
