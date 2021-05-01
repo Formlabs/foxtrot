@@ -455,12 +455,15 @@ impl Triangulation {
         // Replaces the previous item in the hull
         self.hull.update(h_ab, self.half.prev(f));
 
-        self.legalize(f);
-
-        let h_p = if self.points[a].0 != self.points[p].0 {
+        // We compare the points using > rather than != because normalization
+        // in the Hull may mess up ordering.
+        let h_p = if self.points[a].0 > self.points[p].0 {
             // Insert the new edge into the hull, using the previous
             // HullIndex as a hint to avoid searching for its position.
-            self.hull.insert(h_ab, self.points[p].0, p, self.half.next(f))
+            let h_bp = self.hull.insert(
+                h_ab, self.points[p].0, p, self.half.next(f));
+            self.legalize(f);
+            h_bp
         } else {
             /*  Rare case when p and a are in a perfect vertical line:
              *
@@ -472,7 +475,7 @@ impl Triangulation {
              *                 /p [new point]
              *               /  | ^
              *             /    |   \
-             *           V      |  g  \
+             *           V  f   |  g  \
              *          -------->------>\
              *          b<------a<------c [previous hull edge]
              *              e
@@ -489,6 +492,10 @@ impl Triangulation {
             // in the hull, then move the point in the look-up table.
             self.hull.update(h_ca, self.half.next(g));
             self.hull.move_point(a, p);
+
+            // Legalize the two new triangle edges
+            self.legalize(f);
+            self.legalize(g);
             h_ca
         };
 
