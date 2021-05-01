@@ -1,9 +1,119 @@
-safe_index::new! { PointIndex, map: PointVec with iter: PointIter }
-safe_index::new! { EdgeIndex, map: EdgeVec with iter: EdgeIter }
-safe_index::new! { HullIndex, map: HullVec with iter: HullIter }
+use std::convert::TryInto;
 
-pub const EMPTY_EDGE: EdgeIndex = EdgeIndex { val: std::usize::MAX };
-pub const EMPTY_HULL: HullIndex = HullIndex { val: std::usize::MAX };
+type IndexNum = u32;
 
-pub const POINT_INDEX_ZERO: PointIndex = PointIndex { val: 0 };
-pub const POINT_INDEX_ONE: PointIndex = PointIndex { val: 1 };
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd)]
+pub struct TypedIndex<P>(IndexNum, std::marker::PhantomData<*const P>);
+impl<P> TypedIndex<P> {
+    pub fn new(i: usize) -> Self {
+        Self::const_new(i.try_into().unwrap())
+    }
+    pub const fn const_new(i: IndexNum) -> Self {
+        Self(i, std::marker::PhantomData)
+    }
+    pub const fn empty() -> Self {
+        Self::const_new(IndexNum::MAX)
+    }
+}
+
+impl<P> std::ops::Add<usize> for TypedIndex<P> {
+    type Output = Self;
+    fn add(self, i: usize) -> Self::Output {
+        Self::new((self.0 as usize).checked_add(i).unwrap())
+    }
+}
+
+impl<P> std::ops::AddAssign<usize> for TypedIndex<P> {
+    fn add_assign(&mut self, i: usize) {
+        let i: IndexNum = i.try_into().unwrap();
+        self.0 = self.0.checked_add(i).unwrap();
+    }
+}
+
+impl<P> std::cmp::PartialEq<usize> for TypedIndex<P> {
+    fn eq(&self, i: &usize) -> bool {
+        let i: IndexNum = (*i).try_into().unwrap();
+        self.0.eq(&i)
+    }
+}
+
+#[derive(Debug)]
+pub struct TypedVec<T, P>(Vec<T>, std::marker::PhantomData<*const P>);
+
+impl<T, P> std::ops::Index<TypedIndex<P>> for TypedVec<T, P> {
+    type Output = T;
+    fn index(&self, index: TypedIndex<P>) -> &Self::Output {
+        self.0.index(index.0 as usize)
+    }
+}
+
+impl<T, P> std::ops::IndexMut<TypedIndex<P>> for TypedVec<T, P> {
+    fn index_mut(&mut self, index: TypedIndex<P>) -> &mut Self::Output {
+        self.0.index_mut(index.0 as usize)
+    }
+}
+impl<T, P> std::ops::Deref for TypedVec<T, P> {
+    type Target = Vec<T> ;
+    fn deref(&self) -> &Vec<T> {
+        &self.0
+    }
+}
+
+impl<T, P> TypedVec<T, P> {
+    pub fn new() -> Self {
+        Self::of(Vec::new())
+    }
+    pub fn with_capacity(s: usize) -> Self {
+        Self::of(Vec::with_capacity(s))
+    }
+    pub fn of(v: Vec<T>) -> Self {
+        Self(v, std::marker::PhantomData)
+    }
+    pub fn push(&mut self, t: T) -> TypedIndex<P> {
+        let i = self.next_index();
+        self.0.push(t);
+        i
+    }
+    pub fn next_index(&self) -> TypedIndex<P> {
+        TypedIndex::new(self.0.len())
+    }
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+    pub fn iter(&self) -> impl Iterator<Item=&T> {
+        self.0.iter()
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd)]
+pub struct HullTag {}
+pub type HullIndex = TypedIndex<HullTag>;
+pub type HullVec<T> = TypedVec<T, HullTag>;
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd)]
+pub struct EdgeTag {}
+pub type EdgeIndex = TypedIndex<EdgeTag>;
+pub type EdgeVec<T> = TypedVec<T, EdgeTag>;
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd)]
+pub struct PointTag {}
+pub type PointIndex = TypedIndex<PointTag>;
+pub type PointVec<T> = TypedVec<T, PointTag>;
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd)]
+pub struct ContourTag {}
+pub type ContourIndex = TypedIndex<ContourTag>;
+pub type ContourVec<T> = TypedVec<T, ContourTag>;
+
+pub const EMPTY_EDGE: EdgeIndex = EdgeIndex::empty();
+pub const EMPTY_HULL: HullIndex = HullIndex::empty();
+
+pub const POINT_INDEX_ZERO: PointIndex = PointIndex::const_new(0);
+pub const POINT_INDEX_ONE: PointIndex = PointIndex::const_new(1);
+
+pub const EMPTY_CONTOUR: ContourIndex = ContourIndex::empty();

@@ -7,7 +7,6 @@ edition = "2018"
 [dependencies]
 geometry-predicates = "0.3.0"
 thiserror = "1.0"
-safe_index = "0.9.9"
 
 [dev-dependencies]
 clap = "2.33"

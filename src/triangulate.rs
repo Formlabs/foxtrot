@@ -1474,7 +1474,7 @@ impl Triangulation {
              }
          }
 
-         for p in &self.points {
+         for p in self.points.iter() {
              out.push_str(&format!(
                 r#"
         <circle cx="{}" cy="{}" r="{}" style="fill:rgb(255,128,128)" />"#,

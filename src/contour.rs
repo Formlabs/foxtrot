@@ -1,13 +1,8 @@
 use crate::{
-    indexes::{PointIndex, EdgeIndex, HullIndex, EMPTY_EDGE},
+    indexes::{PointIndex, EdgeIndex, HullIndex, ContourVec, ContourIndex,
+              EMPTY_EDGE, EMPTY_CONTOUR},
     triangulate::Triangulation,
 };
-
-safe_index::new! {
-    ContourIndex,
-    map: ContourVec with iter: ContourIter
-}
-const EMPTY_CONTOUR: ContourIndex = ContourIndex { val: std::usize::MAX };
 
 #[derive(Copy, Clone, Debug)]
 pub enum ContourData {
