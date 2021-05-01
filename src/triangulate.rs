@@ -402,7 +402,7 @@ impl Triangulation {
     ///
     /// # Panics
     /// Panics if invariants are not correct
-    pub fn check(&mut self) {
+    pub fn check(&self) {
         self.hull.check();
         self.half.check();
     }
@@ -1582,6 +1582,7 @@ mod tests {
         assert!(t.inside((0.0, 0.0)));
         assert!(!t.inside((1.01, 0.0)));
     }
+
     #[test]
     fn nested_circles() {
         let mut edges = Vec::new();
@@ -1604,10 +1605,47 @@ mod tests {
 
         let t = Triangulation::build_with_edges(&points, &edges)
             .expect("Could not build triangulation");
-        t.save_svg("out.svg");
         assert!(!t.inside((0.0, 0.0)));
         assert!(!t.inside((1.01, 0.0)));
         assert!(t.inside((0.75, 0.0)));
         assert!(t.inside((0.0, 0.8)));
+    }
+
+    #[test]
+    fn grid() {
+        let mut points = Vec::new();
+        const N: usize = 32;
+        for i in 0..N {
+            for j in 0..N {
+                points.push((i as f64, j as f64));
+            }
+        }
+        let t = Triangulation::build(&points)
+            .expect("Could not build triangulation");
+        t.check();
+    }
+
+    #[test]
+    fn grid_with_fixed_circle() {
+        let mut edges = Vec::new();
+        let mut points = Vec::new();
+        const N: usize = 32;
+        for i in 0..N {
+            let a = (i as f64) / (N as f64) * core::f64::consts::PI * 2.0;
+            let x = a.cos() * 0.9;
+            let y = a.sin() * 0.9;
+            points.push((x, y));
+            edges.push((i, (i + 1) % N));
+        }
+        const M: usize = 32;
+        for i in 0..M {
+            for j in 0..M {
+                points.push((i as f64 / M as f64 * 2.0 - 1.0,
+                             j as f64 / M as f64 * 2.0 - 1.0));
+            }
+        }
+        let t = Triangulation::build_with_edges(&points, &edges)
+            .expect("Could not build triangulation");
+        t.check();
     }
 }
