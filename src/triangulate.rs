@@ -38,12 +38,42 @@ pub struct Triangulation {
 }
 
 impl Triangulation {
+    /// Builds a complete triangulation from the given points
+    ///
+    /// # Errors
+    /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`], or
+    /// [`Error::DuplicatePoint`] if the input is invalid.
+    pub fn build(points: & [Point]) -> Result<Triangulation, Error> {
+        let mut t = Self::new(points)?;
+        t.run()?;
+        Ok(t)
+    }
+
+    /// Builds a complete triangulation from the given points and edges.
+    /// The points are a flat array of positions in 2D spaces; edges are
+    /// undirected and expressed as indexes into the points list.
+    ///
+    /// # Errors
+    /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
+    /// [`Error::InvalidEdge`], or [`Error::DuplicatePoint`] if the input is
+    /// invalid.
+    pub fn build_with_edges<'a, E>(points: &[Point], edges: E)
+        -> Result<Triangulation, Error>
+        where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
+    {
+        let mut t = Self::new_with_edges(points, edges)?;
+        t.run()?;
+        Ok(t)
+    }
+
     /// Constructs a new triangulation of the given points.  The points are a
     /// flat array of positions in 2D spaces; edges are undirected and expressed
     /// as indexes into the `points` list.
     ///
     /// The triangulation is not actually run in this constructor; use
-    /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate.
+    /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate,
+    /// or [`Triangulation::build_with_edges`] to get a complete triangulation
+    /// right away.
     ///
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
@@ -210,7 +240,8 @@ impl Triangulation {
     /// Constructs a new unconstrained triangulation
     ///
     /// The triangulation is not actually run in this constructor; use
-    /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate.
+    /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate,
+    /// or [`Triangulation::build`] to get a complete triangulation right away.
     ///
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`], or
@@ -1318,13 +1349,22 @@ impl Triangulation {
             })
     }
 
-    /// Writes the current state of the triangulation to an SVG file
+    /// Writes the current state of the triangulation to an SVG file,
+    /// without debug visualizations.
     pub fn save_svg(&self, filename: &str) -> std::io::Result<()> {
-        std::fs::write(filename, self.to_svg())
+        std::fs::write(filename, self.to_svg(false))
     }
 
-    /// Converts the current state of the triangulation to an SVG
-    pub fn to_svg(&self) -> String {
+    /// Writes the current state of the triangulation to an SVG file,
+    /// including the upper hull as a debugging visualization.
+    pub fn save_debug_svg(&self, filename: &str) -> std::io::Result<()> {
+        std::fs::write(filename, self.to_svg(true))
+    }
+
+    /// Converts the current state of the triangulation to an SVG.  When `debug`
+    /// is true, includes the upper hull and to-be-fixed edges; otherwise, just
+    /// shows points, triangles, and fixed edges from the half-edge graph.
+    pub fn to_svg(&self, debug: bool) -> String {
         const SCALE: f64 = 250.0;
         let (x_bounds, y_bounds) = Self::bbox(&self.points);
         let line_width = (x_bounds.1 - x_bounds.0)
@@ -1343,20 +1383,22 @@ impl Triangulation {
 
         // Draw endings in green (they will be overdrawn in white if they're
         // included in the triangulation).
-        for (p, (start, end)) in self.endings.iter().enumerate() {
-            for i in *start..*end {
-                let dst = PointIndex::new(p);
-                let src = self.ending_data[i];
-                 out.push_str(&format!(
-                    r#"
-        <line x1="{}" y1="{}" x2="{}" y2="{}"
-         style="stroke:rgb(0,255,0)"
-         stroke-width="{}" stroke-linecap="round" />"#,
-                    dx(self.points[src].0),
-                    dy(self.points[src].1),
-                    dx(self.points[dst].0),
-                    dy(self.points[dst].1),
-                    line_width));
+        if debug {
+            for (p, (start, end)) in self.endings.iter().enumerate() {
+                for i in *start..*end {
+                    let dst = PointIndex::new(p);
+                    let src = self.ending_data[i];
+                     out.push_str(&format!(
+                        r#"
+            <line x1="{}" y1="{}" x2="{}" y2="{}"
+             style="stroke:rgb(0,255,0)"
+             stroke-width="{}" stroke-linecap="round" />"#,
+                        dx(self.points[src].0),
+                        dy(self.points[src].1),
+                        dx(self.points[dst].0),
+                        dy(self.points[dst].1),
+                        line_width));
+                }
             }
         }
 
@@ -1377,20 +1419,22 @@ impl Triangulation {
                 line_width))
          }
 
-         for e in self.hull.values() {
-             let edge = self.half.edge(e);
-             let (pa, pb) = (edge.src, edge.dst);
-             out.push_str(&format!(
-                r#"
-    <line x1="{}" y1="{}" x2="{}" y2="{}"
-     style="stroke:rgb(255,255,0)"
-     stroke-width="{}" stroke-dasharray="{}"
-     stroke-linecap="round" />"#,
-                dx(self.points[pa].0),
-                dy(self.points[pa].1),
-                dx(self.points[pb].0),
-                dy(self.points[pb].1),
-                line_width, line_width * 2.0))
+         if debug {
+             for e in self.hull.values() {
+                 let edge = self.half.edge(e);
+                 let (pa, pb) = (edge.src, edge.dst);
+                 out.push_str(&format!(
+                    r#"
+        <line x1="{}" y1="{}" x2="{}" y2="{}"
+         style="stroke:rgb(255,255,0)"
+         stroke-width="{}" stroke-dasharray="{}"
+         stroke-linecap="round" />"#,
+                    dx(self.points[pa].0),
+                    dy(self.points[pa].1),
+                    dx(self.points[pb].0),
+                    dy(self.points[pb].1),
+                    line_width, line_width * 2.0))
+             }
          }
 
          for p in &self.points {

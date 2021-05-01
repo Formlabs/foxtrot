@@ -69,7 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     if let Some(out) = matches.value_of("output") {
         eprintln!("    Saving {}", out);
-        t.save_svg(out).expect("Could not save SVG");
+        t.save_debug_svg(out).expect("Could not save SVG");
     }
 
     Ok(())
