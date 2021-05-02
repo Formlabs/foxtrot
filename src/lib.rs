@@ -38,8 +38,8 @@ fn main() {
 
 # Crate features
 By default, the library uses `u32` indexes for internal data structures,
-to improve performance.  If you are planning to triangulate more than 1
-billion (10⁶) points, you should enable the `long-indexes` feature.
+to improve performance.  If you are planning to triangulate more than 500M
+points in a single pass, you should enable the `long-indexes` feature.
 */
 
 #![warn(missing_docs)]
