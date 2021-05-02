@@ -85,7 +85,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .get_matches();
 
     let font_path = matches.value_of("font")
-        .unwrap_or("/Library/Fonts/Arial.ttf");
+        .unwrap_or("/Library/Fonts/Georgia.ttf");
     let font = {
         let data = std::fs::read(&font_path)?;
         Font::try_from_vec(data).unwrap()

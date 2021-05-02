@@ -1452,10 +1452,10 @@ impl Triangulation {
     /// shows points, triangles, and fixed edges from the half-edge graph.
     pub fn to_svg(&self, debug: bool) -> String {
         let (x_bounds, y_bounds) = Self::bbox(&self.points);
-        const TARGET_WIDTH: f64 = 800.0;
-        let scale = TARGET_WIDTH / (x_bounds.1 - x_bounds.0);
+        let scale = 800.0 /
+            (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0);
         let line_width = (x_bounds.1 - x_bounds.0)
-            .max(y_bounds.1 - y_bounds.0) / 250.0 * scale;
+            .min(y_bounds.1 - y_bounds.0) / 100.0 * scale;
         let dx = |x| { scale * (x - x_bounds.0) + line_width};
         let dy = |y| { scale * (y_bounds.1 - y) + line_width};
 
