@@ -1451,19 +1451,22 @@ impl Triangulation {
     /// is true, includes the upper hull and to-be-fixed edges; otherwise, just
     /// shows points, triangles, and fixed edges from the half-edge graph.
     pub fn to_svg(&self, debug: bool) -> String {
-        const SCALE: f64 = 250.0;
         let (x_bounds, y_bounds) = Self::bbox(&self.points);
+        const TARGET_WIDTH: f64 = 800.0;
+        let scale = TARGET_WIDTH / (x_bounds.1 - x_bounds.0);
         let line_width = (x_bounds.1 - x_bounds.0)
-            .max(y_bounds.1 - y_bounds.0) / 250.0 * SCALE;
-        let dx = |x| { SCALE * (x - x_bounds.0) + line_width};
-        let dy = |y| { SCALE * (y_bounds.1 - y) + line_width};
+            .max(y_bounds.1 - y_bounds.0) / 250.0 * scale;
+        let dx = |x| { scale * (x - x_bounds.0) + line_width};
+        let dy = |y| { scale * (y_bounds.1 - y) + line_width};
 
          let mut out = String::new();
          // Put a dummy rectangle in the SVG so that rsvg-convert doesn't clip
          out.push_str(&format!(
-            r#"<svg viewbox="auto" xmlns="http://www.w3.org/2000/svg">
+            r#"<svg viewbox="auto" xmlns="http://www.w3.org/2000/svg" width="{}" height="{}">
     <rect x="0" y="0" width="{}" height="{}"
      style="fill:rgb(0,0,0)" />"#,
+     scale * (x_bounds.1 - x_bounds.0),
+     scale * (y_bounds.1 - y_bounds.0),
      dx(x_bounds.1) + line_width,
      dy(y_bounds.0) + line_width));
 
