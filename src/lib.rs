@@ -1,8 +1,47 @@
-//! `cdt` is a library for calculating
-//! [Delaunay](https://en.wikipedia.org/wiki/Delaunay_triangulation) and
-//! [constrained Delaunay](https://en.wikipedia.org/wiki/Constrained_Delaunay_triangulation)
-//! triangulations.
-//
+/*!
+`cdt` is a library for calculating
+[Delaunay](https://en.wikipedia.org/wiki/Delaunay_triangulation) and
+[constrained Delaunay](https://en.wikipedia.org/wiki/Constrained_Delaunay_triangulation)
+triangulations.
+
+It is optimized for correctness and speed, using exact predicates to perform
+point-in-circle and orientation tests.
+
+# Examples
+## Delaunay triangulation
+This triangulates a set of four points in a square
+```rust
+fn main() {
+    let pts = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
+    let triangles = cdt::triangulate_points(&pts).unwrap();
+    assert!(triangles.len() == 2);
+    for t in triangles {
+        println!("{:?} {:?} {:?}", pts[t.0], pts[t.1], pts[t.2])
+    }
+}
+```
+
+## Constrained Delaunay triangulation
+This triangulates an inner and outer square
+```rust
+fn main() {
+    let pts = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0),
+                   (0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8)];
+    let triangles = cdt::triangulate_contours(&pts,
+            &[vec![0, 1, 2, 3, 0], vec![4, 5, 6, 7, 4]])
+        .unwrap();
+    for t in triangles {
+        println!("{:?} {:?} {:?}", pts[t.0], pts[t.1], pts[t.2])
+    }
+}
+```
+
+# Crate features
+By default, the library uses `u32` indexes for internal data structures,
+to improve performance.  If you are planning to triangulate more than 1
+billion (10⁶) points, you should enable the `long-indexes` feature.
+*/
+
 #![warn(missing_docs)]
 pub(crate) mod contour;
 pub(crate) mod predicates;
@@ -51,6 +90,10 @@ pub enum Error {
     /// Returned when points in the input array are exact duplicates
     #[error("points may not include duplicates")]
     DuplicatePoint,
+
+    /// Returned when the last point in a contour does not match the start
+    #[error("contours must be closed")]
+    OpenContour,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,8 +103,17 @@ pub enum Error {
 /// into the original points list.  The resulting triangulation has a convex
 /// hull.
 pub fn triangulate_points(pts: &[Point]) -> Result<Vec<(usize, usize, usize)>, Error> {
-    let mut t = triangulate::Triangulation::new(&pts)?;
-    t.run()?;
+    let t = Triangulation::build(&pts)?;
+    Ok(t.triangles().collect())
+}
+
+/// Triangulates a set of contours, given as indexed paths into the point list.
+/// Each contour must be closed (i.e. the last point in the contour must equal
+/// the first point), otherwise [`Error::OpenContour`] will be returned.
+pub fn triangulate_contours(pts: &[Point], contours: &[Vec<usize>])
+    -> Result<Vec<(usize, usize, usize)>, Error>
+{
+    let t = Triangulation::build_from_contours(&pts, contours)?;
     Ok(t.triangles().collect())
 }
 
@@ -72,7 +124,6 @@ pub fn triangulate_with_edges<'a, E>(pts: &[Point], edges: E)
     -> Result<Vec<(usize, usize, usize)>, Error>
     where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
 {
-    let mut t = triangulate::Triangulation::new_with_edges(&pts, edges)?;
-    t.run()?;
+    let t = Triangulation::build_with_edges(&pts, edges)?;
     Ok(t.triangles().collect())
 }

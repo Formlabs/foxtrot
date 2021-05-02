@@ -66,6 +66,21 @@ impl Triangulation {
         Ok(t)
     }
 
+    /// Builds a complete triangulation from the given points and contours
+    /// (which are represented as indexes into the points array).
+    ///
+    /// # Errors
+    /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
+    /// [`Error::InvalidEdge`], [`Error::OpenContour`] or
+    /// [`Error::DuplicatePoint`] if the input is invalid.
+    pub fn build_from_contours(points: &[Point], contours: &[Vec<usize>])
+        -> Result<Triangulation, Error>
+    {
+        let mut t = Self::new_from_contours(points, contours)?;
+        t.run()?;
+        Ok(t)
+    }
+
     /// Constructs a new triangulation of the given points.  The points are a
     /// flat array of positions in 2D spaces; edges are undirected and expressed
     /// as indexes into the `points` list.
@@ -246,9 +261,41 @@ impl Triangulation {
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`], or
     /// [`Error::DuplicatePoint`] if the input is invalid.
-    pub fn new(points: & [Point]) -> Result<Triangulation, Error> {
+    pub fn new(points: &[Point]) -> Result<Triangulation, Error> {
         let edges: [(usize, usize); 0] = [];
         Self::new_with_edges(points, &edges)
+    }
+
+    /// Triangulates a set of contours, given as indexed paths into the point
+    /// list.  Each contour must be closed (i.e. the last point in the contour
+    /// must equal the first point), otherwise [`Error::OpenContour`] will be
+    /// returned.
+    ///
+    /// The triangulation is not actually run in this constructor; use
+    /// [`Triangulation::step`] or [`Triangulation::run`] to triangulate,
+    /// or [`Triangulation::build_from_contours`] to get a complete
+    /// triangulation right away.
+    ///
+    /// # Errors
+    /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
+    /// [`Error::InvalidEdge`], [`Error::OpenContour`] or
+    /// [`Error::DuplicatePoint`] if the input is invalid.
+    pub fn new_from_contours(pts: &[Point], contours: &[Vec<usize>])
+        -> Result<Triangulation, Error>
+    {
+        let mut edges = Vec::with_capacity(
+            contours.iter().map(|c| c.len()).sum());
+        for c in contours {
+            if c.is_empty() {
+                continue;
+            } else if c[0] != *c.last().unwrap() {
+                return Err(Error::OpenContour);
+            }
+            for i in 1..c.len() {
+                edges.push((c[i - 1], c[i]));
+            }
+        }
+        Self::new_with_edges(&pts, &edges)
     }
 
     /// Runs the triangulation algorithm until completion
