@@ -1,6 +1,8 @@
 use clap::{Arg, App};
 use rusttype::{point, Font, Scale, OutlineBuilder};
 
+const BEZIER_RESOLUTION: usize = 4;
+
 #[derive(Default)]
 struct Builder {
     points: Vec<(f64, f64)>,
@@ -45,17 +47,30 @@ impl OutlineBuilder for Builder {
         // shortly (if all is behaving well)
     }
 
-    fn quad_to(&mut self, x1: f32, y1: f32, x: f32, y: f32) {
-        // TODO
-        //self.line_to(x1, y1);
-        self.line_to(x, y);
+    fn quad_to(&mut self, x1: f32, y1: f32, x2: f32, y2: f32) {
+        let x0 = self.x;
+        let y0 = -self.y;
+        for i in 1..=BEZIER_RESOLUTION {
+            let t = i as f32 / (BEZIER_RESOLUTION as f32);
+            let f = |a, b, c| (1.0 - t).powf(2.0) * a +
+                               2.0 * (1.0 - t) * t * b + t.powf(2.0) * c;
+            self.line_to(f(x0, x1, x2), f(y0, y1, y2));
+        }
     }
 
-    fn curve_to(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, x: f32, y: f32) {
-        // TODO
-        //self.line_to(x1, y1);
-        //self.line_to(x2, y2);
-        self.line_to(x, y);
+    fn curve_to(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, x3: f32, y3: f32) {
+        let x0 = self.x;
+        let y0 = -self.y;
+
+        for i in 1..=BEZIER_RESOLUTION {
+            let t = i as f32 / (BEZIER_RESOLUTION as f32);
+            let f = |a, b, c, d|
+                (1.0 - t).powf(3.0) * a +
+                3.0 * (1.0 - t).powf(2.0) * t * b +
+                3.0 * (1.0 - t) * t.powf(2.0) * c +
+                t.powf(3.0) * d;
+                self.line_to(f(x0, x1, x2, x3), f(y0, y1, y2, y3));
+        }
     }
 }
 
