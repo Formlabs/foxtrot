@@ -45,8 +45,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let seed = rand::thread_rng().gen();
         let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
-        let points: Vec<(f64, f64)> = repeat_with(|| rng.gen_range(0.0..1.0))
+
+        // We generate random points as f32, to make it more likely that
+        // some will line up exactly on one axis or another, which can trigger
+        // interesting edge cases.  Experimentally, we have X or Y collisions
+        // at a rate of about one per 4K fuzzed samples.
+        let points: Vec<_> = repeat_with(|| rng.gen_range(0.0..1.0))
             .tuple_windows()
+            .map(|(a, b): (f32, f32)| (a as f64, b as f64))
             .take(num)
             .collect();
 

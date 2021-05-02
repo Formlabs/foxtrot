@@ -41,8 +41,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Use a ChaCha RNG to be reproducible across platforms
     let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(seed);
 
-    let points: Vec<(f64, f64)> = repeat_with(|| rng.gen_range(0.0..1.0))
+    // Sample as f32 to match the behavior in fuzz.rs
+    // (to increase likelihood of collisions)
+    let points: Vec<_> = repeat_with(|| rng.gen_range(0.0..1.0))
         .tuple_windows()
+        .map(|(a, b): (f32, f32)| (a as f64, b as f64))
         .take(num)
         .collect();
 
