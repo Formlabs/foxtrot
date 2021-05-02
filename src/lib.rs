@@ -110,8 +110,9 @@ pub fn triangulate_points(pts: &[Point]) -> Result<Vec<(usize, usize, usize)>, E
 /// Triangulates a set of contours, given as indexed paths into the point list.
 /// Each contour must be closed (i.e. the last point in the contour must equal
 /// the first point), otherwise [`Error::OpenContour`] will be returned.
-pub fn triangulate_contours(pts: &[Point], contours: &[Vec<usize>])
+pub fn triangulate_contours<V>(pts: &[Point], contours: &[V])
     -> Result<Vec<(usize, usize, usize)>, Error>
+    where for<'b> &'b V: IntoIterator<Item=&'b usize>
 {
     let t = Triangulation::build_from_contours(&pts, contours)?;
     Ok(t.triangles().collect())

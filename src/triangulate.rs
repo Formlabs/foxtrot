@@ -73,8 +73,9 @@ impl Triangulation {
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
     /// [`Error::InvalidEdge`], [`Error::OpenContour`] or
     /// [`Error::DuplicatePoint`] if the input is invalid.
-    pub fn build_from_contours(points: &[Point], contours: &[Vec<usize>])
+    pub fn build_from_contours<V>(points: &[Point], contours: &[V])
         -> Result<Triangulation, Error>
+        where for<'b> &'b V: IntoIterator<Item=&'b usize>
     {
         let mut t = Self::new_from_contours(points, contours)?;
         t.run()?;
@@ -280,19 +281,20 @@ impl Triangulation {
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
     /// [`Error::InvalidEdge`], [`Error::OpenContour`] or
     /// [`Error::DuplicatePoint`] if the input is invalid.
-    pub fn new_from_contours(pts: &[Point], contours: &[Vec<usize>])
+    pub fn new_from_contours<'a, V>(pts: &[Point], contours: &[V])
         -> Result<Triangulation, Error>
+        where for<'b> &'b V: IntoIterator<Item=&'b usize>
     {
-        let mut edges = Vec::with_capacity(
-            contours.iter().map(|c| c.len()).sum());
+        let mut edges = Vec::new();
         for c in contours {
-            if c.is_empty() {
-                continue;
-            } else if c[0] != *c.last().unwrap() {
-                return Err(Error::OpenContour);
+            let next = edges.len();
+            for (a, b) in c.into_iter().zip(c.into_iter().skip(1)) {
+                edges.push((*a, *b));
             }
-            for i in 1..c.len() {
-                edges.push((c[i - 1], c[i]));
+            if let Some(start) = edges.get(next) {
+                if start.0 != edges.last().unwrap().1 {
+                    return Err(Error::OpenContour);
+                }
             }
         }
         Self::new_with_edges(&pts, &edges)
@@ -1694,5 +1696,27 @@ mod tests {
         let t = Triangulation::build_with_edges(&points, &edges)
             .expect("Could not build triangulation");
         t.check();
+    }
+
+    #[test]
+    fn new_from_contours() {
+        let t = Triangulation::build_from_contours::<Vec<usize>>(
+            &[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)], &vec![]);
+        assert!(t.is_ok());
+
+        let t = Triangulation::build_from_contours(
+            &[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)], &[vec![]]);
+        assert!(t.is_ok());
+
+        let t = Triangulation::build_from_contours(
+            &[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)], &[vec![0]]);
+        assert!(t.is_ok());
+
+        let t = Triangulation::build_from_contours(
+            &[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)], &[vec![0, 1]]);
+        assert!(t.is_err());
+        if let Err(e) = t {
+            assert!(e == Error::OpenContour);
+        }
     }
 }
