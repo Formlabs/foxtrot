@@ -8,7 +8,7 @@ type Index = u32;
 ////////////////////////////////////////////////////////////////////////////////
 
 /// This represents a strongly-typed index into a [`TypedVec`] parameterized
-/// with the same `PhantomData`.
+/// with the same `PhantomData`.  It should be zero-cost at runtime.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd)]
 pub struct TypedIndex<P>(Index, std::marker::PhantomData<*const P>);
 impl<P> TypedIndex<P> {
@@ -46,7 +46,8 @@ impl<P> std::cmp::PartialEq<usize> for TypedIndex<P> {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// This represents a strongly-typed `Vec<T>` which can only be accessed by
-/// a [`TypedIndex`] parameterized with the same `PhantomData`.
+/// a [`TypedIndex`] parameterized with the same `PhantomData`, at zero
+/// run-time cost.
 #[derive(Debug)]
 pub struct TypedVec<T, P>(Vec<T>, std::marker::PhantomData<*const P>);
 
