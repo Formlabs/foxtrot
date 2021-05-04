@@ -152,8 +152,17 @@ impl Triangulation {
 
         // Add two phantom points to the point list, so that the hull is
         // always guaranteed to be below points in the original set.
-        let dx = x_bounds.1 - x_bounds.0;
-        let dy = y_bounds.1 - y_bounds.0;
+        let dx = if x_bounds.1 == x_bounds.0 {
+            1.0
+        } else {
+            x_bounds.1 - x_bounds.0
+        };
+        let dy = if y_bounds.0 == y_bounds.1 {
+            1.0
+        } else {
+            y_bounds.1 - y_bounds.0
+        };
+
         let x_bounds = (x_bounds.0 - dx / 8.0, x_bounds.1 + dx / 8.0);
         let y_bounds = (y_bounds.0 - dy / 8.0, y_bounds.1 + dy / 8.0);
 
