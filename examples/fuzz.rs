@@ -44,7 +44,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         i += 1;
 
         let seed = rand::thread_rng().gen();
-        let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
+        let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(seed);
 
         // We generate random points as f32, to make it more likely that
         // some will line up exactly on one axis or another, which can trigger

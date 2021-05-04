@@ -45,6 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // (to increase likelihood of collisions)
     let points: Vec<_> = repeat_with(|| rng.gen_range(0.0..1.0))
         .tuple_windows()
+        .map(|(a, b): (f32, f32)| (a as f64, b as f64))
         .take(num)
         .collect();
 
