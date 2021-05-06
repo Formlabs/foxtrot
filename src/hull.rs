@@ -6,10 +6,15 @@ const N: usize = 1 << 10;
 
 #[derive(Clone, Copy, Debug)]
 struct Node {
+    /// X position of the point (non-normalized, to avoid floating-point errors)
     pos: f64,
+
+    /// `EdgeIndex` of the edge to the right of this point, i.e. having this
+    /// point as its `dst` (since the hull is on top of the shape and triangle
+    /// are wound counter-clockwise).
     edge: EdgeIndex,
 
-    // prev is leftward, next is rightward
+    /// Neighbors, or `EMPTY_HULL`
     left: HullIndex,
     right: HullIndex,
 }
@@ -38,10 +43,10 @@ pub struct Hull {
     /// Spare slots in the [`Hull::data`] array, to keep it small
     empty: Vec<HullIndex>,
 
-    /// Offset factor to normalize coordinates
+    /// Offset factor to normalize coordinates when packing into buckets
     xmin: f64,
 
-    /// Scale factor to normalize coordinates
+    /// Scale factor to normalize coordinates when packing into buckets
     dx: f64,
 }
 
