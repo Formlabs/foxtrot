@@ -2,8 +2,7 @@ use crate::{
     contour::{Contour, ContourData},
     Error, Point,
     half::Half, hull::Hull,
-    indexes::{PointIndex, PointVec, EdgeIndex, HullIndex,
-              EMPTY_EDGE, EMPTY_HULL},
+    indexes::{PointIndex, PointVec, EdgeIndex, HullIndex, EMPTY_EDGE},
     predicates::{acute, orient2d, in_circle, centroid, distance2, pseudo_angle},
 };
 
@@ -391,10 +390,10 @@ impl Triangulation {
     /// Walks the upper hull, making it convex.
     /// This should only be called once from `finalize()`.
     fn make_outer_hull_convex(&mut self) {
-        // TODO
         // Walk the hull from left to right, flattening any convex regions
         assert!(self.next == self.points.len());
-        let mut hl = self.hull.start();
+        let mut start = self.hull.start();
+        let mut hl = start;
         let mut hr = self.hull.right_hull(hl);
         loop {
             /*
@@ -408,10 +407,6 @@ impl Triangulation {
             let el = self.hull.edge(hl);
             let er = self.hull.edge(hr);
 
-            // The last hull index has an empty edge attached
-            if er == EMPTY_EDGE {
-                break;
-            }
             let edge_l = self.half.edge(el);
             let edge_r = self.half.edge(er);
             assert!(edge_r.dst == edge_l.src);
@@ -427,18 +422,19 @@ impl Triangulation {
                 self.legalize(self.half.prev(new_edge));
 
                 // Try stepping back in case this reveals another convex tri
-                let prev = self.hull.left_hull(hl);
-                if prev == EMPTY_HULL {
-                    hr = self.hull.right_hull(hl);
-                } else {
-                    hr = hl;
-                    hl = prev;
-                }
+                hr = hl;
+                hl = self.hull.left_hull(hl);
+
+                // Record this as the start of the convex region
+                start = hl;
             } else {
                 // Continue walking along the hull
                 let next = self.hull.right_hull(hr);
                 hl = hr;
                 hr = next;
+                if hl == start {
+                    break;
+                }
             }
         }
     }
@@ -451,7 +447,7 @@ impl Triangulation {
 
         if self.ending_data.is_empty() {
             // For an unconstrained triangulation, make the outer hull convex
-            //self.make_outer_hull_convex(); // TODO
+            self.make_outer_hull_convex();
         } else {
             // For a constrained triangulation, flood fill and erase triangles
             // that are outside the shape boundaries.
