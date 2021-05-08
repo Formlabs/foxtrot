@@ -65,6 +65,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         };
 
         let mut t = gen()?;
+        t.check();
         let result = std::panic::catch_unwind(move || {
             while !t.done() {
                 t.step().expect("Could not triangulate");
