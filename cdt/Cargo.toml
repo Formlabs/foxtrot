@@ -1,0 +1,20 @@
+[package]
+name = "cdt"
+version = "0.1.0"
+authors = ["Matt Keeter <matt@formlabs.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+geometry-predicates = "0.3.0"
+thiserror = "1.0"
+
+[features]
+long-indexes = []
+
+[dev-dependencies]
+clap = "2.33"
+itertools = "0.10.0"
+rand = "0.8.3"
+rand_chacha = "0.3.0"
+rusttype = "0.9"
