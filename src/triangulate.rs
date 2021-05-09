@@ -11,7 +11,6 @@ const MAX_RETRIES: usize = 100;
 
 #[derive(Debug)]
 enum Walk {
-    Outside(HullIndex),
     Inside(EdgeIndex),
     Done(EdgeIndex),
 }
@@ -25,6 +24,7 @@ pub struct Triangulation {
     angles: PointVec<f64>,          // pseudo-angles for each point
     remap: PointVec<usize>,         // self.points[i] = input[self.remap[i]]
     next: PointIndex,               // Progress of the triangulation
+    constrained: bool,
 
     // If a point p terminates fixed edges, then endings[p] will be a tuple
     // range into ending_data containing the starting points of those edges.
@@ -101,7 +101,6 @@ impl Triangulation {
             Ok(())
         }
     }
-
 
     /// Constructs a new triangulation of the given points.  The points are a
     /// flat array of positions in 2D spaces; edges are undirected and expressed
@@ -187,16 +186,9 @@ impl Triangulation {
             }
         }
 
-        // Sort with a special comparison function that puts the first
-        // three keys at the start of the list, and uses OrderedFloat
-        // otherwise.  The order of the first three keys is not
-        // guaranteed, which we fix up below.
-        scratch.sort_unstable_by(|k, r|
-            if k.0 == pa || k.0 == pb || k.0 == pc {
-                std::cmp::Ordering::Less
-            } else {
-                k.1.partial_cmp(&r.1).unwrap()
-            });
+        //  The order of the first three keys is not guaranteed, which
+        //  we fix up below.
+        scratch.sort_unstable_by(|k, r| k.1.partial_cmp(&r.1).unwrap());
 
         // Apply sorting to initial three points, ignoring distance
         // values at this point because they're unused.
@@ -236,9 +228,10 @@ impl Triangulation {
         let mut out = Triangulation {
             hull: Hull::new(sorted_points.len(), has_edges),
             half: Half::new(sorted_points.len()),
+            constrained: has_edges,
 
             remap: map_reverse,
-            next: PointIndex::new(3), // we've already built a, b, c
+            next: PointIndex::new(0),
             angles: PointVec::of(sorted_points.iter()
                 .map(|p| pseudo_angle((p.0 - center.0, p.1 - center.1)))
                 .collect()),
@@ -250,9 +243,10 @@ impl Triangulation {
             points: sorted_points, // moved out here
         };
 
-        let pa = PointIndex::new(0);
-        let pb = PointIndex::new(1);
-        let pc = PointIndex::new(2);
+        let pa = out.next;
+        let pb = out.next + 1;
+        let pc = out.next + 2;
+        out.next += 3;
         let e_ab = out.half.insert(pa, pb, pc,
                                    EMPTY_EDGE, EMPTY_EDGE, EMPTY_EDGE);
         assert!(e_ab == EdgeIndex::new(0));
@@ -445,15 +439,15 @@ impl Triangulation {
     fn finalize(&mut self) {
         assert!(self.next == self.points.len());
 
-        if self.ending_data.is_empty() {
-            // For an unconstrained triangulation, make the outer hull convex
-            self.make_outer_hull_convex();
-        } else {
+        if self.constrained {
             // For a constrained triangulation, flood fill and erase triangles
             // that are outside the shape boundaries.
             let h = self.hull.start();
             let e = self.hull.edge(h);
             self.half.flood_erase_from(e);
+        } else {
+            // For an unconstrained triangulation, make the outer hull convex
+            self.make_outer_hull_convex();
         }
 
         self.next += 1usize;
@@ -598,9 +592,17 @@ impl Triangulation {
             let edge_bq = self.half.edge(e_bq);
             let q = edge_bq.dst;
 
-            // Check that the inner angle is less that pi/2, skipping out
-            // of the loop if that's not true.
-            if self.acute(p, b, q) <= 0.0 || self.orient2d(p, b, q) >= 0.0 {
+            // If we're building a constrained triangulation, then we force the
+            // outer hull to be convex, so each point-to-point connection
+            // is guaranteed to stay within the triangulation.  This is slightly
+            // less efficient than the acute check, but dramatically simplifies
+            // the code for fixing edges.
+            //
+            // For unconstrained triangulations, we check that the inner angle
+            // is less that pi/2, per Zalik '05.
+            if (!self.constrained && self.acute(p, b, q) <= 0.0) ||
+                self.orient2d(p, b, q) >= 0.0
+            {
                 break;
             }
 
@@ -641,8 +643,10 @@ impl Triangulation {
             let edge_qa = self.half.edge(e_qa);
             let q = edge_qa.src;
 
-            // Check the inner angle against pi/2
-            if self.acute(p, a, q) <= 0.0  || self.orient2d(p, a, q) <= 0.0{
+            // Same check as above
+            if (!self.constrained && self.acute(p, a, q) <= 0.0)  ||
+                self.orient2d(p, a, q) <= 0.0
+            {
                 break;
             }
 
@@ -661,7 +665,7 @@ impl Triangulation {
     /// inserting a fixed edge.  h is a [`HullIndex`] equivalent to the `src`
     /// point, and `dst` is the destination of the new fixed edge.
     fn find_hull_walk_mode(&self, h: HullIndex, src: PointIndex, dst: PointIndex)
-        -> Walk {
+        -> Result<Walk, Error> {
         /*  We've just built a triangle that contains a fixed edge, and need
             to walk through the triangulation and implement that edge.
 
@@ -681,8 +685,8 @@ impl Triangulation {
                     :
                    dst
 
-            This triangle may not exist!  For example, if the p->src edge
-            remains outside the hull on the left, then we start in Walk::Outside
+            Because the triangulation is convex, we know that this triangle
+            exists; we can't escape the triangulation.
         */
         let e_right = self.hull.edge(h);
         let h_left = self.hull.left_hull(h);
@@ -697,9 +701,9 @@ impl Triangulation {
         // If the fixed edge is directly attached to src, then we can declare
         // that we're done right away (and the caller will lock the edge)
         if dst == wedge_left {
-            return Walk::Done(e_left);
+            return Ok(Walk::Done(e_left));
         } else if dst == wedge_right {
-            return Walk::Done(e_right);
+            return Ok(Walk::Done(e_right));
         }
 
         // Otherwise, check the winding to see which side we're on.
@@ -708,14 +712,8 @@ impl Triangulation {
 
         // For now, we don't handle cases where fixed edges have coincident
         // points that are not the start/end of the fixed edge.
-        assert!(o_left != 0.0);
-        assert!(o_right != 0.0);
-
-        // Easy cases: we're outside the wedge on one side or the other
-        if o_left < 0.0 {
-            return Walk::Outside(h_left);
-        } else if o_right < 0.0 {
-            return Walk::Outside(h);
+        if o_left == 0.0 || o_right == 0.0 {
+            return Err(Error::PointOnFixedEdge);
         }
 
         // Walk the inside of the wedge until we find the
@@ -736,7 +734,7 @@ impl Triangulation {
                      V     |    \
                     ------>a------ (a == dst)
                 */
-                return Walk::Done(index_a_src);
+                return Ok(Walk::Done(index_a_src));
             }
 
             // Keep walking through the fan
@@ -762,7 +760,7 @@ impl Triangulation {
                 // We may exit either into another interior triangle or
                 // leave the triangulation and walk the hull, but we don't
                 // need to decide that right now.
-                return Walk::Inside(intersected_index);
+                return Ok(Walk::Inside(intersected_index));
             } else {
                 /*  Sorry, Mario; your src-dst line is in another triangle
 
@@ -788,287 +786,188 @@ impl Triangulation {
         }
     }
 
-    fn walk_fill(&mut self, src: PointIndex, dst: PointIndex, mut m: Walk) -> Result<(), Error> {
+    fn walk_fill(&mut self, src: PointIndex, dst: PointIndex, mut e: EdgeIndex) -> Result<(), Error> {
         let mut steps_left = Contour::new_pos(src, ContourData::None);
         let mut steps_right = Contour::new_neg(src, ContourData::None);
 
-        // If we start inside a triangle, then escape it right away, because
-        // Walk::Inside typically means means we've _entered_ through edge
-        // `e`.
-        if let Walk::Inside(e_ba) = m {
-            /*
-                         src
-                         / :^
-                        / :  \
-                     hl/  :   \hr
-                      /  :     \
-                     V   :  e   \
-                    b---:------->a
-                        :
-                       dst
-             */
-            let edge_ba = self.half.edge(e_ba);
-            let e_ac = edge_ba.next;
-            let e_cb = edge_ba.prev;
-            let edge_ac = self.half.edge(e_ac);
-            let edge_cb = self.half.edge(e_cb);
+        /*
+         * We start inside a triangle, then escape it right away:
+                     src
+                     / :^
+                    / :  \
+                 hl/  :   \hr
+                  /  :     \
+                 V   :  e   \
+                b---:------->a
+                    :
+                   dst
+         */
+        let edge_ba = self.half.edge(e);
+        let e_ac = edge_ba.next;
+        let e_cb = edge_ba.prev;
+        let edge_ac = self.half.edge(e_ac);
+        let edge_cb = self.half.edge(e_cb);
 
-            // Delete this triangle from the triangulation; it will be
-            // reconstructed later in a more perfect form.
-            self.half.erase(e_ba);
+        // Delete this triangle from the triangulation; it will be
+        // reconstructed later in a more perfect form.
+        self.half.erase(e);
 
-            steps_left.push(self, edge_ba.src,
-                if edge_cb.buddy != EMPTY_EDGE {
-                    ContourData::Buddy(edge_cb.buddy)
-                } else {
-                    let hl = self.hull.index_of(edge_cb.dst);
-                    assert!(self.hull.edge(hl) == e_cb);
-                    ContourData::Hull(hl, edge_cb.fixed)
-                });
-            steps_right.push(self, edge_ba.dst,
-                if edge_ac.buddy != EMPTY_EDGE {
-                    ContourData::Buddy(edge_ac.buddy)
-                } else {
-                    let hr = self.hull.index_of(edge_ac.dst);
-                    assert!(self.hull.edge(hr) == e_ac);
-                    ContourData::Hull(hr, edge_ac.fixed)
-                });
-
-            // Exit this triangle, either onto the hull or continuing inside
-            // the triangulation.
-            if edge_ba.fixed {
-                return Err(Error::CrossingFixedEdge);
-            }
-            if edge_ba.buddy == EMPTY_EDGE {
-                let h = self.hull.index_of(edge_ba.dst);
-                assert!(self.hull.edge(h) == e_ba);
-                let hl = self.hull.left_hull(h);
-                self.hull.erase(h);
-                m = Walk::Outside(hl);
+        steps_left.push(self, edge_ba.src,
+            if edge_cb.buddy != EMPTY_EDGE {
+                ContourData::Buddy(edge_cb.buddy)
             } else {
-                m = Walk::Inside(edge_ba.buddy);
-            }
-        }
+                let hl = self.hull.index_of(edge_cb.dst);
+                assert!(self.hull.edge(hl) == e_cb);
+                ContourData::Hull(hl, edge_cb.fixed)
+            });
+        steps_right.push(self, edge_ba.dst,
+            if edge_ac.buddy != EMPTY_EDGE {
+                ContourData::Buddy(edge_ac.buddy)
+            } else {
+                let hr = self.hull.index_of(edge_ac.dst);
+                assert!(self.hull.edge(hr) == e_ac);
+                ContourData::Hull(hr, edge_ac.fixed)
+            });
 
+        // Exit this triangle, either onto the hull or continuing inside
+        // the triangulation.
+        if edge_ba.fixed {
+            return Err(Error::CrossingFixedEdge);
+        }
+        assert!(edge_ba.buddy != EMPTY_EDGE);
+        e = edge_ba.buddy;
 
         loop {
-            match m {
-                Walk::Outside(h) => {
-                    /*
-                                     /src
-                                   / /  ^
-                                 /  /    \
-                               /   /h     \
-                              /   /        \
-                            /    V          \
-                          /     ------------>\
-                        dst
+            /*            src
+                         :
+                   b<--:-------a
+                    \ :  e     ^
+                     :\      /
+                    :   v  /
+                   :     c
+                  dst
+             */
+            let edge_ab = self.half.edge(e);
+            let e_bc = edge_ab.next;
+            let e_ca = edge_ab.prev;
+            let edge_bc = self.half.edge(e_bc);
+            let edge_ca = self.half.edge(e_ca);
+            let c = edge_bc.dst;
 
-                        (as the loop runs, e may not start at src, but it
-                        will be the most recent hull edge)
-                     */
-                    // Check the next hull edge to see if it either intersects
-                    // the new line or terminates it.
-                    let edge_index = self.hull.edge(h);
-                    let edge = self.half.edge(edge_index);
+            // Erase this triangle from the triangulation before
+            // pushing vertices to the contours, which could create
+            // new triangles.  At this point, you're not allowed to use
+            // self.half for any of the triangle edges, which is why
+            // we stored them all above.
+            self.half.erase(e);
 
-                    // If we've reached the target point, then rejoice; the
-                    // last point pushed to the contour should terminate the
-                    // hull.
-                    if edge.dst == dst {
-                        let e_src_dst = steps_right.push(
-                                self, dst, ContourData::Buddy(edge_index))
-                            .expect("Failed to push last edge");
-
-                        // This should have terminated the lower contour
-                        assert!(self.half.edge(e_src_dst).src == src);
-                        assert!(self.half.edge(e_src_dst).dst == dst);
-
-                        // If we entered then exited the contour, then we'll
-                        // triangulate an edge when pushing to steps_left;
-                        // otherwise, we've only got two points in steps_left,
-                        // and our newest edge is on the hull.
-                        if let Some(e_dst_src) = steps_left.push(self, dst,
-                            ContourData::Hull(h, false))
-                        {
-                            assert!(self.half.edge(e_dst_src).src == dst);
-                            assert!(self.half.edge(e_dst_src).dst == src);
-                            self.half.link(e_src_dst, e_dst_src);
-                        } else {
-                            self.hull.update(h, e_src_dst);
-                        }
-                        self.half.lock(e_src_dst);
-
-                        break;
-                    }
-                    assert!(src != edge.dst);
-
-                    // If we're intersecting this edge, then things get tricky
-                    if self.orient2d(src, dst, edge.dst) <= 0.0 {
-                        if edge.fixed {
-                            return Err(Error::CrossingFixedEdge);
-                        }
-                        steps_left.push(self, edge.dst,
-                                         ContourData::Hull(h, false));
-                        m = Walk::Inside(edge_index);
-                        // We leave this hull intact, because it will be updated
-                        // once the triangulation reaches it.
+            // Handle the termination case, if c is the destination
+            if c == dst {
+                // The left (above) contour is either on the hull
+                // (if no buddy is present) or inside the triangulation
+                let e_dst_src = steps_left.push(self, c,
+                    if edge_bc.buddy == EMPTY_EDGE {
+                        let h = self.hull.index_of(edge_bc.dst);
+                        assert!(self.hull.edge(h) == e_bc);
+                        ContourData::Hull(h, edge_bc.fixed)
                     } else {
-                        // If we're still outside the triangulation, then keep
-                        // walking along the hull
-                        steps_right.push(self, edge.dst,
-                                         ContourData::Buddy(edge_index));
-                        m = Walk::Outside(self.hull.left_hull(h));
-                        self.hull.erase(h);
-                    }
-                }
-                Walk::Inside(e_ab) => {
-                    /*            src
-                                 :
-                           b<--:-------a
-                            \ :  e     ^
-                             :\      /
-                            :   v  /
-                           :     c
-                          dst
-                     */
-                    let edge_ab = self.half.edge(e_ab);
-                    let e_bc = edge_ab.next;
-                    let e_ca = edge_ab.prev;
-                    let edge_bc = self.half.edge(e_bc);
-                    let edge_ca = self.half.edge(e_ca);
-                    let c = edge_bc.dst;
+                        ContourData::Buddy(edge_bc.buddy)
+                    }).expect("Failed to create fixed edge");
 
-                    // Erase this triangle from the triangulation before
-                    // pushing vertices to the contours, which could create
-                    // new triangles.  At this point, you're not allowed to use
-                    // self.half for any of the triangle edges, which is why
-                    // we stored them all above.
-                    self.half.erase(e_ab);
+                // This better have terminated the triangulation of
+                // the upper contour with a dst-src edge
+                assert!(self.half.edge(e_dst_src).dst == src);
+                assert!(self.half.edge(e_dst_src).src == dst);
 
-                    // Handle the termination case, if c is the destination
-                    if c == dst {
-                        // The left (above) contour is either on the hull
-                        // (if no buddy is present) or inside the triangulation
-                        let e_dst_src = steps_left.push(self, c,
-                            if edge_bc.buddy == EMPTY_EDGE {
-                                let h = self.hull.index_of(edge_bc.dst);
-                                assert!(self.hull.edge(h) == e_bc);
-                                ContourData::Hull(h, edge_bc.fixed)
-                            } else {
-                                ContourData::Buddy(edge_bc.buddy)
-                            }).expect("Failed to create fixed edge");
-
-                        // This better have terminated the triangulation of
-                        // the upper contour with a dst-src edge
-                        assert!(self.half.edge(e_dst_src).dst == src);
-                        assert!(self.half.edge(e_dst_src).src == dst);
-
-                        // The other contour will finish up with the other
-                        // half of the fixed edge as its buddy.  This edge
-                        // could also be on the hull, so we do the same check
-                        // as above.
-                        let e_src_dst = steps_right.push(self, c,
-                            if edge_ca.buddy == EMPTY_EDGE {
-                                let h = self.hull.index_of(edge_ca.dst);
-                                assert!(self.hull.edge(h) == e_ca);
-                                ContourData::Hull(h, edge_ca.fixed)
-                            } else {
-                                ContourData::Buddy(edge_ca.buddy)
-                            })
-                            .expect("Failed to create second fixed edge");
-
-                        // Similarly, this better have terminated the
-                        // triangulation of the lower contour.
-                        assert!(self.half.edge(e_src_dst).src == src);
-                        assert!(self.half.edge(e_src_dst).dst == dst);
-
-                        self.half.link(e_src_dst, e_dst_src);
-                        self.half.lock(e_src_dst); // locks both sides
-
-                        break;
-                    }
-
-                    let o_psc = self.orient2d(src, dst, c);
-                    if o_psc > 0.0 {
-                        // Store the c-a edge as our buddy, and exit via b-c
-                        // (unless c-a is the 0th edge, which has no buddy)
-                        steps_right.push(self, c,
-                            if edge_ca.buddy == EMPTY_EDGE {
-                                let h = self.hull.index_of(edge_ca.dst);
-                                assert!(self.hull.edge(h) == e_ca);
-                                ContourData::Hull(h, edge_ca.fixed)
-                            } else {
-                                ContourData::Buddy(edge_ca.buddy)
-                            });
-
-                        // Exit the triangle, either onto the hull or staying
-                        // in the triangulation
-                        if edge_bc.fixed {
-                            return Err(Error::CrossingFixedEdge);
-                        }
-                        m = if edge_bc.buddy == EMPTY_EDGE {
-                            let h = self.hull.index_of(edge_bc.dst);
-                            assert!(self.hull.edge(h) == e_bc);
-                            let hl = self.hull.left_hull(h);
-                            self.hull.erase(h);
-                            Walk::Outside(hl)
-                        } else {
-                            Walk::Inside(edge_bc.buddy)
-                        };
-                    } else if o_psc < 0.0 {
-                        /*         src
-                                    :
-                               b<-- :-a
-                                |  : ^
-                                |  :/
-                                | :/
-                                | :
-                                V/:
-                                c dst
-                         */
-                        // Store the b-c edge as our buddy and exit via c-a,
-                        //
-                        // (c-b may be a hull edge, so we check for that)
-                        steps_left.push(self, c,
-                            if edge_bc.buddy == EMPTY_EDGE {
-                                let h = self.hull.index_of(edge_bc.dst);
-                                assert!(self.hull.edge(h) == e_bc);
-                                ContourData::Hull(h, edge_bc.fixed)
-                            } else {
-                                ContourData::Buddy(edge_bc.buddy)
-                            });
-
-                        if edge_ca.fixed {
-                            return Err(Error::CrossingFixedEdge);
-                        }
-                        m = if edge_ca.buddy == EMPTY_EDGE {
-                            let h = self.hull.index_of(edge_ca.dst);
-                            assert!(self.hull.edge(h) == e_ca);
-                            let hl = self.hull.left_hull(h);
-                            self.hull.erase(h);
-                            Walk::Outside(hl)
-                        } else {
-                            Walk::Inside(edge_ca.buddy)
-                        };
+                // The other contour will finish up with the other
+                // half of the fixed edge as its buddy.  This edge
+                // could also be on the hull, so we do the same check
+                // as above.
+                let e_src_dst = steps_right.push(self, c,
+                    if edge_ca.buddy == EMPTY_EDGE {
+                        let h = self.hull.index_of(edge_ca.dst);
+                        assert!(self.hull.edge(h) == e_ca);
+                        ContourData::Hull(h, edge_ca.fixed)
                     } else {
-                        return Err(Error::PointOnFixedEdge);
-                    }
+                        ContourData::Buddy(edge_ca.buddy)
+                    })
+                    .expect("Failed to create second fixed edge");
+
+                // Similarly, this better have terminated the
+                // triangulation of the lower contour.
+                assert!(self.half.edge(e_src_dst).src == src);
+                assert!(self.half.edge(e_src_dst).dst == dst);
+
+                self.half.link(e_src_dst, e_dst_src);
+                self.half.lock(e_src_dst); // locks both sides
+
+                break;
+            }
+
+            let o_psc = self.orient2d(src, dst, c);
+            e = if o_psc > 0.0 {
+                // Store the c-a edge as our buddy, and exit via b-c
+                // (unless c-a is the 0th edge, which has no buddy)
+                steps_right.push(self, c,
+                    if edge_ca.buddy == EMPTY_EDGE {
+                        let h = self.hull.index_of(edge_ca.dst);
+                        assert!(self.hull.edge(h) == e_ca);
+                        ContourData::Hull(h, edge_ca.fixed)
+                    } else {
+                        ContourData::Buddy(edge_ca.buddy)
+                    });
+
+                // Exit the triangle, either onto the hull or staying
+                // in the triangulation
+                if edge_bc.fixed {
+                    return Err(Error::CrossingFixedEdge);
                 }
-                _ => panic!("Invalid walk mode"),
+                assert!(edge_bc.buddy != EMPTY_EDGE);
+                edge_bc.buddy
+            } else if o_psc < 0.0 {
+                /*         src
+                            :
+                       b<-- :-a
+                        |  : ^
+                        |  :/
+                        | :/
+                        | :
+                        V/:
+                        c dst
+                 */
+                // Store the b-c edge as our buddy and exit via c-a,
+                //
+                // (c-b may be a hull edge, so we check for that)
+                steps_left.push(self, c,
+                    if edge_bc.buddy == EMPTY_EDGE {
+                        let h = self.hull.index_of(edge_bc.dst);
+                        assert!(self.hull.edge(h) == e_bc);
+                        ContourData::Hull(h, edge_bc.fixed)
+                    } else {
+                        ContourData::Buddy(edge_bc.buddy)
+                    });
+
+                if edge_ca.fixed {
+                    return Err(Error::CrossingFixedEdge);
+                }
+                assert!(edge_ca.buddy != EMPTY_EDGE);
+                edge_ca.buddy
+            } else {
+                return Err(Error::PointOnFixedEdge);
             }
         }
         Ok(())
     }
 
     fn handle_fixed_edge(&mut self, h: HullIndex, src: PointIndex, dst: PointIndex) -> Result<(), Error> {
-        match self.find_hull_walk_mode(h, src, dst) {
+        match self.find_hull_walk_mode(h, src, dst)? {
             // Easy mode: the fixed edge is directly connected to the new
             // point, so we lock it and return immediately.
             Walk::Done(e) => { self.half.lock(e); Ok(()) },
 
-            // Otherwise, things get hard!
-            m => self.walk_fill(src, dst, m),
+            // Otherwise, we're guaranteed to be inside the triangulation,
+            // because the hull is convex by construction.
+            Walk::Inside(e) => self.walk_fill(src, dst, e),
         }
     }
 
