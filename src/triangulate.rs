@@ -186,9 +186,16 @@ impl Triangulation {
             }
         }
 
-        //  The order of the first three keys is not guaranteed, which
-        //  we fix up below.
-        scratch.sort_unstable_by(|k, r| k.1.partial_cmp(&r.1).unwrap());
+        // Sort with a special comparison function that puts the first
+        // three keys at the start of the list, and uses partial_cmp
+        // otherwise.  The order of the first three keys is not
+        // guaranteed, which we fix up below.
+        scratch.sort_unstable_by(|k, r|
+            if k.0 == pa || k.0 == pb || k.0 == pc {
+                std::cmp::Ordering::Less
+            } else {
+                k.1.partial_cmp(&r.1).unwrap()
+            });
 
         // Apply sorting to initial three points, ignoring distance
         // values at this point because they're unused.
