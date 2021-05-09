@@ -1076,8 +1076,7 @@ impl Triangulation {
         let (x_bounds, y_bounds) = Self::bbox(&self.points);
         let scale = 800.0 /
             (x_bounds.1 - x_bounds.0).max(y_bounds.1 - y_bounds.0);
-        let line_width = (x_bounds.1 - x_bounds.0)
-            .min(y_bounds.1 - y_bounds.0) / 100.0 * scale;
+        let line_width = 2.0;
         let dx = |x| { scale * (x - x_bounds.0) + line_width};
         let dy = |y| { scale * (y_bounds.1 - y) + line_width};
 
