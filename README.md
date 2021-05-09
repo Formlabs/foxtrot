@@ -24,5 +24,5 @@ for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 dual licensed as above, without any additional terms or conditions.
 
 ### Disclaimer
-This isn't an official Formlabs project,
+This isn't an official Formlabs project (experimental or otherwise),
 it is just code that happens to be owned by Formlabs.
