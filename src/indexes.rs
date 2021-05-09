@@ -117,8 +117,4 @@ pub type ContourVec<T> = TypedVec<T, ContourTag>;
 
 pub const EMPTY_EDGE: EdgeIndex = EdgeIndex::empty();
 pub const EMPTY_HULL: HullIndex = HullIndex::empty();
-
-pub const POINT_INDEX_ZERO: PointIndex = PointIndex::const_new(0);
-pub const POINT_INDEX_ONE: PointIndex = PointIndex::const_new(1);
-
 pub const EMPTY_CONTOUR: ContourIndex = ContourIndex::empty();

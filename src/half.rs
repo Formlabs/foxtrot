@@ -128,8 +128,9 @@ impl Half {
     /// using odd-even counting (i.e. we switch from outside to inside every
     /// time we cross a fixed edge).
     pub fn flood_erase_from(&mut self, e: EdgeIndex) {
+        assert!(self.edge(e).buddy == EMPTY_EDGE);
         let mut seen = EdgeVec::of(vec![false; self.edges.len()]);
-        let mut todo = vec![(e, false)];
+        let mut todo = vec![(e, self.edge(e).fixed)];
         while let Some((e, inside)) = todo.pop() {
             if e == EMPTY_EDGE || seen[e] {
                 continue;

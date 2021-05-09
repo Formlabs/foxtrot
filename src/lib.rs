@@ -94,6 +94,10 @@ pub enum Error {
     /// Returned when the last point in a contour does not match the start
     #[error("contours must be closed")]
     OpenContour,
+
+    /// Returned when the input has fewer than 3 points
+    #[error("too few points")]
+    TooFewPoints,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
