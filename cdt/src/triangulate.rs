@@ -59,7 +59,7 @@ impl Triangulation {
     /// invalid.
     pub fn build_with_edges<'a, E>(points: &[Point], edges: E)
         -> Result<Triangulation, Error>
-        where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
+        where E: IntoIterator<Item=&'a (usize, usize)> + Copy
     {
         let mut t = Self::new_with_edges(points, edges)?;
         t.run()?;
@@ -117,9 +117,9 @@ impl Triangulation {
     /// invalid.
     pub fn new_with_edges<'a, E>(points: &[Point], edges: E)
         -> Result<Triangulation, Error>
-        where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone
+        where E: IntoIterator<Item=&'a (usize, usize)> + Copy
     {
-        Self::validate_input(points, edges.clone())?;
+        Self::validate_input(points, edges)?;
 
         //  Picking the seed triangle and center point is tricky!
         //
@@ -231,7 +231,7 @@ impl Triangulation {
         }
 
         ////////////////////////////////////////////////////////////////////////
-        let has_edges = edges.clone().into_iter().count() > 0;
+        let has_edges = edges.into_iter().count() > 0;
         let mut out = Triangulation {
             hull: Hull::new(sorted_points.len(), has_edges),
             half: Half::new(sorted_points.len()),
@@ -274,7 +274,7 @@ impl Triangulation {
         ////////////////////////////////////////////////////////////////////////
         // Iterate over edges, counting which points have a termination
         let mut termination_count = PointVec::of(vec![0; out.points.len()]);
-        let edge_iter = || edges.clone()
+        let edge_iter = || edges
             .into_iter()
             .map(|&(src, dst)| {
                 let src = map_forward[src];

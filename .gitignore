@@ -1,3 +1,4 @@
 /target
+/local
 *.svg
 .DS_Store

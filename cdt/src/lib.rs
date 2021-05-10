@@ -11,28 +11,24 @@ point-in-circle and orientation tests.
 ## Delaunay triangulation
 This triangulates a set of four points in a square
 ```rust
-fn main() {
-    let pts = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
-    let triangles = cdt::triangulate_points(&pts).unwrap();
-    assert!(triangles.len() == 2);
-    for t in triangles {
-        println!("{:?} {:?} {:?}", pts[t.0], pts[t.1], pts[t.2])
-    }
+let pts = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
+let triangles = cdt::triangulate_points(&pts).unwrap();
+assert!(triangles.len() == 2);
+for t in triangles {
+    println!("{:?} {:?} {:?}", pts[t.0], pts[t.1], pts[t.2])
 }
 ```
 
 ## Constrained Delaunay triangulation
 This triangulates an inner and outer square
 ```rust
-fn main() {
-    let pts = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0),
-                   (0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8)];
-    let triangles = cdt::triangulate_contours(&pts,
-            &[vec![0, 1, 2, 3, 0], vec![4, 5, 6, 7, 4]])
-        .unwrap();
-    for t in triangles {
-        println!("{:?} {:?} {:?}", pts[t.0], pts[t.1], pts[t.2])
-    }
+let pts = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0),
+               (0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8)];
+let triangles = cdt::triangulate_contours(&pts,
+        &[vec![0, 1, 2, 3, 0], vec![4, 5, 6, 7, 4]])
+    .unwrap();
+for t in triangles {
+    println!("{:?} {:?} {:?}", pts[t.0], pts[t.1], pts[t.2])
 }
 ```
 
