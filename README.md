@@ -2,8 +2,9 @@
 _A fast STEP file viewer_
 
 ## Subsystems
-- `cdt`: Constrained Delaunay triangulation
-
+- `step`: STEP file parsing and triangulation
+- `gui`: GUI for rendering step files
+- `cdt`: Constrained Delaunay triangulation (standalone)
 
 ## License
 © 2021 [Formlabs](https://formlabs.com)
