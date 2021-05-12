@@ -1,6 +1,11 @@
 use std::marker::PhantomData;
 
 pub struct Id<T>(usize, PhantomData<*const T>);
+impl<T> Id<T> {
+    pub const fn new(u: usize) -> Self {
+        Self(u, PhantomData)
+    }
+}
 pub struct Set<T, const L: usize, const U: usize>(Vec<T>);
 pub struct List<T, const L: usize, const U: usize>(Vec<T>);
 pub struct UniqueList<T, const L: usize, const U: usize>(Vec<T>);
