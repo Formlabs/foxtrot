@@ -407,7 +407,17 @@ impl Surface {
     pub fn normal(&self, p: DVec3) -> DVec3 {
         match self {
             Surface::Plane { normal, .. } => *normal,
-            _ => DVec3::new(0.0, 0.0, 0.0),
+            Surface::Cylinder { location, axis, .. } => {
+                // Project the point onto the axis
+                let proj = (p - location).dot(axis);
+
+                // Find the nearest point along the axis
+                let nearest = location + axis * proj;
+
+                // Then the normal is just pointing along that direction
+                // (same hack as below)
+                -(p - nearest).normalize()
+            }
         }
     }
 
