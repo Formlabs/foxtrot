@@ -304,26 +304,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 pub fn triangulate<S: std::fmt::Debug>(step: &StepFile<S>) -> (Vec<Vertex>, Vec<Triangle>) {
     let mut t = Triangulator::new(step);
     t.triangulate();
-
-    // Ignore t for now
-    (
-        vec![
-            Vertex {
-                pos: DVec3::new(0.0, 0.0, 0.0),
-                norm: DVec3::new(0.0, 0.0, 1.0),
-                color: DVec3::new(1.0, 0.0, 0.0),
-            }, Vertex {
-                pos: DVec3::new(1.0, 0.0, 0.0),
-                norm: DVec3::new(0.0, 0.0, 1.0),
-                color: DVec3::new(0.0, 1.0, 0.0),
-            }, Vertex {
-                pos: DVec3::new(0.0, 1.0, 0.0),
-                norm: DVec3::new(0.0, 0.0, 1.0),
-                color: DVec3::new(0.0, 0.0, 1.0),
-            },
-        ],
-        vec![ Triangle { verts: U32Vec3::new(0, 1, 2) } ]
-    )
+    (t.vertices, t.triangles)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -400,7 +381,6 @@ impl Surface {
                 let scale = 1.0 / (1.0 + (-p.z / radius).exp());
                 DVec2::new(p.x * scale, p.y * scale)
             }
-            _ => unimplemented!(),
         }
     }
 
