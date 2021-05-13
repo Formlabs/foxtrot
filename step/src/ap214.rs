@@ -1,452 +1,285 @@
-use std::marker::PhantomData;
-
-pub struct Id<T>(usize, PhantomData<*const T>);
-impl<T> Id<T> {
-    pub const fn new(u: usize) -> Self {
-        Self(u, PhantomData)
-    }
-}
-pub struct Set<T, const L: usize, const U: usize>(Vec<T>);
-pub struct List<T, const L: usize, const U: usize>(Vec<T>);
-pub struct UniqueList<T, const L: usize, const U: usize>(Vec<T>);
-
-////////////////////////////////////////////////////////////////////////////////
-// Types (primitive)
-pub struct DescriptiveMeasure(String);
-pub struct Identifier(String);
-pub struct Label(String);
+pub struct Id(usize);
 pub struct LengthMeasure(f64);
-pub struct Text(String);
-pub struct NonNegativeLengthMeasure(LengthMeasure);
-pub struct PlaneAngleMeasure(f64);
-pub struct PositiveLengthMeasure(NonNegativeLengthMeasure);
-pub struct PositiveRatioMeasure(RatioMeasure);
-pub struct RatioMeasure(f64);
-
-pub enum Axis2Placement {
-    Axis2Placement3D(Id<Axis2Placement3D>),
-    Axis2Placement2D(Id<Axis2Placement2D>),
-}
-pub enum FillStyleSelect {
-    FillAreaStyleColour(Id<FillAreaStyleColour>),
-    // Rest of options are skipped
-}
-pub enum PresentationStyleSelect {
-    SurfaceStyleUsage(Id<SurfaceStyleUsage>),
-    // Rest of options are skipped
-}
-pub enum Source {
-    Made,
-    Bought,
-    NotKnown,
-}
-pub enum SurfaceSide {
-    Positive,
-    Negative,
-    Both,
-}
-pub enum SurfaceSideStyleSelect {
-    SurfaceSideStyle(Id<SurfaceSideStyle>),
-}
-pub enum SurfaceStyleElementSelect {
-    SurfaceStyleFillArea(Id<SurfaceStyleFillArea>),
-    // Rest of options are skipped
-}
-pub enum RepresentedDefinition {
-    PropertyDefinition(Id<PropertyDefinition>),
-    // Rest of options are skipped
-}
-pub enum MeasureValue {
-    CountMeasure(f64),
-    // Rest of options are skipped
-}
-pub enum CharacterizedDefinition {
-    // Nothing here?
-}
-pub enum Unit {
-    NamedUnit(Id<NamedUnit>),
-    // Nothing else here
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Entities
-pub struct AdvancedBrepShapeRepresentation {
-    pub _0: ShapeRepresentation,
-}
-pub struct AdvancedFace {
-    pub _0: FaceSurface,
-}
-pub struct ApplicationContext {
-    pub application: Label,
-}
-pub struct ApplicationContextElement {
-    pub name: Label,
-    pub frame_of_reference: Id<ApplicationContext>,
-}
-pub struct ApplicationProtocolDefinition {
-    pub name: Label,
-    pub description: Option<Text>,
-    pub relating_context: Id<ApplicationContext>,
-    pub related_context: Id<ApplicationContext>,
-}
-pub struct Axis2Placement2D {
-    pub _0: Placement,
-    pub ref_direction: Option<Direction>,
-}
-pub struct Axis2Placement3D {
-    pub _0: Placement,
-    pub ref_direction: Option<Direction>,
-}
-pub struct CartesianPoint {
-    pub _0: Point,
-    pub coordinates: List<LengthMeasure, 1, 3>,
-}
-pub struct Circle {
-    pub _0: Conic,
-    pub radius: PositiveLengthMeasure,
-}
-pub struct ClosedShell {
-    pub _0: ConnectedFaceSet,
-}
-pub struct Colour {}
-pub struct ColourRgb {
-    pub _0: ColourSpecification,
-    pub red: f64,
-    pub green: f64,
-    pub blue: f64,
-}
-pub struct ColourSpecification {
-    pub _0: Colour,
-    pub name: Label,
-}
-pub struct Conic {
-    pub _0: Curve,
-    pub position: Axis2Placement,
-}
-pub struct ConnectedFaceSet {
-    pub _0: TopologicalRepresentationItem,
-    pub cfs_faces: Set<Id<Face>, 1, {usize::MAX}>,
-}
-pub struct Curve {
-    pub _0: GeometricRepresentationItem,
-}
-pub struct CylindricalSurface {
-    pub _0: ElementarySurface,
-    pub radius: PositiveLengthMeasure,
-}
-pub struct Direction {
-    pub _0: GeometricRepresentationItem,
-    pub direction_ratios: List<f64, 2, 3>,
-}
-pub struct DimensionalExponents {
-    pub length_exponent: f64,
-    pub mass_exponent: f64,
-    pub time_exponent: f64,
-    pub electric_current_exponent: f64,
-    pub thermodynamic_temperature_exponent: f64,
-    pub amount_of_substance_exponent: f64,
-    pub luminous_intensity_exponent: f64,
-}
-pub struct Edge {
-    pub _0: TopologicalRepresentationItem,
-    pub edge_start: Id<Vertex>,
-    pub edge_end: Id<Vertex>,
-}
-pub struct EdgeCurve {
-    pub _0: Edge,
-    pub _1: GeometricRepresentationItem,
-    pub edge_geometry: Id<Curve>,
-    pub same_sense: bool,
-}
-pub struct EdgeLoop {
-    pub _0: Loop,
-    pub _1: Path,
-}
-pub struct ElementarySurface {
-    pub _0: Surface,
-    pub position: Axis2Placement3D,
-}
-pub struct Face {
-    pub _0: TopologicalRepresentationItem,
-    pub bounds: Set<Id<FaceBound>, 1, {usize::MAX}>,
-}
-pub struct FaceBound {
-    pub _0: TopologicalRepresentationItem,
-    pub bound: Id<Loop>,
-    pub orientation: bool,
-}
-pub struct FaceSurface {
-    pub _0: Face,
-    pub _1: GeometricRepresentationItem,
-    pub face_geometry: Id<Surface>,
-    pub same_sense: bool,
-}
-pub struct FillAreaStyle {
-    pub _0: FoundedItem,
-    pub name: Label,
-    pub fill_stypes: Set<FillStyleSelect, 1, {usize::MAX}>,
-}
-pub struct FillAreaStyleColour {
-    pub name: Label,
-    pub fill_color: Id<Colour>,
-}
-pub struct FoundedItem {}
-pub struct GeometricRepresentationItem {
-    pub _0: RepresentationItem,
-}
-pub struct Line {
-    pub _0: Curve,
-    pub pnt: Id<CartesianPoint>,
-    pub dir: Id<Vector>,
-}
-pub struct Loop {
-    pub _0: TopologicalRepresentationItem,
-}
-pub struct ManifoldSolidBrep {
-    pub _0: SolidModel,
-    pub outer: ClosedShell,
-}
-pub struct MeasureWithUnit {
-    pub value_component: MeasureValue,
-    pub unit_component: Unit,
-}
-pub struct MechanicalDesignGeometricPresentationArea {
-    pub _0: PresentationArea,
-}
-pub struct NamedUnit {
-    pub dimensions: Id<DimensionalExponents>,
-}
-pub struct OrientedEdge {
-    pub _0: Edge,
-    pub edge_element: Id<Edge>,
-    pub orientation: bool,
-}
-pub struct Path {
-    pub _0: GeometricRepresentationItem,
-    pub edge_list: UniqueList<Id<OrientedEdge>, 1, {usize::MAX}>,
-}
-pub struct Placement {
-    pub _0: GeometricRepresentationItem,
-    pub location: Id<CartesianPoint>,
-}
-pub struct Plane {
-    pub _0: ElementarySurface,
-}
-pub struct PresentationArea {
-    pub _0: PresentationRepresentation,
-}
-pub struct PresentationRepresentation {
-    pub _0: Representation,
-}
-pub struct PresentationStyleAssignment {
-    pub _0: FoundedItem,
-    pub styles: Set<Id<PresentationStyleSelect>, 1, {usize::MAX}>,
-}
-pub struct Product {
-    pub id: Identifier,
-    pub name: Label,
-    pub description: Option<Text>,
-    pub frame_of_reference: Set<Id<ProductContext>, 1, {usize::MAX}>,
-}
-pub struct ProductCategory {
-    pub name: Label,
-    pub description: Option<Text>,
-}
-pub struct ProductContext {
-    pub _0: ApplicationContextElement,
-    pub discipline_type: Label,
-}
-pub struct ProductDefinition {
-    pub id: Identifier,
-    pub description: Option<Text>,
-    pub formation: Id<ProductDefinitionFormation>,
-    pub frame_of_reference: Id<ProductDefinitionContext>,
-}
-pub struct ProductDefinitionContext {
-    pub _0: ApplicationContextElement,
-    pub life_cycle_stage: Label,
-}
-pub struct ProductDefinitionFormation {
-    pub id: Identifier,
-    pub description: Option<Text>,
-    pub of_product: Product,
-}
-pub struct ProductDefinitionFormationWithSpecifiedSource {
-    pub _0: ProductDefinitionFormation,
-    pub make_or_buy: Source,
-}
-pub struct ProductDefinitionShape {
-    pub _0: PropertyDefinition,
-}
-pub struct ProductRelatedProductCategory {
-    pub _0: ProductCategory,
-    pub products: Set<Id<Product>, 1, {usize::MAX}>,
-}
-pub struct PropertyDefinition {
-    pub name: Label,
-    pub description: Option<Text>,
-    pub definition: Id<CharacterizedDefinition>,
-}
-pub struct PropertyDefinitionRepresentation {
-    pub definition: RepresentedDefinition,
-    pub used_representation: Id<Representation>,
-}
-pub struct Point {
-    pub _0: GeometricRepresentationItem,
-}
-pub struct Representation {
-    pub name: Label,
-    pub items: Set<Id<RepresentationItem>, 1, {usize::MAX}>,
-    pub context_of_items: Id<RepresentationContext>,
-}
-pub struct RepresentationContext {
-    pub context_identifier: Identifier,
-    pub context_type: Text,
-}
-pub struct RepresentationItem{
-    pub name: Label,
-}
-pub struct RepresentationRelationship {
-    pub name: Label,
-    pub description: Option<Text>,
-    pub rep_1: Representation,
-    pub rep_2: Representation,
-}
-pub struct ShapeDefinitionRepresentation {
-    pub _0: PropertyDefinitionRepresentation,
-}
-pub struct ShapeRepresentation {
-    pub _0: Representation,
-}
-pub struct ShapeRepresentationRelationship {
-    pub _0: RepresentationRelationship,
-}
-pub struct SolidModel {
-    pub _0: GeometricRepresentationItem,
-}
-pub struct StyledItem {
-    pub _0: RepresentationItem,
-    pub styles: Set<Id<PresentationStyleAssignment>, 1, {usize::MAX}>,
-    pub item: RepresentationItem,
-}
-pub struct Surface {
-    pub _0: GeometricRepresentationItem,
-}
-pub struct SurfaceStyleUsage {
-    pub _0: FoundedItem,
-    pub side: SurfaceSide,
-    pub style: SurfaceSideStyleSelect,
-}
-pub struct SurfaceSideStyle {
-    pub _0: FoundedItem,
-    pub name: Label,
-    pub styles: Set<Id<SurfaceStyleElementSelect>, 1, 7>,
-}
-pub struct SurfaceStyleFillArea {
-    pub _0: FoundedItem,
-    pub fill_area: FillAreaStyle,
-}
-pub struct TopologicalRepresentationItem {
-    pub _0: RepresentationItem,
-}
-pub struct UncertaintyMeasureWithUnit {
-    pub _0: MeasureWithUnit,
-    pub name: Label,
-    pub description: Option<Text>,
-}
-pub struct ValueRepresentationItem {
-    pub _0: RepresentationItem,
-    pub value_component: MeasureValue,
-}
-pub struct Vector {
-    pub _0: GeometricRepresentationItem,
-    pub orientation: Direction,
-    pub magnitude: LengthMeasure,
-}
-pub struct Vertex {
-    pub _0: TopologicalRepresentationItem,
-}
-pub struct VertexPoint {
-    pub _0: Vertex,
-    pub _1: GeometricRepresentationItem,
-    pub vertex_geometry: Id<Point>,
-}
+pub struct CountMeasure(f64);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-pub enum Entity {
-    AdvancedBrepShapeRepresentation(AdvancedBrepShapeRepresentation),
-    AdvancedFace(AdvancedFace),
-    ApplicationContext(ApplicationContext),
-    ApplicationContextElement(ApplicationContextElement),
-    ApplicationProtocolDefinition(ApplicationProtocolDefinition),
-    Axis2Placement2D(Axis2Placement2D),
-    Axis2Placement3D(Axis2Placement3D),
-    CartesianPoint(CartesianPoint),
-    Circle(Circle),
-    ClosedShell(ClosedShell),
-    Colour(Colour),
-    ColourRgb(ColourRgb),
-    ColourSpecification(ColourSpecification),
-    Conic(Conic),
-    ConnectedFaceSet(ConnectedFaceSet),
-    Curve(Curve),
-    CylindricalSurface(CylindricalSurface),
-    Direction(Direction),
-    DimensionalExponents(DimensionalExponents),
-    Edge(Edge),
-    EdgeCurve(EdgeCurve),
-    EdgeLoop(EdgeLoop),
-    ElementarySurface(ElementarySurface),
-    Face(Face),
-    FaceBound(FaceBound),
-    FaceSurface(FaceSurface),
-    FillAreaStyle(FillAreaStyle),
-    FillAreaStyleColour(FillAreaStyleColour),
-    FoundedItem(FoundedItem),
-    GeometricRepresentationItem(GeometricRepresentationItem),
-    Line(Line),
-    Loop(Loop),
-    ManifoldSolidBrep(ManifoldSolidBrep),
-    MeasureWithUnit(MeasureWithUnit),
-    MechanicalDesignGeometricPresentationArea(MechanicalDesignGeometricPresentationArea),
-    NamedUnit(NamedUnit),
-    OrientedEdge(OrientedEdge),
-    Path(Path),
-    Placement(Placement),
-    Plane(Plane),
-    PresentationArea(PresentationArea),
-    PresentationRepresentation(PresentationRepresentation),
-    PresentationStyleAssignment(PresentationStyleAssignment),
-    Product(Product),
-    ProductCategory(ProductCategory),
-    ProductContext(ProductContext),
-    ProductDefinition(ProductDefinition),
-    ProductDefinitionContext(ProductDefinitionContext),
-    ProductDefinitionFormation(ProductDefinitionFormation),
-    ProductDefinitionFormationWithSpecifiedSource(ProductDefinitionFormationWithSpecifiedSource),
-    ProductDefinitionShape(ProductDefinitionShape),
-    ProductRelatedProductCategory(ProductRelatedProductCategory),
-    PropertyDefinition(PropertyDefinition),
-    PropertyDefinitionRepresentation(PropertyDefinitionRepresentation),
-    Point(Point),
-    Representation(Representation),
-    RepresentationContext(RepresentationContext),
-    RepresentationItem(RepresentationItem),
-    RepresentationRelationship(RepresentationRelationship),
-    ShapeDefinitionRepresentation(ShapeDefinitionRepresentation),
-    ShapeRepresentation(ShapeRepresentation),
-    ShapeRepresentationRelationship(ShapeRepresentationRelationship),
-    SolidModel(SolidModel),
-    StyledItem(StyledItem),
-    Surface(Surface),
-    SurfaceStyleUsage(SurfaceStyleUsage),
-    SurfaceSideStyle(SurfaceSideStyle),
-    SurfaceStyleFillArea(SurfaceStyleFillArea),
-    TopologicalRepresentationItem(TopologicalRepresentationItem),
-    UncertaintyMeasureWithUnit(UncertaintyMeasureWithUnit),
-    ValueRepresentationItem(ValueRepresentationItem),
-    Vector(Vector),
-    Vertex(Vertex),
-    VertexPoint(VertexPoint),
+pub enum Entity<S> {
+    AdvancedBrepShapeRepresentation(S, Id, Id),
+    AdvancedFace(S, Vec<Id>, Id, bool),
+    ApplicationContext(S),
+    ApplicationProtocolDefinition(S, S, u32, Id),
+    Axis2Placement3d(S, Id, Id, Id),
+    CartesianPoint(S, (f64, f64, f64)),
+    Circle(S, Id, f64),
+    ClosedShell(S, Vec<Id>),
+    ColourRgb(S, f64, f64, f64),
+    CylindricalSurface(S, Id, f64),
+    Direction(S, (f64, f64, f64)),
+    EdgeCurve(S, Id, Id, Id, bool),
+    EdgeLoop(S, Vec<Id>),
+    FaceBound(S, Id, bool),
+    FillAreaStyle(S, Id),
+    FillAreaStyleColour(S, Id),
+    Line(S, Id, Id),
+    MechanicalDesignGeometricPresentationRepresentation(S, Id, Id),
+    ManifoldSolidBrep(S, Id),
+    OrientedEdge(S, Id, bool),
+    Plane(S, Id),
+    PresentationStyleAssignment(Id),
+    Product(S, S, S, Id),
+    ProductCategory(S, S),
+    ProductContext(S, Id, S),
+    ProductDefinition(S, S, Id, Id),
+    ProductDefinitionContext(S, Id, S),
+    ProductDefinitionFormationWithSpecifiedSource(S, S, Id),
+    ProductDefinitionShape(S, S, Id),
+    ProductRelatedProductCategory(S, S, Id),
+    PropertyDefinition(S, S, Id),
+    PropertyDefinitionRepresentation(Id, Id),
+    Representation(S, Id, Id),
+    ShapeDefinitionRepresentation(Id, Id),
+    ShapeRepresentation(S, Id, Id),
+    ShapeRepresentationRelationship(S, S, Id, Id),
+    StyledItem(S, Id, Id),
+    SurfaceStyleUsage(Id),
+    SurfaceSideStyle(S, Id),
+    SurfaceStyleFillArea(Id),
+    UncertaintyMeasureWithUnit(LengthMeasure, Id, S, S),
+
+    ValueRepresentationItem(S,CountMeasure),
+    Vector(S, Id, f64),
+    VertexPoint(S, Id),
+
+    ComplexEntity, // lol we're not handling these
+}
+
+pub fn parse(_data: &[u8]) -> Vec<Entity<&'static str>> {
+    use Entity::*;
+    vec![
+        PropertyDefinitionRepresentation(Id(14),Id(12)),
+        PropertyDefinitionRepresentation(Id(15),Id(13)),
+        Representation("",Id(16),Id(219)),
+        Representation("",Id(17),Id(219)),
+        PropertyDefinition("pmivalidationproperty","",Id(224)),
+        PropertyDefinition("pmivalidationproperty","",Id(224)),
+        ValueRepresentationItem("numberofannotations",CountMeasure(0.)),
+        ValueRepresentationItem("numberofviews",CountMeasure(0.)),
+        ShapeRepresentationRelationship("","",Id(143),Id(19)),
+        AdvancedBrepShapeRepresentation("",Id(141),Id(219)),
+        Circle("",Id(150),0.00635),
+        Circle("",Id(151),0.00635),
+        CylindricalSurface("",Id(149),0.00635),
+        OrientedEdge("",Id(51),false),
+        OrientedEdge("",Id(52),false),
+        OrientedEdge("",Id(53),true),
+        OrientedEdge("",Id(54),true),
+        OrientedEdge("",Id(55),true),
+        OrientedEdge("",Id(56),false),
+        OrientedEdge("",Id(57),false),
+        OrientedEdge("",Id(52),true),
+        OrientedEdge("",Id(58),true),
+        OrientedEdge("",Id(59),false),
+        OrientedEdge("",Id(60),false),
+        OrientedEdge("",Id(56),true),
+        OrientedEdge("",Id(61),false),
+        OrientedEdge("",Id(54),false),
+        OrientedEdge("",Id(62),true),
+        OrientedEdge("",Id(59),true),
+        OrientedEdge("",Id(63),true),
+        OrientedEdge("",Id(64),false),
+        OrientedEdge("",Id(53),false),
+        OrientedEdge("",Id(57),true),
+        OrientedEdge("",Id(60),true),
+        OrientedEdge("",Id(62),false),
+        OrientedEdge("",Id(63),false),
+        OrientedEdge("",Id(51),true),
+        OrientedEdge("",Id(61),true),
+        OrientedEdge("",Id(58),false),
+        OrientedEdge("",Id(55),false),
+        OrientedEdge("",Id(64),true),
+        EdgeCurve("",Id(65),Id(66),Id(75),true),
+        EdgeCurve("",Id(67),Id(65),Id(76),true),
+        EdgeCurve("",Id(67),Id(68),Id(77),true),
+        EdgeCurve("",Id(68),Id(66),Id(78),true),
+        EdgeCurve("",Id(65),Id(69),Id(79),true),
+        EdgeCurve("",Id(70),Id(69),Id(80),true),
+        EdgeCurve("",Id(67),Id(70),Id(81),true),
+        EdgeCurve("",Id(69),Id(71),Id(82),true),
+        EdgeCurve("",Id(72),Id(71),Id(83),true),
+        EdgeCurve("",Id(70),Id(72),Id(84),true),
+        EdgeCurve("",Id(66),Id(71),Id(85),true),
+        EdgeCurve("",Id(68),Id(72),Id(86),true),
+        EdgeCurve("",Id(73),Id(73),Id(20),true),
+        EdgeCurve("",Id(74),Id(74),Id(21),true),
+        VertexPoint("",Id(189)),
+        VertexPoint("",Id(190)),
+        VertexPoint("",Id(192)),
+        VertexPoint("",Id(194)),
+        VertexPoint("",Id(198)),
+        VertexPoint("",Id(200)),
+        VertexPoint("",Id(204)),
+        VertexPoint("",Id(206)),
+        VertexPoint("",Id(213)),
+        VertexPoint("",Id(215)),
+        Line("",Id(188),Id(87)),
+        Line("",Id(191),Id(88)),
+        Line("",Id(193),Id(89)),
+        Line("",Id(195),Id(90)),
+        Line("",Id(197),Id(91)),
+        Line("",Id(199),Id(92)),
+        Line("",Id(201),Id(93)),
+        Line("",Id(203),Id(94)),
+        Line("",Id(205),Id(95)),
+        Line("",Id(207),Id(96)),
+        Line("",Id(209),Id(97)),
+        Line("",Id(210),Id(98)),
+        Vector("",Id(158),1.),
+        Vector("",Id(159),1.),
+        Vector("",Id(160),1.),
+        Vector("",Id(161),1.),
+        Vector("",Id(164),1.),
+        Vector("",Id(165),1.),
+        Vector("",Id(166),1.),
+        Vector("",Id(169),1.),
+        Vector("",Id(170),1.),
+        Vector("",Id(171),1.),
+        Vector("",Id(174),1.),
+        Vector("",Id(175),1.),
+        EdgeLoop("",vec![Id(23),Id(24),Id(25),Id(26)]),
+        EdgeLoop("",vec![Id(27),Id(28),Id(29),Id(30)]),
+        EdgeLoop("",vec![Id(31),Id(32),Id(33),Id(34)]),
+        EdgeLoop("",vec![Id(35),Id(36),Id(37),Id(38)]),
+        EdgeLoop("",vec![Id(39)]),
+        EdgeLoop("",vec![Id(40)]),
+        EdgeLoop("",vec![Id(41),Id(42),Id(43),Id(44)]),
+        EdgeLoop("",vec![Id(45)]),
+        EdgeLoop("",vec![Id(46),Id(47),Id(48),Id(49)]),
+        EdgeLoop("",vec![Id(50)]),
+        FaceBound("",Id(99),true),
+        FaceBound("",Id(100),true),
+        FaceBound("",Id(101),true),
+        FaceBound("",Id(102),true),
+        FaceBound("",Id(103),true),
+        FaceBound("",Id(104),true),
+        FaceBound("",Id(105),true),
+        FaceBound("",Id(106),true),
+        FaceBound("",Id(107),true),
+        FaceBound("",Id(108),true),
+        Plane("",Id(145)),
+        Plane("",Id(146)),
+        Plane("",Id(147)),
+        Plane("",Id(148)),
+        Plane("",Id(152)),
+        Plane("",Id(153)),
+        AdvancedFace("",vec![Id(109)],Id(119),true),
+        AdvancedFace("",vec![Id(110)],Id(120),false),
+        AdvancedFace("",vec![Id(111)],Id(121),false),
+        AdvancedFace("",vec![Id(112)],Id(122),true),
+        AdvancedFace("",vec![Id(113),Id(114)],Id(22),false),
+        AdvancedFace("",vec![Id(115),Id(116)],Id(123),true),
+        AdvancedFace("",vec![Id(117),Id(118)],Id(124),false),
+        ClosedShell("",vec![Id(125),Id(126),Id(127),Id(128),Id(129),Id(130),Id(131)]),
+        StyledItem("",Id(134),Id(141)),
+        PresentationStyleAssignment(Id(135)),
+        SurfaceStyleUsage(Id(136)),
+        SurfaceSideStyle("",Id(137)),
+        SurfaceStyleFillArea(Id(138)),
+        FillAreaStyle("",Id(139)),
+        FillAreaStyleColour("",Id(140)),
+        ColourRgb("",0.615686274509804,0.811764705882353,0.929411764705882),
+        ManifoldSolidBrep("Part1",Id(132)),
+        ShapeDefinitionRepresentation(Id(224),Id(143)),
+        ShapeRepresentation("Part1",Id(144),Id(219)),
+        Axis2Placement3d("",Id(186),Id(154),Id(155)),
+        Axis2Placement3d("",Id(187),Id(156),Id(157)),
+        Axis2Placement3d("",Id(196),Id(162),Id(163)),
+        Axis2Placement3d("",Id(202),Id(167),Id(168)),
+        Axis2Placement3d("",Id(208),Id(172),Id(173)),
+        Axis2Placement3d("",Id(211),Id(176),Id(177)),
+        Axis2Placement3d("",Id(212),Id(178),Id(179)),
+        Axis2Placement3d("",Id(214),Id(180),Id(181)),
+        Axis2Placement3d("",Id(216),Id(182),Id(183)),
+        Axis2Placement3d("",Id(217),Id(184),Id(185)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(1.,0.,0.)),
+        Direction("",(-1.,0.,0.)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(0.,1.,0.)),
+        Direction("",(0.,0.,-1.)),
+        Direction("",(0.,1.,0.)),
+        Direction("",(0.,0.,-1.)),
+        Direction("",(0.,1.,0.)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(1.,0.,0.)),
+        Direction("",(0.,0.,-1.)),
+        Direction("",(1.,0.,0.)),
+        Direction("",(-1.,0.,0.)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(0.,1.,0.)),
+        Direction("",(0.,0.,-1.)),
+        Direction("",(0.,1.,0.)),
+        Direction("",(0.,1.,0.)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(1.,0.,0.)),
+        Direction("",(1.,0.,0.)),
+        Direction("",(0.,0.,-1.)),
+        Direction("",(-1.,0.,0.)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(1.,0.,0.)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(1.,0.,0.)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(1.,0.,0.)),
+        Direction("",(0.,0.,1.)),
+        Direction("",(1.,0.,0.)),
+        CartesianPoint("",(0.,0.,0.)),
+        CartesianPoint("",(0.,0.0127,0.0254)),
+        CartesianPoint("",(0.,0.0127,0.)),
+        CartesianPoint("",(0.,0.,0.)),
+        CartesianPoint("",(-3.46944695195361E-18,0.0254,0.)),
+        CartesianPoint("",(0.,0.,0.0254)),
+        CartesianPoint("",(0.,0.,0.0254)),
+        CartesianPoint("",(0.,0.0127,0.0254)),
+        CartesianPoint("",(-3.46944695195361E-18,0.0254,0.0254)),
+        CartesianPoint("",(-3.46944695195361E-18,0.0254,0.0254)),
+        CartesianPoint("",(0.0254,0.,0.0254)),
+        CartesianPoint("",(0.0254,0.,0.)),
+        CartesianPoint("",(0.0508,0.,0.)),
+        CartesianPoint("",(0.0508,0.,0.0254)),
+        CartesianPoint("",(0.0508,0.,0.0254)),
+        CartesianPoint("",(0.0254,0.,0.0254)),
+        CartesianPoint("",(0.0508,0.0127,0.0254)),
+        CartesianPoint("",(0.0508,0.0127,0.)),
+        CartesianPoint("",(0.0508,0.0254,0.)),
+        CartesianPoint("",(0.0508,0.0254,0.0254)),
+        CartesianPoint("",(0.0508,0.0254,0.0254)),
+        CartesianPoint("",(0.0508,0.0127,0.0254)),
+        CartesianPoint("",(0.0254,0.0254,0.0254)),
+        CartesianPoint("",(0.0254,0.0254,0.)),
+        CartesianPoint("",(0.0254,0.0254,0.0254)),
+        CartesianPoint("",(0.0254,0.0127,0.0254)),
+        CartesianPoint("",(0.0254,0.0127,0.0254)),
+        CartesianPoint("",(0.03175,0.0127,0.0254)),
+        CartesianPoint("",(0.0254,0.0127,0.)),
+        CartesianPoint("",(0.03175,0.0127,0.)),
+        CartesianPoint("",(0.0254,0.0127,0.0254)),
+        CartesianPoint("",(0.0254,0.0127,0.)),
+        MechanicalDesignGeometricPresentationRepresentation("",Id(133),Id(219)),
+        ComplexEntity,
+        UncertaintyMeasureWithUnit(LengthMeasure(5.0E-6),Id(223),"DISTANCE_ACCURACY_VALUE","MaximumToleranceappliedtomodel"),
+        ComplexEntity,
+        ComplexEntity,
+        ComplexEntity,
+        ProductDefinitionShape("","",Id(225)),
+        ProductDefinition("","",Id(227),Id(226)),
+        ProductDefinitionContext("",Id(233),"design"),
+        ProductDefinitionFormationWithSpecifiedSource("","",Id(229)),
+        ProductRelatedProductCategory("","",Id(229)),
+        Product("Part1","Part1","Part1",Id(231)),
+        ProductCategory("",""),
+        ProductContext("",Id(233),"mechanical"),
+        ApplicationProtocolDefinition("internationalstandard","automotive_design",2010,Id(233)),
+        ApplicationContext("coredataforautomotivemechanicaldesignprocesses"),
+    ]
 }
