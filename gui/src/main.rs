@@ -1,9 +1,45 @@
 use std::borrow::Cow;
 use winit::{
+    dpi::PhysicalSize,
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
+
+struct App {
+    surface: wgpu::Surface,
+    device: wgpu::Device,
+    swapchain_format: wgpu::TextureFormat,
+    swapchain: wgpu::SwapChain,
+}
+
+impl App {
+    fn new(size: PhysicalSize<u32>, format: wgpu::TextureFormat,
+           surface: wgpu::Surface, device: wgpu::Device) -> Self
+    {
+        Self {
+            swapchain_format: format,
+            swapchain: Self::rebuild_swapchain_(size, format, &surface, &device),
+            surface,
+            device,
+        }
+    }
+    fn rebuild_swapchain(&mut self,size: PhysicalSize<u32>) {
+        self.swapchain = Self::rebuild_swapchain_(size, self.swapchain_format, &self.surface, &self.device);
+    }
+
+    fn rebuild_swapchain_(size: PhysicalSize<u32>, format: wgpu::TextureFormat,
+                          surface: &wgpu::Surface, device: &wgpu::Device) -> wgpu::SwapChain {
+        let sc_desc = wgpu::SwapChainDescriptor {
+            usage: wgpu::TextureUsage::RENDER_ATTACHMENT,
+            format: format,
+            width: size.width,
+            height: size.height,
+            present_mode: wgpu::PresentMode::Mailbox,
+        };
+        device.create_swap_chain(surface, &sc_desc)
+    }
+}
 
 async fn run(event_loop: EventLoop<()>, window: Window) {
     let size = window.inner_size();
@@ -64,15 +100,7 @@ async fn run(event_loop: EventLoop<()>, window: Window) {
         multisample: wgpu::MultisampleState::default(),
     });
 
-    let mut sc_desc = wgpu::SwapChainDescriptor {
-        usage: wgpu::TextureUsage::RENDER_ATTACHMENT,
-        format: swapchain_format,
-        width: size.width,
-        height: size.height,
-        present_mode: wgpu::PresentMode::Mailbox,
-    };
-
-    let mut swap_chain = device.create_swap_chain(&surface, &sc_desc);
+    let mut app = App::new(size, swapchain_format, surface, device);
 
     event_loop.run(move |event, _, control_flow| {
         // Have the closure take ownership of the resources.
@@ -87,17 +115,15 @@ async fn run(event_loop: EventLoop<()>, window: Window) {
                 ..
             } => {
                 // Recreate the swap chain with the new size
-                sc_desc.width = size.width;
-                sc_desc.height = size.height;
-                swap_chain = device.create_swap_chain(&surface, &sc_desc);
+                app.rebuild_swapchain(size);
             }
             Event::RedrawRequested(_) => {
-                let frame = swap_chain
+                let frame = app.swapchain
                     .get_current_frame()
                     .expect("Failed to acquire next swap chain texture")
                     .output;
                 let mut encoder =
-                    device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+                    app.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
                 {
                     let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: None,
