@@ -37,12 +37,14 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         t
     }
 
+    /// Writes the triangulation to a STL, for debugging
     pub fn save_stl(&self, filename: &str) -> std::io::Result<()> {
         let mut out: Vec<u8> = Vec::new();
         for _ in 0..80 { // header
             out.push('x' as u8);
         }
-        let u: u32 = self.triangles.len().try_into().expect("Too many triangles");
+        let u: u32 = self.triangles.len().try_into()
+            .expect("Too many triangles");
         out.extend(&u.to_le_bytes());
         for t in self.triangles.iter() {
             out.extend(std::iter::repeat(0).take(12)); // normal
@@ -79,7 +81,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
             }
         }
 
-        // For each contour, deproject from 3D down to the surface, then
+        // For each contour, project from 3D down to the surface, then
         // start collecting them as constrained edges for triangulation
         let offset = self.vertices.len();
         let s = self.get_surface(surface);
@@ -96,17 +98,19 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
                 // The contour marches forward!
                 contour.push(pts.len());
 
+                // Project to the 2D subspace for triangulation
                 let proj = s.lower(pt);
                 pts.push((proj.x, proj.y));
 
                 // Also store this vertex in the 3D triangulation
                 self.vertices.push(Vertex {
                     pos: pt,
-                    norm: DVec3::new(0.0, 0.0, 0.0),
+                    norm: s.normal(pt),
                     color: DVec3::new(0.0, 0.0, 0.0),
                 });
             }
-            // The last point is a duplicate, because it closes the contours
+            // The last point is a duplicate, because it closes the contours,
+            // so we skip it here and reattach the contour to the start.
             pts.pop();
             self.vertices.pop();
 
@@ -121,12 +125,16 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
             .expect("Could not build CDT triangulation");
         match t.run() {
             Ok(()) => for (a, b, c) in t.triangles() {
-                    self.triangles.push(Triangle {
-                        verts: U32Vec3::new(
-                            (a + offset) as u32,
-                            (b + offset) as u32,
-                            (c + offset) as u32)
-                    });
+                let a = (a + offset) as u32;
+                let b = (b + offset) as u32;
+                let c = (c + offset) as u32;
+                self.triangles.push(Triangle { verts:
+                    if same_sense ^ s.sign() {
+                        U32Vec3::new(a, b, c)
+                    } else {
+                        U32Vec3::new(a, c, b)
+                    }
+                });
             },
             Err(e) => {
                 eprintln!("Got error when triangulating: {:?}", e);
@@ -216,7 +224,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         }
     }
 
-    fn circle(&self, u: DVec3, v: DVec3, position: Id, radius: f64) -> Vec<DVec3> {
+    fn circle(&self, u: DVec3, _v: DVec3, position: Id, radius: f64) -> Vec<DVec3> {
         let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
 
         // Build a rotation matrix to go from flat (XY) to 3D space
@@ -279,7 +287,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         };
         let start = (u - pnt).dot(&dir);
         let end = (v - pnt).dot(&dir);
-        const N: usize = 10;
+
         // Project onto the pnt + dir, and walk from start to end
         vec![pnt + dir * start, pnt + dir * end]
     }
@@ -325,10 +333,13 @@ pub fn triangulate<S: std::fmt::Debug>(step: &StepFile<S>) -> (Vec<Vertex>, Vec<
 #[derive(Debug, Copy, Clone)]
 enum Surface {
     Cylinder {
+        location: DVec3,
+        axis: DVec3,
         mat_i: DMat4,
         radius: f64,
     },
     Plane {
+        normal: DVec3,
         mat_i: DMat4,
     }
 }
@@ -337,13 +348,14 @@ impl Surface {
     pub fn new_cylinder(axis: DVec3, ref_direction: DVec3, location: DVec3, radius: f64) -> Self {
         Surface::Cylinder {
             mat_i: Self::build_mat_i(axis, ref_direction, location),
-            radius
+            axis, radius, location,
         }
     }
 
     pub fn new_plane(axis: DVec3, ref_direction: DVec3, location: DVec3) -> Self {
         Surface::Plane {
-            mat_i: Self::build_mat_i(axis, ref_direction, location)
+            mat_i: Self::build_mat_i(axis, ref_direction, location),
+            normal: axis,
         }
     }
 
@@ -373,10 +385,10 @@ impl Surface {
     pub fn lower(&self, p: DVec3) -> DVec2 {
         let p = DVec4::new(p.x, p.y, p.z, 1.0);
         match self {
-            Surface::Plane { mat_i } => {
+            Surface::Plane { mat_i, .. } => {
                 glm::vec4_to_vec2(&(mat_i * p))
             },
-            Surface::Cylinder { mat_i, radius } => {
+            Surface::Cylinder { mat_i, radius, .. } => {
                 let p = mat_i * p;
                 // We convert the Z coordinates to either add or subtract from
                 // the radius, so that we maintain the right topology (instead
@@ -389,6 +401,21 @@ impl Surface {
                 DVec2::new(p.x * scale, p.y * scale)
             }
             _ => unimplemented!(),
+        }
+    }
+
+    pub fn normal(&self, p: DVec3) -> DVec3 {
+        match self {
+            Surface::Plane { normal, .. } => *normal,
+            _ => DVec3::new(0.0, 0.0, 0.0),
+        }
+    }
+
+    pub fn sign(&self) -> bool {
+        // TODO: this is a hack, why are cylinders different from planes?
+        match self {
+            Surface::Plane {..} => false,
+            Surface::Cylinder {..} => true,
         }
     }
 }
