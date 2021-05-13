@@ -51,8 +51,8 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
                 out.extend(&(v.pos.x as f32).to_le_bytes());
                 out.extend(&(v.pos.y as f32).to_le_bytes());
                 out.extend(&(v.pos.z as f32).to_le_bytes());
-                out.extend(std::iter::repeat(0).take(2)); // attributes
             }
+            out.extend(std::iter::repeat(0).take(2)); // attributes
         }
         std::fs::write(filename, out)
     }
@@ -80,7 +80,8 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         }
 
         // For each contour, deproject from 3D down to the surface, then
-        // start collecting them as constraints for triangulation
+        // start collecting them as constrained edges for triangulation
+        let offset = self.vertices.len();
         let s = self.get_surface(surface);
         let mut pts = Vec::new();
         let mut contours = Vec::new();
@@ -118,9 +119,21 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
         let mut t = cdt::Triangulation::new_from_contours(&pts, &contours)
             .expect("Could not build CDT triangulation");
-        t.save_debug_svg(&format!("out{}.svg", surface.0));
-        // TODO: project the bound contours onto the surface, triangulate,
-        // then deproject and build triangles
+        match t.run() {
+            Ok(()) => for (a, b, c) in t.triangles() {
+                    self.triangles.push(Triangle {
+                        verts: U32Vec3::new(
+                            (a + offset) as u32,
+                            (b + offset) as u32,
+                            (c + offset) as u32)
+                    });
+            },
+            Err(e) => {
+                eprintln!("Got error when triangulating: {:?}", e);
+                t.save_debug_svg(&format!("out{}.svg", surface.0))
+                    .expect("Could not save debug SVG");
+            }
+        }
     }
 
     fn get_surface(&self, surface: Id) -> Surface {
@@ -365,9 +378,15 @@ impl Surface {
             },
             Surface::Cylinder { mat_i, radius } => {
                 let p = mat_i * p;
-                // Convert from X/Y/Z position to theta-z position, since
-                // we assume that the point is on the cylinder
-                DVec2::new(p.y.atan2(p.x), p.z)
+                // We convert the Z coordinates to either add or subtract from
+                // the radius, so that we maintain the right topology (instead
+                // of doing something like theta-z coordinates, which wrap
+                // around awkwardly).
+
+                // Assume that Z is roughly on the same order of magnitude
+                // as the radius, and use a sigmoid function
+                let scale = 1.0 / (1.0 + (-p.z / radius).exp());
+                DVec2::new(p.x * scale, p.y * scale)
             }
             _ => unimplemented!(),
         }
