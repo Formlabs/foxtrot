@@ -11,25 +11,65 @@ struct App {
     device: wgpu::Device,
     swapchain_format: wgpu::TextureFormat,
     swapchain: wgpu::SwapChain,
+    render_pipeline: wgpu::RenderPipeline,
 }
 
 impl App {
-    fn new(size: PhysicalSize<u32>, format: wgpu::TextureFormat,
+    fn new(size: PhysicalSize<u32>, adapter: wgpu::Adapter,
            surface: wgpu::Surface, device: wgpu::Device) -> Self
     {
+        let swapchain_format = adapter.get_swap_chain_preferred_format(&surface).unwrap();
+
+        // Load the shaders from disk
+        let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("shader.wgsl"))),
+            flags: wgpu::ShaderFlags::all(),
+        });
+
+        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[],
+            push_constant_ranges: &[],
+        });
+
+        let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: None,
+            layout: Some(&pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &shader,
+                entry_point: "vs_main",
+                buffers: &[],
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &shader,
+                entry_point: "fs_main",
+                targets: &[swapchain_format.into()],
+            }),
+            primitive: wgpu::PrimitiveState::default(),
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState::default(),
+        });
+
         Self {
-            swapchain_format: format,
-            swapchain: Self::rebuild_swapchain_(size, format, &surface, &device),
+            swapchain_format,
+            swapchain: Self::rebuild_swapchain_(
+                size, swapchain_format, &surface, &device),
             surface,
             device,
+            render_pipeline,
         }
     }
+
     fn rebuild_swapchain(&mut self,size: PhysicalSize<u32>) {
-        self.swapchain = Self::rebuild_swapchain_(size, self.swapchain_format, &self.surface, &self.device);
+        self.swapchain = Self::rebuild_swapchain_(size, self.swapchain_format,
+            &self.surface, &self.device);
     }
 
     fn rebuild_swapchain_(size: PhysicalSize<u32>, format: wgpu::TextureFormat,
-                          surface: &wgpu::Surface, device: &wgpu::Device) -> wgpu::SwapChain {
+                          surface: &wgpu::Surface, device: &wgpu::Device)
+        -> wgpu::SwapChain
+    {
         let sc_desc = wgpu::SwapChainDescriptor {
             usage: wgpu::TextureUsage::RENDER_ATTACHMENT,
             format: format,
@@ -38,6 +78,33 @@ impl App {
             present_mode: wgpu::PresentMode::Mailbox,
         };
         device.create_swap_chain(surface, &sc_desc)
+    }
+
+    fn redraw(&self, queue: &wgpu::Queue) {
+        let frame = self.swapchain
+            .get_current_frame()
+            .expect("Failed to acquire next swap chain texture")
+            .output;
+        let mut encoder =
+            self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+        {   // Temporary scope to borrow encoder
+            let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: None,
+                color_attachments: &[wgpu::RenderPassColorAttachment {
+                    view: &frame.view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color::GREEN),
+                        store: true,
+                    },
+                }],
+                depth_stencil_attachment: None,
+            });
+            rpass.set_pipeline(&self.render_pipeline);
+            rpass.draw(0..3, 0..1);
+        }
+
+        queue.submit(Some(encoder.finish()));
     }
 }
 
@@ -67,82 +134,22 @@ async fn run(event_loop: EventLoop<()>, window: Window) {
         .await
         .expect("Failed to create device");
 
-    // Load the shaders from disk
-    let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-        label: None,
-        source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("shader.wgsl"))),
-        flags: wgpu::ShaderFlags::all(),
-    });
 
-    let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-        label: None,
-        bind_group_layouts: &[],
-        push_constant_ranges: &[],
-    });
-
-    let swapchain_format = adapter.get_swap_chain_preferred_format(&surface).unwrap();
-
-    let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-        label: None,
-        layout: Some(&pipeline_layout),
-        vertex: wgpu::VertexState {
-            module: &shader,
-            entry_point: "vs_main",
-            buffers: &[],
-        },
-        fragment: Some(wgpu::FragmentState {
-            module: &shader,
-            entry_point: "fs_main",
-            targets: &[swapchain_format.into()],
-        }),
-        primitive: wgpu::PrimitiveState::default(),
-        depth_stencil: None,
-        multisample: wgpu::MultisampleState::default(),
-    });
-
-    let mut app = App::new(size, swapchain_format, surface, device);
+    let mut app = App::new(size, adapter, surface, device);
 
     event_loop.run(move |event, _, control_flow| {
         // Have the closure take ownership of the resources.
         // `event_loop.run` never returns, therefore we must do this to ensure
         // the resources are properly cleaned up.
-        let _ = (&instance, &adapter, &shader, &pipeline_layout);
+        let _ = (&instance);
 
         *control_flow = ControlFlow::Wait;
         match event {
             Event::WindowEvent {
                 event: WindowEvent::Resized(size),
                 ..
-            } => {
-                // Recreate the swap chain with the new size
-                app.rebuild_swapchain(size);
-            }
-            Event::RedrawRequested(_) => {
-                let frame = app.swapchain
-                    .get_current_frame()
-                    .expect("Failed to acquire next swap chain texture")
-                    .output;
-                let mut encoder =
-                    app.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
-                {
-                    let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                        label: None,
-                        color_attachments: &[wgpu::RenderPassColorAttachment {
-                            view: &frame.view,
-                            resolve_target: None,
-                            ops: wgpu::Operations {
-                                load: wgpu::LoadOp::Clear(wgpu::Color::GREEN),
-                                store: true,
-                            },
-                        }],
-                        depth_stencil_attachment: None,
-                    });
-                    rpass.set_pipeline(&render_pipeline);
-                    rpass.draw(0..3, 0..1);
-                }
-
-                queue.submit(Some(encoder.finish()));
-            }
+            } => app.rebuild_swapchain(size),
+            Event::RedrawRequested(_) => app.redraw(&queue),
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
                 ..
