@@ -1,5 +1,5 @@
 #[derive(Copy, Clone, Debug)]
-pub struct Id(usize);
+pub struct Id(pub usize);
 #[derive(Copy, Clone, Debug)]
 pub struct LengthMeasure(f64);
 #[derive(Copy, Clone, Debug)]
