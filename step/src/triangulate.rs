@@ -96,10 +96,13 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
     }
 
     fn edge_loop(&mut self, edge_list: &[Id]) -> Vec<DVec3> {
-        let mut out = Vec::new();
+        let mut out = vec![DVec3::new(0.0, 0.0, 0.0)];
         for e in edge_list {
+            out.pop();
             if let &Entity::OrientedEdge(_, element, orientation) = self.entity(*e) {
                 out.extend(self.oriented_edge(element, orientation).into_iter());
+            } else {
+                panic!("Invalid OrientedEdge {:?}", self.entity(*e));
             }
         }
         out
