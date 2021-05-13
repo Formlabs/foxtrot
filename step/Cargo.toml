@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 nalgebra-glm = "0.3"
+cdt = { path = "../cdt" }
 
 [dev-dependencies]
 clap = "2.33"

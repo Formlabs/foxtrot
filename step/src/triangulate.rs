@@ -1,6 +1,6 @@
 use std::convert::TryInto;
 use nalgebra_glm as glm;
-use nalgebra_glm::{DVec3, DVec4, DMat4, U32Vec3};
+use nalgebra_glm::{DVec2, DVec3, DVec4, DMat4, U32Vec3};
 use crate::ap214::StepFile;
 
 #[derive(Copy, Clone, Debug)]
@@ -39,7 +39,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     pub fn save_stl(&self, filename: &str) -> std::io::Result<()> {
         let mut out: Vec<u8> = Vec::new();
-        for c in 0..80 {
+        for _ in 0..80 { // header
             out.push('x' as u8);
         }
         let u: u32 = self.triangles.len().try_into().expect("Too many triangles");
@@ -78,8 +78,61 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
                 panic!("Expected FaceBounds; got {:?}", self.entity(*b));
             }
         }
+
+        // For each contour, deproject from 3D down to the surface, then
+        // start collecting them as constraints for triangulation
+        let s = self.get_surface(surface);
+        let mut pts = Vec::new();
+        let mut contours = Vec::new();
+        for bc in bound_contours {
+            // Start a new contour here
+            let mut contour = Vec::new();
+
+            // Record the initial point to close the loop
+            let start = pts.len();
+
+            for pt in bc {
+                // The contour marches forward!
+                contour.push(pts.len());
+
+                let proj = s.lower(pt);
+                pts.push((proj.x, proj.y));
+
+                // Also store this vertex in the 3D triangulation
+                self.vertices.push(Vertex {
+                    pos: pt,
+                    norm: DVec3::new(0.0, 0.0, 0.0),
+                    color: DVec3::new(0.0, 0.0, 0.0),
+                });
+            }
+            // The last point is a duplicate, because it closes the contours
+            pts.pop();
+            self.vertices.pop();
+
+            // Close the loop by returning to the starting point
+            *contour.last_mut().unwrap() = start;
+
+            // Store this contour in the global list
+            contours.push(contour);
+        }
+
+        let mut t = cdt::Triangulation::new_from_contours(&pts, &contours)
+            .expect("Could not build CDT triangulation");
+        t.save_debug_svg(&format!("out{}.svg", surface.0));
         // TODO: project the bound contours onto the surface, triangulate,
         // then deproject and build triangles
+    }
+
+    fn get_surface(&self, surface: Id) -> Surface {
+        if let &Entity::CylindricalSurface(_, position, radius) = self.entity(surface) {
+            let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
+            Surface::new_cylinder(axis, ref_direction, location, radius)
+        } else if let &Entity::Plane(_, position) = self.entity(surface) {
+            let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
+            Surface::new_plane(axis, ref_direction, location)
+        } else {
+            panic!("Could not get surface {:?}", self.entity(surface));
+        }
     }
 
     fn face_bounds(&mut self, bound: Id, orientation: bool) -> Vec<DVec3> {
@@ -151,22 +204,10 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
     }
 
     fn circle(&self, u: DVec3, v: DVec3, position: Id, radius: f64) -> Vec<DVec3> {
-        let (location, axis, ref_direction) = if let &Entity::Axis2Placement3d(_, location, axis, ref_direction) = self.entity(position) {
-            self.axis2_placement_3d(location, axis, ref_direction)
-        } else {
-            panic!("Could not get Axis2Placement3d {:?}", self.entity(position));
-        };
+        let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
 
         // Build a rotation matrix to go from flat (XY) to 3D space
-        let mut mat = DMat4::identity();
-        mat.set_column(0, &glm::vec3_to_vec4(&ref_direction));
-        mat.set_column(1, &glm::vec3_to_vec4(&axis.cross(&ref_direction)));
-        mat.set_column(2, &glm::vec3_to_vec4(&axis));
-        mat.set_column(3, &glm::vec3_to_vec4(&location));
-        *mat.get_mut((3, 3)).unwrap() =  1.0;
-
-        // Calculate the inverse of this matrix
-        let mat_i = mat.try_inverse().expect("Could not invert");
+        let (mat, mat_i) = Surface::build_mats(axis, ref_direction, location);
 
         // Project from 3D into the circle's flat plane
         let u_flat = mat_i * DVec4::new(u.x, u.y, u.z, 1.0);
@@ -187,6 +228,14 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
             out.push(glm::vec4_to_vec3(&(mat * pos)));
         }
         out
+    }
+
+    fn axis2_placement_3d_(&self, id: Id) -> (DVec3, DVec3, DVec3) {
+        if let &Entity::Axis2Placement3d(_, location, axis, ref_direction) = self.entity(id) {
+            self.axis2_placement_3d(location, axis, ref_direction)
+        } else {
+            panic!("Could not get Axis2Placement3d {:?}", self.entity(id));
+        }
     }
 
     fn axis2_placement_3d(&self, location: Id, axis: Id, ref_direction: Id) -> (DVec3, DVec3, DVec3) {
@@ -218,13 +267,8 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         let start = (u - pnt).dot(&dir);
         let end = (v - pnt).dot(&dir);
         const N: usize = 10;
-        let mut out = Vec::new();
         // Project onto the pnt + dir, and walk from start to end
-        for i in 0..N {
-            let frac = ((N - i - 1) as f64) / ((N - 1) as f64);
-            out.push(pnt + dir * (start * frac + end * (1.0 - frac)));
-        }
-        out
+        vec![pnt + dir * start, pnt + dir * end]
     }
 
     fn vector(&self, orientation: Id, magnitude: f64) -> DVec3 {
@@ -259,4 +303,73 @@ pub fn triangulate<S: std::fmt::Debug>(step: &StepFile<S>) -> (Vec<Vertex>, Vec<
         ],
         vec![ Triangle { verts: U32Vec3::new(0, 1, 2) } ]
     )
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// Represents a surface in 3D space, with a function to project a 3D point
+// on the surface down to a 2D space.
+#[derive(Debug, Copy, Clone)]
+enum Surface {
+    Cylinder {
+        mat_i: DMat4,
+        radius: f64,
+    },
+    Plane {
+        mat_i: DMat4,
+    }
+}
+
+impl Surface {
+    pub fn new_cylinder(axis: DVec3, ref_direction: DVec3, location: DVec3, radius: f64) -> Self {
+        Surface::Cylinder {
+            mat_i: Self::build_mat_i(axis, ref_direction, location),
+            radius
+        }
+    }
+
+    pub fn new_plane(axis: DVec3, ref_direction: DVec3, location: DVec3) -> Self {
+        Surface::Plane {
+            mat_i: Self::build_mat_i(axis, ref_direction, location)
+        }
+    }
+
+    fn build_mat(axis: DVec3, ref_direction: DVec3, location: DVec3) -> DMat4 {
+        let mut mat = DMat4::identity();
+        mat.set_column(0, &glm::vec3_to_vec4(&ref_direction));
+        mat.set_column(1, &glm::vec3_to_vec4(&axis.cross(&ref_direction)));
+        mat.set_column(2, &glm::vec3_to_vec4(&axis));
+        mat.set_column(3, &glm::vec3_to_vec4(&location));
+        *mat.get_mut((3, 3)).unwrap() =  1.0;
+        mat
+    }
+
+    fn build_mats(axis: DVec3, ref_direction: DVec3, location: DVec3) -> (DMat4, DMat4) {
+        let m = Self::build_mat(axis, ref_direction, location);
+        (m, m.try_inverse().expect("Could not invert"))
+    }
+
+    fn build_mat_i(axis: DVec3, ref_direction: DVec3, location: DVec3) -> DMat4 {
+        Self::build_mat(axis, ref_direction, location)
+            .try_inverse()
+            .expect("Could not invert")
+    }
+
+    /// Lowers a 3D point on a specific surface into a 2D space defined by
+    /// the surface type.
+    pub fn lower(&self, p: DVec3) -> DVec2 {
+        let p = DVec4::new(p.x, p.y, p.z, 1.0);
+        match self {
+            Surface::Plane { mat_i } => {
+                glm::vec4_to_vec2(&(mat_i * p))
+            },
+            Surface::Cylinder { mat_i, radius } => {
+                let p = mat_i * p;
+                // Convert from X/Y/Z position to theta-z position, since
+                // we assume that the point is on the cylinder
+                DVec2::new(p.y.atan2(p.x), p.z)
+            }
+            _ => unimplemented!(),
+        }
+    }
 }
