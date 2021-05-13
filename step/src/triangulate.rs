@@ -237,7 +237,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         let start_ang = u_flat.y.atan2(u_flat.x);
         let end_ang = start_ang + std::f64::consts::PI * 2.0;
 
-        const N: usize = 10;
+        const N: usize = 64;
         let mut out = Vec::new();
         // Project onto the pnt + dir, and walk from start to end
         for i in 0..N {
