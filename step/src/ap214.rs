@@ -1,9 +1,13 @@
+#[derive(Copy, Clone, Debug)]
 pub struct Id(usize);
+#[derive(Copy, Clone, Debug)]
 pub struct LengthMeasure(f64);
+#[derive(Copy, Clone, Debug)]
 pub struct CountMeasure(f64);
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#[derive(Debug)]
 pub enum Entity<S> {
     AdvancedBrepShapeRepresentation(S, Id, Id),
     AdvancedFace(S, Vec<Id>, Id, bool),
@@ -22,8 +26,8 @@ pub enum Entity<S> {
     FillAreaStyle(S, Id),
     FillAreaStyleColour(S, Id),
     Line(S, Id, Id),
-    MechanicalDesignGeometricPresentationRepresentation(S, Id, Id),
     ManifoldSolidBrep(S, Id),
+    MechanicalDesignGeometricPresentationRepresentation(S, Id, Id),
     OrientedEdge(S, Id, bool),
     Plane(S, Id),
     PresentationStyleAssignment(Id),
@@ -42,21 +46,109 @@ pub enum Entity<S> {
     ShapeRepresentation(S, Id, Id),
     ShapeRepresentationRelationship(S, S, Id, Id),
     StyledItem(S, Id, Id),
-    SurfaceStyleUsage(Id),
     SurfaceSideStyle(S, Id),
     SurfaceStyleFillArea(Id),
+    SurfaceStyleUsage(Id),
     UncertaintyMeasureWithUnit(LengthMeasure, Id, S, S),
-
     ValueRepresentationItem(S,CountMeasure),
     Vector(S, Id, f64),
     VertexPoint(S, Id),
 
     ComplexEntity, // lol we're not handling these
+    Placeholder,
 }
 
-pub fn parse(_data: &[u8]) -> Vec<Entity<&'static str>> {
+impl<S> Entity<S> {
+    pub fn upstream(&self) -> Vec<Id> {
+        use Entity::*;
+        match self {
+            AdvancedBrepShapeRepresentation(_s, a, b) => vec![*a, *b],
+            AdvancedFace(_s, v, a, _b) => { let mut v = v.clone(); v.push(*a); v },
+            ApplicationContext(_) => vec![],
+            ApplicationProtocolDefinition(_, _, _, i) => vec![*i],
+            Axis2Placement3d(_, a, b, c) => vec![*a, *b, *c],
+            CartesianPoint(_, _) => vec![],
+            Circle(_, a, _) => vec![*a],
+            ClosedShell(_, v) => v.clone(),
+            ColourRgb(_, _, _, _) => vec![],
+            ComplexEntity => vec![],
+            CylindricalSurface(_, a, _) => vec![*a],
+            Direction(_, _) => vec![],
+            EdgeCurve(_, a, b, c, _) => vec![*a, *b, *c],
+            EdgeLoop(_, v) => v.clone(),
+            FaceBound(_, a, _) => vec![*a],
+            FillAreaStyle(_, a) => vec![*a],
+            FillAreaStyleColour(_, a) => vec![*a],
+            Line(_, a, b) => vec![*a, *b],
+            ManifoldSolidBrep(_, a) => vec![*a],
+            MechanicalDesignGeometricPresentationRepresentation(_, a, b) => vec![*a, *b],
+            OrientedEdge(_, a, _) => vec![*a],
+            Placeholder => vec![],
+            Plane(_, a) => vec![*a],
+            PresentationStyleAssignment(a) => vec![*a],
+            Product(_, _, _, a) => vec![*a],
+            ProductCategory(_, _) => vec![],
+            ProductContext(_, a, _) => vec![*a],
+            ProductDefinition(_, _, a, b) => vec![*a, *b],
+            ProductDefinitionContext(_, a, _) => vec![*a],
+            ProductDefinitionFormationWithSpecifiedSource(_, _, a) => vec![*a],
+            ProductDefinitionShape(_, _, a) => vec![*a],
+            ProductRelatedProductCategory(_, _, a) => vec![*a],
+            PropertyDefinition(_, _, a) => vec![*a],
+            PropertyDefinitionRepresentation(a, b) => vec![*a, *b],
+            Representation(_, a, b) => vec![*a, *b],
+            ShapeDefinitionRepresentation(a, b) => vec![*a, *b],
+            ShapeRepresentation(_, a, b) => vec![*a, *b],
+            ShapeRepresentationRelationship(_, _, a, b) => vec![*a, *b],
+            StyledItem(_, a, b) => vec![*a, *b],
+            SurfaceSideStyle(_, a) => vec![*a],
+            SurfaceStyleFillArea(a) => vec![*a],
+            SurfaceStyleUsage(a) => vec![*a],
+            UncertaintyMeasureWithUnit(_, a, _, _) => vec![*a],
+            ValueRepresentationItem(_, _) => vec![],
+            Vector(_, a, _) => vec![*a],
+            VertexPoint(_, a) => vec![*a],
+        }
+    }
+}
+
+pub struct StepFile<S>(Vec<Entity<S>>);
+impl<S: std::fmt::Debug> StepFile<S> {
+    pub fn to_dot(&self) -> String {
+        let mut out = "digraph {\n".to_owned();
+        for (i, e) in self.0.iter().enumerate() {
+            if let Entity::Placeholder = e {
+                continue;
+            }
+            let d = format!("{:?}", e);
+            let name = d.split("(").next().unwrap();
+
+            out += &format!("  e{} [ label = \"#{}: {}\" ];\n", i, i, name);
+            for j in e.upstream() {
+                out += &format!("  e{} -> e{};\n", i, j.0);
+            }
+        }
+        out += "}";
+        out
+    }
+    pub fn save_dot(&self, filename: &str) -> std::io::Result<()> {
+        std::fs::write(filename, self.to_dot())
+    }
+}
+
+pub fn parse(_data: &[u8]) -> StepFile<&str> {
     use Entity::*;
-    vec![
+    StepFile(vec![
+        Placeholder,
+        Placeholder,
+        Placeholder,
+        Placeholder,
+        Placeholder,
+        Placeholder,
+        Placeholder,
+        Placeholder,
+        Placeholder,
+        Placeholder, // data starts at #10
         PropertyDefinitionRepresentation(Id(14),Id(12)),
         PropertyDefinitionRepresentation(Id(15),Id(13)),
         Representation("",Id(16),Id(219)),
@@ -281,5 +373,5 @@ pub fn parse(_data: &[u8]) -> Vec<Entity<&'static str>> {
         ProductContext("",Id(233),"mechanical"),
         ApplicationProtocolDefinition("internationalstandard","automotive_design",2010,Id(233)),
         ApplicationContext("coredataforautomotivemechanicaldesignprocesses"),
-    ]
+    ])
 }

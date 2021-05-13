@@ -1393,6 +1393,9 @@ dependencies = [
 [[package]]
 name = "step"
 version = "0.1.0"
+dependencies = [
+ "clap",
+]
 
 [[package]]
 name = "storage-map"
