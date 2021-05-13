@@ -1,4 +1,4 @@
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Id(pub usize);
 #[derive(Copy, Clone, Debug)]
 pub struct LengthMeasure(f64);
@@ -112,7 +112,8 @@ impl<S> Entity<S> {
     }
 }
 
-pub struct StepFile<S>(Vec<Entity<S>>);
+pub struct StepFile<S>(pub Vec<Entity<S>>);
+
 impl<S: std::fmt::Debug> StepFile<S> {
     pub fn to_dot(&self) -> String {
         let mut out = "digraph {\n".to_owned();
