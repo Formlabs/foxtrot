@@ -61,8 +61,10 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn triangulate(&mut self) {
         for e in self.data {
-            if let Entity::AdvancedFace(_, bounds, surface, same_sense) = e {
-                self.advanced_face(bounds, *surface, *same_sense);
+            match e {
+                Entity::AdvancedFace(_, bounds, surface, same_sense) =>
+                    self.advanced_face(bounds, *surface, *same_sense),
+                _ => (),
             }
         }
     }
@@ -74,10 +76,10 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
     fn advanced_face(&mut self, bounds: &[Id], surface: Id, same_sense: bool) {
         let mut bound_contours = Vec::new();
         for b in bounds {
-            if let &Entity::FaceBound(_, bound, orientation) = self.entity(*b) {
-                bound_contours.push(self.face_bounds(bound, orientation));
-            } else {
-                panic!("Expected FaceBounds; got {:?}", self.entity(*b));
+            match self.entity(*b) {
+                &Entity::FaceBound(_, bound, orientation) =>
+                    bound_contours.push(self.face_bounds(bound, orientation)),
+                e => panic!("Expected FaceBounds; got {:?}", e),
             }
         }
 
@@ -145,27 +147,30 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
     }
 
     fn get_surface(&self, surface: Id) -> Surface {
-        if let &Entity::CylindricalSurface(_, position, radius) = self.entity(surface) {
-            let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
-            Surface::new_cylinder(axis, ref_direction, location, radius)
-        } else if let &Entity::Plane(_, position) = self.entity(surface) {
-            let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
-            Surface::new_plane(axis, ref_direction, location)
-        } else {
-            panic!("Could not get surface {:?}", self.entity(surface));
+        match self.entity(surface) {
+            &Entity::CylindricalSurface(_, position, radius) => {
+                let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
+                Surface::new_cylinder(axis, ref_direction, location, radius)
+            },
+            &Entity::Plane(_, position) => {
+                let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
+                Surface::new_plane(axis, ref_direction, location)
+            },
+            e => panic!("Could not get surface {:?}", e),
         }
     }
 
     fn face_bounds(&mut self, bound: Id, orientation: bool) -> Vec<DVec3> {
-        if let Entity::EdgeLoop(_, edge_list) = self.entity(bound) {
-            let edge_list = edge_list.clone(); // TODO: this is inefficient
-            let mut d = self.edge_loop(&edge_list);
-            if !orientation {
-                d.reverse()
-            }
-            d
-        } else {
-            panic!("{:?} is not an EdgeLoop", self.entity(bound));
+        match self.entity(bound) {
+            Entity::EdgeLoop(_, edge_list) => {
+                let edge_list = edge_list.clone(); // TODO: this is inefficient
+                let mut d = self.edge_loop(&edge_list);
+                if !orientation {
+                    d.reverse()
+                }
+                d
+            },
+            e => panic!("{:?} is not an EdgeLoop", e),
         }
     }
 
@@ -173,54 +178,55 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         let mut out = vec![DVec3::new(0.0, 0.0, 0.0)];
         for e in edge_list {
             out.pop();
-            if let &Entity::OrientedEdge(_, element, orientation) = self.entity(*e) {
-                out.extend(self.oriented_edge(element, orientation).into_iter());
-            } else {
-                panic!("Invalid OrientedEdge {:?}", self.entity(*e));
+            match self.entity(*e) {
+                &Entity::OrientedEdge(_, element, orientation) =>
+                    out.extend(self.oriented_edge(element, orientation).into_iter()),
+                e => panic!("Invalid OrientedEdge {:?}", e),
             }
         }
         out
     }
 
     fn oriented_edge(&mut self, element: Id, orientation: bool) -> Vec<DVec3> {
-        if let &Entity::EdgeCurve(_, edge_start, edge_end, edge_geometry, same_sense) = self.entity(element) {
-            let mut d = self.edge_curve(edge_start, edge_end, edge_geometry, same_sense);
-            if !orientation {
-                d.reverse()
-            }
-            d
-        } else {
-            panic!("Invalid");
+        match self.entity(element) {
+            &Entity::EdgeCurve(_, edge_start, edge_end, edge_geometry, same_sense) =>
+            {
+                let mut d = self.edge_curve(edge_start, edge_end, edge_geometry, same_sense);
+                if !orientation {
+                    d.reverse()
+                }
+                d
+            },
+            e => panic!("Could not get EdgeCurve from {:?}", e),
         }
     }
 
     fn edge_curve(&mut self, edge_start: Id, edge_end: Id, edge_geometry: Id, same_sense: bool) -> Vec<DVec3> {
-        let u = if let &Entity::VertexPoint(_, i) = self.entity(edge_start) {
-            self.vertex_point(i)
-        } else {
-            panic!("Could not get vertex from {:?}", self.entity(edge_start));
+        let u = match self.entity(edge_start) {
+            &Entity::VertexPoint(_, i) => self.vertex_point(i),
+            e => panic!("Could not get vertex from {:?}", e),
         };
-        let v = if let &Entity::VertexPoint(_, i) = self.entity(edge_end) {
-            self.vertex_point(i)
-        } else {
-            panic!("Could not get vertex from {:?}", self.entity(edge_start));
+        let v = match self.entity(edge_end) {
+            &Entity::VertexPoint(_, i) => self.vertex_point(i),
+            e => panic!("Could not get vertex from {:?}", e),
         };
 
-        if let &Entity::Circle(_, position, radius) = self.entity(edge_geometry) {
-            assert!(edge_start == edge_end);
-            self.circle(u, v, position, radius)
-        } else if let &Entity::Line(_, pnt, dir) = self.entity(edge_geometry) {
-            self.line(u, v, pnt, dir)
-        } else {
-            panic!("Could not get edge from {:?}", self.entity(edge_geometry));
+        match self.entity(edge_geometry) {
+            &Entity::Circle(_, position, radius) => {
+                assert!(edge_start == edge_end);
+                self.circle(u, v, position, radius)
+            },
+            &Entity::Line(_, pnt, dir) => {
+                self.line(u, v, pnt, dir)
+            },
+            e => panic!("Could not get edge from {:?}", e),
         }
     }
 
     fn vertex_point(&self, vertex_geometry: Id) -> DVec3 {
-        if let &Entity::CartesianPoint(_, (x, y, z)) = self.entity(vertex_geometry) {
-            DVec3::new(x, y, z)
-        } else {
-            panic!("Could not get CartesianPoint from {:?}", self.entity(vertex_geometry));
+        match self.entity(vertex_geometry) {
+            &Entity::CartesianPoint(_, (x, y, z)) => DVec3::new(x, y, z),
+            e => panic!("Could not get CartesianPoint from {:?}", e),
         }
     }
 
@@ -252,38 +258,34 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
     }
 
     fn axis2_placement_3d_(&self, id: Id) -> (DVec3, DVec3, DVec3) {
-        if let &Entity::Axis2Placement3d(_, location, axis, ref_direction) = self.entity(id) {
-            self.axis2_placement_3d(location, axis, ref_direction)
-        } else {
-            panic!("Could not get Axis2Placement3d {:?}", self.entity(id));
+        match self.entity(id) {
+            &Entity::Axis2Placement3d(_, location, axis, ref_direction) =>
+                self.axis2_placement_3d(location, axis, ref_direction),
+            e => panic!("Could not get Axis2Placement3d {:?}", e),
         }
     }
 
     fn axis2_placement_3d(&self, location: Id, axis: Id, ref_direction: Id) -> (DVec3, DVec3, DVec3) {
-        let location = if let &Entity::CartesianPoint(_, (x, y, z)) = self.entity(location) {
-            DVec3::new(x, y, z)
-        } else {
-            panic!("Could not get CartesianPoint from {:?}", self.entity(location));
+        let location = match self.entity(location) {
+            &Entity::CartesianPoint(_, (x, y, z)) => DVec3::new(x, y, z),
+            e => panic!("Could not get CartesianPoint from {:?}", e),
         };
-        let axis = if let &Entity::Direction(_, (x, y, z)) = self.entity(axis) {
-            DVec3::new(x, y, z)
-        } else {
-            panic!("Could not get Direction from {:?}", self.entity(axis));
+        let axis = match self.entity(axis) {
+            &Entity::Direction(_, (x, y, z)) => DVec3::new(x, y, z),
+            e => panic!("Could not get Direction from {:?}", e),
         };
-        let ref_direction = if let &Entity::Direction(_, (x, y, z)) = self.entity(ref_direction) {
-            DVec3::new(x, y, z)
-        } else {
-            panic!("Could not get Direction from {:?}", self.entity(ref_direction));
+        let ref_direction = match self.entity(ref_direction) {
+            &Entity::Direction(_, (x, y, z)) => DVec3::new(x, y, z),
+            e => panic!("Could not get Direction from {:?}", e),
         };
         (location, axis, ref_direction)
     }
 
     fn line(&self, u: DVec3, v: DVec3, pnt: Id, dir: Id) -> Vec<DVec3> {
         let pnt = self.vertex_point(pnt);
-        let dir = if let &Entity::Vector(_, orientation, magnitude) = self.entity(dir) {
-            self.vector(orientation, magnitude)
-        } else {
-            panic!("Could not get vector from {:?}", self.entity(dir));
+        let dir = match self.entity(dir) {
+            &Entity::Vector(_, o, m) => self.vector(o, m),
+            e => panic!("Could not get vector from {:?}", e),
         };
         let start = (u - pnt).dot(&dir);
         let end = (v - pnt).dot(&dir);
@@ -293,10 +295,10 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
     }
 
     fn vector(&self, orientation: Id, magnitude: f64) -> DVec3 {
-        if let &Entity::Direction(_, (x, y, z)) = self.entity(orientation) {
-            DVec3::new(x * magnitude, y * magnitude, z * magnitude)
-        } else {
-            panic!("Could not get Direction from {:?}", self.entity(orientation));
+        match self.entity(orientation) {
+            &Entity::Direction(_, (x, y, z)) =>
+                DVec3::new(x * magnitude, y * magnitude, z * magnitude),
+            e => panic!("Could not get Direction from {:?}", e),
         }
     }
 }
