@@ -350,7 +350,7 @@ step_files_for_tests_as_str = open('/Users/Henry Heffan/Desktop/foxtrot/KondoMot
 ) + "\n\n" + open('/Users/Henry Heffan/Desktop/foxtrot/HOLEWIZARD.step').read()
 
 
-def escape(x): return x.replace("\n", "\\n").replace("\"", "\\\"")
+def escape(x): return re.sub(r"/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/", "", x).replace("\n", "\\n").replace("\"", "\\\"")
 
 
 test_cases_for_entity = {}
@@ -406,6 +406,8 @@ mod tests {{
     ))
 
 o.close()
+otypes.close()
 
 # doesn't capture output
-subprocess.run(["rustfmt", PARSE_AUTOGEN_FILENAME, AP214_AUTOGEN_FILENAME])
+subprocess.run(["rustfmt", AP214_AUTOGEN_FILENAME])
+subprocess.run(["rustfmt", PARSE_AUTOGEN_FILENAME])

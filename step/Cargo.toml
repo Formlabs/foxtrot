@@ -12,6 +12,7 @@ nom = "6.0"
 nalgebra-glm = "0.3"
 cdt = { path = "../cdt" }
 memchr = "2.4.0"
+rayon = "1.5"
 
 [dev-dependencies]
 clap = "2.33"
