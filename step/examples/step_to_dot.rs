@@ -1,7 +1,5 @@
 use clap::{Arg, App};
 
-use step::ap214;
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("step_to_dot")
         .author("Matt Keeter <matt@formlabs.com>")
@@ -18,7 +16,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Could not get input file");
 
     let data = std::fs::read(input)?;
-    let parsed = ap214::parse(&data);
+    let parsed = step::parse::parse_file_as_string(&data);
     if let Some(out) = matches.value_of("output") {
         parsed.save_dot(out)?;
     } else {

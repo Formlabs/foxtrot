@@ -37,7 +37,8 @@ impl App {
         let mut args = std::env::args();
         args.next();
         let filename = args.next().expect("Could not get filename from first argument");
-        let step = step::parse::parse_file_at_path(&filename);
+        let data = step::parse::striped_string_from_path(&filename);
+        let step = step::parse::parse_entities_from_striped_file(&data);
         let (verts, tris) = step::triangulate::triangulate(&step);
 
         let mut out = Self {

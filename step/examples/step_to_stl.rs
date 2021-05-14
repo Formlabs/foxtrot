@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Could not get input file");
 
     let data = std::fs::read(input)?;
-    let parsed = ap214::parse(&data);
+    let parsed = step::parse::parse_file_as_string(&data);
     let tri = triangulate::Triangulator::run(&parsed);
     tri.save_stl(matches.value_of("output").expect("Need output file"))?;
 
