@@ -9,7 +9,7 @@ pub struct CountMeasure(f64);
 
 #[derive(Debug)]
 pub enum Entity<S> {
-    AdvancedBrepShapeRepresentation(S, Id, Id),
+    AdvancedBrepShapeRepresentation(S, Vec<Id>, Id),
     AdvancedFace(S, Vec<Id>, Id, bool),
     ApplicationContext(S),
     ApplicationProtocolDefinition(S, S, u32, Id),
@@ -41,7 +41,7 @@ pub enum Entity<S> {
     ProductRelatedProductCategory(S, S, Id),
     PropertyDefinition(S, S, Id),
     PropertyDefinitionRepresentation(Id, Id),
-    Representation(S, Id, Id),
+    Representation(S, Vec<Id>, Id),
     ShapeDefinitionRepresentation(Id, Id),
     ShapeRepresentation(S, Id, Id),
     ShapeRepresentationRelationship(S, S, Id, Id),
@@ -62,7 +62,7 @@ impl<S> Entity<S> {
     pub fn upstream(&self) -> Vec<Id> {
         use Entity::*;
         match self {
-            AdvancedBrepShapeRepresentation(_s, a, b) => vec![*a, *b],
+            AdvancedBrepShapeRepresentation(_s, v, a) => { let mut v = v.clone(); v.push(*a); v },
             AdvancedFace(_s, v, a, _b) => { let mut v = v.clone(); v.push(*a); v },
             ApplicationContext(_) => vec![],
             ApplicationProtocolDefinition(_, _, _, i) => vec![*i],
@@ -96,7 +96,7 @@ impl<S> Entity<S> {
             ProductRelatedProductCategory(_, _, a) => vec![*a],
             PropertyDefinition(_, _, a) => vec![*a],
             PropertyDefinitionRepresentation(a, b) => vec![*a, *b],
-            Representation(_, a, b) => vec![*a, *b],
+            Representation(_, a, b) => { let mut a = a.clone(); a.push(*b); a },
             ShapeDefinitionRepresentation(a, b) => vec![*a, *b],
             ShapeRepresentation(_, a, b) => vec![*a, *b],
             ShapeRepresentationRelationship(_, _, a, b) => vec![*a, *b],
@@ -152,14 +152,14 @@ pub fn parse(_data: &[u8]) -> StepFile<&str> {
         Placeholder, // data starts at #10
         PropertyDefinitionRepresentation(Id(14),Id(12)),
         PropertyDefinitionRepresentation(Id(15),Id(13)),
-        Representation("",Id(16),Id(219)),
-        Representation("",Id(17),Id(219)),
+        Representation("",vec![Id(16)],Id(219)),
+        Representation("",vec![Id(17)],Id(219)),
         PropertyDefinition("pmivalidationproperty","",Id(224)),
         PropertyDefinition("pmivalidationproperty","",Id(224)),
         ValueRepresentationItem("numberofannotations",CountMeasure(0.)),
         ValueRepresentationItem("numberofviews",CountMeasure(0.)),
         ShapeRepresentationRelationship("","",Id(143),Id(19)),
-        AdvancedBrepShapeRepresentation("",Id(141),Id(219)),
+        AdvancedBrepShapeRepresentation("",vec![Id(141)],Id(219)),
         Circle("",Id(150),0.00635),
         Circle("",Id(151),0.00635),
         CylindricalSurface("",Id(149),0.00635),
