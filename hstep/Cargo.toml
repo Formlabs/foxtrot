@@ -1,17 +1,8 @@
 [package]
-name = "step"
+name = "hstep"
 version = "0.1.0"
 authors = ["Matt Keeter <matt.j.keeter@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-
-[dependencies]
-nom = "6.0"
-nalgebra-glm = "0.3"
-cdt = { path = "../cdt" }
-memchr = "2.4.0"
-
-[dev-dependencies]
-clap = "2.33"

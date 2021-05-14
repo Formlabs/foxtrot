@@ -1,4 +1,9 @@
-use crate::ap214::Entity;
+use std::cmp::max;
+use std::fs::File;
+use std::io::Read;
+use std::str;
+
+use crate::parse_autogen::{data_line, DataEntity};
 use memchr::{memchr, memchr2, memchr_iter};
 
 /// Flattens a STEP file, removing comments and whitespace
@@ -33,7 +38,7 @@ pub fn into_blocks(data: &[u8]) -> Vec<&[u8]> {
             // Skip over quoted blocks
             b'\'' => i += next + memchr(b'\'', &data[i + next..]).unwrap() + 1,
             b';' => {
-                blocks.push(&data[start..(i + next)]);
+                blocks.push(&data[start..=(i + next)]);
 
                 i += next + 1; // Skip the semicolon
                 start = i;
@@ -42,6 +47,42 @@ pub fn into_blocks(data: &[u8]) -> Vec<&[u8]> {
         }
     }
     blocks
+}
+
+pub fn parse_file_as_string(file: &Vec<u8>) -> Vec<DataEntity> {
+    let stripped = strip_flatten(&file);
+    let blocks = into_blocks(&stripped);
+
+    let mut entities: Vec<DataEntity> = Vec::new();
+    let mut max_idx = 0;
+    let mut started = false;
+    for block in blocks {
+        let st = str::from_utf8(block).expect("ok utf8 str");
+        if !started {
+            if st == "DATA;" {
+                started = true;
+            }
+            continue;
+        }
+        if st == "ENDSEC;" {
+            break;
+        }
+        let (_rest_block, (id, entity)) = data_line(st).expect("ok parse");
+        max_idx = max(max_idx, id.0);
+        if id.0 >= entities.len() {
+            entities.resize_with(max_idx * 3 / 2 + 1, || DataEntity::Null);
+        }
+        entities[id.0] = entity;
+    }
+    entities.resize_with(max_idx, || DataEntity::Null);
+    entities
+}
+
+pub fn parse_file_at_path(filename: &str) -> Vec<DataEntity> {
+    let mut f = File::open(filename).expect("file opens");
+    let mut buffer = Vec::new();
+    f.read_to_end(&mut buffer).expect("read ok");
+    parse_file_as_string(&buffer)
 }
 
 #[cfg(test)]
