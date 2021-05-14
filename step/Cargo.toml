@@ -9,4 +9,9 @@ edition = "2018"
 
 [dependencies]
 nom = "6.0"
+nalgebra-glm = "0.3"
+cdt = { path = "../cdt" }
 memchr = "2.4.0"
+
+[dev-dependencies]
+clap = "2.33"

@@ -12,13 +12,11 @@ pub fn strip_flatten(data: &[u8]) -> Vec<u8> {
     let mut i = 0;
     while i < data.len() {
         match data[i] {
-            b'/' => {
-                if i + 1 < data.len() && data[i + 1] == b'*' {
-                    for j in memchr_iter(b'/', &data[i + 2..]) {
-                        if data[i + j + 1] == b'*' {
-                            i += j + 2;
-                            break;
-                        }
+            b'/' => if i + 1 < data.len() && data[i + 1] == b'*' {
+                for j in memchr_iter(b'/', &data[i + 2..]) {
+                    if data[i + j + 1] == b'*' {
+                        i += j + 2;
+                        break;
                     }
                 }
             }
@@ -44,7 +42,7 @@ pub fn into_blocks(data: &[u8]) -> Vec<&[u8]> {
 
                 i += next + 1; // Skip the semicolon
                 start = i;
-            }
+            },
             _ => unreachable!(),
         }
     }
