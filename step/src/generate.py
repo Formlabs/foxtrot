@@ -54,15 +54,15 @@ pf_mp = {
 AP214_AUTOGEN_FILENAME = 'ap214_autogen.rs'
 PARSE_AUTOGEN_FILENAME = 'parse_autogen.rs'
 
-otypes = open(AP214_AUTOGEN_FILENAME, 'w')
-o = open(PARSE_AUTOGEN_FILENAME, 'w')
+o_ap214_autogen = open(AP214_AUTOGEN_FILENAME, 'w')
+o_parse_autogen = open(PARSE_AUTOGEN_FILENAME, 'w')
 
-otypes.write("""
+o_ap214_autogen.write("""
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Hash, Ord)]
 pub struct Id(pub usize);
 """)
 
-o.write("""
+o_parse_autogen.write("""
 use crate::parse_basics::{{paren_tup, step_opt, Res, after_ws, after_wscomma, step_string, step_vec, step_id, step_identifier, step_float, step_bool, step_udecimal}};
 use crate::ap214_autogen::*;
 use nom::{{ branch::alt, bytes::complete::{{ tag }}, combinator::opt, sequence::{{ tuple, delimited, terminated }}, Err as NomErr, error::VerboseError }};
@@ -87,8 +87,8 @@ pub fn step_stf_{lname}(input: &str) -> Res<&str, {cname}> {{
 """
 
 for name in strongly_typed_floats:
-    otypes.write(STRONGLY_TYPED_FLOAT_TEMPLATE_T.format(cname=name))
-    o.write(STRONGLY_TYPED_FLOAT_TEMPLATE_O.format(cname=name, uname=camel_to_snake(
+    o_ap214_autogen.write(STRONGLY_TYPED_FLOAT_TEMPLATE_T.format(cname=name))
+    o_parse_autogen.write(STRONGLY_TYPED_FLOAT_TEMPLATE_O.format(cname=name, uname=camel_to_snake(
         name).upper(), lname=camel_to_snake(name).lower()))
     type_mp[name] = name
     pf_mp[name] = "step_stf_{lname}".format(lname=camel_to_snake(name).lower())
@@ -117,12 +117,12 @@ pub fn step_c_{lname}(input: &str) -> Res<&str, {cname}> {{
 """
 
 for name, vals in strongly_typed_enum_combination.items():
-    otypes.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T.format(
+    o_ap214_autogen.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T.format(
         cname=name,
         enum_vals=", ".join(["{cval}({cval})".format(cval=val)
                             for val in vals])
     ))
-    o.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_O.format(
+    o_parse_autogen.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_O.format(
         cname=name,
         lname=camel_to_snake(name).lower(),
         enum_vals=", ".join(["{cval}({cval})".format(cval=val)
@@ -160,7 +160,7 @@ pub fn step_enum_{lname}(input: &str) -> Res<&str, {cname}> {{
 """
 
 for name, vals in enums.items():
-    otypes.write(ENUM_TEMPLATE_T.format(
+    o_ap214_autogen.write(ENUM_TEMPLATE_T.format(
         cname=name,
         enum_vals=", ".join(vals),
         lname=camel_to_snake(name).lower(),
@@ -170,7 +170,7 @@ for name, vals in enums.items():
         remaps=", ".join([
             "\"{uval}\" => {cname}::{cval}".format(uval=camel_to_snake(val).upper(), cname=name, cval=val) for val in vals
         ])))
-    o.write(ENUM_TEMPLATE_O.format(
+    o_parse_autogen.write(ENUM_TEMPLATE_O.format(
         cname=name,
         enum_vals=", ".join(vals),
         lname=camel_to_snake(name).lower(),
@@ -263,12 +263,16 @@ data_entity = {
     "VertexPoint": ["str", "id"]
 }
 
+abstract_entity = {
+
+}
+
 data_entity = sorted(list(data_entity.items()))
 
 
 # generate big enum to hold values
 
-otypes.write("""
+o_ap214_autogen.write("""
 #[derive(Debug)]
 pub enum DataEntity<'a> {{
     Null,
@@ -304,7 +308,7 @@ fn data_entity_{lname}<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {{
 """
 
 for name, tps in data_entity:
-    o.write(DATA_ENTITY_FUNCS_TEMPLATE.format(
+    o_parse_autogen.write(DATA_ENTITY_FUNCS_TEMPLATE.format(
         lname=camel_to_snake(name).lower(), uname=camel_to_snake(name).upper(), cname=name,
         unpack=("({})" if sum(t != "*" for t in tps) > 1 else "{}").format(
             ", ".join("x" + str(i) if t != "*" else "_" for i, t in enumerate(tps))),
@@ -317,13 +321,13 @@ for name, tps in data_entity:
 
 # write functions which gather data entitys together
 
-o.write("""
+o_parse_autogen.write("""
 pub fn data_entity_complex_bucket_type(input: &str) -> Res<&str, DataEntity> {
     terminated( paren_tup, after_ws(tag(";")) ) (input).map(|(next_input, _)| (next_input, DataEntity::ComplexBucketType) )
 }
 """)
 
-o.write("""
+o_parse_autogen.write("""
 pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
     let res = tuple((
         after_ws(step_id), after_ws(tag("=")), after_ws(opt(step_identifier))
@@ -379,7 +383,7 @@ line_test_cases = [escape(test[1:].strip()) for test in m]
 max_num_individual_tests = 10
 max_line_tests_cases = 60
 
-o.write(
+o_parse_autogen.write(
     """
 #[cfg(test)]
 mod tests {{
@@ -408,9 +412,13 @@ mod tests {{
         )
     ))
 
-o.close()
-otypes.close()
+o_parse_autogen.close()
+o_ap214_autogen.close()
 
-# doesn't capture output
 subprocess.run(["rustfmt", AP214_AUTOGEN_FILENAME])
 subprocess.run(["rustfmt", PARSE_AUTOGEN_FILENAME])
+
+
+ENTITY_TREE_FILENAME = 'entity_tree_autogen.rs'
+
+

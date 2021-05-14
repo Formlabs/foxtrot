@@ -2,19 +2,19 @@
 pub struct Id(pub usize);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct VolumeMeasure(pub f64);
+pub struct ParameterValue(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct PositiveLengthMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct ParameterValue(pub f64);
+pub struct LengthMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct CountMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct LengthMeasure(pub f64);
+pub struct VolumeMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct AreaMeasure(pub f64);
