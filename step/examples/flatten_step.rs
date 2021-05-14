@@ -11,6 +11,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .long("out")
             .help("dot file to target")
             .takes_value(true))
+        .arg(Arg::with_name("quiet")
+            .short("q")
+            .long("quiet")
+            .help("disable output"))
         .arg(Arg::with_name("input")
             .takes_value(true))
         .get_matches();
@@ -19,8 +23,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let data = std::fs::read(input)?;
     let parsed = flatten(&data);
-    for p in parsed {
-        println!("{}\n--------", std::str::from_utf8(p).unwrap());
+    if !matches.is_present("quiet") {
+        for p in parsed {
+            println!("{}\n--------", std::str::from_utf8(p).unwrap());
+        }
     }
     Ok(())
 }
