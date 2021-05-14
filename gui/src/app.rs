@@ -30,11 +30,14 @@ pub enum Reply {
 
 impl App {
     pub fn new(size: PhysicalSize<u32>, adapter: wgpu::Adapter,
-           surface: wgpu::Surface, device: wgpu::Device) -> Self
+               surface: wgpu::Surface, device: wgpu::Device) -> Self
     {
         let swapchain_format = adapter.get_swap_chain_preferred_format(&surface).unwrap();
 
-        let step = step::ap214::parse(&[]);
+        let mut args = std::env::args();
+        args.next();
+        let filename = args.next().expect("Could not get filename from first argument");
+        let step = step::parse::parse_file_at_path(&filename);
         let (verts, tris) = step::triangulate::triangulate(&step);
 
         let mut out = Self {

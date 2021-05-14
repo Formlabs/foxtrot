@@ -5,8 +5,8 @@ fn main() {
     let start = SystemTime::now();
 
     let filename = "/Users/Henry Heffan/Desktop/foxtrot/KondoMotherboard_RevB_full.step";
-    let entitys = parse_file_at_path(filename);
-    println!("{}", entitys.len());
+    let entities = parse_file_at_path(filename);
+    println!("{}", entities.0.len());
 
     let end = SystemTime::now();
     let since_the_epoch = end.duration_since(start).expect("Time went backwards");

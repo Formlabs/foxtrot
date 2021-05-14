@@ -14,6 +14,7 @@ cdt = { path = "../cdt" }
 memchr = "2.4.0"
 rayon = "1.5"
 ambassador = "0.2"
+fast-float = "0.2.0"
 
 [dev-dependencies]
 clap = "2.33"

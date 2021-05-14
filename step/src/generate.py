@@ -58,7 +58,7 @@ otypes = open(AP214_AUTOGEN_FILENAME, 'w')
 o = open(PARSE_AUTOGEN_FILENAME, 'w')
 
 otypes.write("""
-#[derive(Debug, PartialEq, Eq, PartialOrd, Hash, Ord)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Hash, Ord)]
 pub struct Id(pub usize);
 """)
 
@@ -76,7 +76,7 @@ strongly_typed_floats = {
 }
 
 STRONGLY_TYPED_FLOAT_TEMPLATE_T = """
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct {cname}(pub f64);
 """
 STRONGLY_TYPED_FLOAT_TEMPLATE_O = """
@@ -100,6 +100,7 @@ strongly_typed_enum_combination = {
     "AreaMeasureOrVolumeMeasure": ["AreaMeasure", "VolumeMeasure"]
 }
 STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T = """
+#[derive(Debug, Copy, Clone)]
 pub enum {cname} {{ {enum_vals} }}
 """
 STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_O = """
@@ -145,6 +146,7 @@ enums = {
     "TrimmedCurveEnum": ["Parameter", "WeDontSupportOneElmentEnumsYet"],
 }
 ENUM_TEMPLATE_T = """
+#[derive(Debug, Copy, Clone)]
 pub enum {cname} {{ {enum_vals} }}
 """
 ENUM_TEMPLATE_O = """
@@ -267,6 +269,7 @@ data_entity = sorted(list(data_entity.items()))
 # generate big enum to hold values
 
 otypes.write("""
+#[derive(Debug)]
 pub enum DataEntity {{
     Null,
     ComplexBucketType,

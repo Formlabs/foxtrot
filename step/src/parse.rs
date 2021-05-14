@@ -6,9 +6,9 @@ use rayon::prelude::*;
 
 use memchr::{memchr, memchr2, memchr_iter};
 
+use crate::ap214::StepFile;
 use crate::ap214_autogen::DataEntity;
 use crate::parse_autogen::data_line;
-
 
 /// Flattens a STEP file, removing comments and whitespace
 pub fn strip_flatten(data: &[u8]) -> Vec<u8> {
@@ -91,11 +91,11 @@ pub fn parse_file_as_string(file: &Vec<u8>) -> Vec<DataEntity> {
     entities
 }
 
-pub fn parse_file_at_path(filename: &str) -> Vec<DataEntity> {
+pub fn parse_file_at_path(filename: &str) -> StepFile {
     let mut f = File::open(filename).expect("file opens");
     let mut buffer = Vec::new();
     f.read_to_end(&mut buffer).expect("read ok");
-    parse_file_as_string(&buffer)
+    StepFile(parse_file_as_string(&buffer))
 }
 
 #[cfg(test)]
