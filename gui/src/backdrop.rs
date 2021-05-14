@@ -13,11 +13,12 @@ impl Backdrop {
             flags: wgpu::ShaderFlags::all(),
         });
 
-        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: None,
-            bind_group_layouts: &[],
-            push_constant_ranges: &[],
-        });
+        let pipeline_layout = device.create_pipeline_layout(
+            &wgpu::PipelineLayoutDescriptor {
+                label: None,
+                bind_group_layouts: &[],
+                push_constant_ranges: &[],
+            });
 
         let render_pipeline = device.create_render_pipeline(
             &wgpu::RenderPipelineDescriptor {
@@ -34,7 +35,13 @@ impl Backdrop {
                     targets: &[swapchain_format.into()],
                 }),
                 primitive: wgpu::PrimitiveState::default(),
-                depth_stencil: None,
+                depth_stencil: Some(wgpu::DepthStencilState {
+                    format: wgpu::TextureFormat::Depth32Float,
+                    depth_write_enabled: true,
+                    depth_compare: wgpu::CompareFunction::Always,
+                    stencil: wgpu::StencilState::default(),
+                    bias: wgpu::DepthBiasState::default(),
+                }),
                 multisample: wgpu::MultisampleState::default(),
         });
 
@@ -43,7 +50,10 @@ impl Backdrop {
         }
     }
 
-    pub fn draw(&self, frame: &wgpu::SwapChainTexture, encoder: &mut wgpu::CommandEncoder) {
+    pub fn draw(&self, frame: &wgpu::SwapChainTexture,
+                depth_view: &wgpu::TextureView,
+                encoder: &mut wgpu::CommandEncoder)
+    {
         let mut rpass = encoder.begin_render_pass(
             &wgpu::RenderPassDescriptor {
                 label: None,
@@ -55,7 +65,15 @@ impl Backdrop {
                         store: true,
                     },
                 }],
-                depth_stencil_attachment: None,
+                depth_stencil_attachment: Some(
+                    wgpu::RenderPassDepthStencilAttachment {
+                        view: &depth_view,
+                        depth_ops: Some(wgpu::Operations {
+                            load: wgpu::LoadOp::Clear(-1.0),
+                            store: true,
+                        }),
+                        stencil_ops: None,
+                    }),
             });
         rpass.set_pipeline(&self.render_pipeline);
         rpass.draw(0..6, 0..1);

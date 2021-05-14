@@ -14,6 +14,8 @@ pub struct App {
     model: Model,
     backdrop: Backdrop,
 
+    depth: (wgpu::Texture, wgpu::TextureView),
+
     modifiers: ModifiersState,
     last_cursor: Option<PhysicalPosition<f64>>,
     cursor_down: bool,
@@ -38,6 +40,7 @@ impl App {
             swapchain_format,
             swapchain: Self::rebuild_swapchain_(
                 size, swapchain_format, &surface, &device),
+            depth: Self::rebuild_depth_(size, &device),
             model: Model::new(&device, swapchain_format, &verts, &tris),
             backdrop: Backdrop::new(&device, swapchain_format),
             surface,
@@ -92,7 +95,31 @@ impl App {
         self.swapchain = Self::rebuild_swapchain_(
             size, self.swapchain_format,
             &self.surface, &self.device);
+        self.depth = Self::rebuild_depth_(size, &self.device);
         self.model.set_aspect(size.width as f32 / size.height as f32);
+    }
+
+    fn rebuild_depth_(size: PhysicalSize<u32>, device: &wgpu::Device)
+        -> (wgpu::Texture, wgpu::TextureView)
+    {
+        let size = wgpu::Extent3d {
+            width: size.width,
+            height: size.height,
+            depth_or_array_layers: 1,
+        };
+        let desc = wgpu::TextureDescriptor {
+            label: Some("depth tex"),
+            size,
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Depth32Float,
+            usage: wgpu::TextureUsage::RENDER_ATTACHMENT |
+                   wgpu::TextureUsage::SAMPLED,
+        };
+        let tex = device.create_texture(&desc);
+        let view = tex.create_view(&wgpu::TextureViewDescriptor::default());
+        (tex, view)
     }
 
     fn rebuild_swapchain_(size: PhysicalSize<u32>, format: wgpu::TextureFormat,
@@ -117,8 +144,8 @@ impl App {
         let mut encoder = self.device.create_command_encoder(
             &wgpu::CommandEncoderDescriptor { label: None });
 
-        self.backdrop.draw(&frame, &mut encoder);
-        self.model.draw(&queue, &frame, &mut encoder);
+        self.backdrop.draw(&frame, &self.depth.1, &mut encoder);
+        self.model.draw(&queue, &frame, &self.depth.1, &mut encoder);
 
         queue.submit(Some(encoder.finish()));
     }

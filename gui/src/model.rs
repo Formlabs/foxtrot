@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use bytemuck::{Pod, Zeroable};
 use itertools::Itertools;
 use nalgebra_glm as glm;
-use glm::{Vec3, Mat4};
+use glm::{Vec3, Vec4, Mat4};
 use wgpu::util::DeviceExt;
 
 use step::triangulate::{Vertex, Triangle};
@@ -12,6 +12,16 @@ use step::triangulate::{Vertex, Triangle};
 #[derive(Clone, Copy, Pod, Zeroable)]
 struct GPUVertex {
     pos: [f32; 4],
+    norm: [f32; 4],
+}
+
+impl GPUVertex {
+    fn from_vertex(v: &Vertex) -> Self {
+        Self {
+            pos: [v.pos.x as f32, v.pos.y as f32, v.pos.z as f32, 1.0],
+            norm: [v.norm.x as f32, v.norm.y as f32, v.norm.z as f32, 1.0],
+        }
+    }
 }
 
 pub struct Model {
@@ -31,9 +41,7 @@ impl Model {
                verts: &[Vertex], tris: &[Triangle]) -> Self {
 
         let vertex_data: Vec<GPUVertex> = verts.into_iter()
-            .map(|v| GPUVertex {
-                pos: [v.pos.x as f32, v.pos.y as f32, v.pos.z as f32, 1.0]
-            })
+            .map(GPUVertex::from_vertex)
             .collect();
         let index_data: Vec<u32> = tris.into_iter()
             .flat_map(|t| t.verts.iter())
@@ -97,10 +105,17 @@ impl Model {
             array_stride: std::mem::size_of::<GPUVertex>() as wgpu::BufferAddress,
             step_mode: wgpu::InputStepMode::Vertex,
             attributes: &[
+                // Positions
                 wgpu::VertexAttribute {
                     format: wgpu::VertexFormat::Float32x4,
                     offset: 0,
                     shader_location: 0,
+                },
+                // Normals
+                wgpu::VertexAttribute {
+                    format: wgpu::VertexFormat::Float32x4,
+                    offset: std::mem::size_of::<Vec4>() as wgpu::BufferAddress,
+                    shader_location: 1,
                 },
             ],
         };
@@ -139,7 +154,13 @@ impl Model {
                     targets: &[swapchain_format.into()],
                 }),
                 primitive: wgpu::PrimitiveState::default(),
-                depth_stencil: None,
+                depth_stencil: Some(wgpu::DepthStencilState {
+                    format: wgpu::TextureFormat::Depth32Float,
+                    depth_write_enabled: true,
+                    depth_compare: wgpu::CompareFunction::Greater,
+                    stencil: wgpu::StencilState::default(),
+                    bias: wgpu::DepthBiasState::default(),
+                }),
                 multisample: wgpu::MultisampleState::default(),
         });
 
@@ -161,6 +182,7 @@ impl Model {
 
     fn generate_matrix(&self) -> Mat4 {
         let i = Mat4::identity();
+        glm::scale(&i, &Vec3::new(1.0, 1.0, 0.01)) *
         glm::rotate_x(&i, self.yaw) *
         glm::rotate_y(&i, self.pitch) *
         glm::scale(&i, &Vec3::new(1.0, self.aspect, 1.0)) *
@@ -168,7 +190,9 @@ impl Model {
         glm::translate(&i, &-self.center)
     }
 
-    pub fn draw(&self, queue: &wgpu::Queue, frame: &wgpu::SwapChainTexture,
+    pub fn draw(&self, queue: &wgpu::Queue,
+                frame: &wgpu::SwapChainTexture,
+                depth_view: &wgpu::TextureView,
                 encoder: &mut wgpu::CommandEncoder)
     {
         // Update the uniform buffer with our new matrix
@@ -186,7 +210,15 @@ impl Model {
                         store: true,
                     },
                 }],
-                depth_stencil_attachment: None,
+                depth_stencil_attachment: Some(
+                    wgpu::RenderPassDepthStencilAttachment {
+                        view: &depth_view,
+                        depth_ops: Some(wgpu::Operations {
+                            load: wgpu::LoadOp::Load,
+                            store: true,
+                        }),
+                        stencil_ops: None,
+                    }),
             });
         rpass.set_pipeline(&self.render_pipeline);
         rpass.set_index_buffer(self.index_buf.slice(..), wgpu::IndexFormat::Uint32);
