@@ -251,6 +251,12 @@ impl Model {
         self.center.z += dz;
     }
 
+    pub fn translate_camera(&mut self, dx: f32, dy: f32){
+        let i = Mat4::identity();
+        let vec=glm::rotate_y(&i, -self.pitch) *glm::rotate_x(&i, -self.yaw) *Vec4::new(dx, dy, 0.0, 1.0);
+        self.translate(vec.x, vec.y, vec.z);
+    }
+
     pub fn scale(&mut self, value: f32){
         self.scale*=value;
     }
