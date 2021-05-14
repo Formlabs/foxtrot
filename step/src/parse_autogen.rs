@@ -21,13 +21,13 @@ pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
     .map(|(next_input, res)| (next_input, AreaMeasure(res)))
 }
 
-pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
+pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
     delimited(
-        tuple((tag("COUNT_MEASURE"), after_ws(tag("(")))),
+        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
         after_ws(step_float),
         after_ws(tag(")")),
     )(input)
-    .map(|(next_input, res)| (next_input, CountMeasure(res)))
+    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
 }
 
 pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
@@ -48,13 +48,13 @@ pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
     .map(|(next_input, res)| (next_input, ParameterValue(res)))
 }
 
-pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
+pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
     delimited(
-        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
+        tuple((tag("COUNT_MEASURE"), after_ws(tag("(")))),
         after_ws(step_float),
         after_ws(tag(")")),
     )(input)
-    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
+    .map(|(next_input, res)| (next_input, CountMeasure(res)))
 }
 
 pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
@@ -2478,14 +2478,8 @@ mod tests {
         assert!(data_entity_representation("('volume',(#427285),#359378);").is_ok());
         assert!(data_entity_representation("('material name',(#399377),#356690);").is_ok());
         assert!(data_entity_representation("('volume',(#427263),#321256);").is_ok());
-        assert!(
-            data_entity_representation("($  /*   NUL REF   */,(),$\n    /*   NUL REF   */);")
-                .is_ok()
-        );
-        assert!(
-            data_entity_representation("($  /*   NUL REF   */,(),$\n    /*   NUL REF   */);")
-                .is_ok()
-        );
+        assert!(data_entity_representation("($  ,(),$\n    );").is_ok());
+        assert!(data_entity_representation("($  ,(),$\n    );").is_ok());
     }
 
     #[test]

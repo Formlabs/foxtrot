@@ -123,7 +123,6 @@ where
     F: FnMut(&'a str) -> Res<&'a str, O>,
 {
     preceded(multispace0, inner)
-    // preceded(separated_list0(tuple((tag("/*"), take_until("*/"), tag("*/"))), multispace0), inner)
 }
 pub fn after_expect_ws<'a, F: 'a, O>(inner: F) -> impl FnMut(&'a str) -> Res<&'a str, O>
 where
@@ -233,15 +232,15 @@ mod tests {
             Ok(("     \n\nff", Id(12345)))
         );
         assert_eq!(
-            after_ws(step_id)(" /*  */ \n #012345     \n\nff"),
+            after_ws(step_id)(" \n #012345     \n\nff"),
             Ok(("     \n\nff", Id(12345)))
         );
         assert_eq!(
-            after_ws(step_id)(" /**/ \n #012345     \n\nff"),
+            after_ws(step_id)(" \t\r \n #012345     \n\nff"),
             Ok(("     \n\nff", Id(12345)))
         );
         assert_eq!(
-            after_ws(step_id)(" /*\n\n'\n*/ \n #012345     \n\nff"),
+            after_ws(step_id)(" \t\t \n #012345     \n\nff"),
             Ok(("     \n\nff", Id(12345)))
         );
         assert_eq!(after_ws(step_id)("#0"), Ok(("", Id(0))));
