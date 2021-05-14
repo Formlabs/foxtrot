@@ -244,4 +244,14 @@ impl Model {
         self.pitch += dx;
         self.yaw += dy;
     }
+
+    pub fn translate(&mut self, dx: f32, dy: f32, dz: f32){
+        self.center.x += dx;
+        self.center.y += dy;
+        self.center.z += dz;
+    }
+
+    pub fn scale(&mut self, value: f32){
+        self.scale*=value;
+    }
 }
