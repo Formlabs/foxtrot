@@ -1,7 +1,9 @@
 use std::convert::TryInto;
 use nalgebra_glm as glm;
 use nalgebra_glm::{DVec2, DVec3, DVec4, DMat4, U32Vec3};
+
 use crate::ap214::StepFile;
+use crate::ap214_autogen::{DataEntity, Id};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vertex {
@@ -14,16 +16,15 @@ pub struct Triangle {
     pub verts: U32Vec3,
 }
 
-use crate::ap214::{Entity, Id};
 
-pub struct Triangulator<'a, S> {
-    data: &'a [Entity<S>],
+pub struct Triangulator<'a> {
+    data: &'a [DataEntity<'a>],
     vertices: Vec<Vertex>,
     triangles: Vec<Triangle>,
 }
 
-impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
-    fn new(d: &'a StepFile<S>) -> Self {
+impl<'a> Triangulator<'a> {
+    fn new(d: &'a StepFile) -> Self {
         Self {
             data: &d.0,
             vertices: Vec::new(),
@@ -31,7 +32,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         }
     }
 
-    pub fn run(d: &'a StepFile<S>) -> Self {
+    pub fn run(d: &'a StepFile) -> Self {
         let mut t = Self::new(d);
         t.triangulate();
         t
@@ -62,14 +63,14 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
     fn triangulate(&mut self) {
         for e in self.data {
             match e {
-                Entity::AdvancedFace(_, bounds, surface, same_sense) =>
+                DataEntity::AdvancedFace(_, bounds, surface, same_sense) =>
                     self.advanced_face(bounds, *surface, *same_sense),
                 _ => (),
             }
         }
     }
 
-    fn entity(&self, i: Id) -> &Entity<S> {
+    fn entity(&self, i: Id) -> &DataEntity {
         &self.data[i.0]
     }
 
@@ -77,7 +78,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         let mut bound_contours = Vec::new();
         for b in bounds {
             match self.entity(*b) {
-                &Entity::FaceBound(_, bound, orientation) =>
+                &DataEntity::FaceBound(_, bound, orientation) =>
                     bound_contours.push(self.face_bounds(bound, orientation)),
                 e => panic!("Expected FaceBounds; got {:?}", e),
             }
@@ -148,11 +149,11 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn get_surface(&self, surface: Id) -> Surface {
         match self.entity(surface) {
-            &Entity::CylindricalSurface(_, position, radius) => {
+            &DataEntity::CylindricalSurface(_, position, radius) => {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
                 Surface::new_cylinder(axis, ref_direction, location, radius)
             },
-            &Entity::Plane(_, position) => {
+            &DataEntity::Plane(_, position) => {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
                 Surface::new_plane(axis, ref_direction, location)
             },
@@ -162,7 +163,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn face_bounds(&mut self, bound: Id, orientation: bool) -> Vec<DVec3> {
         match self.entity(bound) {
-            Entity::EdgeLoop(_, edge_list) => {
+            DataEntity::EdgeLoop(_, edge_list) => {
                 let edge_list = edge_list.clone(); // TODO: this is inefficient
                 let mut d = self.edge_loop(&edge_list);
                 if !orientation {
@@ -179,7 +180,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
         for e in edge_list {
             out.pop();
             match self.entity(*e) {
-                &Entity::OrientedEdge(_, element, orientation) =>
+                &DataEntity::OrientedEdge(_, element, orientation) =>
                     out.extend(self.oriented_edge(element, orientation).into_iter()),
                 e => panic!("Invalid OrientedEdge {:?}", e),
             }
@@ -189,7 +190,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn oriented_edge(&mut self, element: Id, orientation: bool) -> Vec<DVec3> {
         match self.entity(element) {
-            &Entity::EdgeCurve(_, edge_start, edge_end, edge_geometry, same_sense) =>
+            &DataEntity::EdgeCurve(_, edge_start, edge_end, edge_geometry, same_sense) =>
             {
                 let mut d = self.edge_curve(edge_start, edge_end, edge_geometry, same_sense);
                 if !orientation {
@@ -203,20 +204,20 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn edge_curve(&mut self, edge_start: Id, edge_end: Id, edge_geometry: Id, same_sense: bool) -> Vec<DVec3> {
         let u = match self.entity(edge_start) {
-            &Entity::VertexPoint(_, i) => self.vertex_point(i),
+            &DataEntity::VertexPoint(_, i) => self.vertex_point(i),
             e => panic!("Could not get vertex from {:?}", e),
         };
         let v = match self.entity(edge_end) {
-            &Entity::VertexPoint(_, i) => self.vertex_point(i),
+            &DataEntity::VertexPoint(_, i) => self.vertex_point(i),
             e => panic!("Could not get vertex from {:?}", e),
         };
 
         match self.entity(edge_geometry) {
-            &Entity::Circle(_, position, radius) => {
+            &DataEntity::Circle(_, position, radius) => {
                 assert!(edge_start == edge_end);
                 self.circle(u, v, position, radius)
             },
-            &Entity::Line(_, pnt, dir) => {
+            &DataEntity::Line(_, pnt, dir) => {
                 self.line(u, v, pnt, dir)
             },
             e => panic!("Could not get edge from {:?}", e),
@@ -225,7 +226,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn vertex_point(&self, vertex_geometry: Id) -> DVec3 {
         match self.entity(vertex_geometry) {
-            &Entity::CartesianPoint(_, (x, y, z)) => DVec3::new(x, y, z),
+            DataEntity::CartesianPoint(_, v) => DVec3::new(v[0], v[1], v[2]),
             e => panic!("Could not get CartesianPoint from {:?}", e),
         }
     }
@@ -259,7 +260,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn axis2_placement_3d_(&self, id: Id) -> (DVec3, DVec3, DVec3) {
         match self.entity(id) {
-            &Entity::Axis2Placement3d(_, location, axis, ref_direction) =>
+            &DataEntity::Axis2Placement3d(_, location, axis, ref_direction) =>
                 self.axis2_placement_3d(location, axis, ref_direction),
             e => panic!("Could not get Axis2Placement3d {:?}", e),
         }
@@ -267,15 +268,15 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn axis2_placement_3d(&self, location: Id, axis: Id, ref_direction: Id) -> (DVec3, DVec3, DVec3) {
         let location = match self.entity(location) {
-            &Entity::CartesianPoint(_, (x, y, z)) => DVec3::new(x, y, z),
+            DataEntity::CartesianPoint(_, v) => DVec3::new(v[0], v[1], v[2]),
             e => panic!("Could not get CartesianPoint from {:?}", e),
         };
         let axis = match self.entity(axis) {
-            &Entity::Direction(_, (x, y, z)) => DVec3::new(x, y, z),
+            DataEntity::Direction(_, v) => DVec3::new(v[0], v[1], v[2]),
             e => panic!("Could not get Direction from {:?}", e),
         };
         let ref_direction = match self.entity(ref_direction) {
-            &Entity::Direction(_, (x, y, z)) => DVec3::new(x, y, z),
+            DataEntity::Direction(_, v) => DVec3::new(v[0], v[1], v[2]),
             e => panic!("Could not get Direction from {:?}", e),
         };
         (location, axis, ref_direction)
@@ -284,7 +285,7 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
     fn line(&self, u: DVec3, v: DVec3, pnt: Id, dir: Id) -> Vec<DVec3> {
         let pnt = self.vertex_point(pnt);
         let dir = match self.entity(dir) {
-            &Entity::Vector(_, o, m) => self.vector(o, m),
+            &DataEntity::Vector(_, o, m) => self.vector(o, m),
             e => panic!("Could not get vector from {:?}", e),
         };
         let start = (u - pnt).dot(&dir);
@@ -296,14 +297,14 @@ impl<'a, S: std::fmt::Debug> Triangulator<'a, S> {
 
     fn vector(&self, orientation: Id, magnitude: f64) -> DVec3 {
         match self.entity(orientation) {
-            &Entity::Direction(_, (x, y, z)) =>
-                DVec3::new(x * magnitude, y * magnitude, z * magnitude),
+            DataEntity::Direction(_, v) =>
+                DVec3::new(v[0] * magnitude, v[1] * magnitude, v[2] * magnitude),
             e => panic!("Could not get Direction from {:?}", e),
         }
     }
 }
 
-pub fn triangulate<S: std::fmt::Debug>(step: &StepFile<S>) -> (Vec<Vertex>, Vec<Triangle>) {
+pub fn triangulate(step: &StepFile) -> (Vec<Vertex>, Vec<Triangle>) {
     let mut t = Triangulator::new(step);
     t.triangulate();
     (t.vertices, t.triangles)

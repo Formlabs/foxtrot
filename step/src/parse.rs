@@ -6,9 +6,9 @@ use rayon::prelude::*;
 
 use memchr::{memchr, memchr2, memchr_iter};
 
+use crate::ap214::StepFile;
 use crate::ap214_autogen::DataEntity;
 use crate::parse_autogen::data_line;
-
 
 /// Flattens a STEP file, removing comments and whitespace
 pub fn strip_flatten(data: &[u8]) -> Vec<u8> {
@@ -53,7 +53,7 @@ pub fn into_blocks(data: &[u8]) -> Vec<&[u8]> {
     blocks
 }
 
-pub fn parse_entities_from_striped_file(stripped_file: &Vec<u8>) -> Vec<DataEntity> {
+pub fn parse_entities_from_striped_file(stripped_file: &Vec<u8>) -> StepFile {
     let blocks = into_blocks(&stripped_file);
 
     let mut data_sec_idx = 0;
@@ -87,7 +87,7 @@ pub fn parse_entities_from_striped_file(stripped_file: &Vec<u8>) -> Vec<DataEnti
         entities[id.0] = entity
     }
 
-    entities
+    StepFile(entities)
 }
 
 pub fn striped_string_from_path(filename: &str) -> Vec<u8> {

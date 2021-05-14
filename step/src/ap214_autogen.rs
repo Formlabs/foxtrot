@@ -1,57 +1,64 @@
-#[derive(Debug, PartialEq, Eq, PartialOrd, Hash, Ord)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Hash, Ord)]
 pub struct Id(pub usize);
 
-#[derive(Debug, PartialEq)]
-pub struct ParameterValue(pub f64);
-
-#[derive(Debug, PartialEq)]
-pub struct CountMeasure(pub f64);
-
-#[derive(Debug, PartialEq)]
-pub struct AreaMeasure(pub f64);
-
-#[derive(Debug, PartialEq)]
-pub struct LengthMeasure(pub f64);
-
-#[derive(Debug, PartialEq)]
-pub struct PositiveLengthMeasure(pub f64);
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct VolumeMeasure(pub f64);
 
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct PositiveLengthMeasure(pub f64);
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct ParameterValue(pub f64);
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct CountMeasure(pub f64);
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct LengthMeasure(pub f64);
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct AreaMeasure(pub f64);
+
+#[derive(Debug, Copy, Clone)]
 pub enum AreaMeasureOrVolumeMeasure {
     AreaMeasure(AreaMeasure),
     VolumeMeasure(VolumeMeasure),
 }
 
+#[derive(Debug, Copy, Clone)]
 pub enum SurfaceSide {
     Positive,
     Negative,
     Both,
 }
 
+#[derive(Debug, Copy, Clone)]
 pub enum Source {
     Made,
     Bought,
     NotKnown,
 }
 
+#[derive(Debug, Copy, Clone)]
 pub enum BSplineEnum1 {
     Unspecified,
     WeDontSupportOneElmentEnumsYet,
 }
 
+#[derive(Debug, Copy, Clone)]
 pub enum BSplineEnum2 {
     PiecewiseBezierKnots,
     Unspecified,
     QuasiUniformKnots,
 }
 
+#[derive(Debug, Copy, Clone)]
 pub enum TrimmedCurveEnum {
     Parameter,
     WeDontSupportOneElmentEnumsYet,
 }
 
+#[derive(Debug)]
 pub enum DataEntity<'a> {
     Null,
     ComplexBucketType,

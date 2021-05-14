@@ -6,9 +6,9 @@ fn main() {
 
     let filename = "/Users/Henry Heffan/Desktop/foxtrot/KondoMotherboard_RevB_full.step";
     let stripped_str = striped_string_from_path(filename);
-    let entitys = parse_entities_from_striped_file(&stripped_str);
+    let entities = parse_entities_from_striped_file(&stripped_str);
 
-    println!("{}", entitys.len());
+    println!("{}", entities.0.len());
 
     let end = SystemTime::now();
     let since_the_epoch = end.duration_since(start).expect("Time went backwards");
