@@ -57,8 +57,18 @@ pub fn parse_file_as_string(file: &Vec<u8>) -> Vec<DataEntity> {
 
     let mut entities : Vec<DataEntity> = Vec::new();
     let mut max_idx = 0;
+    let mut started = false;
     for block in blocks {
         let st = str::from_utf8(block).expect("ok utf8 str");
+        if !started {
+            if st == "DATA;" {
+                started = true;
+            }
+            continue;
+        }
+        if st == "ENDSEC;" {
+            break
+        }
         let (_rest_block, (id, entity)) = data_line(st).expect("ok parse");
         max_idx = max(max_idx, id.0);
         if id.0 >= entities.len() {
