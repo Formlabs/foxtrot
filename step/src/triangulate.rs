@@ -84,22 +84,37 @@ impl<'a> Triangulator<'a> {
             }
         }
 
+
         // For each contour, project from 3D down to the surface, then
         // start collecting them as constrained edges for triangulation
         let offset = self.vertices.len();
         let s = self.get_surface(surface);
         let mut pts = Vec::new();
-        let mut contours = Vec::new();
+        let mut edges = Vec::new();
         for bc in bound_contours {
-            // Start a new contour here
-            let mut contour = Vec::new();
+            // Special case for a single-vertex point, which shows up in cones:
+            // we push it as a Steiner point, but without any associated
+            // contours.
+            if bc.len() == 1 {
+                self.vertices.push(Vertex {
+                    pos: bc[0],
+                    norm: s.normal(bc[0]),
+                    color: DVec3::new(0.0, 0.0, 0.0),
+                });
+
+                // Project to the 2D subspace for triangulation
+                let proj = s.lower(bc[0]);
+                pts.push((proj.x, proj.y));
+
+                continue;
+            }
 
             // Record the initial point to close the loop
             let start = pts.len();
 
             for pt in bc {
                 // The contour marches forward!
-                contour.push(pts.len());
+                edges.push((pts.len(), pts.len() + 1));
 
                 // Project to the 2D subspace for triangulation
                 let proj = s.lower(pt);
@@ -118,13 +133,11 @@ impl<'a> Triangulator<'a> {
             self.vertices.pop();
 
             // Close the loop by returning to the starting point
-            *contour.last_mut().unwrap() = start;
-
-            // Store this contour in the global list
-            contours.push(contour);
+            edges.pop();
+            edges.last_mut().unwrap().1 = start;
         }
 
-        let mut t = cdt::Triangulation::new_from_contours(&pts, &contours)
+        let mut t = cdt::Triangulation::new_with_edges(&pts, &edges)
             .expect("Could not build CDT triangulation");
         match t.run() {
             Ok(()) => for (a, b, c) in t.triangles() {
@@ -157,6 +170,11 @@ impl<'a> Triangulator<'a> {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
                 Surface::new_plane(axis, ref_direction, location)
             },
+            // We treat cones like planes, since that's a valid mapping into 2D
+            &DataEntity::ConicalSurface(_, position, _radius, _semi_angle) => {
+                let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
+                Surface::new_plane(axis, ref_direction, location)
+            },
             e => panic!("Could not get surface {:?}", e),
         }
     }
@@ -171,6 +189,15 @@ impl<'a> Triangulator<'a> {
                 }
                 d
             },
+            DataEntity::VertexLoop(_, loop_vertex) => {
+                let u = match self.entity(*loop_vertex) {
+                    &DataEntity::VertexPoint(_, i) => self.vertex_point(i),
+                    e => panic!("{:?} is not a VertexPoint", e),
+                };
+                // This is an "edge loop" with a single vertex, which is
+                // used for cones and not really anything else.
+                vec![u]
+            }
             e => panic!("{:?} is not an EdgeLoop", e),
         }
     }
@@ -214,7 +241,6 @@ impl<'a> Triangulator<'a> {
 
         match self.entity(edge_geometry) {
             &DataEntity::Circle(_, position, radius) => {
-                assert!(edge_start == edge_end);
                 self.circle(u, v, position, radius)
             },
             &DataEntity::Line(_, pnt, dir) => {
@@ -231,7 +257,7 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn circle(&self, u: DVec3, _v: DVec3, position: Id, radius: f64) -> Vec<DVec3> {
+    fn circle(&self, u: DVec3, v: DVec3, position: Id, radius: f64) -> Vec<DVec3> {
         let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
 
         // Build a rotation matrix to go from flat (XY) to 3D space
@@ -239,17 +265,24 @@ impl<'a> Triangulator<'a> {
 
         // Project from 3D into the circle's flat plane
         let u_flat = mat_i * DVec4::new(u.x, u.y, u.z, 1.0);
+        let v_flat = mat_i * DVec4::new(v.x, v.y, v.z, 1.0);
 
         // Pick the starting angle in the circle's flat plane
-        let start_ang = u_flat.y.atan2(u_flat.x);
-        let end_ang = start_ang + std::f64::consts::PI * 2.0;
+        let u_ang = u_flat.y.atan2(u_flat.x);
+        let mut v_ang = v_flat.y.atan2(v_flat.x);
+        while v_ang >= u_ang {
+            v_ang -= std::f64::consts::PI * 2.0;
+        }
 
         const N: usize = 64;
+        let count = (N as f64 * (u_ang - v_ang) /
+                    (2.0 * std::f64::consts::PI)).round() as usize;
+
         let mut out = Vec::new();
         // Project onto the pnt + dir, and walk from start to end
-        for i in 0..N {
-            let frac = ((N - i - 1) as f64) / ((N - 1) as f64);
-            let ang = start_ang * (1.0 - frac) + end_ang * frac;
+        for i in 0..count {
+            let frac = (i as f64) / ((count - 1) as f64);
+            let ang = u_ang * (1.0 - frac) + v_ang * frac;
             let pos = DVec4::new(ang.cos() * radius, ang.sin() * radius, 0.0, 1.0);
 
             // Project back into 3D

@@ -173,7 +173,7 @@ impl App {
     }
 
     fn pan(&mut self, dx:f64, dy:f64){
-        self.model.translate(dx as f32 / -10000.0, dy as f32 / 10000.0 , 0 as f32);
+        self.model.translate_camera(dx as f32 / -10000.0, dy as f32 / 10000.0 );
     }
 
     fn scale(&mut self, value: f32){
