@@ -7,7 +7,7 @@ fn vs_main(
     [[location(0)]] position: vec4<f32>,
 ) -> VertexOutput {
     var out: VertexOutput;
-    out.position = position.xyzw;
+    out.position = vec4<f32>(position.xyz * 10.0, 1.0);
     return out;
 }
 
