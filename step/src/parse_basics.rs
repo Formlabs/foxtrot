@@ -241,10 +241,10 @@ mod tests {
 
     #[test]
     fn test_string() {
-        assert_eq!(step_string("'abcd'  "), Ok(("  ", "abcd".to_string())));
-        assert_eq!(step_string("'ad''dd'  "), Ok(("'dd'  ", "ad".to_string())));
-        assert_eq!(step_string("'ad'dd'  "), Ok(("dd'  ", "ad".to_string())));
-        assert_eq!(step_string("'',"), Ok((",", "".to_string())));
+        assert_eq!(step_string("'abcd'  "), Ok(("  ", "abcd")));
+        assert_eq!(step_string("'ad''dd'  "), Ok(("'dd'  ", "ad")));
+        assert_eq!(step_string("'ad'dd'  "), Ok(("dd'  ", "ad")));
+        assert_eq!(step_string("'',"), Ok((",", "")));
     }
 
     #[test]
