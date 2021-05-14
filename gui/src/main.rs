@@ -26,11 +26,14 @@ impl App {
     {
         let swapchain_format = adapter.get_swap_chain_preferred_format(&surface).unwrap();
 
+        let step = step::ap214::parse(&[]);
+        let (verts, tris) = step::triangulate::triangulate(&step);
+
         Self {
             swapchain_format,
             swapchain: Self::rebuild_swapchain_(
                 size, swapchain_format, &surface, &device),
-            model: Model::new(&device, swapchain_format),
+            model: Model::new(&device, swapchain_format, &verts, &tris),
             backdrop: Backdrop::new(&device, swapchain_format),
             surface,
             device,
