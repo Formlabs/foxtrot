@@ -2,22 +2,22 @@
 pub struct Id(pub usize);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct LengthMeasure(pub f64);
-
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub struct ParameterValue(pub f64);
-
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub struct CountMeasure(pub f64);
+pub struct AreaMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct VolumeMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
+pub struct CountMeasure(pub f64);
+
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct PositiveLengthMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct AreaMeasure(pub f64);
+pub struct ParameterValue(pub f64);
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct LengthMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone)]
 pub enum AreaMeasureOrVolumeMeasure {
@@ -174,80 +174,437 @@ impl DataEntity<'_> {
         use DataEntity::*;
         match self {
             Null | ComplexBucketType => vec![],
-            AdvancedBrepShapeRepresentation(_, _, x2) => vec![x2.clone()],
-            AdvancedFace(_, _, x2, _) => vec![x2.clone()],
-            ApplicationContext(_) => vec![],
-            ApplicationProtocolDefinition(_, _, _, x3) => vec![x3.clone()],
-            Axis2Placement3d(_, x1, x2, x3) => vec![x1.clone(), x2.clone(), x3.clone()],
-            BSplineCurveWithKnots(_, _, _, _, _, _, _, _, _) => vec![],
-            BSplineSurfaceWithKnots(_, _, _, _, _, _, _, _, _, _, _, _, _) => vec![],
-            BrepWithVoids(_, x1, _) => vec![x1.clone()],
-            CartesianPoint(_, _) => vec![],
-            Circle(_, x1, _) => vec![x1.clone()],
-            ClosedShell(_, _) => vec![],
-            ColourRgb(_, _, _, _) => vec![],
-            ConicalSurface(_, x1, _, _) => vec![x1.clone()],
-            ContextDependentShapeRepresentation(x0, x1) => vec![x0.clone(), x1.clone()],
-            CurveStyle(_, x1, _, x3) => vec![x1.clone(), x3.clone()],
-            CylindricalSurface(_, x1, _) => vec![x1.clone()],
-            DerivedUnit(_) => vec![],
-            DerivedUnitElement(x0, _) => vec![x0.clone()],
-            DescriptiveRepresentationItem(_, _) => vec![],
-            Direction(_, _) => vec![],
-            DraughtingPreDefinedColour(_) => vec![],
-            DraughtingPreDefinedCurveFont(_) => vec![],
-            EdgeCurve(_, x1, x2, x3, _) => vec![x1.clone(), x2.clone(), x3.clone()],
-            EdgeLoop(_, _) => vec![],
-            Ellipse(_, x1, _, _) => vec![x1.clone()],
-            FaceBound(_, x1, _) => vec![x1.clone()],
-            FillAreaStyle(_, _) => vec![],
-            FillAreaStyleColour(_, x1) => vec![x1.clone()],
-            GeometricCurveSet(_, _) => vec![],
-            ItemDefinedTransformation(_, _, x2, x3) => vec![x2.clone(), x3.clone()],
-            Line(_, x1, x2) => vec![x1.clone(), x2.clone()],
-            ManifoldSolidBrep(_, x1) => vec![x1.clone()],
-            ManifoldSurfaceShapeRepresentation(_, _, x2) => vec![x2.clone()],
-            MeasureRepresentationItem(_, _, x2) => vec![x2.clone()],
-            MechanicalDesignGeometricPresentationRepresentation(_, _, x2) => vec![x2.clone()],
-            NextAssemblyUsageOccurrence(_, _, _, x3, x4, _) => vec![x3.clone(), x4.clone()],
-            OpenShell(_, _) => vec![],
-            OrientedClosedShell(_, x2, _) => vec![x2.clone()],
-            OrientedEdge(_, x3, _) => vec![x3.clone()],
-            OverRidingStyledItem(_, _, x2, x3) => vec![x2.clone(), x3.clone()],
-            Plane(_, x1) => vec![x1.clone()],
-            PresentationLayerAssignment(_, _, _) => vec![],
-            PresentationStyleAssignment(_) => vec![],
-            PresentationStyleByContext(_, x1) => vec![x1.clone()],
-            Product(_, _, _, _) => vec![],
-            ProductCategory(_, _) => vec![],
-            ProductContext(_, x1, _) => vec![x1.clone()],
-            ProductDefinition(_, _, x2, x3) => vec![x2.clone(), x3.clone()],
-            ProductDefinitionContext(_, x1, _) => vec![x1.clone()],
-            ProductDefinitionFormation(_, _, x2) => vec![x2.clone()],
-            ProductDefinitionFormationWithSpecifiedSource(_, _, x2, _) => vec![x2.clone()],
-            ProductDefinitionShape(_, _, x2) => vec![x2.clone()],
-            ProductRelatedProductCategory(_, _, _) => vec![],
-            PropertyDefinition(_, _, x2) => vec![x2.clone()],
-            PropertyDefinitionRepresentation(x0, x1) => vec![x0.clone(), x1.clone()],
-            Representation(_, _, _) => vec![],
-            ShapeAspect(_, _, x2, _) => vec![x2.clone()],
-            ShapeDefinitionRepresentation(x0, x1) => vec![x0.clone(), x1.clone()],
-            ShapeRepresentation(_, _, x2) => vec![x2.clone()],
-            ShapeRepresentationRelationship(_, _, x2, x3) => vec![x2.clone(), x3.clone()],
-            ShellBasedSurfaceModel(_, _) => vec![],
-            SphericalSurface(_, x1, _) => vec![x1.clone()],
-            StyledItem(_, _, x2) => vec![x2.clone()],
-            SurfaceOfLinearExtrusion(_, x1, x2) => vec![x1.clone(), x2.clone()],
-            SurfaceSideStyle(_, _) => vec![],
-            SurfaceStyleFillArea(x0) => vec![x0.clone()],
-            SurfaceStyleUsage(_, x1) => vec![x1.clone()],
-            ToroidalSurface(_, x1, _, _) => vec![x1.clone()],
-            TrimmedCurve(_, x1, _, _, _, _) => vec![x1.clone()],
-            UncertaintyMeasureWithUnit(_, x1, _, _) => vec![x1.clone()],
-            ValueRepresentationItem(_, _) => vec![],
-            Vector(_, x1, _) => vec![x1.clone()],
-            VertexLoop(_, x1) => vec![x1.clone()],
-            VertexPoint(_, x1) => vec![x1.clone()],
+            AdvancedBrepShapeRepresentation(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r.push(x2.clone());
+                r
+            }
+            AdvancedFace(_, x1, x2, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r.push(x2.clone());
+                r
+            }
+            ApplicationContext(_) => {
+                vec![]
+            }
+            ApplicationProtocolDefinition(_, _, _, x3) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x3.clone());
+                r
+            }
+            Axis2Placement3d(_, x1, x2, x3) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.clone());
+                r.push(x3.clone());
+                r
+            }
+            BSplineCurveWithKnots(_, _, x2, _, _, _, _, _, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x2 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            BSplineSurfaceWithKnots(_, _, _, x3, _, _, _, _, _, _, _, _, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x3 {
+                    for n1 in n0 {
+                        r.push(n1.clone());
+                    }
+                }
+                r
+            }
+            BrepWithVoids(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                for n0 in x2 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            CartesianPoint(_, _) => {
+                vec![]
+            }
+            Circle(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            ClosedShell(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            ColourRgb(_, _, _, _) => {
+                vec![]
+            }
+            ConicalSurface(_, x1, _, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            ContextDependentShapeRepresentation(x0, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x0.clone());
+                r.push(x1.clone());
+                r
+            }
+            CurveStyle(_, x1, _, x3) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x3.clone());
+                r
+            }
+            CylindricalSurface(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            DerivedUnit(x0) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x0 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            DerivedUnitElement(x0, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x0.clone());
+                r
+            }
+            DescriptiveRepresentationItem(_, _) => {
+                vec![]
+            }
+            Direction(_, _) => {
+                vec![]
+            }
+            DraughtingPreDefinedColour(_) => {
+                vec![]
+            }
+            DraughtingPreDefinedCurveFont(_) => {
+                vec![]
+            }
+            EdgeCurve(_, x1, x2, x3, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.clone());
+                r.push(x3.clone());
+                r
+            }
+            EdgeLoop(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            Ellipse(_, x1, _, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            FaceBound(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            FillAreaStyle(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            FillAreaStyleColour(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            GeometricCurveSet(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            ItemDefinedTransformation(_, _, x2, x3) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r.push(x3.clone());
+                r
+            }
+            Line(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.clone());
+                r
+            }
+            ManifoldSolidBrep(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            ManifoldSurfaceShapeRepresentation(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r.push(x2.clone());
+                r
+            }
+            MeasureRepresentationItem(_, _, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r
+            }
+            MechanicalDesignGeometricPresentationRepresentation(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r.push(x2.clone());
+                r
+            }
+            NextAssemblyUsageOccurrence(_, _, _, x3, x4, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x3.clone());
+                r.push(x4.clone());
+                r
+            }
+            OpenShell(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            OrientedClosedShell(_, x2, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r
+            }
+            OrientedEdge(_, x3, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x3.clone());
+                r
+            }
+            OverRidingStyledItem(_, x1, x2, x3) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r.push(x2.clone());
+                r.push(x3.clone());
+                r
+            }
+            Plane(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            PresentationLayerAssignment(_, _, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x2 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            PresentationStyleAssignment(x0) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x0 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            PresentationStyleByContext(x0, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x0 {
+                    r.push(n0.clone());
+                }
+                r.push(x1.clone());
+                r
+            }
+            Product(_, _, _, x3) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x3 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            ProductCategory(_, _) => {
+                vec![]
+            }
+            ProductContext(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            ProductDefinition(_, _, x2, x3) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r.push(x3.clone());
+                r
+            }
+            ProductDefinitionContext(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            ProductDefinitionFormation(_, _, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r
+            }
+            ProductDefinitionFormationWithSpecifiedSource(_, _, x2, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r
+            }
+            ProductDefinitionShape(_, _, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r
+            }
+            ProductRelatedProductCategory(_, _, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x2 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            PropertyDefinition(_, _, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r
+            }
+            PropertyDefinitionRepresentation(x0, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x0.clone());
+                r.push(x1.clone());
+                r
+            }
+            Representation(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                if let Some(i) = x2 {
+                    r.push(i.clone());
+                };
+                r
+            }
+            ShapeAspect(_, _, x2, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r
+            }
+            ShapeDefinitionRepresentation(x0, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x0.clone());
+                r.push(x1.clone());
+                r
+            }
+            ShapeRepresentation(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r.push(x2.clone());
+                r
+            }
+            ShapeRepresentationRelationship(_, _, x2, x3) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r.push(x3.clone());
+                r
+            }
+            ShellBasedSurfaceModel(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            SphericalSurface(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            StyledItem(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r.push(x2.clone());
+                r
+            }
+            SurfaceOfLinearExtrusion(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.clone());
+                r
+            }
+            SurfaceSideStyle(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r
+            }
+            SurfaceStyleFillArea(x0) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x0.clone());
+                r
+            }
+            SurfaceStyleUsage(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            ToroidalSurface(_, x1, _, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            TrimmedCurve(_, x1, x2, x3, _, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.0.clone());
+                r.push(x3.0.clone());
+                r
+            }
+            UncertaintyMeasureWithUnit(_, x1, _, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            ValueRepresentationItem(_, _) => {
+                vec![]
+            }
+            Vector(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            VertexLoop(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
+            VertexPoint(_, x1) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
         }
     }
 }

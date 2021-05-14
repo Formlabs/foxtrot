@@ -349,15 +349,17 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
 
 def make_packer(t):
     if t == 'id':
-        return "x{i}.clone()" 
+        return "r.push(x{i}.clone());" 
+    elif t == 'pair_id_ParameterValue':
+        return "r.push(x{i}.0.clone());" 
     elif t == 'vec_id':
-        return "*x{i}"
+        return "for n0 in x{i} {{ r.push(n0.clone()); }}"
     elif t == 'vec_vec_id':
-        return "**x{i}"
+        return "for n0 in x{i} {{ for n1 in n0 {{ r.push(n1.clone()); }} }};"
     elif t == 'opt_vec_id':
-        return "*(match x{i} {{ Some(v) => v, None => vec![] }})"
+        return "if let Some(v) = x{i} {{ r.append(v.clone()); }};"
     elif t == 'opt_id':
-        return "*(match x{i} {{ Some(v) => vec![v], None => vec![] }})"
+        return "if let Some(i) = x{i} {{ r.push(i.clone()); }};"
     else:
         raise ValueError(t)
                  
@@ -374,12 +376,15 @@ impl DataEntity<'_> {{
 }}
 """.format(
     remaps = ", ".join([
-        "{cname}({unpack}) => vec![{pack}]".format(
+        "{cname}({unpack}) => {{ {pack} }}".format(
             cname=name,
-            unpack=", ".join(["x{i}".format(i=i) if (t == 'id' or 'id_' in 't') else "_" for i, t in enumerate(vals) if t != '*']),
-            pack=", ".join([
-                make_packer(t).format(i=i) for (i, t) in enumerate(vals) if (t == 'id' or 'id_' in 't')
-            ])
+            unpack=", ".join(["x{i}".format(i=i) if (t == 'id' or '_id' in t) else "_" for i, t in enumerate(vals) if t != '*']),
+            pack="let mut r: Vec<Id> = Vec::new(); {adders} r".format(
+                adders="".join([
+                    make_packer(t).format(i=i) for (i, t) in enumerate(vals) if (t == 'id' or '_id' in t)
+                ])
+            ) if sum(1 for (i, t) in enumerate(vals) if (t == 'id' or '_id' in t)) != 0 else
+            "vec![]"
         )
         for name, vals in data_entity
     ])
