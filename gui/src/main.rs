@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use winit::{
     dpi::PhysicalSize,
     event::{Event, WindowEvent},
@@ -6,12 +5,15 @@ use winit::{
     window::Window,
 };
 
+pub(crate) mod model;
+use crate::model::Model;
+
 struct App {
     surface: wgpu::Surface,
     device: wgpu::Device,
     swapchain_format: wgpu::TextureFormat,
     swapchain: wgpu::SwapChain,
-    render_pipeline: wgpu::RenderPipeline,
+    model: Model,
 }
 
 impl App {
@@ -20,49 +22,19 @@ impl App {
     {
         let swapchain_format = adapter.get_swap_chain_preferred_format(&surface).unwrap();
 
-        // Load the shaders from disk
-        let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
-            label: None,
-            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("shader.wgsl"))),
-            flags: wgpu::ShaderFlags::all(),
-        });
-
-        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: None,
-            bind_group_layouts: &[],
-            push_constant_ranges: &[],
-        });
-
-        let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: None,
-            layout: Some(&pipeline_layout),
-            vertex: wgpu::VertexState {
-                module: &shader,
-                entry_point: "vs_main",
-                buffers: &[],
-            },
-            fragment: Some(wgpu::FragmentState {
-                module: &shader,
-                entry_point: "fs_main",
-                targets: &[swapchain_format.into()],
-            }),
-            primitive: wgpu::PrimitiveState::default(),
-            depth_stencil: None,
-            multisample: wgpu::MultisampleState::default(),
-        });
-
         Self {
             swapchain_format,
             swapchain: Self::rebuild_swapchain_(
                 size, swapchain_format, &surface, &device),
+            model: Model::new(&device, swapchain_format),
             surface,
             device,
-            render_pipeline,
         }
     }
 
     fn rebuild_swapchain(&mut self,size: PhysicalSize<u32>) {
-        self.swapchain = Self::rebuild_swapchain_(size, self.swapchain_format,
+        self.swapchain = Self::rebuild_swapchain_(
+            size, self.swapchain_format,
             &self.surface, &self.device);
     }
 
@@ -85,24 +57,10 @@ impl App {
             .get_current_frame()
             .expect("Failed to acquire next swap chain texture")
             .output;
-        let mut encoder =
-            self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
-        {   // Temporary scope to borrow encoder
-            let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: None,
-                color_attachments: &[wgpu::RenderPassColorAttachment {
-                    view: &frame.view,
-                    resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color::GREEN),
-                        store: true,
-                    },
-                }],
-                depth_stencil_attachment: None,
-            });
-            rpass.set_pipeline(&self.render_pipeline);
-            rpass.draw(0..3, 0..1);
-        }
+        let mut encoder = self.device.create_command_encoder(
+            &wgpu::CommandEncoderDescriptor { label: None });
+
+        self.model.draw(&frame, &mut encoder);
 
         queue.submit(Some(encoder.finish()));
     }
@@ -110,16 +68,19 @@ impl App {
 
 async fn run(event_loop: EventLoop<()>, window: Window) {
     let size = window.inner_size();
-    let instance = wgpu::Instance::new(wgpu::BackendBit::all());
-    let surface = unsafe { instance.create_surface(&window) };
-    let adapter = instance
-        .request_adapter(&wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::default(),
-            // Request an adapter which can render to our surface
-            compatible_surface: Some(&surface),
-        })
-        .await
-        .expect("Failed to find an appropriate adapter");
+    let (surface, adapter) = {
+        let instance = wgpu::Instance::new(wgpu::BackendBit::all());
+        let surface = unsafe { instance.create_surface(&window) };
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::default(),
+                // Request an adapter which can render to our surface
+                compatible_surface: Some(&surface),
+            })
+            .await
+            .expect("Failed to find an appropriate adapter");
+        (surface, adapter)
+    };
 
     // Create the logical device and command queue
     let (device, queue) = adapter
@@ -134,15 +95,9 @@ async fn run(event_loop: EventLoop<()>, window: Window) {
         .await
         .expect("Failed to create device");
 
-
     let mut app = App::new(size, adapter, surface, device);
 
     event_loop.run(move |event, _, control_flow| {
-        // Have the closure take ownership of the resources.
-        // `event_loop.run` never returns, therefore we must do this to ensure
-        // the resources are properly cleaned up.
-        let _ = (&instance);
-
         *control_flow = ControlFlow::Wait;
         match event {
             Event::WindowEvent {
