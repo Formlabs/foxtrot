@@ -2,3 +2,5 @@
 /local
 *.svg
 .DS_Store
+step/src/*.pdb
+step/src/*.exe
