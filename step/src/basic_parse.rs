@@ -2,11 +2,11 @@
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_till, take_until},
-    character::complete::{one_of, multispace0, multispace1},
-    combinator::opt,
+    character::complete::{one_of, multispace0, multispace1, alpha1, alphanumeric1},
+    combinator::{{opt, recognize}},
     error::{context, VerboseError},
     multi::{many0, many1, separated_list0},
-    sequence::{preceded, tuple, delimited},
+    sequence::{preceded, tuple, delimited, pair},
     IResult,
 };
 
@@ -59,6 +59,9 @@ pub fn step_udecimal(input: &str) -> Res<&str, usize> {
         let num = s.parse::<usize>().unwrap();   // TODO can be faster
         num
     }))
+}
+pub fn step_identifier(input: &str) -> Res<&str, &str> {
+    recognize(pair( alt((alpha1, tag("_"))), many0(alt((alphanumeric1, tag("_")))) ))(input).map(|(next_input, res)| (next_input, res))
 }
 pub fn step_id(input: &str) -> Res<&str, Id> {
     context("id", preceded(tag("#"), step_udecimal))(input).map(|(next_input, res)| (next_input, Id(res)))
@@ -123,18 +126,6 @@ pub fn step_opt<'a, F: 'a, O>(inner: F) -> impl FnMut(&'a str) -> Res<&'a str, O
     preceded(opt(tag("$")), opt(inner))
 }
 
-pub fn named_func<'a, F: 'a, O>(name_lower: &'static str, name_upper: &'static str, inner: F) -> impl FnMut(&'a str) -> Res<&'a str, O>
-  where
-  F: FnMut(&'a str) -> Res<&'a str, O>,
-{
-    context( name_lower, 
-    delimited(
-        tuple((alt((tag(name_lower), tag(name_upper))), after_ws(tag("(")))),
-        inner,
-        tuple((after_ws(tag(")")), after_ws(tag(";"))))
-    )
-    )
-}
 
 #[cfg(test)]
 mod tests {

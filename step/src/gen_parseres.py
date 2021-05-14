@@ -51,8 +51,8 @@ pf_mp = {
 o = open('parse_file.rs', 'w')
 
 o.write("""
-use crate::basic_parse::{{paren_tup, step_opt, Id, Res, after_ws, after_wscomma, named_func, step_string, step_vec, step_id, step_float, step_bool, step_udecimal}};
-use nom::{{ branch::alt, bytes::complete::{{ tag }}, multi::{{ many0 }}, sequence::{{ tuple, delimited, terminated }}, }};
+use crate::basic_parse::{{paren_tup, step_opt, Id, Res, after_ws, after_wscomma, step_string, step_vec, step_id, step_identifier, step_float, step_bool, step_udecimal}};
+use nom::{{ branch::alt, bytes::complete::{{ tag }}, combinator::opt, multi::{{ many0 }}, sequence::{{ tuple, delimited, terminated }}, Err as NomErr, error::VerboseError }};
 """.format())
 
 
@@ -250,10 +250,11 @@ pub enum DataEntity {{
 
 DATA_ENTITY_FUNCS_TEMPLATE = """
 fn data_entity_{lname}(input: &str) -> Res<&str, DataEntity> {{
-    named_func(
-        "{lname}", "{uname}",
+    delimited(
+        after_ws(tag("(")),
         {parser},
-    )(input) .map(|(next_input, res)| (next_input, {{
+        tuple((after_ws(tag(")")), after_ws(tag(";"))))
+    ) (input) .map(|(next_input, res)| (next_input, {{
         let {unpack} = res;
         DataEntity::{cname}({pack})
     }}))
@@ -278,32 +279,44 @@ pub fn data_entity_complex_bucket_type(input: &str) -> Res<&str, DataEntity> {
 }
 """)
 
-o.write("""
-fn data_entity(input: &str) -> Res<&str, DataEntity> {{
-    alt((
-{outer_options}
-    ))(input)
-}}
-""".format(outer_options=",\n".join([
-        "        alt(( {inner_options} ))".format(inner_options=", ".join(chunk))
-        for chunk in chunks(
-            ["data_entity_complex_bucket_type"] + 
-            ["data_entity_{lname}".format(lname=camel_to_snake(name).lower()) for name, _ in data_entity],
-            14
-        )
-    ])
-))
+# o.write("""
+# fn data_entity(input: &str) -> Res<&str, DataEntity> {{
+#     alt((
+# {outer_options}
+#     ))(input)
+# }}
+# """.format(outer_options=",\n".join([
+#         "        alt(( {inner_options} ))".format(inner_options=", ".join(chunk))
+#         for chunk in chunks(
+#             ["data_entity_complex_bucket_type"] + 
+#             ["data_entity_{lname}".format(lname=camel_to_snake(name).lower()) for name, _ in data_entity],
+#             14
+#         )
+#     ])
+# ))
 
 o.write("""
-fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
-    tuple((
-        after_ws(step_id), after_ws(tag("=")), after_ws(data_entity)
-    ))(input) .map(|(next_input, res)| (next_input, {
-        let (id, _, ent) = res;
-        (id, ent)
-    }))
-}
-""")
+fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
+    let res = tuple((
+        after_ws(step_id), after_ws(tag("=")), after_ws(opt(step_identifier))
+    ))(input);
+    if res.is_err() {{ return res.map( |(a, (b, _, _))| (a, (b, DataEntity::ComplexBucketType )) ) }}
+    let (next_input, (id, _, opt_iden)) = res.expect("should be ok");
+
+    if opt_iden.is_none() {{
+        return data_entity_complex_bucket_type(next_input).map(|(next_input, ent)| (next_input, (id, ent)) );
+    }}
+
+    match opt_iden.unwrap() {{
+        {cases}
+        _ => Err(NomErr::Error(VerboseError{{errors: vec![]}}))
+    }}.map(|(next_input, ent)| (next_input, (id, ent)) )
+}}
+""".format(
+    cases="\n".join([
+        "        \"{uname}\" => data_entity_{lname}(next_input),".format(lname=camel_to_snake(name).lower(), uname=camel_to_snake(name).upper()) for name, _ in data_entity
+    ])
+))
 
 o.write("""
 pub fn data_block(input: &str) -> Res<&str, Vec<(Id, DataEntity)>> {
@@ -352,7 +365,7 @@ mod tests {{
         "    #[test]\n    fn test_{name}() {{\n{tests}\n    }}".format(
             name = camel_to_snake(name).lower(),
             tests = "\n".join(["        assert!(data_entity_{lname}(\"{text}\").is_ok());".format(
-                lname = camel_to_snake(name).lower(), text = escape(text[3:])) for text in test_cases_for_entity[name][:min(len(m), max_num_individual_tests)]
+                lname = camel_to_snake(name).lower(), text = escape('(' + text.split('(', 1)[1])) for text in test_cases_for_entity[name][:min(len(m), max_num_individual_tests)]
             ])
         )
         for name, _ in data_entity
