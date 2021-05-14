@@ -270,8 +270,8 @@ impl<'a> Triangulator<'a> {
         // Pick the starting angle in the circle's flat plane
         let u_ang = u_flat.y.atan2(u_flat.x);
         let mut v_ang = v_flat.y.atan2(v_flat.x);
-        while v_ang >= u_ang {
-            v_ang -= std::f64::consts::PI * 2.0;
+        if v_ang == u_ang {
+            v_ang += 2.0 * std::f64::consts::PI;
         }
 
         const N: usize = 64;
