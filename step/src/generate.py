@@ -57,8 +57,13 @@ PARSE_AUTOGEN_FILENAME = 'parse_autogen.rs'
 otypes = open(AP214_AUTOGEN_FILENAME, 'w')
 o = open(PARSE_AUTOGEN_FILENAME, 'w')
 
+otypes.write("""
+#[derive(Debug, PartialEq, Eq, PartialOrd, Hash, Ord)]
+pub struct Id(pub usize);
+""")
+
 o.write("""
-use crate::parse_basics::{{paren_tup, step_opt, Id, Res, after_ws, after_wscomma, step_string, step_vec, step_id, step_identifier, step_float, step_bool, step_udecimal}};
+use crate::parse_basics::{{paren_tup, step_opt, Res, after_ws, after_wscomma, step_string, step_vec, step_id, step_identifier, step_float, step_bool, step_udecimal}};
 use crate::ap214_autogen::*;
 use nom::{{ branch::alt, bytes::complete::{{ tag }}, combinator::opt, sequence::{{ tuple, delimited, terminated }}, Err as NomErr, error::VerboseError }};
 """.format())

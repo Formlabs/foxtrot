@@ -1,7 +1,7 @@
 use crate::ap214_autogen::*;
 use crate::parse_basics::{
     after_ws, after_wscomma, paren_tup, step_bool, step_float, step_id, step_identifier, step_opt,
-    step_string, step_udecimal, step_vec, Id, Res,
+    step_string, step_udecimal, step_vec, Res,
 };
 use nom::{
     branch::alt,
@@ -12,13 +12,31 @@ use nom::{
     Err as NomErr,
 };
 
-pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
+pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
     delimited(
-        tuple((tag("AREA_MEASURE"), after_ws(tag("(")))),
+        tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
         after_ws(step_float),
         after_ws(tag(")")),
     )(input)
-    .map(|(next_input, res)| (next_input, AreaMeasure(res)))
+    .map(|(next_input, res)| (next_input, LengthMeasure(res)))
+}
+
+pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
+    delimited(
+        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
+}
+
+pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
+    delimited(
+        tuple((tag("PARAMETER_VALUE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, ParameterValue(res)))
 }
 
 pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
@@ -39,31 +57,13 @@ pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
     .map(|(next_input, res)| (next_input, VolumeMeasure(res)))
 }
 
-pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
+pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
     delimited(
-        tuple((tag("PARAMETER_VALUE"), after_ws(tag("(")))),
+        tuple((tag("AREA_MEASURE"), after_ws(tag("(")))),
         after_ws(step_float),
         after_ws(tag(")")),
     )(input)
-    .map(|(next_input, res)| (next_input, ParameterValue(res)))
-}
-
-pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
-    delimited(
-        tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, LengthMeasure(res)))
-}
-
-pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
-    delimited(
-        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
+    .map(|(next_input, res)| (next_input, AreaMeasure(res)))
 }
 
 pub enum AreaMeasureOrVolumeMeasure {

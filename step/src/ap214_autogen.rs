@@ -1,6 +1,15 @@
 
+#[derive(Debug, PartialEq, Eq, PartialOrd, Hash, Ord)]
+pub struct Id(pub usize);
+
 #[derive(Debug, PartialEq)]
-pub struct AreaMeasure(pub f64);
+pub struct LengthMeasure(pub f64);
+
+#[derive(Debug, PartialEq)]
+pub struct PositiveLengthMeasure(pub f64);
+
+#[derive(Debug, PartialEq)]
+pub struct ParameterValue(pub f64);
 
 #[derive(Debug, PartialEq)]
 pub struct CountMeasure(pub f64);
@@ -9,10 +18,4 @@ pub struct CountMeasure(pub f64);
 pub struct VolumeMeasure(pub f64);
 
 #[derive(Debug, PartialEq)]
-pub struct ParameterValue(pub f64);
-
-#[derive(Debug, PartialEq)]
-pub struct LengthMeasure(pub f64);
-
-#[derive(Debug, PartialEq)]
-pub struct PositiveLengthMeasure(pub f64);
+pub struct AreaMeasure(pub f64);

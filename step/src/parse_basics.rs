@@ -10,9 +10,7 @@ use nom::{
 };
 
 use std::str;
-
-#[derive(Debug, PartialEq, Eq, PartialOrd, Hash, Ord)]
-pub struct Id(pub usize);
+use crate::ap214_autogen::Id;
 
 pub type Res<T, U> = IResult<T, U, VerboseError<T>>;
 
