@@ -23,7 +23,7 @@ impl App {
         let step = step::ap214::parse(&[]);
         let (verts, tris) = step::triangulate::triangulate(&step);
 
-        Self {
+        let mut out = Self {
             swapchain_format,
             swapchain: Self::rebuild_swapchain_(
                 size, swapchain_format, &surface, &device),
@@ -31,13 +31,16 @@ impl App {
             backdrop: Backdrop::new(&device, swapchain_format),
             surface,
             device,
-        }
+        };
+        out.model.set_aspect(size.width as f32 / size.height as f32);
+        out
     }
 
-    pub fn rebuild_swapchain(&mut self,size: PhysicalSize<u32>) {
+    pub fn resize(&mut self,size: PhysicalSize<u32>) {
         self.swapchain = Self::rebuild_swapchain_(
             size, self.swapchain_format,
             &self.surface, &self.device);
+        self.model.set_aspect(size.width as f32 / size.height as f32);
     }
 
     fn rebuild_swapchain_(size: PhysicalSize<u32>, format: wgpu::TextureFormat,
@@ -63,7 +66,7 @@ impl App {
             &wgpu::CommandEncoderDescriptor { label: None });
 
         self.backdrop.draw(&frame, &mut encoder);
-        self.model.draw(&frame, &mut encoder);
+        self.model.draw(&queue, &frame, &mut encoder);
 
         queue.submit(Some(encoder.finish()));
     }

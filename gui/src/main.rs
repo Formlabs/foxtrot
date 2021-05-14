@@ -46,7 +46,10 @@ async fn run(event_loop: EventLoop<()>, window: Window) {
         *control_flow = ControlFlow::Wait;
         match event {
             Event::WindowEvent { event, .. } => match event {
-                WindowEvent::Resized(size) => app.rebuild_swapchain(size),
+                WindowEvent::Resized(size) => {
+                    app.resize(size);
+                    app.redraw(&queue);
+                },
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
                 WindowEvent::ModifiersChanged(m) => {
                     modifiers = m;
