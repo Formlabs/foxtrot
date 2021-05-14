@@ -116,7 +116,7 @@ pub fn step_c_{lname}(input: &str) -> Res<&str, {cname}> {{
 """
 
 for name, vals in strongly_typed_enum_combination.items():
-    o.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T.format(
+    otypes.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T.format(
         cname=name,
         enum_vals=", ".join(["{cval}({cval})".format(cval=val)
                             for val in vals])
@@ -158,7 +158,7 @@ pub fn step_enum_{lname}(input: &str) -> Res<&str, {cname}> {{
 """
 
 for name, vals in enums.items():
-    o.write(ENUM_TEMPLATE_T.format(
+    otypes.write(ENUM_TEMPLATE_T.format(
         cname=name,
         enum_vals=", ".join(vals),
         lname=camel_to_snake(name).lower(),
@@ -266,7 +266,7 @@ data_entity = sorted(list(data_entity.items()))
 
 # generate big enum to hold values
 
-o.write("""
+otypes.write("""
 pub enum DataEntity {{
     Null,
     ComplexBucketType,

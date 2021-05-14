@@ -12,31 +12,13 @@ use nom::{
     Err as NomErr,
 };
 
-pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
+pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
     delimited(
-        tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
+        tuple((tag("AREA_MEASURE"), after_ws(tag("(")))),
         after_ws(step_float),
         after_ws(tag(")")),
     )(input)
-    .map(|(next_input, res)| (next_input, LengthMeasure(res)))
-}
-
-pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
-    delimited(
-        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
-}
-
-pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
-    delimited(
-        tuple((tag("PARAMETER_VALUE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, ParameterValue(res)))
+    .map(|(next_input, res)| (next_input, AreaMeasure(res)))
 }
 
 pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
@@ -48,6 +30,33 @@ pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
     .map(|(next_input, res)| (next_input, CountMeasure(res)))
 }
 
+pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
+    delimited(
+        tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, LengthMeasure(res)))
+}
+
+pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
+    delimited(
+        tuple((tag("PARAMETER_VALUE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, ParameterValue(res)))
+}
+
+pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
+    delimited(
+        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
+}
+
 pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
     delimited(
         tuple((tag("VOLUME_MEASURE"), after_ws(tag("(")))),
@@ -55,20 +64,6 @@ pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
         after_ws(tag(")")),
     )(input)
     .map(|(next_input, res)| (next_input, VolumeMeasure(res)))
-}
-
-pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
-    delimited(
-        tuple((tag("AREA_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, AreaMeasure(res)))
-}
-
-pub enum AreaMeasureOrVolumeMeasure {
-    AreaMeasure(AreaMeasure),
-    VolumeMeasure(VolumeMeasure),
 }
 
 pub fn step_c_area_measure_or_volume_measure(input: &str) -> Res<&str, AreaMeasureOrVolumeMeasure> {
@@ -86,12 +81,6 @@ pub fn step_c_area_measure_or_volume_measure(input: &str) -> Res<&str, AreaMeasu
             }
         })
     })
-}
-
-pub enum SurfaceSide {
-    Positive,
-    Negative,
-    Both,
 }
 
 pub fn step_enum_surface_side(input: &str) -> Res<&str, SurfaceSide> {
@@ -113,12 +102,6 @@ pub fn step_enum_surface_side(input: &str) -> Res<&str, SurfaceSide> {
     })
 }
 
-pub enum Source {
-    Made,
-    Bought,
-    NotKnown,
-}
-
 pub fn step_enum_source(input: &str) -> Res<&str, Source> {
     delimited(
         tag("."),
@@ -136,11 +119,6 @@ pub fn step_enum_source(input: &str) -> Res<&str, Source> {
             },
         )
     })
-}
-
-pub enum BSplineEnum1 {
-    Unspecified,
-    WeDontSupportOneElmentEnumsYet,
 }
 
 pub fn step_enum_b_spline_enum1(input: &str) -> Res<&str, BSplineEnum1> {
@@ -166,12 +144,6 @@ pub fn step_enum_b_spline_enum1(input: &str) -> Res<&str, BSplineEnum1> {
     })
 }
 
-pub enum BSplineEnum2 {
-    PiecewiseBezierKnots,
-    Unspecified,
-    QuasiUniformKnots,
-}
-
 pub fn step_enum_b_spline_enum2(input: &str) -> Res<&str, BSplineEnum2> {
     delimited(
         tag("."),
@@ -195,11 +167,6 @@ pub fn step_enum_b_spline_enum2(input: &str) -> Res<&str, BSplineEnum2> {
     })
 }
 
-pub enum TrimmedCurveEnum {
-    Parameter,
-    WeDontSupportOneElmentEnumsYet,
-}
-
 pub fn step_enum_trimmed_curve_enum(input: &str) -> Res<&str, TrimmedCurveEnum> {
     delimited(
         tag("."),
@@ -221,115 +188,6 @@ pub fn step_enum_trimmed_curve_enum(input: &str) -> Res<&str, TrimmedCurveEnum> 
             },
         )
     })
-}
-
-pub enum DataEntity {
-    Null,
-    ComplexBucketType,
-    AdvancedBrepShapeRepresentation(String, Vec<Id>, Id),
-    AdvancedFace(String, Vec<Id>, Id, bool),
-    ApplicationContext(String),
-    ApplicationProtocolDefinition(String, String, usize, Id),
-    Axis2Placement3d(String, Id, Id, Id),
-    BSplineCurveWithKnots(
-        String,
-        usize,
-        Vec<Id>,
-        BSplineEnum1,
-        bool,
-        bool,
-        Vec<usize>,
-        Vec<f64>,
-        BSplineEnum2,
-    ),
-    BSplineSurfaceWithKnots(
-        String,
-        usize,
-        usize,
-        Vec<Vec<Id>>,
-        BSplineEnum1,
-        bool,
-        bool,
-        bool,
-        Vec<usize>,
-        Vec<usize>,
-        Vec<f64>,
-        Vec<f64>,
-        BSplineEnum2,
-    ),
-    BrepWithVoids(String, Id, Vec<Id>),
-    CartesianPoint(String, Vec<f64>),
-    Circle(String, Id, f64),
-    ClosedShell(String, Vec<Id>),
-    ColourRgb(String, f64, f64, f64),
-    ConicalSurface(String, Id, f64, f64),
-    ContextDependentShapeRepresentation(Id, Id),
-    CurveStyle(String, Id, PositiveLengthMeasure, Id),
-    CylindricalSurface(String, Id, f64),
-    DerivedUnit(Vec<Id>),
-    DerivedUnitElement(Id, f64),
-    DescriptiveRepresentationItem(String, String),
-    Direction(String, Vec<f64>),
-    DraughtingPreDefinedColour(String),
-    DraughtingPreDefinedCurveFont(String),
-    EdgeCurve(String, Id, Id, Id, bool),
-    EdgeLoop(String, Vec<Id>),
-    Ellipse(String, Id, f64, f64),
-    FaceBound(String, Id, bool),
-    FillAreaStyle(String, Vec<Id>),
-    FillAreaStyleColour(String, Id),
-    GeometricCurveSet(String, Vec<Id>),
-    ItemDefinedTransformation(String, String, Id, Id),
-    Line(String, Id, Id),
-    ManifoldSolidBrep(String, Id),
-    ManifoldSurfaceShapeRepresentation(String, Vec<Id>, Id),
-    MeasureRepresentationItem(String, AreaMeasureOrVolumeMeasure, Id),
-    MechanicalDesignGeometricPresentationRepresentation(String, Vec<Id>, Id),
-    NextAssemblyUsageOccurrence(String, String, String, Id, Id, Option<String>),
-    OpenShell(String, Vec<Id>),
-    OrientedClosedShell(String, Id, bool),
-    OrientedEdge(String, Id, bool),
-    OverRidingStyledItem(String, Vec<Id>, Id, Id),
-    Plane(String, Id),
-    PresentationLayerAssignment(String, String, Vec<Id>),
-    PresentationStyleAssignment(Vec<Id>),
-    PresentationStyleByContext(Vec<Id>, Id),
-    Product(String, String, String, Vec<Id>),
-    ProductCategory(String, String),
-    ProductContext(String, Id, String),
-    ProductDefinition(String, String, Id, Id),
-    ProductDefinitionContext(String, Id, String),
-    ProductDefinitionFormation(String, String, Id),
-    ProductDefinitionFormationWithSpecifiedSource(String, String, Id, Source),
-    ProductDefinitionShape(String, String, Id),
-    ProductRelatedProductCategory(String, Option<String>, Vec<Id>),
-    PropertyDefinition(String, String, Id),
-    PropertyDefinitionRepresentation(Id, Id),
-    Representation(Option<String>, Vec<Id>, Option<Id>),
-    ShapeAspect(String, String, Id, bool),
-    ShapeDefinitionRepresentation(Id, Id),
-    ShapeRepresentation(String, Vec<Id>, Id),
-    ShapeRepresentationRelationship(String, String, Id, Id),
-    ShellBasedSurfaceModel(String, Vec<Id>),
-    SphericalSurface(String, Id, f64),
-    StyledItem(String, Vec<Id>, Id),
-    SurfaceOfLinearExtrusion(String, Id, Id),
-    SurfaceSideStyle(String, Vec<Id>),
-    SurfaceStyleFillArea(Id),
-    SurfaceStyleUsage(SurfaceSide, Id),
-    ToroidalSurface(String, Id, f64, f64),
-    TrimmedCurve(
-        String,
-        Id,
-        (Id, ParameterValue),
-        (Id, ParameterValue),
-        bool,
-        TrimmedCurveEnum,
-    ),
-    UncertaintyMeasureWithUnit(LengthMeasure, Id, String, String),
-    ValueRepresentationItem(String, CountMeasure),
-    Vector(String, Id, f64),
-    VertexPoint(String, Id),
 }
 
 fn data_entity_advanced_brep_shape_representation(input: &str) -> Res<&str, DataEntity> {

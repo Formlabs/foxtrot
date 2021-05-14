@@ -3,7 +3,8 @@ use std::fs::File;
 use std::io::Read;
 use std::str;
 
-use crate::parse_autogen::{data_line, DataEntity};
+use crate::ap214_autogen::DataEntity;
+use crate::parse_autogen::data_line;
 use memchr::{memchr, memchr2, memchr_iter};
 
 /// Flattens a STEP file, removing comments and whitespace
