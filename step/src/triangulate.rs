@@ -78,12 +78,13 @@ impl<'a> Triangulator<'a> {
         let mut bound_contours = Vec::new();
         for b in bounds {
             match self.entity(*b) {
-                &DataEntity::FaceBound(_, bound, orientation) =>
-                    bound_contours.push(self.face_bounds(bound, orientation)),
+                &DataEntity::FaceBound(_, bound, orientation) => {
+                    let b = self.face_bounds(bound, orientation);
+                    bound_contours.push(b);
+                },
                 e => panic!("Expected FaceBounds; got {:?}", e),
             }
         }
-
 
         // For each contour, project from 3D down to the surface, then
         // start collecting them as constrained edges for triangulation
@@ -270,15 +271,23 @@ impl<'a> Triangulator<'a> {
         // Pick the starting angle in the circle's flat plane
         let u_ang = u_flat.y.atan2(u_flat.x);
         let mut v_ang = v_flat.y.atan2(v_flat.x);
+        const PI2: f64 = 2.0 * std::f64::consts::PI;
         if closed {
             assert!((u_ang - v_ang).abs() < std::f64::EPSILON);
-            v_ang = u_ang + 2.0 * std::f64::consts::PI;
+            v_ang = u_ang + PI2;
+        }
+        // Heuristic to pick the shortest path along the circle.  TODO:
+        // Is this actually the correct behavior?
+        else if (v_ang + PI2 - u_ang).abs() < (v_ang - u_ang).abs() {
+            v_ang += PI2
+        } else if (v_ang - PI2 - u_ang).abs() < (v_ang - u_ang).abs() {
+            v_ang -= PI2
         }
 
         const N: usize = 64;
-        let count = (N as f64 * (u_ang - v_ang).abs() /
-                    (2.0 * std::f64::consts::PI)).round() as usize;
-        let count = count.max(4);
+        let count = 4.max(
+            (N as f64 * (u_ang - v_ang).abs() /
+            (2.0 * std::f64::consts::PI)).round() as usize);
 
         let mut out = Vec::new();
         // Project onto the pnt + dir, and walk from start to end
