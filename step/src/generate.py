@@ -347,6 +347,44 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
     ])
 ))
 
+def make_packer(t):
+    if t == 'id':
+        return "x{i}.clone()" 
+    elif t == 'vec_id':
+        return "*x{i}"
+    elif t == 'vec_vec_id':
+        return "**x{i}"
+    elif t == 'opt_vec_id':
+        return "*(match x{i} {{ Some(v) => v, None => vec![] }})"
+    elif t == 'opt_id':
+        return "*(match x{i} {{ Some(v) => vec![v], None => vec![] }})"
+    else:
+        raise ValueError(t)
+                 
+ 
+o_ap214_autogen.write("""
+impl DataEntity<'_> {{
+    pub fn upstream(&self) -> Vec<Id> {{
+        use DataEntity::*;
+        match self {{
+            Null | ComplexBucketType => vec![],
+            {remaps}
+        }}
+    }}
+}}
+""".format(
+    remaps = ", ".join([
+        "{cname}({unpack}) => vec![{pack}]".format(
+            cname=name,
+            unpack=", ".join(["x{i}".format(i=i) if (t == 'id' or 'id_' in 't') else "_" for i, t in enumerate(vals) if t != '*']),
+            pack=", ".join([
+                make_packer(t).format(i=i) for (i, t) in enumerate(vals) if (t == 'id' or 'id_' in 't')
+            ])
+        )
+        for name, vals in data_entity
+    ])
+))
+
 
 # gather test cases
 

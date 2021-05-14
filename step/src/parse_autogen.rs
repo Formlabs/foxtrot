@@ -12,15 +12,6 @@ use nom::{
     Err as NomErr,
 };
 
-pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
-    delimited(
-        tuple((tag("AREA_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, AreaMeasure(res)))
-}
-
 pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
     delimited(
         tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
@@ -30,15 +21,6 @@ pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
     .map(|(next_input, res)| (next_input, LengthMeasure(res)))
 }
 
-pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
-    delimited(
-        tuple((tag("COUNT_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, CountMeasure(res)))
-}
-
 pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
     delimited(
         tuple((tag("PARAMETER_VALUE"), after_ws(tag("(")))),
@@ -46,6 +28,15 @@ pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
         after_ws(tag(")")),
     )(input)
     .map(|(next_input, res)| (next_input, ParameterValue(res)))
+}
+
+pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
+    delimited(
+        tuple((tag("COUNT_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, CountMeasure(res)))
 }
 
 pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
@@ -64,6 +55,15 @@ pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLength
         after_ws(tag(")")),
     )(input)
     .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
+}
+
+pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
+    delimited(
+        tuple((tag("AREA_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, AreaMeasure(res)))
 }
 
 pub fn step_c_area_measure_or_volume_measure(input: &str) -> Res<&str, AreaMeasureOrVolumeMeasure> {
