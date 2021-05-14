@@ -23,13 +23,13 @@ def chunks(lst, n):
 
 type_mp = {
     "pair_id_ParameterValue": "(Id, ParameterValue)",
-    "str": "String",
+    "str": "&'a str",
     "id": "Id",
     "float": "f64",
     "bool": "bool",
     "usize": "usize",
     "opt_id": "Option<Id>",
-    "opt_str": "Option<String>",
+    "opt_str": "Option<&'a str>",
     "vec_id": "Vec<Id>",
     "vec_vec_id": "Vec<Vec<Id>>",
     "vec_float": "Vec<f64>",
@@ -267,7 +267,7 @@ data_entity = sorted(list(data_entity.items()))
 # generate big enum to hold values
 
 otypes.write("""
-pub enum DataEntity {{
+pub enum DataEntity<'a> {{
     Null,
     ComplexBucketType,
 {types}
@@ -288,7 +288,7 @@ pub enum DataEntity {{
 # generate parser for each entity
 
 DATA_ENTITY_FUNCS_TEMPLATE = """
-fn data_entity_{lname}(input: &str) -> Res<&str, DataEntity> {{
+fn data_entity_{lname}<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {{
     delimited(
         after_ws(tag("(")),
         {parser},

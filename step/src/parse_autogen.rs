@@ -12,33 +12,6 @@ use nom::{
     Err as NomErr,
 };
 
-pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
-    delimited(
-        tuple((tag("AREA_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, AreaMeasure(res)))
-}
-
-pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
-    delimited(
-        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
-}
-
-pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
-    delimited(
-        tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, LengthMeasure(res)))
-}
-
 pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
     delimited(
         tuple((tag("PARAMETER_VALUE"), after_ws(tag("(")))),
@@ -55,6 +28,33 @@ pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
         after_ws(tag(")")),
     )(input)
     .map(|(next_input, res)| (next_input, CountMeasure(res)))
+}
+
+pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
+    delimited(
+        tuple((tag("AREA_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, AreaMeasure(res)))
+}
+
+pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
+    delimited(
+        tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, LengthMeasure(res)))
+}
+
+pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
+    delimited(
+        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
 }
 
 pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
@@ -190,7 +190,9 @@ pub fn step_enum_trimmed_curve_enum(input: &str) -> Res<&str, TrimmedCurveEnum> 
     })
 }
 
-fn data_entity_advanced_brep_shape_representation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_advanced_brep_shape_representation<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -208,7 +210,7 @@ fn data_entity_advanced_brep_shape_representation(input: &str) -> Res<&str, Data
     })
 }
 
-fn data_entity_advanced_face(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_advanced_face<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -227,7 +229,7 @@ fn data_entity_advanced_face(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_application_context(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_application_context<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         after_ws(step_string),
@@ -241,7 +243,7 @@ fn data_entity_application_context(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_application_protocol_definition(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_application_protocol_definition<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -260,7 +262,7 @@ fn data_entity_application_protocol_definition(input: &str) -> Res<&str, DataEnt
     })
 }
 
-fn data_entity_axis2_placement_3d(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_axis2_placement_3d<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -279,7 +281,7 @@ fn data_entity_axis2_placement_3d(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_b_spline_curve_with_knots(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_b_spline_curve_with_knots<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -303,7 +305,7 @@ fn data_entity_b_spline_curve_with_knots(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_b_spline_surface_with_knots(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_b_spline_surface_with_knots<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -333,7 +335,7 @@ fn data_entity_b_spline_surface_with_knots(input: &str) -> Res<&str, DataEntity>
     })
 }
 
-fn data_entity_brep_with_voids(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_brep_with_voids<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -351,7 +353,7 @@ fn data_entity_brep_with_voids(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_cartesian_point(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_cartesian_point<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_float)))),
@@ -365,7 +367,7 @@ fn data_entity_cartesian_point(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_circle(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_circle<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -383,7 +385,7 @@ fn data_entity_circle(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_closed_shell(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_closed_shell<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_id)))),
@@ -397,7 +399,7 @@ fn data_entity_closed_shell(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_colour_rgb(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_colour_rgb<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -416,7 +418,7 @@ fn data_entity_colour_rgb(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_conical_surface(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_conical_surface<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -435,7 +437,9 @@ fn data_entity_conical_surface(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_context_dependent_shape_representation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_context_dependent_shape_representation<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_id), after_wscomma(step_id))),
@@ -449,7 +453,7 @@ fn data_entity_context_dependent_shape_representation(input: &str) -> Res<&str, 
     })
 }
 
-fn data_entity_curve_style(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_curve_style<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -468,7 +472,7 @@ fn data_entity_curve_style(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_cylindrical_surface(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_cylindrical_surface<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -486,7 +490,7 @@ fn data_entity_cylindrical_surface(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_derived_unit(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_derived_unit<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         after_ws(step_vec(step_id)),
@@ -500,7 +504,7 @@ fn data_entity_derived_unit(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_derived_unit_element(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_derived_unit_element<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_id), after_wscomma(step_float))),
@@ -514,7 +518,7 @@ fn data_entity_derived_unit_element(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_descriptive_representation_item(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_descriptive_representation_item<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_string))),
@@ -528,7 +532,7 @@ fn data_entity_descriptive_representation_item(input: &str) -> Res<&str, DataEnt
     })
 }
 
-fn data_entity_direction(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_direction<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_float)))),
@@ -542,7 +546,7 @@ fn data_entity_direction(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_draughting_pre_defined_colour(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_draughting_pre_defined_colour<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         after_ws(step_string),
@@ -556,7 +560,9 @@ fn data_entity_draughting_pre_defined_colour(input: &str) -> Res<&str, DataEntit
     })
 }
 
-fn data_entity_draughting_pre_defined_curve_font(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_draughting_pre_defined_curve_font<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         after_ws(step_string),
@@ -570,7 +576,7 @@ fn data_entity_draughting_pre_defined_curve_font(input: &str) -> Res<&str, DataE
     })
 }
 
-fn data_entity_edge_curve(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_edge_curve<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -590,7 +596,7 @@ fn data_entity_edge_curve(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_edge_loop(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_edge_loop<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_id)))),
@@ -604,7 +610,7 @@ fn data_entity_edge_loop(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_ellipse(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_ellipse<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -623,7 +629,7 @@ fn data_entity_ellipse(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_face_bound(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_face_bound<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -641,7 +647,7 @@ fn data_entity_face_bound(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_fill_area_style(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_fill_area_style<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_id)))),
@@ -655,7 +661,7 @@ fn data_entity_fill_area_style(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_fill_area_style_colour(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_fill_area_style_colour<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_id))),
@@ -669,7 +675,7 @@ fn data_entity_fill_area_style_colour(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_geometric_curve_set(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_geometric_curve_set<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_id)))),
@@ -683,7 +689,7 @@ fn data_entity_geometric_curve_set(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_item_defined_transformation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_item_defined_transformation<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -702,7 +708,7 @@ fn data_entity_item_defined_transformation(input: &str) -> Res<&str, DataEntity>
     })
 }
 
-fn data_entity_line(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_line<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -720,7 +726,7 @@ fn data_entity_line(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_manifold_solid_brep(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_manifold_solid_brep<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_id))),
@@ -734,7 +740,9 @@ fn data_entity_manifold_solid_brep(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_manifold_surface_shape_representation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_manifold_surface_shape_representation<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -752,7 +760,7 @@ fn data_entity_manifold_surface_shape_representation(input: &str) -> Res<&str, D
     })
 }
 
-fn data_entity_measure_representation_item(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_measure_representation_item<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -770,9 +778,9 @@ fn data_entity_measure_representation_item(input: &str) -> Res<&str, DataEntity>
     })
 }
 
-fn data_entity_mechanical_design_geometric_presentation_representation(
-    input: &str,
-) -> Res<&str, DataEntity> {
+fn data_entity_mechanical_design_geometric_presentation_representation<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -790,7 +798,7 @@ fn data_entity_mechanical_design_geometric_presentation_representation(
     })
 }
 
-fn data_entity_next_assembly_usage_occurrence(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_next_assembly_usage_occurrence<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -811,7 +819,7 @@ fn data_entity_next_assembly_usage_occurrence(input: &str) -> Res<&str, DataEnti
     })
 }
 
-fn data_entity_open_shell(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_open_shell<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_id)))),
@@ -825,7 +833,7 @@ fn data_entity_open_shell(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_oriented_closed_shell(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_oriented_closed_shell<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -844,7 +852,7 @@ fn data_entity_oriented_closed_shell(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_oriented_edge(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_oriented_edge<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -864,7 +872,7 @@ fn data_entity_oriented_edge(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_over_riding_styled_item(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_over_riding_styled_item<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -883,7 +891,7 @@ fn data_entity_over_riding_styled_item(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_plane(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_plane<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_id))),
@@ -897,7 +905,7 @@ fn data_entity_plane(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_presentation_layer_assignment(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_presentation_layer_assignment<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -915,7 +923,7 @@ fn data_entity_presentation_layer_assignment(input: &str) -> Res<&str, DataEntit
     })
 }
 
-fn data_entity_presentation_style_assignment(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_presentation_style_assignment<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         after_ws(step_vec(step_id)),
@@ -929,7 +937,7 @@ fn data_entity_presentation_style_assignment(input: &str) -> Res<&str, DataEntit
     })
 }
 
-fn data_entity_presentation_style_by_context(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_presentation_style_by_context<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_vec(step_id)), after_wscomma(step_id))),
@@ -943,7 +951,7 @@ fn data_entity_presentation_style_by_context(input: &str) -> Res<&str, DataEntit
     })
 }
 
-fn data_entity_product(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_product<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -962,7 +970,7 @@ fn data_entity_product(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_product_category(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_product_category<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_string))),
@@ -976,7 +984,7 @@ fn data_entity_product_category(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_product_context(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_product_context<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -994,7 +1002,7 @@ fn data_entity_product_context(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_product_definition(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_product_definition<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1013,7 +1021,7 @@ fn data_entity_product_definition(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_product_definition_context(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_product_definition_context<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1031,7 +1039,7 @@ fn data_entity_product_definition_context(input: &str) -> Res<&str, DataEntity> 
     })
 }
 
-fn data_entity_product_definition_formation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_product_definition_formation<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1049,9 +1057,9 @@ fn data_entity_product_definition_formation(input: &str) -> Res<&str, DataEntity
     })
 }
 
-fn data_entity_product_definition_formation_with_specified_source(
-    input: &str,
-) -> Res<&str, DataEntity> {
+fn data_entity_product_definition_formation_with_specified_source<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1070,7 +1078,7 @@ fn data_entity_product_definition_formation_with_specified_source(
     })
 }
 
-fn data_entity_product_definition_shape(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_product_definition_shape<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1088,7 +1096,9 @@ fn data_entity_product_definition_shape(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_product_related_product_category(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_product_related_product_category<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1106,7 +1116,7 @@ fn data_entity_product_related_product_category(input: &str) -> Res<&str, DataEn
     })
 }
 
-fn data_entity_property_definition(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_property_definition<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1124,7 +1134,9 @@ fn data_entity_property_definition(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_property_definition_representation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_property_definition_representation<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_id), after_wscomma(step_id))),
@@ -1138,7 +1150,7 @@ fn data_entity_property_definition_representation(input: &str) -> Res<&str, Data
     })
 }
 
-fn data_entity_representation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_representation<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1156,7 +1168,7 @@ fn data_entity_representation(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_shape_aspect(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_shape_aspect<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1175,7 +1187,7 @@ fn data_entity_shape_aspect(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_shape_definition_representation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_shape_definition_representation<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_id), after_wscomma(step_id))),
@@ -1189,7 +1201,7 @@ fn data_entity_shape_definition_representation(input: &str) -> Res<&str, DataEnt
     })
 }
 
-fn data_entity_shape_representation(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_shape_representation<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1207,7 +1219,9 @@ fn data_entity_shape_representation(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_shape_representation_relationship(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_shape_representation_relationship<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1226,7 +1240,7 @@ fn data_entity_shape_representation_relationship(input: &str) -> Res<&str, DataE
     })
 }
 
-fn data_entity_shell_based_surface_model(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_shell_based_surface_model<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_id)))),
@@ -1240,7 +1254,7 @@ fn data_entity_shell_based_surface_model(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_spherical_surface(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_spherical_surface<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1258,7 +1272,7 @@ fn data_entity_spherical_surface(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_styled_item(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_styled_item<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1276,7 +1290,7 @@ fn data_entity_styled_item(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_surface_of_linear_extrusion(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_surface_of_linear_extrusion<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1294,7 +1308,7 @@ fn data_entity_surface_of_linear_extrusion(input: &str) -> Res<&str, DataEntity>
     })
 }
 
-fn data_entity_surface_side_style(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_surface_side_style<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_vec(step_id)))),
@@ -1308,7 +1322,7 @@ fn data_entity_surface_side_style(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_surface_style_fill_area(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_surface_style_fill_area<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         after_ws(step_id),
@@ -1322,7 +1336,7 @@ fn data_entity_surface_style_fill_area(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_surface_style_usage(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_surface_style_usage<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_enum_surface_side), after_wscomma(step_id))),
@@ -1336,7 +1350,7 @@ fn data_entity_surface_style_usage(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_toroidal_surface(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_toroidal_surface<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1355,7 +1369,7 @@ fn data_entity_toroidal_surface(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_trimmed_curve(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_trimmed_curve<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1384,7 +1398,7 @@ fn data_entity_trimmed_curve(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_uncertainty_measure_with_unit(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_uncertainty_measure_with_unit<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1403,7 +1417,7 @@ fn data_entity_uncertainty_measure_with_unit(input: &str) -> Res<&str, DataEntit
     })
 }
 
-fn data_entity_value_representation_item(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_value_representation_item<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_stf_count_measure))),
@@ -1417,7 +1431,7 @@ fn data_entity_value_representation_item(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_vector(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_vector<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((
@@ -1435,7 +1449,7 @@ fn data_entity_vector(input: &str) -> Res<&str, DataEntity> {
     })
 }
 
-fn data_entity_vertex_point(input: &str) -> Res<&str, DataEntity> {
+fn data_entity_vertex_point<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
         tuple((after_ws(step_string), after_wscomma(step_id))),

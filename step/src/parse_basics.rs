@@ -17,7 +17,7 @@ pub type Res<T, U> = IResult<T, U, VerboseError<T>>;
 pub fn step_decimal(input: &str) -> Res<&str, i64> {
     context(
         "decimal",
-        tuple((opt(one_of("-+")), many1(one_of("0123456789")))),
+        tuple((opt(one_of("-+")), recognize(many1(one_of("0123456789"))))),
     )(input)
     .map(|(next_input, res)| {
         (next_input, {
@@ -30,9 +30,7 @@ pub fn step_decimal(input: &str) -> Res<&str, i64> {
                     _ => panic!("unexpected char"),
                 },
             };
-            let s: String = digits.into_iter().collect();
-            let num = sign * s.parse::<i64>().unwrap(); // TODO can be faster
-            num
+            sign * digits.parse::<i64>().unwrap()
         })
     })
 }
@@ -41,25 +39,24 @@ pub fn step_float(input: &str) -> Res<&str, f64> {
         "float",
         tuple((
             opt(tag("-")),
-            many1(one_of("0123456789")),
-            tag("."),
-            many0(one_of("0123456789")),
+            recognize(
+                tuple((
+                    many1(one_of("0123456789")),
+                    tag("."),
+                    many0(one_of("0123456789"))
+                ))
+            ),
             opt(preceded(tag("E"), step_decimal)),
         )),
     )(input)
     .map(|(next_input, res)| {
         (next_input, {
-            let (opt_sign, before_dec, _, after_dec, opt_exp) = res;
+            let (opt_sign, num, opt_exp) = res;
             let sign = match opt_sign {
                 Some(_) => -1f64,
                 None => 1f64,
             };
-            let s: String = before_dec
-                .into_iter()
-                .chain(vec!['.'].into_iter())
-                .chain(after_dec.into_iter())
-                .collect();
-            let num = sign * s.parse::<f64>().unwrap();
+            let num = sign * num.parse::<f64>().unwrap();
             match opt_exp {
                 Some(e) => num * 10f64.powi(e as i32),
                 None => num,
@@ -68,12 +65,8 @@ pub fn step_float(input: &str) -> Res<&str, f64> {
     })
 }
 pub fn step_udecimal(input: &str) -> Res<&str, usize> {
-    context("udecimal", many1(one_of("0123456789")))(input).map(|(next_input, res)| {
-        (next_input, {
-            let s: String = res.into_iter().collect();
-            let num = s.parse::<usize>().unwrap(); // TODO can be faster
-            num
-        })
+    context("udecimal", recognize(many1(one_of("0123456789"))))(input).map(|(next_input, res)| {
+        (next_input, res.parse::<usize>().unwrap())
     })
 }
 pub fn step_identifier(input: &str) -> Res<&str, &str> {
@@ -87,12 +80,12 @@ pub fn step_id(input: &str) -> Res<&str, Id> {
     context("id", preceded(tag("#"), step_udecimal))(input)
         .map(|(next_input, res)| (next_input, Id(res)))
 }
-pub fn step_string(input: &str) -> Res<&str, String> {
+pub fn step_string(input: &str) -> Res<&str, &str> {
     context(
         "string",
         delimited(tag("'"), take_till(|c| c == '\''), tag("'")),
     )(input)
-    .map(|(next_input, res)| (next_input, res.to_string()))
+    .map(|(next_input, res)| (next_input, res))
 }
 pub fn step_bool(input: &str) -> Res<&str, bool> {
     context("string", delimited(tag("."), one_of("TF"), tag(".")))(input).map(

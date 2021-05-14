@@ -53,9 +53,8 @@ pub fn into_blocks(data: &[u8]) -> Vec<&[u8]> {
     blocks
 }
 
-pub fn parse_file_as_string(file: &Vec<u8>) -> Vec<DataEntity> {
-    let stripped = strip_flatten(&file);
-    let blocks = into_blocks(&stripped);
+pub fn parse_entities_from_striped_file(stripped_file: &Vec<u8>) -> Vec<DataEntity> {
+    let blocks = into_blocks(&stripped_file);
 
     let mut data_sec_idx = 0;
     let mut end_sec_idx = blocks.len();
@@ -91,11 +90,11 @@ pub fn parse_file_as_string(file: &Vec<u8>) -> Vec<DataEntity> {
     entities
 }
 
-pub fn parse_file_at_path(filename: &str) -> Vec<DataEntity> {
+pub fn striped_string_from_path(filename: &str) -> Vec<u8> {
     let mut f = File::open(filename).expect("file opens");
     let mut buffer = Vec::new();
     f.read_to_end(&mut buffer).expect("read ok");
-    parse_file_as_string(&buffer)
+    strip_flatten(&buffer)
 }
 
 #[cfg(test)]

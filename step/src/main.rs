@@ -1,11 +1,13 @@
 use std::time::SystemTime;
-use step::parse::parse_file_at_path;
+use step::parse::{striped_string_from_path, parse_entities_from_striped_file};
 
 fn main() {
     let start = SystemTime::now();
 
     let filename = "/Users/Henry Heffan/Desktop/foxtrot/KondoMotherboard_RevB_full.step";
-    let entitys = parse_file_at_path(filename);
+    let stripped_str = striped_string_from_path(filename);
+    let entitys = parse_entities_from_striped_file(&stripped_str);
+
     println!("{}", entitys.len());
 
     let end = SystemTime::now();
