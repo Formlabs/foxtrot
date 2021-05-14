@@ -1,5 +1,5 @@
 use winit::{
-    event::{Event, ModifiersState, WindowEvent, VirtualKeyCode},
+    event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
@@ -40,26 +40,15 @@ async fn run(event_loop: EventLoop<()>, window: Window) {
         .expect("Failed to create device");
 
     let mut app = App::new(size, adapter, surface, device);
-    let mut modifiers = ModifiersState::empty();
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
+        use app::Reply;
         match event {
-            Event::WindowEvent { event, .. } => match event {
-                WindowEvent::Resized(size) => {
-                    app.resize(size);
-                    app.redraw(&queue);
-                },
-                WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
-                WindowEvent::ModifiersChanged(m) => {
-                    modifiers = m;
-                },
-                WindowEvent::KeyboardInput { input, .. } => {
-                    if modifiers.logo() && input.virtual_keycode == Some(VirtualKeyCode::Q) {
-                        *control_flow = ControlFlow::Exit;
-                    }
-                }
-                _ => {}
+            Event::WindowEvent { event, .. } => match app.window_event(event) {
+                Reply::Continue => (),
+                Reply::Quit => *control_flow = ControlFlow::Exit,
+                Reply::Redraw => app.redraw(&queue),
             },
             Event::RedrawRequested(_) => app.redraw(&queue),
             _ => {}

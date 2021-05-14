@@ -162,7 +162,7 @@ impl Model {
     fn generate_matrix(&self) -> Mat4 {
         let i = Mat4::identity();
         glm::rotate_x(&i, self.yaw) *
-        glm::rotate_x(&i, self.pitch) *
+        glm::rotate_y(&i, self.pitch) *
         glm::scale(&i, &Vec3::new(1.0, self.aspect, 1.0)) *
         glm::scale(&i, &Vec3::new(self.scale, self.scale, self.scale)) *
         glm::translate(&i, &-self.center)
@@ -193,5 +193,10 @@ impl Model {
         rpass.set_vertex_buffer(0, self.vertex_buf.slice(..));
         rpass.set_bind_group(0, &self.bind_group, &[]);
         rpass.draw_indexed(0..self.index_count, 0, 0..1);
+    }
+
+    pub fn spin(&mut self, dx: f32, dy: f32) {
+        self.pitch += dx;
+        self.yaw += dy;
     }
 }

@@ -1,5 +1,6 @@
 use winit::{
-    dpi::PhysicalSize,
+    dpi::{PhysicalPosition, PhysicalSize},
+    event::{ElementState, ModifiersState, MouseButton, WindowEvent, VirtualKeyCode},
 };
 
 use crate::model::Model;
@@ -12,6 +13,16 @@ pub struct App {
     swapchain: wgpu::SwapChain,
     model: Model,
     backdrop: Backdrop,
+
+    modifiers: ModifiersState,
+    last_cursor: Option<PhysicalPosition<f64>>,
+    cursor_down: bool,
+}
+
+pub enum Reply {
+    Continue,
+    Redraw,
+    Quit,
 }
 
 impl App {
@@ -31,12 +42,53 @@ impl App {
             backdrop: Backdrop::new(&device, swapchain_format),
             surface,
             device,
+
+            modifiers: ModifiersState::empty(),
+            last_cursor: None,
+            cursor_down: false,
         };
         out.model.set_aspect(size.width as f32 / size.height as f32);
         out
     }
 
-    pub fn resize(&mut self,size: PhysicalSize<u32>) {
+    pub fn window_event(&mut self, e: WindowEvent) -> Reply {
+        match e {
+            WindowEvent::Resized(size) => {
+                self.resize(size);
+                Reply::Redraw
+            },
+            WindowEvent::CloseRequested => Reply::Quit,
+            WindowEvent::ModifiersChanged(m) => {
+                self.modifiers = m;
+                Reply::Continue
+            },
+            WindowEvent::KeyboardInput { input, .. } => {
+                if self.modifiers.logo() && input.virtual_keycode == Some(VirtualKeyCode::Q) {
+                    Reply::Quit
+                } else {
+                    Reply::Continue
+                }
+            },
+            WindowEvent::MouseInput { button, state, .. } => {
+                if button == MouseButton::Left {
+                    self.cursor_down = state == ElementState::Pressed;
+                }
+                Reply::Continue
+            }
+            WindowEvent::CursorMoved { position, .. } => {
+                if let Some(prev) = self.last_cursor {
+                    if self.cursor_down {
+                        self.drag(position.x - prev.x, position.y - prev.y);
+                    }
+                }
+                self.last_cursor = Some(position);
+                Reply::Redraw
+            },
+            _ => Reply::Continue,
+        }
+    }
+
+    fn resize(&mut self,size: PhysicalSize<u32>) {
         self.swapchain = Self::rebuild_swapchain_(
             size, self.swapchain_format,
             &self.surface, &self.device);
@@ -69,5 +121,9 @@ impl App {
         self.model.draw(&queue, &frame, &mut encoder);
 
         queue.submit(Some(encoder.finish()));
+    }
+
+    fn drag(&mut self, dx: f64, dy: f64) {
+        self.model.spin(dx as f32 / 100.0, dy as f32 / 100.0);
     }
 }
