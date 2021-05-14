@@ -1,15 +1,15 @@
 use std::borrow::Cow;
 
-pub struct Model {
+pub struct Backdrop {
     render_pipeline: wgpu::RenderPipeline,
 }
 
-impl Model {
+impl Backdrop {
     pub fn new(device: &wgpu::Device, swapchain_format: wgpu::TextureFormat) -> Self {
         // Load the shaders from disk
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
-            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("shader.wgsl"))),
+            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("backdrop.wgsl"))),
             flags: wgpu::ShaderFlags::all(),
         });
 
@@ -38,7 +38,7 @@ impl Model {
                 multisample: wgpu::MultisampleState::default(),
         });
 
-        Model {
+        Backdrop {
             render_pipeline,
         }
     }
@@ -51,13 +51,14 @@ impl Model {
                     view: &frame.view,
                     resolve_target: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Load,
+                        load: wgpu::LoadOp::Clear(wgpu::Color::GREEN),
                         store: true,
                     },
                 }],
                 depth_stencil_attachment: None,
             });
         rpass.set_pipeline(&self.render_pipeline);
-        rpass.draw(0..3, 0..1);
+        rpass.draw(0..6, 0..1);
     }
 }
+

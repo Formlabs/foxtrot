@@ -6,7 +6,10 @@ use winit::{
 };
 
 pub(crate) mod model;
+pub(crate) mod backdrop;
+
 use crate::model::Model;
+use crate::backdrop::Backdrop;
 
 struct App {
     surface: wgpu::Surface,
@@ -14,6 +17,7 @@ struct App {
     swapchain_format: wgpu::TextureFormat,
     swapchain: wgpu::SwapChain,
     model: Model,
+    backdrop: Backdrop,
 }
 
 impl App {
@@ -27,6 +31,7 @@ impl App {
             swapchain: Self::rebuild_swapchain_(
                 size, swapchain_format, &surface, &device),
             model: Model::new(&device, swapchain_format),
+            backdrop: Backdrop::new(&device, swapchain_format),
             surface,
             device,
         }
@@ -60,6 +65,7 @@ impl App {
         let mut encoder = self.device.create_command_encoder(
             &wgpu::CommandEncoderDescriptor { label: None });
 
+        self.backdrop.draw(&frame, &mut encoder);
         self.model.draw(&frame, &mut encoder);
 
         queue.submit(Some(encoder.finish()));
