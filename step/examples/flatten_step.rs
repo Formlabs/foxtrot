@@ -1,6 +1,6 @@
 use clap::{Arg, App};
 
-use step::parse::flatten;
+use step::parse::{strip_flatten, into_blocks};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("step_to_dot")
@@ -22,9 +22,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Could not get input file");
 
     let data = std::fs::read(input)?;
-    let parsed = flatten(&data);
+    let stripped = strip_flatten(&data);
+    let blocks = into_blocks(&stripped);
     if !matches.is_present("quiet") {
-        for p in parsed {
+        for p in blocks {
             println!("{}\n--------", std::str::from_utf8(p).unwrap());
         }
     }
