@@ -75,7 +75,7 @@ pub fn parse_entities_from_striped_file(stripped_file: &Vec<u8>) -> StepFile {
 
     let id_entity_pairs: Vec<_> = blocks[(data_sec_idx+1)..end_sec_idx].par_iter().map(|&block| {
         let line_string = str::from_utf8(block).expect("ok utf8 str");
-        let (_rest_block, (id, entity)) = data_line(line_string).expect("ok parse");
+        let (_rest_block, (id, entity)) = data_line(line_string).expect(&format!("ok parse \n\n>>{}<<\n\n", line_string));
         (id, entity)
     }).collect();
 

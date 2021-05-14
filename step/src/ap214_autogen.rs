@@ -2,22 +2,22 @@
 pub struct Id(pub usize);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct ParameterValue(pub f64);
+pub struct VolumeMeasure(pub f64);
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct AreaMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct PositiveLengthMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct LengthMeasure(pub f64);
-
-#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct CountMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct VolumeMeasure(pub f64);
+pub struct ParameterValue(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub struct AreaMeasure(pub f64);
+pub struct LengthMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone)]
 pub enum AreaMeasureOrVolumeMeasure {
@@ -42,7 +42,7 @@ pub enum Source {
 #[derive(Debug, Copy, Clone)]
 pub enum BSplineEnum1 {
     Unspecified,
-    WeDontSupportOneElmentEnumsYet,
+    SurfOfLinearExtrusion,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -165,5 +165,6 @@ pub enum DataEntity<'a> {
     UncertaintyMeasureWithUnit(LengthMeasure, Id, &'a str, &'a str),
     ValueRepresentationItem(&'a str, CountMeasure),
     Vector(&'a str, Id, f64),
+    VertexLoop(&'a str, Id),
     VertexPoint(&'a str, Id),
 }

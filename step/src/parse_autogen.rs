@@ -12,42 +12,6 @@ use nom::{
     Err as NomErr,
 };
 
-pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
-    delimited(
-        tuple((tag("PARAMETER_VALUE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, ParameterValue(res)))
-}
-
-pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
-    delimited(
-        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
-}
-
-pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
-    delimited(
-        tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, LengthMeasure(res)))
-}
-
-pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
-    delimited(
-        tuple((tag("COUNT_MEASURE"), after_ws(tag("(")))),
-        after_ws(step_float),
-        after_ws(tag(")")),
-    )(input)
-    .map(|(next_input, res)| (next_input, CountMeasure(res)))
-}
-
 pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
     delimited(
         tuple((tag("VOLUME_MEASURE"), after_ws(tag("(")))),
@@ -64,6 +28,42 @@ pub fn step_stf_area_measure(input: &str) -> Res<&str, AreaMeasure> {
         after_ws(tag(")")),
     )(input)
     .map(|(next_input, res)| (next_input, AreaMeasure(res)))
+}
+
+pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLengthMeasure> {
+    delimited(
+        tuple((tag("POSITIVE_LENGTH_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
+}
+
+pub fn step_stf_count_measure(input: &str) -> Res<&str, CountMeasure> {
+    delimited(
+        tuple((tag("COUNT_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, CountMeasure(res)))
+}
+
+pub fn step_stf_parameter_value(input: &str) -> Res<&str, ParameterValue> {
+    delimited(
+        tuple((tag("PARAMETER_VALUE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, ParameterValue(res)))
+}
+
+pub fn step_stf_length_measure(input: &str) -> Res<&str, LengthMeasure> {
+    delimited(
+        tuple((tag("LENGTH_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, LengthMeasure(res)))
 }
 
 pub fn step_c_area_measure_or_volume_measure(input: &str) -> Res<&str, AreaMeasureOrVolumeMeasure> {
@@ -124,10 +124,7 @@ pub fn step_enum_source(input: &str) -> Res<&str, Source> {
 pub fn step_enum_b_spline_enum1(input: &str) -> Res<&str, BSplineEnum1> {
     delimited(
         tag("."),
-        alt((
-            tag("UNSPECIFIED"),
-            tag("WE_DONT_SUPPORT_ONE_ELMENT_ENUMS_YET"),
-        )),
+        alt((tag("UNSPECIFIED"), tag("SURF_OF_LINEAR_EXTRUSION"))),
         tag("."),
     )(input)
     .map(|(next_input, res)| {
@@ -135,9 +132,7 @@ pub fn step_enum_b_spline_enum1(input: &str) -> Res<&str, BSplineEnum1> {
             next_input,
             match res {
                 "UNSPECIFIED" => BSplineEnum1::Unspecified,
-                "WE_DONT_SUPPORT_ONE_ELMENT_ENUMS_YET" => {
-                    BSplineEnum1::WeDontSupportOneElmentEnumsYet
-                }
+                "SURF_OF_LINEAR_EXTRUSION" => BSplineEnum1::SurfOfLinearExtrusion,
                 _ => panic!("unepected string"),
             },
         )
@@ -1449,6 +1444,20 @@ fn data_entity_vector<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     })
 }
 
+fn data_entity_vertex_loop<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((after_ws(step_string), after_wscomma(step_id))),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1) = res;
+            DataEntity::VertexLoop(x0, x1)
+        })
+    })
+}
+
 fn data_entity_vertex_point<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
@@ -1581,6 +1590,7 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
         "UNCERTAINTY_MEASURE_WITH_UNIT" => data_entity_uncertainty_measure_with_unit(next_input),
         "VALUE_REPRESENTATION_ITEM" => data_entity_value_representation_item(next_input),
         "VECTOR" => data_entity_vector(next_input),
+        "VERTEX_LOOP" => data_entity_vertex_loop(next_input),
         "VERTEX_POINT" => data_entity_vertex_point(next_input),
         _ => Err(NomErr::Error(VerboseError { errors: vec![] })),
     }
@@ -2704,6 +2714,9 @@ mod tests {
         assert!(data_entity_vector("('',#111916,1.);").is_ok());
         assert!(data_entity_vector("('',#203996,1.);").is_ok());
     }
+
+    #[test]
+    fn test_vertex_loop() {}
 
     #[test]
     fn test_vertex_point() {

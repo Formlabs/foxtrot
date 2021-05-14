@@ -141,7 +141,7 @@ for name, vals in strongly_typed_enum_combination.items():
 enums = {
     "SurfaceSide": ["Positive", "Negative", "Both"],
     "Source": ["Made", "Bought", "NotKnown"],
-    "BSplineEnum1": ["Unspecified", "WeDontSupportOneElmentEnumsYet"],
+    "BSplineEnum1": ["Unspecified", "SurfOfLinearExtrusion"],
     "BSplineEnum2": ["PiecewiseBezierKnots", "Unspecified", "QuasiUniformKnots"],
     "TrimmedCurveEnum": ["Parameter", "WeDontSupportOneElmentEnumsYet"],
 }
@@ -260,6 +260,7 @@ data_entity = {
     "UncertaintyMeasureWithUnit": ["LengthMeasure", "id", "str", "str"],
     "ValueRepresentationItem": ["str", "CountMeasure"],
     "Vector": ["str", "id", "float"],
+    "VertexLoop": ["str", "id"],
     "VertexPoint": ["str", "id"]
 }
 
@@ -353,8 +354,8 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
 
 # gather test cases
 
-step_files_for_tests_as_str = open('/Users/Henry Heffan/Desktop/foxtrot/KondoMotherboard_RevB_full.step').read(
-) + "\n\n" + open('/Users/Henry Heffan/Desktop/foxtrot/HOLEWIZARD.step').read()
+step_files_for_tests_as_str = open('/Users/Henry Heffan/Desktop/foxtrot/foxtrot/local/KondoMotherboard_RevB_full.step').read(
+) + "\n\n" + open('/Users/Henry Heffan/Desktop/foxtrot/foxtrot/local/HOLEWIZARD.step').read()
 
 
 def escape(x): return re.sub(r"/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/", "", x).replace("\n", "\\n").replace("\"", "\\\"")
