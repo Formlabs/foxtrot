@@ -231,7 +231,7 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn circle(&self, u: DVec3, _v: DVec3, position: Id, radius: f64) -> Vec<DVec3> {
+    fn circle(&self, u: DVec3, v: DVec3, position: Id, radius: f64) -> Vec<DVec3> {
         let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
 
         // Build a rotation matrix to go from flat (XY) to 3D space
@@ -239,17 +239,21 @@ impl<'a> Triangulator<'a> {
 
         // Project from 3D into the circle's flat plane
         let u_flat = mat_i * DVec4::new(u.x, u.y, u.z, 1.0);
+        let v_flat = mat_i * DVec4::new(v.x, v.y, v.z, 1.0);
 
         // Pick the starting angle in the circle's flat plane
-        let start_ang = u_flat.y.atan2(u_flat.x);
-        let end_ang = start_ang + std::f64::consts::PI * 2.0;
+        let u_ang = u_flat.y.atan2(u_flat.x);
+        let mut v_ang = v_flat.y.atan2(v_flat.x);
+        while v_ang >= u_ang {
+            v_ang -= std::f64::consts::PI * 2.0;
+        }
 
         const N: usize = 64;
         let mut out = Vec::new();
         // Project onto the pnt + dir, and walk from start to end
         for i in 0..N {
             let frac = ((N - i - 1) as f64) / ((N - 1) as f64);
-            let ang = start_ang * (1.0 - frac) + end_ang * frac;
+            let ang = u_ang * (1.0 - frac) + v_ang * frac;
             let pos = DVec4::new(ang.cos() * radius, ang.sin() * radius, 0.0, 1.0);
 
             // Project back into 3D
