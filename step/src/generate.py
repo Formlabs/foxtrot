@@ -47,12 +47,16 @@ pf_mp = {
     "vec_usize": "step_vec(step_udecimal)"
 }
 
+AP214_AUTOGEN_FILENAME = 'ap214_autogen.rs'
+PARSE_AUTOGEN_FILENAME = 'parse_autogen.rs'
 
-o = open('parse_file.rs', 'w')
+otypes = open(AP214_AUTOGEN_FILENAME, 'w')
+o = open(PARSE_AUTOGEN_FILENAME, 'w')
 
 o.write("""
-use crate::basic_parse::{{paren_tup, step_opt, Id, Res, after_ws, after_wscomma, step_string, step_vec, step_id, step_identifier, step_float, step_bool, step_udecimal}};
-use nom::{{ branch::alt, bytes::complete::{{ tag }}, combinator::opt, multi::{{ many0 }}, sequence::{{ tuple, delimited, terminated }}, Err as NomErr, error::VerboseError }};
+use crate::parse_basics::{{paren_tup, step_opt, Id, Res, after_ws, after_wscomma, step_string, step_vec, step_id, step_identifier, step_float, step_bool, step_udecimal}};
+use crate::ap214_autogen::*;
+use nom::{{ branch::alt, bytes::complete::{{ tag }}, combinator::opt, sequence::{{ tuple, delimited, terminated }}, Err as NomErr, error::VerboseError }};
 """.format())
 
 
@@ -62,9 +66,11 @@ strongly_typed_floats = {
     "LengthMeasure", "CountMeasure", "PositiveLengthMeasure", "AreaMeasure", "VolumeMeasure", "ParameterValue",
 }
 
-STRONGLY_TYPED_FLOAT_TEMPLATE = """
+STRONGLY_TYPED_FLOAT_TEMPLATE_T = """
 #[derive(Debug, PartialEq)]
 pub struct {cname}(pub f64);
+"""
+STRONGLY_TYPED_FLOAT_TEMPLATE_O = """
 pub fn step_stf_{lname}(input: &str) -> Res<&str, {cname}> {{
     delimited(tuple((tag("{uname}"), after_ws(tag("(")))), after_ws(step_float), after_ws(tag(")")))(input)
     .map(|(next_input, res)| (next_input, {cname}(res)))
@@ -72,7 +78,8 @@ pub fn step_stf_{lname}(input: &str) -> Res<&str, {cname}> {{
 """
 
 for name in strongly_typed_floats:
-    o.write(STRONGLY_TYPED_FLOAT_TEMPLATE.format(cname=name, uname=camel_to_snake(name).upper(), lname=camel_to_snake(name).lower()))
+    otypes.write(STRONGLY_TYPED_FLOAT_TEMPLATE_T.format(cname=name))
+    o.write(STRONGLY_TYPED_FLOAT_TEMPLATE_O.format(cname=name, uname=camel_to_snake(name).upper(), lname=camel_to_snake(name).lower()))
     type_mp[name] = name
     pf_mp[name] = "step_stf_{lname}".format(lname = camel_to_snake(name).lower())
     
@@ -83,8 +90,10 @@ for name in strongly_typed_floats:
 strongly_typed_enum_combination = {
     "AreaMeasureOrVolumeMeasure" : [ "AreaMeasure", "VolumeMeasure" ]
 }
-STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE = """
+STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T = """
 pub enum {cname} {{ {enum_vals} }}
+"""
+STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_O = """
 pub fn step_c_{lname}(input: &str) -> Res<&str, {cname}> {{
     tuple(( alt(( {tag_vals} )), delimited( after_ws(tag("(")), after_ws(step_float), after_ws(tag(")")) ) )) (input)
     .map(|(next_input, res)| (next_input, {{
@@ -98,7 +107,11 @@ pub fn step_c_{lname}(input: &str) -> Res<&str, {cname}> {{
 """
 
 for name, vals in strongly_typed_enum_combination.items():
-    o.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE.format(
+    o.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T.format(
+        cname=name,
+        enum_vals = ", ".join(["{cval}({cval})".format(cval=val) for val in vals])
+    ))
+    o.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_O.format(
         cname=name,
         lname = camel_to_snake(name).lower(),
         enum_vals = ", ".join(["{cval}({cval})".format(cval=val) for val in vals]),
@@ -119,18 +132,31 @@ enums = {
     "BSplineEnum2": ["PiecewiseBezierKnots", "Unspecified", "QuasiUniformKnots"],
     "TrimmedCurveEnum": ["Parameter", "WeDontSupportOneElmentEnumsYet"],
 }
-ENUM_TEMPLATE = """
+ENUM_TEMPLATE_T = """
 pub enum {cname} {{ {enum_vals} }}
+"""
+ENUM_TEMPLATE_O = """
 pub fn step_enum_{lname}(input: &str) -> Res<&str, {cname}> {{
     delimited(tag("."), alt(({tag_options})), tag("."))(input)
     .map(|(next_input, res)| (next_input, match res {{
         {remaps},
         _ => panic!("unepected string")
     }}))
-}}\n"""
+}}
+"""
 
 for name, vals in enums.items():
-    o.write(ENUM_TEMPLATE.format(
+    o.write(ENUM_TEMPLATE_T.format(
+        cname = name,
+        enum_vals = ", ".join(vals),
+        lname = camel_to_snake(name).lower(),
+        tag_options = ", ".join([
+            "tag(\"{uval}\")".format(uval=camel_to_snake(val).upper()) for val in vals
+        ]),
+        remaps = ", ".join([
+            "\"{uval}\" => {cname}::{cval}".format(uval = camel_to_snake(val).upper(), cname=name, cval=val) for val in vals
+        ])))
+    o.write(ENUM_TEMPLATE_O.format(
         cname = name,
         enum_vals = ", ".join(vals),
         lname = camel_to_snake(name).lower(),
@@ -230,6 +256,7 @@ data_entity = sorted(list(data_entity.items()))
 
 o.write("""
 pub enum DataEntity {{
+    Null,
     ComplexBucketType,
 {types}
 }}
@@ -279,24 +306,8 @@ pub fn data_entity_complex_bucket_type(input: &str) -> Res<&str, DataEntity> {
 }
 """)
 
-# o.write("""
-# fn data_entity(input: &str) -> Res<&str, DataEntity> {{
-#     alt((
-# {outer_options}
-#     ))(input)
-# }}
-# """.format(outer_options=",\n".join([
-#         "        alt(( {inner_options} ))".format(inner_options=", ".join(chunk))
-#         for chunk in chunks(
-#             ["data_entity_complex_bucket_type"] + 
-#             ["data_entity_{lname}".format(lname=camel_to_snake(name).lower()) for name, _ in data_entity],
-#             14
-#         )
-#     ])
-# ))
-
 o.write("""
-fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
+pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
     let res = tuple((
         after_ws(step_id), after_ws(tag("=")), after_ws(opt(step_identifier))
     ))(input);
@@ -318,36 +329,31 @@ fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
     ])
 ))
 
-o.write("""
-pub fn data_block(input: &str) -> Res<&str, Vec<(Id, DataEntity)>> {
-    many0(
-        after_ws(data_line)
-    )(input)
-}
-""")
 
-
-# generate test cases
-
-escape = lambda x: x.replace("\n", "\\n").replace("\"", "\\\"")
+# gather test cases
 
 step_files_for_tests_as_str = open('/Users/Henry Heffan/Desktop/foxtrot/KondoMotherboard_RevB_full.step').read() + "\n\n" + open('/Users/Henry Heffan/Desktop/foxtrot/HOLEWIZARD.step').read()
 
+escape = lambda x: x.replace("\n", "\\n").replace("\"", "\\\"")
 
 test_cases_for_entity = {}
 for name, _ in data_entity:
     m = re.findall(" = " + camel_to_snake(name).upper() + "\\([^;]*;", step_files_for_tests_as_str)
     seed = 3242562
     random.Random(seed).shuffle(m)  # make it deterministic so reruning doesnt confuse git
-    test_cases_for_entity[name] = m
+    test_cases_for_entity[name] = [escape('(' + test.split('(', 1)[1]) for test in m]
 
 m = re.findall(";\n#\\d* =\\s*[^( ][^;]*;", step_files_for_tests_as_str)
 seed = 3242562
 random.Random(seed).shuffle(m)  # make it deterministic so reruning doesnt confuse git
-line_test_cases = m
+line_test_cases = [escape(test[1:].strip()) for test in m]
 
-max_num_individual_tests = 25
-max_line_tests_cases = 500
+
+# generate tests in rust
+
+
+max_num_individual_tests = 10
+max_line_tests_cases = 60
 
 o.write(
 """
@@ -365,7 +371,7 @@ mod tests {{
         "    #[test]\n    fn test_{name}() {{\n{tests}\n    }}".format(
             name = camel_to_snake(name).lower(),
             tests = "\n".join(["        assert!(data_entity_{lname}(\"{text}\").is_ok());".format(
-                lname = camel_to_snake(name).lower(), text = escape('(' + text.split('(', 1)[1])) for text in test_cases_for_entity[name][:min(len(m), max_num_individual_tests)]
+                lname = camel_to_snake(name).lower(), text=test) for test in test_cases_for_entity[name][:min(len(m), max_num_individual_tests)]
             ])
         )
         for name, _ in data_entity
@@ -373,27 +379,13 @@ mod tests {{
     line_test="    #[test]\n    fn test_data_line() {{\n{tests}\n    }}".format(
         name = camel_to_snake(name).lower(),
         tests = "\n".join(["        assert!(data_line(\"{text}\").is_ok());".format(
-            lname = camel_to_snake(name).lower(), text = escape(text[1:].strip())) for text in line_test_cases[:min(len(m), max_line_tests_cases)]
+            lname = camel_to_snake(name).lower(), text=test) for test in line_test_cases[:min(len(m), max_line_tests_cases)]
         ])
     )
 ))
 
-# m = re.findall(";\n#\\d* = [^;]*;", step_files_for_tests_as_str)
-# seed = 3242562
-# random.Random(seed).shuffle(m)  # make it deterministic so reruning doesnt confuse git
-# max_num_tests = 200
-# tests = m[:min(len(m), max_num_tests)]
-# o.write("    #[test]\n    fn test_data_block() {{\n{tests}\n    }}\n\n".format(
-#     name = camel_to_snake(name).lower(),
-#     tests = "\n".join([
-#         "        let block = data_line(\"{text}\"));\n        assert!(block.is_ok());\n        assert!(block?.1.len() == 20);".format(
-#             lname = camel_to_snake(name).lower(),
-#             text = "\\n".join(escape(t) for t in test)
-#             )
-#         for test in chunks(tests, 20)
-#     ])
-# ))
-
-
 o.close()
+
+import subprocess
+subprocess.run(["rustfmt", PARSE_AUTOGEN_FILENAME, AP214_AUTOGEN_FILENAME])  # doesn't capture output
 

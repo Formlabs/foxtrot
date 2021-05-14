@@ -1,7 +1,7 @@
 
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take_till, take_until},
+    bytes::complete::{tag, take_till},
     character::complete::{one_of, multispace0, multispace1, alpha1, alphanumeric1},
     combinator::{{opt, recognize}},
     error::{context, VerboseError},
@@ -13,7 +13,7 @@ use nom::{
 use std::str;
 
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Hash, Ord)]
 pub struct Id(pub usize);
 
 
@@ -95,7 +95,8 @@ pub fn after_ws<'a, F: 'a, O>(inner: F) -> impl FnMut(&'a str) -> Res<&'a str, O
   where
   F: FnMut(&'a str) -> Res<&'a str, O>,
 {
-    preceded(separated_list0(tuple((tag("/*"), take_until("*/"), tag("*/"))), multispace0), inner)
+    preceded(multispace0, inner)
+    // preceded(separated_list0(tuple((tag("/*"), take_until("*/"), tag("*/"))), multispace0), inner)
 }
 pub fn after_expect_ws<'a, F: 'a, O>(inner: F) -> impl FnMut(&'a str) -> Res<&'a str, O>
   where
