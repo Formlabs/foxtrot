@@ -182,11 +182,24 @@ impl Model {
 
     fn generate_matrix(&self) -> Mat4 {
         let i = Mat4::identity();
-        glm::scale(&i, &Vec3::new(1.0, 1.0, 0.01)) *
+        // The transforms below are applied bottom-to-top when thinking about
+        // the model, i.e. it's translated, then scaled, then rotated, etc.
+
+        // The Z clipping range is 0-1, so push forward
+        glm::translate(&i, &Vec3::new(0.0, 0.0, 0.5)) *
+
+        // Scale to compensate for aspect ratio and reduce Z scale to improve
+        // clipping
+        glm::scale(&i, &Vec3::new(1.0, self.aspect, 0.1)) *
+
+        // Rotation!
         glm::rotate_x(&i, self.yaw) *
         glm::rotate_y(&i, self.pitch) *
-        glm::scale(&i, &Vec3::new(1.0, self.aspect, 1.0)) *
+
+        // Scale to compensate for model size
         glm::scale(&i, &Vec3::new(self.scale, self.scale, self.scale)) *
+
+        // Recenter model
         glm::translate(&i, &-self.center)
     }
 

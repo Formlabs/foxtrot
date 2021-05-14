@@ -69,7 +69,7 @@ impl Backdrop {
                     wgpu::RenderPassDepthStencilAttachment {
                         view: &depth_view,
                         depth_ops: Some(wgpu::Operations {
-                            load: wgpu::LoadOp::Clear(-1.0),
+                            load: wgpu::LoadOp::Clear(0.0),
                             store: true,
                         }),
                         stencil_ops: None,
