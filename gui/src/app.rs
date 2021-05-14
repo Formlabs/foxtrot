@@ -1,6 +1,6 @@
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize},
-    event::{ElementState, ModifiersState, MouseButton, WindowEvent, VirtualKeyCode},
+    event::{ElementState, ModifiersState, MouseButton, WindowEvent, VirtualKeyCode, MouseScrollDelta},
 };
 
 use crate::model::Model;
@@ -18,7 +18,8 @@ pub struct App {
 
     modifiers: ModifiersState,
     last_cursor: Option<PhysicalPosition<f64>>,
-    cursor_down: bool,
+    left_mouse_down: bool,
+    right_mouse_down: bool,
 }
 
 pub enum Reply {
@@ -48,7 +49,8 @@ impl App {
 
             modifiers: ModifiersState::empty(),
             last_cursor: None,
-            cursor_down: false,
+            left_mouse_down: false,
+            right_mouse_down: false,
         };
         out.model.set_aspect(size.width as f32 / size.height as f32);
         out
@@ -74,19 +76,31 @@ impl App {
             },
             WindowEvent::MouseInput { button, state, .. } => {
                 if button == MouseButton::Left {
-                    self.cursor_down = state == ElementState::Pressed;
+                    self.left_mouse_down = state == ElementState::Pressed;
+                }
+                if button == MouseButton::Right {
+                    self.right_mouse_down = state == ElementState::Pressed;
                 }
                 Reply::Continue
             }
             WindowEvent::CursorMoved { position, .. } => {
                 if let Some(prev) = self.last_cursor {
-                    if self.cursor_down {
+                    if self.left_mouse_down {
                         self.drag(position.x - prev.x, position.y - prev.y);
+                    }
+                    if self.right_mouse_down {
+                        self.pan(position.x - prev.x, position.y - prev.y);
                     }
                 }
                 self.last_cursor = Some(position);
                 Reply::Redraw
             },
+            WindowEvent::MouseWheel { delta, ..} => {
+                if let MouseScrollDelta::LineDelta(_,verti)=delta{
+                    self.scale(1.0 + verti / 10.0);
+                }
+                Reply::Redraw
+            }
             _ => Reply::Continue,
         }
     }
@@ -152,5 +166,13 @@ impl App {
 
     fn drag(&mut self, dx: f64, dy: f64) {
         self.model.spin(dx as f32 / 100.0, dy as f32 / 100.0);
+    }
+
+    fn pan(&mut self, dx:f64, dy:f64){
+        self.model.translate(dx as f32 / -10000.0, dy as f32 / 10000.0 , 0 as f32);
+    }
+
+    fn scale(&mut self, value: f32){
+        self.model.scale(value);
     }
 }
