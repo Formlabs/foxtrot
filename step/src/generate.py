@@ -264,10 +264,6 @@ data_entity = {
     "VertexPoint": ["str", "id"]
 }
 
-abstract_entity = {
-
-}
-
 data_entity = sorted(list(data_entity.items()))
 
 
