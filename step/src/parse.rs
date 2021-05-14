@@ -1,11 +1,10 @@
+use std::cmp::max;
 use std::fs::File;
 use std::io::Read;
 use std::str;
-use std::cmp::max;
 
 use crate::parse_autogen::{data_line, DataEntity};
 use memchr::{memchr, memchr2, memchr_iter};
-
 
 /// Flattens a STEP file, removing comments and whitespace
 pub fn strip_flatten(data: &[u8]) -> Vec<u8> {
@@ -13,11 +12,13 @@ pub fn strip_flatten(data: &[u8]) -> Vec<u8> {
     let mut i = 0;
     while i < data.len() {
         match data[i] {
-            b'/' => if i + 1 < data.len() && data[i + 1] == b'*' {
-                for j in memchr_iter(b'/', &data[i + 2..]) {
-                    if data[i + j + 1] == b'*' {
-                        i += j + 2;
-                        break;
+            b'/' => {
+                if i + 1 < data.len() && data[i + 1] == b'*' {
+                    for j in memchr_iter(b'/', &data[i + 2..]) {
+                        if data[i + j + 1] == b'*' {
+                            i += j + 2;
+                            break;
+                        }
                     }
                 }
             }
@@ -43,19 +44,18 @@ pub fn into_blocks(data: &[u8]) -> Vec<&[u8]> {
 
                 i += next + 1; // Skip the semicolon
                 start = i;
-            },
+            }
             _ => unreachable!(),
         }
     }
     blocks
 }
 
-
 pub fn parse_file_as_string(file: &Vec<u8>) -> Vec<DataEntity> {
     let stripped = strip_flatten(&file);
     let blocks = into_blocks(&stripped);
 
-    let mut entities : Vec<DataEntity> = Vec::new();
+    let mut entities: Vec<DataEntity> = Vec::new();
     let mut max_idx = 0;
     let mut started = false;
     for block in blocks {
@@ -67,16 +67,16 @@ pub fn parse_file_as_string(file: &Vec<u8>) -> Vec<DataEntity> {
             continue;
         }
         if st == "ENDSEC;" {
-            break
+            break;
         }
         let (_rest_block, (id, entity)) = data_line(st).expect("ok parse");
         max_idx = max(max_idx, id.0);
         if id.0 >= entities.len() {
-            entities.resize_with(max_idx * 3 / 2 + 1, || { DataEntity::Null });
+            entities.resize_with(max_idx * 3 / 2 + 1, || DataEntity::Null);
         }
         entities[id.0] = entity;
     }
-    entities.resize_with(max_idx, || { DataEntity::Null });
+    entities.resize_with(max_idx, || DataEntity::Null);
     entities
 }
 
@@ -86,8 +86,6 @@ pub fn parse_file_at_path(filename: &str) -> Vec<DataEntity> {
     f.read_to_end(&mut buffer).expect("read ok");
     parse_file_as_string(&buffer)
 }
-
-
 
 #[cfg(test)]
 mod tests {

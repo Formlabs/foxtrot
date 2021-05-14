@@ -1,10 +1,14 @@
 
+import subprocess
 import re
 import random
 
+
 def camel_to_snake(s):
-    if s == "Axis2Placement3d": return "AXIS2_PLACEMENT_3D"
+    if s == "Axis2Placement3d":
+        return "AXIS2_PLACEMENT_3D"
     return re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
+
 
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst. Try not to yeild chunks of size 1"""
@@ -19,26 +23,26 @@ def chunks(lst, n):
 
 type_mp = {
     "pair_id_ParameterValue": "(Id, ParameterValue)",
-    "str" : "String",
-    "id" : "Id",
-    "float" : "f64",
-    "bool" : "bool",
-    "usize" : "usize",
+    "str": "String",
+    "id": "Id",
+    "float": "f64",
+    "bool": "bool",
+    "usize": "usize",
     "opt_id": "Option<Id>",
     "opt_str": "Option<String>",
     "vec_id": "Vec<Id>",
     "vec_vec_id": "Vec<Vec<Id>>",
     "vec_float": "Vec<f64>",
-    "vec_usize" : "Vec<usize>"
+    "vec_usize": "Vec<usize>"
 }
 pf_mp = {
     "pair_id_ParameterValue": 'delimited(tag("("), tuple((after_ws(step_id), after_wscomma(step_stf_parameter_value))), after_ws(tag(")")))',
-    "*" : "tag(\"*\")",
-    "id" : "step_id",
-    "str" : "step_string",
-    "float" : "step_float",
-    "bool" : "step_bool",
-    "usize" : "step_udecimal",
+    "*": "tag(\"*\")",
+    "id": "step_id",
+    "str": "step_string",
+    "float": "step_float",
+    "bool": "step_bool",
+    "usize": "step_udecimal",
     "opt_id": "step_opt(step_id)",
     "opt_str": "step_opt(step_string)",
     "vec_id": "step_vec(step_id)",
@@ -79,16 +83,16 @@ pub fn step_stf_{lname}(input: &str) -> Res<&str, {cname}> {{
 
 for name in strongly_typed_floats:
     otypes.write(STRONGLY_TYPED_FLOAT_TEMPLATE_T.format(cname=name))
-    o.write(STRONGLY_TYPED_FLOAT_TEMPLATE_O.format(cname=name, uname=camel_to_snake(name).upper(), lname=camel_to_snake(name).lower()))
+    o.write(STRONGLY_TYPED_FLOAT_TEMPLATE_O.format(cname=name, uname=camel_to_snake(
+        name).upper(), lname=camel_to_snake(name).lower()))
     type_mp[name] = name
-    pf_mp[name] = "step_stf_{lname}".format(lname = camel_to_snake(name).lower())
-    
+    pf_mp[name] = "step_stf_{lname}".format(lname=camel_to_snake(name).lower())
 
 
 # add strongly typed floats combinations as enums
 
 strongly_typed_enum_combination = {
-    "AreaMeasureOrVolumeMeasure" : [ "AreaMeasure", "VolumeMeasure" ]
+    "AreaMeasureOrVolumeMeasure": ["AreaMeasure", "VolumeMeasure"]
 }
 STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T = """
 pub enum {cname} {{ {enum_vals} }}
@@ -109,18 +113,21 @@ pub fn step_c_{lname}(input: &str) -> Res<&str, {cname}> {{
 for name, vals in strongly_typed_enum_combination.items():
     o.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T.format(
         cname=name,
-        enum_vals = ", ".join(["{cval}({cval})".format(cval=val) for val in vals])
+        enum_vals=", ".join(["{cval}({cval})".format(cval=val)
+                            for val in vals])
     ))
     o.write(STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_O.format(
         cname=name,
-        lname = camel_to_snake(name).lower(),
-        enum_vals = ", ".join(["{cval}({cval})".format(cval=val) for val in vals]),
-        tag_vals = ", ".join(["tag(\"{uval}\")".format(uval=camel_to_snake(val).upper()) for val in vals]),
-        match_options = ",\n".join(["            \"{uval}\" => {cname}::{cval}({cval}(flt))".format(cname=name, cval=val, uval=camel_to_snake(val).upper()) for val in vals])
+        lname=camel_to_snake(name).lower(),
+        enum_vals=", ".join(["{cval}({cval})".format(cval=val)
+                            for val in vals]),
+        tag_vals=", ".join(["tag(\"{uval}\")".format(
+            uval=camel_to_snake(val).upper()) for val in vals]),
+        match_options=",\n".join(["            \"{uval}\" => {cname}::{cval}({cval}(flt))".format(
+            cname=name, cval=val, uval=camel_to_snake(val).upper()) for val in vals])
     ))
     type_mp[name] = name
-    pf_mp[name] = "step_c_{lname}".format(lname = camel_to_snake(name).lower())
-    
+    pf_mp[name] = "step_c_{lname}".format(lname=camel_to_snake(name).lower())
 
 
 # add enums
@@ -147,28 +154,28 @@ pub fn step_enum_{lname}(input: &str) -> Res<&str, {cname}> {{
 
 for name, vals in enums.items():
     o.write(ENUM_TEMPLATE_T.format(
-        cname = name,
-        enum_vals = ", ".join(vals),
-        lname = camel_to_snake(name).lower(),
-        tag_options = ", ".join([
+        cname=name,
+        enum_vals=", ".join(vals),
+        lname=camel_to_snake(name).lower(),
+        tag_options=", ".join([
             "tag(\"{uval}\")".format(uval=camel_to_snake(val).upper()) for val in vals
         ]),
-        remaps = ", ".join([
-            "\"{uval}\" => {cname}::{cval}".format(uval = camel_to_snake(val).upper(), cname=name, cval=val) for val in vals
+        remaps=", ".join([
+            "\"{uval}\" => {cname}::{cval}".format(uval=camel_to_snake(val).upper(), cname=name, cval=val) for val in vals
         ])))
     o.write(ENUM_TEMPLATE_O.format(
-        cname = name,
-        enum_vals = ", ".join(vals),
-        lname = camel_to_snake(name).lower(),
-        tag_options = ", ".join([
+        cname=name,
+        enum_vals=", ".join(vals),
+        lname=camel_to_snake(name).lower(),
+        tag_options=", ".join([
             "tag(\"{uval}\")".format(uval=camel_to_snake(val).upper()) for val in vals
         ]),
-        remaps = ", ".join([
-            "\"{uval}\" => {cname}::{cval}".format(uval = camel_to_snake(val).upper(), cname=name, cval=val) for val in vals
+        remaps=", ".join([
+            "\"{uval}\" => {cname}::{cval}".format(uval=camel_to_snake(val).upper(), cname=name, cval=val) for val in vals
         ])))
     type_mp[name] = name
-    pf_mp[name] = "step_enum_{lname}".format(lname = camel_to_snake(name).lower())
-    
+    pf_mp[name] = "step_enum_{lname}".format(
+        lname=camel_to_snake(name).lower())
 
 
 # generate DataEntity parsers
@@ -290,11 +297,13 @@ fn data_entity_{lname}(input: &str) -> Res<&str, DataEntity> {{
 
 for name, tps in data_entity:
     o.write(DATA_ENTITY_FUNCS_TEMPLATE.format(
-        lname=camel_to_snake(name).lower(), uname = camel_to_snake(name).upper(), cname = name,
-        unpack=("({})" if sum(t != "*" for t in tps) > 1 else "{}").format(", ".join("x" + str(i) if t != "*" else "_" for i, t in enumerate(tps))),
+        lname=camel_to_snake(name).lower(), uname=camel_to_snake(name).upper(), cname=name,
+        unpack=("({})" if sum(t != "*" for t in tps) > 1 else "{}").format(
+            ", ".join("x" + str(i) if t != "*" else "_" for i, t in enumerate(tps))),
         pack=", ".join("x" + str(i) for i, t in enumerate(tps) if t != "*"),
         parser="after_ws({})".format(pf_mp[tps[0]]) if len(tps) == 1 else
-                "tuple(({}))".format(", ".join(["after_ws({})".format(pf_mp[tps[0]])] + ["after_wscomma({})".format(pf_mp[t]) for t in tps[1:]]))
+        "tuple(({}))".format(", ".join(["after_ws({})".format(
+            pf_mp[tps[0]])] + ["after_wscomma({})".format(pf_mp[t]) for t in tps[1:]]))
     ))
 
 
@@ -332,20 +341,27 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
 
 # gather test cases
 
-step_files_for_tests_as_str = open('/Users/Henry Heffan/Desktop/foxtrot/KondoMotherboard_RevB_full.step').read() + "\n\n" + open('/Users/Henry Heffan/Desktop/foxtrot/HOLEWIZARD.step').read()
+step_files_for_tests_as_str = open('/Users/Henry Heffan/Desktop/foxtrot/KondoMotherboard_RevB_full.step').read(
+) + "\n\n" + open('/Users/Henry Heffan/Desktop/foxtrot/HOLEWIZARD.step').read()
 
-escape = lambda x: x.replace("\n", "\\n").replace("\"", "\\\"")
+
+def escape(x): return x.replace("\n", "\\n").replace("\"", "\\\"")
+
 
 test_cases_for_entity = {}
 for name, _ in data_entity:
-    m = re.findall(" = " + camel_to_snake(name).upper() + "\\([^;]*;", step_files_for_tests_as_str)
+    m = re.findall(" = " + camel_to_snake(name).upper() +
+                   "\\([^;]*;", step_files_for_tests_as_str)
     seed = 3242562
-    random.Random(seed).shuffle(m)  # make it deterministic so reruning doesnt confuse git
-    test_cases_for_entity[name] = [escape('(' + test.split('(', 1)[1]) for test in m]
+    # make it deterministic so reruning doesnt confuse git
+    random.Random(seed).shuffle(m)
+    test_cases_for_entity[name] = [escape(
+        '(' + test.split('(', 1)[1]) for test in m]
 
 m = re.findall(";\n#\\d* =\\s*[^( ][^;]*;", step_files_for_tests_as_str)
 seed = 3242562
-random.Random(seed).shuffle(m)  # make it deterministic so reruning doesnt confuse git
+# make it deterministic so reruning doesnt confuse git
+random.Random(seed).shuffle(m)
 line_test_cases = [escape(test[1:].strip()) for test in m]
 
 
@@ -356,7 +372,7 @@ max_num_individual_tests = 10
 max_line_tests_cases = 60
 
 o.write(
-"""
+    """
 #[cfg(test)]
 mod tests {{
     use super::*;
@@ -367,25 +383,24 @@ mod tests {{
 
 }}
 """.format(
-    individual_tests="\n\n".join([
-        "    #[test]\n    fn test_{name}() {{\n{tests}\n    }}".format(
-            name = camel_to_snake(name).lower(),
-            tests = "\n".join(["        assert!(data_entity_{lname}(\"{text}\").is_ok());".format(
-                lname = camel_to_snake(name).lower(), text=test) for test in test_cases_for_entity[name][:min(len(m), max_num_individual_tests)]
+        individual_tests="\n\n".join([
+            "    #[test]\n    fn test_{name}() {{\n{tests}\n    }}".format(
+                name=camel_to_snake(name).lower(),
+                tests="\n".join(["        assert!(data_entity_{lname}(\"{text}\").is_ok());".format(
+                    lname=camel_to_snake(name).lower(), text=test) for test in test_cases_for_entity[name][:min(len(m), max_num_individual_tests)]
+                ])
+            )
+            for name, _ in data_entity
+        ]),
+        line_test="    #[test]\n    fn test_data_line() {{\n{tests}\n    }}".format(
+            name=camel_to_snake(name).lower(),
+            tests="\n".join(["        assert!(data_line(\"{text}\").is_ok());".format(
+                lname=camel_to_snake(name).lower(), text=test) for test in line_test_cases[:min(len(m), max_line_tests_cases)]
             ])
         )
-        for name, _ in data_entity
-    ]),
-    line_test="    #[test]\n    fn test_data_line() {{\n{tests}\n    }}".format(
-        name = camel_to_snake(name).lower(),
-        tests = "\n".join(["        assert!(data_line(\"{text}\").is_ok());".format(
-            lname = camel_to_snake(name).lower(), text=test) for test in line_test_cases[:min(len(m), max_line_tests_cases)]
-        ])
-    )
-))
+    ))
 
 o.close()
 
-import subprocess
-subprocess.run(["rustfmt", PARSE_AUTOGEN_FILENAME, AP214_AUTOGEN_FILENAME])  # doesn't capture output
-
+# doesn't capture output
+subprocess.run(["rustfmt", PARSE_AUTOGEN_FILENAME, AP214_AUTOGEN_FILENAME])
