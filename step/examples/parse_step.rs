@@ -1,6 +1,6 @@
 use std::time::SystemTime;
 use clap::{Arg, App};
-use step::parse::{striped_string_from_path, parse_entities_from_striped_file};
+use step::parse::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("parse_step")
@@ -14,11 +14,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let start = SystemTime::now();
 
-    let stripped_str = striped_string_from_path(filename);
+    let stripped_str = striped_string_from_path(input);
     let entities = parse_entities_from_striped_file(&stripped_str);
-
-    let entities = parse_file_at_path(input);
-    println!("{}", entities.0.len());
+    println!("Got {} entities", entities.0.len());
 
     let end = SystemTime::now();
     let since_the_epoch = end.duration_since(start).expect("Time went backwards");
