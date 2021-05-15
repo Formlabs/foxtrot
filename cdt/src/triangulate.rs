@@ -163,7 +163,7 @@ impl Triangulation {
                 .for_each(|p| p.1 = distance2(center, points[p.0]));
 
             // Find the three closest points
-            let arr = min3(&scratch);
+            let arr = min3(&scratch, &points);
 
             // Pick out the triangle points, ensuring that they're clockwise
             pa = arr[0];
@@ -194,7 +194,20 @@ impl Triangulation {
             if k.0 == pa || k.0 == pb || k.0 == pc {
                 std::cmp::Ordering::Less
             } else {
-                k.1.partial_cmp(&r.1).unwrap()
+                // Compare by radius first, then break ties with pseudoangle
+                // This should be reproducible, i.e. two identical points should
+                // end up next to each other in the list, although with
+                // floating-point values, you _never know_.
+                match k.1.partial_cmp(&r.1).unwrap() {
+                    std::cmp::Ordering::Equal => {
+                        let pk = points[k.0];
+                        let pr = points[r.0];
+                        let ak = pseudo_angle((pk.0 - center.0, pk.1 - center.1));
+                        let ar = pseudo_angle((pr.0 - center.0, pr.1 - center.1));
+                        ak.partial_cmp(&ar).unwrap()
+                    },
+                    e => e,
+                }
             });
 
         // Apply sorting to initial three points, ignoring distance
@@ -202,17 +215,6 @@ impl Triangulation {
         scratch[0].0 = pa;
         scratch[1].0 = pb;
         scratch[2].0 = pc;
-
-        // Check that sorted points are unique
-        for i in 1..scratch.len() {
-            let pa = points[scratch[i - 1].0];
-            let pb = points[scratch[i].0];
-            if (pa.0 - pb.0).abs() < f64::EPSILON &&
-               (pa.1 - pb.1).abs() < f64::EPSILON
-            {
-                return Err(Error::DuplicatePoint);
-            }
-        }
 
         // These are the points used in the Triangulation struct
         let mut sorted_points = PointVec::with_capacity(points.len());
@@ -223,11 +225,33 @@ impl Triangulation {
         // PointIndex in sorted array -> usize in original array
         let mut map_reverse = PointVec::with_capacity(points.len());
 
-        // Then, copy the rest of the sorted points into sorted_points and
-        // store the full maps.
-        for p in scratch.into_iter() {
-            sorted_points.push(points[p.0]);
-            map_forward[p.0] = map_reverse.push(p.0);
+        for i in 0..scratch.len() {
+            // The first three points are guaranteed to be unique by the
+            // min3 selection function, so they have no dupe
+            let mut dupe = None;
+            let p = scratch[i];
+            if i >= 3 {
+                // Check each point against its nearest neighbor and the
+                // three original points, since they could be duplicates
+                // and may not be adjacent
+                for j in &[i - 1, 0, 1, 2] {
+                    let pa = points[scratch[*j].0];
+                    let pb = points[p.0];
+                    if (pa.0 - pb.0).abs() < f64::EPSILON &&
+                       (pa.1 - pb.1).abs() < f64::EPSILON
+                    {
+                        dupe = Some(*j);
+                        break;
+                    }
+                }
+            };
+            match dupe {
+                None => {
+                    sorted_points.push(points[p.0]);
+                    map_forward[p.0] = map_reverse.push(p.0);
+                },
+                Some(d) => map_forward[p.0] = PointIndex::new(d),
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -1163,9 +1187,9 @@ impl Triangulation {
 // then in order (so that out[0] is closest)
 //
 // This is faster than sorting an entire array each time.
-fn min3(buf: &[(usize, f64)]) -> [usize; 3] {
+fn min3(buf: &[(usize, f64)], points: &[(f64, f64)]) -> [usize; 3] {
     let mut array = [(0, std::f64::INFINITY); 3];
-    for &(p, score) in buf.iter() {
+    'outer: for &(p, score) in buf.iter() {
         if score >= array[2].1 {
             continue;
         }
@@ -1173,6 +1197,28 @@ fn min3(buf: &[(usize, f64)]) -> [usize; 3] {
             // If the new score is bumping this item out of the array,
             // then shift all later items over by one and return.
             if score <= array[i].1 {
+                // Sanity-check to make sure that this point isn't a duplicate
+                // or making the initial triangle colinear
+                if array[0].1.is_infinite() {
+                    // Nothing to do here
+                } else if array[1].1.is_infinite() {
+                    // If there is one point picked already, then don't
+                    // pick it again, since that will be doomed to be colinear.
+                    if points[array[0].0] == points[p] {
+                        continue 'outer;
+                    }
+                } else {
+                    // If two points have been picked, then don't choose a
+                    // third point which is colinear with them.
+                    assert!(!array[0].1.is_infinite());
+                    assert!(!array[1].1.is_infinite());
+                    let p0 = points[array[0].0];
+                    let p1 = points[array[1].0];
+                    if orient2d(p0, p1, points[p]) == 0.0 {
+                        continue 'outer;
+                    }
+                }
+
                 for j in (i..2).rev() {
                     array[j + 1] = array[j];
                 }
@@ -1186,6 +1232,7 @@ fn min3(buf: &[(usize, f64)]) -> [usize; 3] {
     for (i, a) in array.iter().enumerate() {
         out[i] = a.0;
     }
+    // TODO: return a reasonable error if all inputs are colinear or duplicates
     out
 }
 
@@ -1202,12 +1249,22 @@ mod tests {
 
     #[test]
     fn duplicate_point() {
-        let pts = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 0.0)];
-        let t = Triangulation::new(&pts[0..]);
-        assert!(t.is_err());
-        if let Err(err) = t {
-            assert!(err == Error::DuplicatePoint);
-        }
+        let points = vec![
+            (0.0, 0.0),
+            (1.0, 0.0),
+            (1.1, 1.1),
+            (1.1, 1.1),
+            (0.0, 1.0),
+        ];
+        let edges = vec![
+            (0, 1),
+            (1, 2),
+            (3, 4),
+            (4, 0),
+        ];
+        let t = Triangulation::build_with_edges(&points, &edges);
+        assert!(!t.is_err());
+        assert!(t.unwrap().inside((0.5, 0.5)));
     }
 
     #[test]
@@ -1226,6 +1283,61 @@ mod tests {
             .expect("Could not build triangulation");
         assert!(t.inside((0.0, 0.0)));
         assert!(!t.inside((1.01, 0.0)));
+    }
+
+    #[test]
+    fn dupe_start() {
+        let points = vec![
+            // Duplicate nearest points
+            (0.5, 0.5),
+            (0.5, 0.5),
+            (0.5, 0.6),
+            (0.6, 0.5),
+            (0.5, 0.4),
+
+            // Force the center to be at 0.5, 0.5
+            (0.0, 0.0),
+            (1.0, 0.0),
+            (1.0, 1.0),
+            (0.0, 1.0),
+        ];
+        let edges = vec![
+            (1, 2),
+            (2, 3),
+            (3, 4),
+            (4, 0),
+        ];
+        let t = Triangulation::build_with_edges(&points, &edges)
+            .expect("Could not build triangulation");
+        assert!(t.inside((0.55, 0.5)));
+        assert!(!t.inside((0.45, 0.5)));
+    }
+
+    #[test]
+    fn colinear_start() {
+        let points = vec![
+            // Force the center to be at 0.5, 0.5
+            (0.0, 0.0),
+            (1.0, 0.0),
+            (1.0, 1.0),
+            (0.0, 1.0),
+
+            // Threee colinear points
+            (0.5, 0.4),
+            (0.5, 0.5),
+            (0.5, 0.6),
+            (0.6, 0.5),
+        ];
+        let edges = vec![
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 4),
+        ];
+        let t = Triangulation::build_with_edges(&points, &edges)
+            .expect("Could not build triangulation");
+        assert!(t.inside((0.55, 0.5)));
+        assert!(!t.inside((0.45, 0.5)));
     }
 
     #[test]

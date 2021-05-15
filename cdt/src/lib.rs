@@ -83,10 +83,6 @@ pub enum Error {
     #[error("edge must index into point array and have different src and dst")]
     InvalidEdge,
 
-    /// Returned when points in the input array are exact duplicates
-    #[error("points may not include duplicates")]
-    DuplicatePoint,
-
     /// Returned when the last point in a contour does not match the start
     #[error("contours must be closed")]
     OpenContour,
