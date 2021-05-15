@@ -1,4 +1,5 @@
-
+import sys
+import os
 import subprocess
 import re
 import random
@@ -86,7 +87,7 @@ pub fn step_stf_{lname}(input: &str) -> Res<&str, {cname}> {{
 }}
 """
 
-for name in strongly_typed_floats:
+for name in sorted(strongly_typed_floats):
     o_ap214_autogen.write(STRONGLY_TYPED_FLOAT_TEMPLATE_T.format(cname=name))
     o_parse_autogen.write(STRONGLY_TYPED_FLOAT_TEMPLATE_O.format(cname=name, uname=camel_to_snake(
         name).upper(), lname=camel_to_snake(name).lower()))
@@ -392,9 +393,13 @@ impl DataEntity<'_> {{
 
 
 # gather test cases
+if len(sys.argv) == 2:
+    folder = sys.argv[1]
+else:
+    folder = '/Users/Henry Heffan/Desktop/foxtrot/foxtrot/local/'
 
-step_files_for_tests_as_str = open('/Users/Henry Heffan/Desktop/foxtrot/foxtrot/local/KondoMotherboard_RevB_full.step').read(
-) + "\n\n" + open('/Users/Henry Heffan/Desktop/foxtrot/foxtrot/local/HOLEWIZARD.step').read()
+step_files_for_tests_as_str = open(os.path.join(folder, 'KondoMotherboard_RevB_full.step')).read(
+) + "\n\n" + open(os.path.join(folder, 'HOLEWIZARD.step')).read()
 
 
 def escape(x): return re.sub(r"/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/", "", x).replace("\n", "\\n").replace("\"", "\\\"")
