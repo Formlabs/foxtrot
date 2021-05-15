@@ -173,6 +173,21 @@ impl<'a> Triangulator<'a> {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
                 Some(Surface::new_plane(axis, ref_direction, location))
             },
+            DataEntity::BSplineSurfaceWithKnots(_, v_degree, u_degree,
+                control_points_list,
+                _surface_form,
+                u_closed,
+                v_closed,
+                self_intersect,
+                u_multiplicities,
+                v_multiplicities,
+                u_knots,
+                v_knots,
+                knot_spec) =>
+            {
+                eprintln!("Could not get BSplineSurfaceWithKnots");
+                None
+            },
             e => {
                 eprintln!("Could not get surface {:?}", e);
                 None
