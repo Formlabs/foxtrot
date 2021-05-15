@@ -38,14 +38,20 @@ pub struct {struct_name} {{
     parent_data_fields="\n  ".join([format_field("parent_{}".format(name), "{}Data".format(name))
                                   for name in ancestor_dict.keys()])
 
-    # TODO: need to avoid the "diamond problem" when two parents are both subclasses of the same
-    # ancestor: we should only try to derive that ancestor's trait through one of the parents.
     delegation_template = "#[delegate({ancestor}Trait, target = parent_{parent})]"
-    delegations="\n".join(["\n".join([delegation_template.format(ancestor=ancestor, parent=parent)
-                                      for ancestor in ancestor_dict[parent]])
-                           for parent in ancestor_dict.keys()])
+    delegation_list = []
+    # We need to avoid the "diamond problem" when two parents are both subtypes of the same
+    # ancestor: we should only try to derive that ancestor's trait once, through one of the parents.
+    ancestors_already_inherited_from = set()
+
+    for (parent, ancestors) in ancestor_dict.items():
+        for ancestor in [parent] + ancestors:
+            if not ancestor in ancestors_already_inherited_from:
+                delegation_list.append(delegation_template.format(ancestor=ancestor, parent=parent))
+                ancestors_already_inherited_from.add(ancestor)
+
     return template.format(
-        delegations=delegations,
+        delegations="\n".join(delegation_list),
         struct_name=struct_name,
         entity_fields=entity_fields,
         parent_data_fields=parent_data_fields)
