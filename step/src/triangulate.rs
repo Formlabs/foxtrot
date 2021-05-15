@@ -2,7 +2,7 @@ use std::convert::TryInto;
 use nalgebra_glm as glm;
 use nalgebra_glm::{DVec2, DVec3, DVec4, DMat4, U32Vec3};
 
-use crate::ap214::StepFile;
+use crate::StepFile;
 use crate::ap214_autogen::{DataEntity, Id};
 
 #[derive(Copy, Clone, Debug)]

@@ -1,5 +1,21 @@
 use clap::{Arg, App};
 use step::parse::*;
+use step::StepFile;
+
+pub fn to_dot(s: &StepFile) -> String {
+    let mut out = "digraph {\n".to_owned();
+    for (i, e) in s.0.iter().enumerate() {
+        let d = format!("{:?}", e);
+        let name = d.split("(").next().unwrap();
+
+        out += &format!("  e{} [ label = \"#{}: {}\" ];\n", i, i, name);
+        for j in e.upstream() {
+            out += &format!("  e{} -> e{};\n", i, j.0);
+        }
+    }
+    out += "}";
+    out
+}
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("step_to_dot")
@@ -21,10 +37,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let parsed = parse_entities_from_striped_file(&stripped_str);
     println!("Got {} entities", parsed.0.len());
 
+    let dot = to_dot(&parsed);
     if let Some(out) = matches.value_of("output") {
-        parsed.save_dot(out)?;
+        std::fs::write(out, dot)?;
     } else {
-        println!("{}", parsed.to_dot());
+        println!("{}", dot);
     }
     Ok(())
 }

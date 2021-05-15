@@ -6,7 +6,7 @@ use rayon::prelude::*;
 
 use memchr::{memchr, memchr2, memchr_iter};
 
-use crate::ap214::StepFile;
+use crate::StepFile;
 use crate::ap214_autogen::DataEntity;
 use crate::parse_autogen::data_line;
 
