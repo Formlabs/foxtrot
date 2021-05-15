@@ -242,10 +242,13 @@ impl<'a> Triangulator<'a> {
 
         match self.entity(edge_geometry) {
             &DataEntity::Circle(_, position, radius) => {
-                self.circle(u, v, position, radius, edge_start == edge_end)
+                self.ellipse(u, v, position, radius, radius, edge_start == edge_end)
             },
             &DataEntity::Line(_, pnt, dir) => {
                 self.line(u, v, pnt, dir)
+            },
+            &DataEntity::Ellipse(_, position, radius1, radius2) => {
+                self.ellipse(u, v, position, radius1, radius2, edge_start == edge_end)
             },
             e => panic!("Could not get edge from {:?}", e),
         }
@@ -258,19 +261,20 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn circle(&self, u: DVec3, v: DVec3, position: Id, radius: f64, closed: bool) -> Vec<DVec3> {
+    fn ellipse(&self, u: DVec3, v: DVec3, position: Id, radius1: f64, radius2: f64, closed: bool) -> Vec<DVec3> {
         let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
 
         // Build a rotation matrix to go from flat (XY) to 3D space
-        let (mat, mat_i) = Surface::build_mats(axis, ref_direction, location);
+        let world_from_eplane = Surface::make_affine_transform(axis, radius1 * ref_direction, radius2 * axis.cross(&ref_direction), location);
+        let eplane_from_world = world_from_eplane.try_inverse().expect("Could not invert");
 
-        // Project from 3D into the circle's flat plane
-        let u_flat = mat_i * DVec4::new(u.x, u.y, u.z, 1.0);
-        let v_flat = mat_i * DVec4::new(v.x, v.y, v.z, 1.0);
+        // Project from 3D into the "ellipse plane". In the "eplane", the ellipse lies on the unit circle
+        let u_eplane = eplane_from_world * DVec4::new(u.x, u.y, u.z, 1.0);
+        let v_eplane = eplane_from_world * DVec4::new(v.x, v.y, v.z, 1.0);
 
         // Pick the starting angle in the circle's flat plane
-        let u_ang = u_flat.y.atan2(u_flat.x);
-        let mut v_ang = v_flat.y.atan2(v_flat.x);
+        let u_ang = u_eplane.y.atan2(u_eplane.x);
+        let mut v_ang = v_eplane.y.atan2(v_eplane.x);
         const PI2: f64 = 2.0 * std::f64::consts::PI;
         if closed {
             assert!((u_ang - v_ang).abs() < std::f64::EPSILON);
@@ -289,17 +293,17 @@ impl<'a> Triangulator<'a> {
             (N as f64 * (u_ang - v_ang).abs() /
             (2.0 * std::f64::consts::PI)).round() as usize);
 
-        let mut out = Vec::new();
+        let mut out_world = Vec::new();
         // Project onto the pnt + dir, and walk from start to end
         for i in 0..count {
             let frac = (i as f64) / ((count - 1) as f64);
             let ang = u_ang * (1.0 - frac) + v_ang * frac;
-            let pos = DVec4::new(ang.cos() * radius, ang.sin() * radius, 0.0, 1.0);
+            let pos_eplane = DVec4::new(ang.cos(), ang.sin(), 0.0, 1.0);
 
             // Project back into 3D
-            out.push(glm::vec4_to_vec3(&(mat * pos)));
+            out_world.push(glm::vec4_to_vec3(&(world_from_eplane * pos_eplane)));
         }
-        out
+        out_world
     }
 
     fn axis2_placement_3d_(&self, id: Id) -> (DVec3, DVec3, DVec3) {
@@ -375,37 +379,36 @@ enum Surface {
 impl Surface {
     pub fn new_cylinder(axis: DVec3, ref_direction: DVec3, location: DVec3, radius: f64) -> Self {
         Surface::Cylinder {
-            mat_i: Self::build_mat_i(axis, ref_direction, location),
+            mat_i: Self::make_rigid_transform(axis, ref_direction, location).try_inverse().expect("Could not invert"),
             axis, radius, location,
         }
     }
 
     pub fn new_plane(axis: DVec3, ref_direction: DVec3, location: DVec3) -> Self {
         Surface::Plane {
-            mat_i: Self::build_mat_i(axis, ref_direction, location),
+            mat_i: Self::make_rigid_transform(axis, ref_direction, location).try_inverse().expect("Could not invert"),
             normal: axis,
         }
     }
 
-    fn build_mat(axis: DVec3, ref_direction: DVec3, location: DVec3) -> DMat4 {
+    fn make_affine_transform(z_world: DVec3, x_world: DVec3, y_world: DVec3, origin_world: DVec3) -> DMat4 {
         let mut mat = DMat4::identity();
-        mat.set_column(0, &glm::vec3_to_vec4(&ref_direction));
-        mat.set_column(1, &glm::vec3_to_vec4(&axis.cross(&ref_direction)));
-        mat.set_column(2, &glm::vec3_to_vec4(&axis));
-        mat.set_column(3, &glm::vec3_to_vec4(&location));
+        mat.set_column(0, &glm::vec3_to_vec4(&x_world));
+        mat.set_column(1, &glm::vec3_to_vec4(&y_world));
+        mat.set_column(2, &glm::vec3_to_vec4(&z_world));
+        mat.set_column(3, &glm::vec3_to_vec4(&origin_world));
         *mat.get_mut((3, 3)).unwrap() =  1.0;
         mat
     }
 
-    fn build_mats(axis: DVec3, ref_direction: DVec3, location: DVec3) -> (DMat4, DMat4) {
-        let m = Self::build_mat(axis, ref_direction, location);
-        (m, m.try_inverse().expect("Could not invert"))
-    }
-
-    fn build_mat_i(axis: DVec3, ref_direction: DVec3, location: DVec3) -> DMat4 {
-        Self::build_mat(axis, ref_direction, location)
-            .try_inverse()
-            .expect("Could not invert")
+    fn make_rigid_transform(z_world: DVec3, x_world: DVec3, origin_world: DVec3) -> DMat4 {
+        let mut mat = DMat4::identity();
+        mat.set_column(0, &glm::vec3_to_vec4(&x_world));
+        mat.set_column(1, &glm::vec3_to_vec4(&z_world.cross(&x_world)));
+        mat.set_column(2, &glm::vec3_to_vec4(&z_world));
+        mat.set_column(3, &glm::vec3_to_vec4(&origin_world));
+        *mat.get_mut((3, 3)).unwrap() =  1.0;
+        mat
     }
 
     /// Lowers a 3D point on a specific surface into a 2D space defined by
