@@ -7,7 +7,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .author("Matt Keeter <matt@formlabs.com>")
         .about("Tests STEP parsing")
         .arg(Arg::with_name("input")
-            .takes_value(true))
+            .takes_value(true)
+            .required(true))
         .get_matches();
     let input = matches.value_of("input")
         .expect("Could not get input file");

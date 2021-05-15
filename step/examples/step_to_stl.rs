@@ -11,17 +11,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .short("o")
             .long("out")
             .help("stl file to target")
-            .takes_value(true))
+            .takes_value(true)
+            .required(true))
         .arg(Arg::with_name("input")
-            .takes_value(true))
+            .takes_value(true)
+            .required(true))
         .get_matches();
     let input = matches.value_of("input")
         .expect("Could not get input file");
 
     let stripped_str = striped_string_from_path(input);
     let parsed = parse_entities_from_striped_file(&stripped_str);
+
+    let start = std::time::SystemTime::now();
     let tri = triangulate::Triangulator::run(&parsed);
-    tri.save_stl(matches.value_of("output").expect("Need output file"))?;
+    let end = std::time::SystemTime::now();
+    let since_the_epoch = end.duration_since(start)
+        .expect("Time went backwards");
+    println!("Triangulated in {:?}", since_the_epoch);
+
+    if let Some(o) = matches.value_of("output") {
+        tri.save_stl(o)?;
+    }
 
     Ok(())
 }

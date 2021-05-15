@@ -11,7 +11,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .help("dot file to target")
             .takes_value(true))
         .arg(Arg::with_name("input")
-            .takes_value(true))
+            .takes_value(true)
+            .required(true))
         .get_matches();
     let input = matches.value_of("input")
         .expect("Could not get input file");
