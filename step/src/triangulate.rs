@@ -203,8 +203,10 @@ impl<'a> Triangulator<'a> {
         for e in edge_list {
             out.pop();
             match self.entity(*e) {
-                &DataEntity::OrientedEdge(_, element, orientation) =>
-                    out.extend(self.oriented_edge(element, orientation).into_iter()),
+                &DataEntity::OrientedEdge(_, element, orientation) => {
+                    let o = self.oriented_edge(element, orientation);
+                    out.extend(o.into_iter());
+                },
                 e => panic!("Invalid OrientedEdge {:?}", e),
             }
         }

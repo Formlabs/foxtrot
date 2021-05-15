@@ -250,7 +250,7 @@ impl Triangulation {
                     sorted_points.push(points[p.0]);
                     map_forward[p.0] = map_reverse.push(p.0);
                 },
-                Some(d) => map_forward[p.0] = PointIndex::new(d),
+                Some(d) => map_forward[p.0] = map_forward[scratch[d].0],
             }
         }
 
