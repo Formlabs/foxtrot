@@ -2,6 +2,8 @@ use std::convert::TryInto;
 use nalgebra_glm as glm;
 use nalgebra_glm::{DVec2, DVec3, DVec4, DMat4, U32Vec3};
 
+use nurbs::KnotVector;
+
 use crate::StepFile;
 use crate::ap214_autogen::{DataEntity, Id};
 
@@ -91,15 +93,15 @@ impl<'a> Triangulator<'a> {
                     // cones: we push it as a Steiner point, but without any
                     // associated contours.
                     if bc.len() == 1 {
-                        self.vertices.push(Vertex {
-                            pos: bc[0],
-                            norm: s.normal(bc[0]),
-                            color: DVec3::new(0.0, 0.0, 0.0),
-                        });
-
                         // Project to the 2D subspace for triangulation
                         let proj = s.lower(bc[0]);
                         pts.push((proj.x, proj.y));
+
+                        self.vertices.push(Vertex {
+                            pos: bc[0],
+                            norm: s.normal(bc[0], proj),
+                            color: DVec3::new(0.0, 0.0, 0.0),
+                        });
 
                         continue;
                     }
@@ -117,7 +119,7 @@ impl<'a> Triangulator<'a> {
                         // Also store this vertex in the 3D triangulation
                         self.vertices.push(Vertex {
                             pos: pt,
-                            norm: s.normal(pt),
+                            norm: s.normal(pt, proj),
                             color: DVec3::new(0.0, 0.0, 0.0),
                         });
                     }
@@ -189,7 +191,13 @@ impl<'a> Triangulator<'a> {
                 assert!(!v_closed);
                 assert!(!self_intersect);
 
-                eprintln!("Could not get BSplineSurfaceWithKnots");
+                let control_points_list = self.get_control_points(control_points_list);
+
+                let v_knot_vec = KnotVector::from_multiplicities(v_knots, v_multiplicities);
+                let u_knot_vec = KnotVector::from_multiplicities(u_knots, u_multiplicities);
+
+                //Some(Surface::new_bspline(control_points_list,
+                //                        u_knot_vec, v_knot_vec))
                 None
             },
             e => {
@@ -197,6 +205,18 @@ impl<'a> Triangulator<'a> {
                 None
             },
         }
+    }
+
+    fn get_control_points(&self, c: &[Vec<Id>]) -> Vec<Vec<DVec3>> {
+        let mut outer = Vec::new();
+        for v in c {
+            let mut inner = Vec::new();
+            for i in v {
+                inner.push(self.vertex_point(*i));
+            }
+            outer.push(inner);
+        }
+        outer
     }
 
     fn face_bounds(&mut self, bound: Id, orientation: bool) -> Vec<DVec3> {
@@ -301,10 +321,16 @@ impl<'a> Triangulator<'a> {
         let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
 
         // Build a rotation matrix to go from flat (XY) to 3D space
-        let world_from_eplane = Surface::make_affine_transform(axis, radius1 * ref_direction, radius2 * axis.cross(&ref_direction), location);
-        let eplane_from_world = world_from_eplane.try_inverse().expect("Could not invert");
+        let world_from_eplane = Surface::make_affine_transform(axis,
+            radius1 * ref_direction,
+            radius2 * axis.cross(&ref_direction),
+            location);
+        let eplane_from_world = world_from_eplane
+            .try_inverse()
+            .expect("Could not invert");
 
-        // Project from 3D into the "ellipse plane". In the "eplane", the ellipse lies on the unit circle
+        // Project from 3D into the "ellipse plane".  In the "eplane", the
+        // ellipse lies on the unit circle.
         let u_eplane = eplane_from_world * DVec4::new(u.x, u.y, u.z, 1.0);
         let v_eplane = eplane_from_world * DVec4::new(v.x, v.y, v.z, 1.0);
 
@@ -330,7 +356,8 @@ impl<'a> Triangulator<'a> {
             (2.0 * std::f64::consts::PI)).round() as usize);
 
         let mut out_world = vec![u];
-        // Project onto the pnt + dir, and walk from start to end
+        // Walk around the circle, using the true positions for start and
+        // end points to improve numerical accuracy.
         for i in 1..(count - 1) {
             let frac = (i as f64) / ((count - 1) as f64);
             let ang = u_ang * (1.0 - frac) + v_ang * frac;
@@ -405,7 +432,7 @@ pub fn triangulate(step: &StepFile) -> (Vec<Vertex>, Vec<Triangle>) {
 
 // Represents a surface in 3D space, with a function to project a 3D point
 // on the surface down to a 2D space.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 enum Surface {
     Cylinder {
         location: DVec3,
@@ -416,22 +443,37 @@ enum Surface {
     Plane {
         normal: DVec3,
         mat_i: DMat4,
+    },
+    BSpline {
+        control_points: Vec<Vec<DVec3>>,
+        u_knots: KnotVector,
+        v_knots: KnotVector,
     }
 }
 
 impl Surface {
     pub fn new_cylinder(axis: DVec3, ref_direction: DVec3, location: DVec3, radius: f64) -> Self {
         Surface::Cylinder {
-            mat_i: Self::make_rigid_transform(axis, ref_direction, location).try_inverse().expect("Could not invert"),
+            mat_i: Self::make_rigid_transform(axis, ref_direction, location)
+                .try_inverse()
+                .expect("Could not invert"),
             axis, radius, location,
         }
     }
 
     pub fn new_plane(axis: DVec3, ref_direction: DVec3, location: DVec3) -> Self {
         Surface::Plane {
-            mat_i: Self::make_rigid_transform(axis, ref_direction, location).try_inverse().expect("Could not invert"),
+            mat_i: Self::make_rigid_transform(axis, ref_direction, location)
+                .try_inverse()
+                .expect("Could not invert"),
             normal: axis,
         }
+    }
+
+    pub fn new_bspline(control_points: Vec<Vec<DVec3>>,
+                       u_knots: KnotVector, v_knots: KnotVector) -> Self
+    {
+        Surface::BSpline { control_points, u_knots, v_knots }
     }
 
     fn make_affine_transform(z_world: DVec3, x_world: DVec3, y_world: DVec3, origin_world: DVec3) -> DMat4 {
@@ -473,11 +515,15 @@ impl Surface {
                 // as the radius, and use a sigmoid function
                 let scale = 1.0 / (1.0 + (-p.z / radius).exp());
                 DVec2::new(p.x * scale, p.y * scale)
-            }
+            },
+            Surface::BSpline { control_points, u_knots, v_knots } => {
+                DVec2::new(0.0, 0.0)
+            },
         }
     }
 
-    pub fn normal(&self, p: DVec3) -> DVec3 {
+    // Calculate the surface normal, using either the 3D or 2D position
+    pub fn normal(&self, p: DVec3, q: DVec2) -> DVec3 {
         match self {
             Surface::Plane { normal, .. } => *normal,
             Surface::Cylinder { location, axis, .. } => {
@@ -490,7 +536,12 @@ impl Surface {
                 // Then the normal is just pointing along that direction
                 // (same hack as below)
                 -(p - nearest).normalize()
-            }
+            },
+            Surface::BSpline { control_points, u_knots, v_knots } => {
+                // Eventually: use UV coordinates
+                let _q = q;
+                DVec3::new(0.0, 0.0, 0.0)
+            },
         }
     }
 
@@ -499,6 +550,7 @@ impl Surface {
         match self {
             Surface::Plane {..} => false,
             Surface::Cylinder {..} => true,
+            Surface::BSpline {..} => true,
         }
     }
 }

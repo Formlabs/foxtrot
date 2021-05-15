@@ -8,13 +8,14 @@ edition = "2018"
 
 
 [dependencies]
-nom = "6.0"
-nalgebra-glm = "0.3"
-cdt = { path = "../cdt" }
-memchr = "2.4.0"
-rayon = "1.5"
 ambassador = "0.2"
+cdt = { path = "../cdt" }
 fast-float = "0.2.0"
+memchr = "2.4.0"
+nalgebra-glm = "0.3"
+nom = "6.0"
+nurbs = { path = "../nurbs" }
+rayon = "1.5"
 
 [dev-dependencies]
 clap = "2.33"
