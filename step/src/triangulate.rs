@@ -183,8 +183,12 @@ impl<'a> Triangulator<'a> {
                 v_multiplicities,
                 u_knots,
                 v_knots,
-                knot_spec) =>
+                _knot_spec) =>
             {
+                assert!(!u_closed);
+                assert!(!v_closed);
+                assert!(!self_intersect);
+
                 eprintln!("Could not get BSplineSurfaceWithKnots");
                 None
             },
