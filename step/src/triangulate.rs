@@ -77,7 +77,10 @@ impl<'a> Triangulator<'a> {
         // For each contour, project from 3D down to the surface, then
         // start collecting them as constrained edges for triangulation
         let offset = self.vertices.len();
-        let s = self.get_surface(surface);
+        let s = match self.get_surface(surface) {
+            Some(s) => s,
+            None => return,
+        };
         let mut pts = Vec::new();
         let mut edges = Vec::new();
         for b in bounds {
@@ -155,22 +158,25 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn get_surface(&self, surface: Id) -> Surface {
+    fn get_surface(&self, surface: Id) -> Option<Surface> {
         match self.entity(surface) {
             &DataEntity::CylindricalSurface(_, position, radius) => {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
-                Surface::new_cylinder(axis, ref_direction, location, radius)
+                Some(Surface::new_cylinder(axis, ref_direction, location, radius))
             },
             &DataEntity::Plane(_, position) => {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
-                Surface::new_plane(axis, ref_direction, location)
+                Some(Surface::new_plane(axis, ref_direction, location))
             },
             // We treat cones like planes, since that's a valid mapping into 2D
             &DataEntity::ConicalSurface(_, position, _radius, _semi_angle) => {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
-                Surface::new_plane(axis, ref_direction, location)
+                Some(Surface::new_plane(axis, ref_direction, location))
             },
-            e => panic!("Could not get surface {:?}", e),
+            e => {
+                eprintln!("Could not get surface {:?}", e);
+                None
+            },
         }
     }
 
@@ -251,6 +257,13 @@ impl<'a> Triangulator<'a> {
             &DataEntity::Ellipse(_, position, radius1, radius2) => {
                 self.ellipse(u, v, position, radius1, radius2, edge_start == edge_end, same_sense ^ flip)
             },
+            DataEntity::BSplineCurveWithKnots(_, degree, control_points_list,
+                curve_form, closed_curve, self_intersect, knot_multiplicities,
+                knots, knot_spec) =>
+            {
+                eprintln!("Skipping BSpline Curve");
+                vec![]
+            }
             e => panic!("Could not get edge from {:?}", e),
         }
     }
@@ -347,8 +360,8 @@ impl<'a> Triangulator<'a> {
         // Project back to the line, for sanity-checking
         let u_ = pnt + dir * start;
         let v_ = pnt + dir * end;
-        assert!((u_ - u).norm() < std::f64::EPSILON);
-        assert!((v_ - v).norm() < std::f64::EPSILON);
+        assert!(glm::distance2(&u_, &u) < std::f64::EPSILON);
+        assert!(glm::distance2(&v_, &v) < std::f64::EPSILON);
 
         // Ignore pnt and dir, as we're using u/v instead
         vec![u, v]
