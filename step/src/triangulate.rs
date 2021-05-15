@@ -75,67 +75,62 @@ impl<'a> Triangulator<'a> {
     }
 
     fn advanced_face(&mut self, bounds: &[Id], surface: Id, same_sense: bool) {
-        let mut bound_contours = Vec::new();
-        for b in bounds {
-            match self.entity(*b) {
-                &DataEntity::FaceBound(_, bound, orientation) => {
-                    let b = self.face_bounds(bound, orientation);
-                    bound_contours.push(b);
-                },
-                e => panic!("Expected FaceBounds; got {:?}", e),
-            }
-        }
-
         // For each contour, project from 3D down to the surface, then
         // start collecting them as constrained edges for triangulation
         let offset = self.vertices.len();
         let s = self.get_surface(surface);
         let mut pts = Vec::new();
         let mut edges = Vec::new();
-        for bc in bound_contours {
-            // Special case for a single-vertex point, which shows up in cones:
-            // we push it as a Steiner point, but without any associated
-            // contours.
-            if bc.len() == 1 {
-                self.vertices.push(Vertex {
-                    pos: bc[0],
-                    norm: s.normal(bc[0]),
-                    color: DVec3::new(0.0, 0.0, 0.0),
-                });
+        for b in bounds {
+            match self.entity(*b) {
+                &DataEntity::FaceBound(_, bound, orientation) => {
+                    let bc = self.face_bounds(bound, orientation);
+                    // Special case for a single-vertex point, which shows up in
+                    // cones: we push it as a Steiner point, but without any
+                    // associated contours.
+                    if bc.len() == 1 {
+                        self.vertices.push(Vertex {
+                            pos: bc[0],
+                            norm: s.normal(bc[0]),
+                            color: DVec3::new(0.0, 0.0, 0.0),
+                        });
 
-                // Project to the 2D subspace for triangulation
-                let proj = s.lower(bc[0]);
-                pts.push((proj.x, proj.y));
+                        // Project to the 2D subspace for triangulation
+                        let proj = s.lower(bc[0]);
+                        pts.push((proj.x, proj.y));
 
-                continue;
+                        continue;
+                    }
+
+                    // Record the initial point to close the loop
+                    let start = pts.len();
+                    for pt in bc {
+                        // The contour marches forward!
+                        edges.push((pts.len(), pts.len() + 1));
+
+                        // Project to the 2D subspace for triangulation
+                        let proj = s.lower(pt);
+                        pts.push((proj.x, proj.y));
+
+                        // Also store this vertex in the 3D triangulation
+                        self.vertices.push(Vertex {
+                            pos: pt,
+                            norm: s.normal(pt),
+                            color: DVec3::new(0.0, 0.0, 0.0),
+                        });
+                    }
+                    // The last point is a duplicate, because it closes the
+                    // contours, so we skip it here and reattach the contour to
+                    // the start.
+                    pts.pop();
+                    self.vertices.pop();
+
+                    // Close the loop by returning to the starting point
+                    edges.pop();
+                    edges.last_mut().unwrap().1 = start;
+                },
+                e => panic!("Expected FaceBounds; got {:?}", e),
             }
-
-            // Record the initial point to close the loop
-            let start = pts.len();
-
-            for pt in bc {
-                // The contour marches forward!
-                edges.push((pts.len(), pts.len() + 1));
-
-                // Project to the 2D subspace for triangulation
-                let proj = s.lower(pt);
-                pts.push((proj.x, proj.y));
-
-                // Also store this vertex in the 3D triangulation
-                self.vertices.push(Vertex {
-                    pos: pt,
-                    norm: s.normal(pt),
-                    color: DVec3::new(0.0, 0.0, 0.0),
-                });
-            }
-            // The last point is a duplicate, because it closes the contours,
-            // so we skip it here and reattach the contour to the start.
-            pts.pop();
-            self.vertices.pop();
-
-            // Close the loop by returning to the starting point
-            edges.pop();
-            edges.last_mut().unwrap().1 = start;
         }
 
         let mut t = cdt::Triangulation::new_with_edges(&pts, &edges)
