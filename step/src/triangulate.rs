@@ -16,7 +16,6 @@ pub struct Triangle {
     pub verts: U32Vec3,
 }
 
-
 pub struct Triangulator<'a> {
     data: &'a [DataEntity<'a>],
     vertices: Vec<Vertex>,
@@ -199,9 +198,13 @@ impl<'a> Triangulator<'a> {
     }
 
     fn edge_loop(&mut self, edge_list: &[Id]) -> Vec<DVec3> {
-        let mut out = vec![DVec3::new(0.0, 0.0, 0.0)];
-        for e in edge_list {
-            out.pop();
+        let mut out = Vec::new();
+        for (i, e) in edge_list.iter().enumerate() {
+            // Remove the last item from the list, since it's the beginning
+            // of the following list (hopefully)
+            if i > 0 {
+                out.pop();
+            }
             match self.entity(*e) {
                 &DataEntity::OrientedEdge(_, element, orientation) => {
                     let o = self.oriented_edge(element, orientation);
@@ -217,17 +220,18 @@ impl<'a> Triangulator<'a> {
         match self.entity(element) {
             &DataEntity::EdgeCurve(_, edge_start, edge_end, edge_geometry, same_sense) =>
             {
-                let mut d = self.edge_curve(edge_start, edge_end, edge_geometry, same_sense);
-                if !orientation {
-                    d.reverse()
-                }
-                d
+                let (start, end) = if orientation {
+                    (edge_start, edge_end)
+                } else {
+                    (edge_end, edge_start)
+                };
+                self.edge_curve(start, end, edge_geometry, same_sense, !orientation)
             },
             e => panic!("Could not get EdgeCurve from {:?}", e),
         }
     }
 
-    fn edge_curve(&mut self, edge_start: Id, edge_end: Id, edge_geometry: Id, same_sense: bool) -> Vec<DVec3> {
+    fn edge_curve(&mut self, edge_start: Id, edge_end: Id, edge_geometry: Id, same_sense: bool, flip: bool) -> Vec<DVec3> {
         let u = match self.entity(edge_start) {
             &DataEntity::VertexPoint(_, i) => self.vertex_point(i),
             e => panic!("Could not get vertex from {:?}", e),
@@ -239,13 +243,13 @@ impl<'a> Triangulator<'a> {
 
         match self.entity(edge_geometry) {
             &DataEntity::Circle(_, position, radius) => {
-                self.ellipse(u, v, position, radius, radius, edge_start == edge_end)
+                self.ellipse(u, v, position, radius, radius, edge_start == edge_end, same_sense ^ flip)
             },
             &DataEntity::Line(_, pnt, dir) => {
                 self.line(u, v, pnt, dir)
             },
             &DataEntity::Ellipse(_, position, radius1, radius2) => {
-                self.ellipse(u, v, position, radius1, radius2, edge_start == edge_end)
+                self.ellipse(u, v, position, radius1, radius2, edge_start == edge_end, same_sense ^ flip)
             },
             e => panic!("Could not get edge from {:?}", e),
         }
@@ -258,7 +262,10 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn ellipse(&self, u: DVec3, v: DVec3, position: Id, radius1: f64, radius2: f64, closed: bool) -> Vec<DVec3> {
+    fn ellipse(&self, u: DVec3, v: DVec3, position: Id,
+               radius1: f64, radius2: f64, closed: bool, dir: bool)
+        -> Vec<DVec3>
+    {
         let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
 
         // Build a rotation matrix to go from flat (XY) to 3D space
@@ -274,15 +281,15 @@ impl<'a> Triangulator<'a> {
         let mut v_ang = v_eplane.y.atan2(v_eplane.x);
         const PI2: f64 = 2.0 * std::f64::consts::PI;
         if closed {
-            assert!((u_ang - v_ang).abs() < std::f64::EPSILON);
-            v_ang = u_ang + PI2;
-        }
-        // Heuristic to pick the shortest path along the circle.  TODO:
-        // Is this actually the correct behavior?
-        else if (v_ang + PI2 - u_ang).abs() < (v_ang - u_ang).abs() {
-            v_ang += PI2
-        } else if (v_ang - PI2 - u_ang).abs() < (v_ang - u_ang).abs() {
-            v_ang -= PI2
+            if dir {
+                v_ang = u_ang + PI2;
+            } else {
+                v_ang = u_ang - PI2;
+            }
+        } else if dir && v_ang <= u_ang {
+            v_ang += PI2;
+        } else if !dir && v_ang >= u_ang {
+            v_ang -= PI2;
         }
 
         const N: usize = 64;
@@ -290,9 +297,9 @@ impl<'a> Triangulator<'a> {
             (N as f64 * (u_ang - v_ang).abs() /
             (2.0 * std::f64::consts::PI)).round() as usize);
 
-        let mut out_world = Vec::new();
+        let mut out_world = vec![u];
         // Project onto the pnt + dir, and walk from start to end
-        for i in 0..count {
+        for i in 1..(count - 1) {
             let frac = (i as f64) / ((count - 1) as f64);
             let ang = u_ang * (1.0 - frac) + v_ang * frac;
             let pos_eplane = DVec4::new(ang.cos(), ang.sin(), 0.0, 1.0);
@@ -300,6 +307,7 @@ impl<'a> Triangulator<'a> {
             // Project back into 3D
             out_world.push(glm::vec4_to_vec3(&(world_from_eplane * pos_eplane)));
         }
+        out_world.push(v);
         out_world
     }
 
@@ -336,8 +344,14 @@ impl<'a> Triangulator<'a> {
         let start = (u - pnt).dot(&dir);
         let end = (v - pnt).dot(&dir);
 
-        // Project onto the pnt + dir, and walk from start to end
-        vec![pnt + dir * start, pnt + dir * end]
+        // Project back to the line, for sanity-checking
+        let u_ = pnt + dir * start;
+        let v_ = pnt + dir * end;
+        assert!((u_ - u).norm() < std::f64::EPSILON);
+        assert!((v_ - v).norm() < std::f64::EPSILON);
+
+        // Ignore pnt and dir, as we're using u/v instead
+        vec![u, v]
     }
 
     fn vector(&self, orientation: Id, magnitude: f64) -> DVec3 {

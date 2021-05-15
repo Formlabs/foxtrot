@@ -10,7 +10,7 @@ type Index = u32;
 /// This represents a strongly-typed index into a [`TypedVec`] parameterized
 /// with the same `PhantomData`.  It should be zero-cost at runtime.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd)]
-pub struct TypedIndex<P>(Index, std::marker::PhantomData<*const P>);
+pub struct TypedIndex<P>(pub Index, std::marker::PhantomData<*const P>);
 impl<P> TypedIndex<P> {
     pub fn new(i: usize) -> Self {
         Self::const_new(i.try_into().unwrap())
