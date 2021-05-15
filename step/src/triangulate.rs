@@ -2,7 +2,7 @@ use std::convert::TryInto;
 use nalgebra_glm as glm;
 use nalgebra_glm::{DVec2, DVec3, DVec4, DMat4, U32Vec3};
 
-use nurbs::KnotVector;
+use nurbs::{BSplineSurface, KnotVector};
 
 use crate::StepFile;
 use crate::ap214_autogen::{DataEntity, Id};
@@ -175,7 +175,7 @@ impl<'a> Triangulator<'a> {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(position);
                 Some(Surface::new_plane(axis, ref_direction, location))
             },
-            DataEntity::BSplineSurfaceWithKnots(_, v_degree, u_degree,
+            DataEntity::BSplineSurfaceWithKnots(_, u_degree, v_degree,
                 control_points_list,
                 _surface_form,
                 u_closed,
@@ -193,11 +193,17 @@ impl<'a> Triangulator<'a> {
 
                 let control_points_list = self.get_control_points(control_points_list);
 
-                let v_knot_vec = KnotVector::from_multiplicities(v_knots, v_multiplicities);
                 let u_knot_vec = KnotVector::from_multiplicities(u_knots, u_multiplicities);
+                let v_knot_vec = KnotVector::from_multiplicities(v_knots, v_multiplicities);
 
-                //Some(Surface::new_bspline(control_points_list,
-                //                        u_knot_vec, v_knot_vec))
+                let s = BSplineSurface::new(
+                    u_knot_vec,
+                    v_knot_vec,
+                    control_points_list,
+                );
+                println!("surf: {:?}", s.surface_point(*u_degree, *v_degree,
+                        DVec2::new(u_knots[0], v_knots[0])));
+
                 None
             },
             e => {

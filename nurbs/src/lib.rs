@@ -85,6 +85,10 @@ pub struct BSplineSurface {
 
 /// Non-rational b-spline surface with 3D control points
 impl BSplineSurface {
+    pub fn new(u_knots: KnotVector, v_knots: KnotVector,
+               control_points: Vec<Vec<DVec3>>) -> Self {
+        Self { u_knots, v_knots, control_points }
+    }
     /// Converts a point at position uv onto the 3D mesh, using basis functions
     /// of order `p + 1` and `u + 1` respectively.
     ///
@@ -100,7 +104,7 @@ impl BSplineSurface {
         let mut S = DVec3::zeros();
         for l in 0..=q {
             let mut temp = DVec3::zeros();
-            let vind = vspan - q - 1;
+            let vind = vspan - q + l;
             for k in 0..=p {
                 temp += Nu[k] * self.control_points[uind + k][vind];
             }
