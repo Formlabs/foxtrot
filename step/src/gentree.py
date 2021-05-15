@@ -1,3 +1,108 @@
+#### Formatting functions:
+
+def format_field(field_name, type_name):
+    return "{}: {},".format(field_name, type_name)
+
+
+def format_fn_signature(name, arg_list, return_type):
+    return "fn {name}({args}) -> {return_type}".format(
+        name=name,
+        args=", ".join(arg_list),
+        return_type=return_type
+    )
+
+
+def format_fn(signature, body_list):
+    template = """
+{signature} {{
+  {body}
+}}"""
+    return template.format(signature=signature, body="\n  ".join(body_list))
+
+
+def format_entity_struct(struct_name, entity_fields_list, ancestor_dict) -> str:
+    """
+    ancestor_dict: dict from the name of a direct parent to the names of all ancestors of that
+    parent (in no particular order)
+    """
+    template = """
+#[derive(Clone, Debug, Delegate)]
+{delegations}
+pub struct {struct_name} {{
+  {parent_data_fields}
+  {entity_fields}
+}}"""
+
+    entity_fields="\n  ".join([format_field(field_name, type_name)
+                             for (field_name, type_name) in entity_fields_list])
+    parent_data_fields="\n  ".join([format_field("parent_{}".format(name), "{}Data".format(name))
+                                  for name in ancestor_dict.keys()])
+
+    # TODO: need to avoid the "diamond problem" when two parents are both subclasses of the same
+    # ancestor: we should only try to derive that ancestor's trait through one of the parents.
+    delegation_template = "#[delegate({ancestor}Trait, target = parent_{parent})]"
+    delegations="\n".join(["\n".join([delegation_template.format(ancestor=ancestor, parent=parent)
+                                      for ancestor in ancestor_dict[parent]])
+                           for parent in ancestor_dict.keys()])
+    return template.format(
+        delegations=delegations,
+        struct_name=struct_name,
+        entity_fields=entity_fields,
+        parent_data_fields=parent_data_fields)
+
+
+def format_entity_trait(entity_name, entity_fields_list):
+    template = """
+#[delegatable_trait]
+trait {entity_name}Trait {{
+  {methods}
+}}"""
+    methods = "\n  ".join([format_fn_signature(field_name, ["&self"], "&"+type_name)+";"
+                           for (field_name, type_name) in entity_fields_list])
+    return template.format(entity_name=entity_name, methods=methods)
+
+
+def format_entity_trait_impl(struct_name, entity_fields_list):
+    template = """
+impl {struct_name}Trait for {struct_name}Data {{
+    {getters}
+}}
+"""
+    getters = "\n".join([format_fn(format_fn_signature(field_name, ["&self"], "&"+type_name),
+                                   ["&self.{}".format(field_name)])
+                         for (field_name, type_name) in entity_fields_list])
+    return template.format(struct_name=struct_name, getters=getters)
+
+
+def format_entity_enum(entity_name, direct_children_list):
+    template = """
+pub enum {entity_name} {{
+    {variants}
+}}
+"""
+    variants = "\n  ".join(["{child}({child}),".format(child=child) for child in direct_children_list])
+    return template.format(entity_name=entity_name, variants=variants)
+
+
+def format_entity(entity_name, entity_fields_list, ancestor_dict, direct_children_list):
+    blocks = [""]
+    blocks.append("// Types for {entity_name} entity:".format(entity_name=entity_name))
+    if direct_children_list:
+        # "non-leaf" entities with subtypes are represented by an enum with a variant for each of
+        # their children. Their fields are defined on a "*Data" struct.
+        struct_name = "{}Data".format(entity_name)
+        blocks.append(format_entity_enum(entity_name, direct_children_list))
+    else:
+        # "leaf" entities with no subtypes don't need an enum, they're just represented by structs with the same name as the entity.
+        struct_name = entity_name
+
+    blocks.append(format_entity_struct(struct_name, entity_fields_list, vertex_point_ancestor_dict))
+    blocks.append(format_entity_trait(entity_name, entity_fields_list))
+    blocks.append(format_entity_trait_impl(struct_name, entity_fields_list))
+    return "\n".join(blocks)
+
+
+#### Spec Data:
 
 direct_parents = {
     'AdvancedBrepShapeRepresentation': ['ShapeRepresentation'],
@@ -504,3 +609,20 @@ data_entity = {
 }
 
 print (sorted(list(set(data_entity).difference(set(structs)))))
+
+
+#### Demonstrate formatting functions:
+
+# this is like what's in `structs`, but doesn't include inherited fields
+vertex_point_fields = [('vertex_geometry', 'Point')]
+
+# TODO derive this from direct_parent
+vertex_point_ancestor_dict = {
+    'GeometricRepresentationItem': ['RepresentationItem'],
+    'Vertex': ['TopologicalRepresentationItem', 'RepresentationItem'],
+}
+
+# TODO derive this from direct_parent
+vertex_point_direct_children = []
+
+print(format_entity("VertexPoint", [('vertex_geometry', 'Point')], vertex_point_ancestor_dict, vertex_point_direct_children))
