@@ -193,6 +193,8 @@ impl Triangulation {
         scratch.sort_unstable_by(|k, r|
             if k.0 == pa || k.0 == pb || k.0 == pc {
                 std::cmp::Ordering::Less
+            } else if r.0 == pa || r.0 == pb || r.0 == pc {
+                std::cmp::Ordering::Greater
             } else {
                 // Compare by radius first, then break ties with pseudoangle
                 // This should be reproducible, i.e. two identical points should
@@ -210,6 +212,18 @@ impl Triangulation {
                 }
             });
 
+        // Sanity-check that our three target points are at the head of the
+        // list, as expected.
+        assert!((scratch[0].0 == pa) as u8 +
+                (scratch[1].0 == pa) as u8 +
+                (scratch[2].0 == pa) as u8 == 1);
+        assert!((scratch[0].0 == pb) as u8 +
+                (scratch[1].0 == pb) as u8 +
+                (scratch[2].0 == pb) as u8 == 1);
+        assert!((scratch[0].0 == pc) as u8 +
+                (scratch[1].0 == pc) as u8 +
+                (scratch[2].0 == pc) as u8 == 1);
+
         // Apply sorting to initial three points, ignoring distance
         // values at this point because they're unused.
         scratch[0].0 = pa;
@@ -220,7 +234,7 @@ impl Triangulation {
         let mut sorted_points = PointVec::with_capacity(points.len());
 
         // usize in original array -> PointIndex in sorted array
-        let mut map_forward = vec![PointIndex::new(0); points.len()];
+        let mut map_forward = vec![PointIndex::empty(); points.len()];
 
         // PointIndex in sorted array -> usize in original array
         let mut map_reverse = PointVec::with_capacity(points.len());
@@ -240,18 +254,21 @@ impl Triangulation {
                     if (pa.0 - pb.0).abs() < f64::EPSILON &&
                        (pa.1 - pb.1).abs() < f64::EPSILON
                     {
-                        dupe = Some(*j);
+                        dupe = Some(scratch[*j].0);
                         break;
                     }
                 }
             };
-            match dupe {
+            map_forward[p.0] = match dupe {
                 None => {
                     sorted_points.push(points[p.0]);
-                    map_forward[p.0] = map_reverse.push(p.0);
+                    map_reverse.push(p.0)
                 },
-                Some(d) => map_forward[p.0] = map_forward[scratch[d].0],
-            }
+                Some(d) => {
+                    assert!(map_forward[d] != PointIndex::empty());
+                    map_forward[d]
+                },
+            };
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -532,61 +549,95 @@ impl Triangulation {
         assert!(a != p);
         assert!(b != p);
 
-        let f = self.half.insert(b, a, p, EMPTY_EDGE, EMPTY_EDGE, e_ab);
-
-        // Sanity-check that p is on the correct side of b->a
         let o = self.orient2d(b, a, p);
-        assert!(o != 0.0);
-        assert!(o > 0.0);
+        assert!(o >= 0.0);
+        let h_p = if o == 0.0 {
+            /*
+                    b<-------p<------a
+                     \      ^|      ^
+                      \      |     /
+                  next \     |    / prev
+                        \    |   /
+                         \   |  /
+                          \  |v/
+                           V |/
+                            c
 
-        // Replaces the previous item in the hull
-        self.hull.update(h_ab, self.half.prev(f));
+                Special case: if p is exactly on the line, then we split the
+                line instead of inserting a new triangle.
+            */
+            assert!(!edge.fixed);
+            let edge_bc = self.half.edge(edge.next);
+            let edge_ca = self.half.edge(edge.prev);
+            let c = edge_bc.dst;
+            assert!(c == edge_ca.src);
+            self.half.erase(e_ab);
 
-        let h_p = if self.angles[a] != self.angles[p] {
-            // Insert the new edge into the hull, using the previous
-            // HullIndex as a hint to avoid searching for its position.
-            let h_bp = self.hull.insert(
-                h_ab, self.angles[p], p, self.half.next(f));
-            self.legalize(f);
-            h_bp
+            let e_pc = self.half.insert(p, c, a, edge_ca.buddy, EMPTY_EDGE, EMPTY_EDGE);
+            let e_cp = self.half.insert(c, p, b, EMPTY_EDGE, edge_bc.buddy, e_pc);
+
+            // Patch the hull
+            self.hull.update(h_ab, self.half.next(e_cp));
+            let h_ap = self.hull.insert(
+                h_ab, self.angles[p], p, self.half.prev(e_pc));
+            self.legalize(e_pc);
+            self.legalize(e_cp);
+            h_ap
         } else {
-            /*  Rare case when p and a are in a perfect vertical line:
-             *
-             *  We already inserted the left triangle and attached p-b to
-             *  the hull index.  We insert a bonus right triangle here and
-             *  attach c-p to to p's hull index, rather than splitting a-b inn
-             *  the hull.
-             *
-             *                 /p [new point]
-             *               /  | ^
-             *             /    |   \
-             *           V  f   |  g  \
-             *          -------->------>\
-             *          b<------a<------c [previous hull edge]
-             *              e
-             */
-            let h_ca = self.hull.right_hull(h_ab);
-            let e_ca = self.hull.edge(h_ca);
-            let edge_ca = self.half.edge(e_ca);
-            assert!(a == edge_ca.dst);
-            let c = edge_ca.src;
-            let g = self.half.insert(a, c, p,
-                EMPTY_EDGE, self.half.next(f), e_ca);
+            let f = self.half.insert(b, a, p, EMPTY_EDGE, EMPTY_EDGE, e_ab);
+            assert!(o != 0.0);
+            assert!(o > 0.0);
 
-            // h_ca has the same X position as c-p, so we update the same slot
-            // in the hull, then move the point in the look-up table.
-            self.hull.update(h_ca, self.half.next(g));
-            self.hull.move_point(a, p);
+            // Replaces the previous item in the hull
+            self.hull.update(h_ab, self.half.prev(f));
 
-            // Legalize the two new triangle edges
-            self.legalize(f);
-            self.legalize(g);
-            h_ca
+            let h_p = if self.angles[a] != self.angles[p] {
+                // Insert the new edge into the hull, using the previous
+                // HullIndex as a hint to avoid searching for its position.
+                let h_ap = self.hull.insert(
+                    h_ab, self.angles[p], p, self.half.next(f));
+                self.legalize(f);
+                h_ap
+            } else {
+                /*  Rare case when p and a are in a perfect vertical line:
+                 *
+                 *  We already inserted the left triangle and attached p-b to
+                 *  the hull index.  We insert a bonus right triangle here and
+                 *  attach c-p to to p's hull index, rather than splitting a-b
+                 *  in the hull.
+                 *
+                 *                 /p [new point]
+                 *               /  | ^
+                 *             /    |   \
+                 *           V  f   |  g  \
+                 *          -------->------>\
+                 *          b<------a<------c [previous hull edge]
+                 *              e
+                 */
+                let h_ca = self.hull.right_hull(h_ab);
+                let e_ca = self.hull.edge(h_ca);
+                let edge_ca = self.half.edge(e_ca);
+                assert!(a == edge_ca.dst);
+                let c = edge_ca.src;
+                let g = self.half.insert(a, c, p,
+                    EMPTY_EDGE, self.half.next(f), e_ca);
+
+                // h_ca has the same X position as c-p, so we update the same
+                // slot in the hull, then move the point in the look-up table.
+                self.hull.update(h_ca, self.half.next(g));
+                self.hull.move_point(a, p);
+
+                // Legalize the two new triangle edges
+                self.legalize(f);
+                self.legalize(g);
+                h_ca
+            };
+
+            // Check and fill acute angles
+            self.check_acute_left(p, h_p);
+            self.check_acute_right(p, h_p);
+            h_p
         };
-
-        // Check and fill acute angles
-        self.check_acute_left(p, h_p);
-        self.check_acute_right(p, h_p);
 
         // Finally, we check whether this point terminates any edges that are
         // locked in the triangulation (the "constrainted" part of Constrained
