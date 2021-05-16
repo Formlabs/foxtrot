@@ -104,6 +104,10 @@ impl<'a> Triangulator<'a> {
                         });
 
                         continue;
+                    } else if bc.is_empty() {
+                        // If we don't know how to build an edge for a subtype,
+                        // then we return an empty vector and skip it here.
+                        return;
                     }
 
                     // Record the initial point to close the loop
@@ -265,6 +269,11 @@ impl<'a> Triangulator<'a> {
             match self.entity(*e) {
                 &DataEntity::OrientedEdge(_, element, orientation) => {
                     let o = self.oriented_edge(element, orientation);
+                    // Special case: return an empty vector if we don't
+                    // know how to triangulate any of the components.
+                    if o.is_empty() {
+                        return vec![];
+                    }
                     out.extend(o.into_iter());
                 },
                 e => panic!("Invalid OrientedEdge {:?}", e),
@@ -329,8 +338,11 @@ impl<'a> Triangulator<'a> {
                 let t_end = curve.u_from_point(v);
 
                 curve.as_polyline(t_start, t_end, 8)
-            }
-            e => panic!("Could not get edge from {:?}", e),
+            },
+            e => {
+                eprintln!("Could not get edge from {:?}", e);
+                vec![]
+            },
         }
     }
 
