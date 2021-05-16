@@ -306,7 +306,7 @@ impl BSplineCurve {
         }
     }
 
-    pub fn uv_from_point(&self, P: DVec3) -> f64 {
+    pub fn u_from_point(&self, P: DVec3) -> f64 {
         let mut best_score = std::f64::INFINITY;
         let mut best_u = 0.0;
 
@@ -330,6 +330,32 @@ impl BSplineCurve {
             }
         }
         self.u_from_point_newtons_method(P, best_u)
+    }
+
+
+    pub fn as_polyline(&self, u_start: f64, u_end: f64, num_points_per_knot: usize) -> Vec<DVec3> {
+        let mut result: Vec<DVec3> = Vec::new();
+        result.push(self.curve_point(u_start));
+
+        // TODO this could be faster if we skip to the right start/end sections
+
+        assert!(num_points_per_knot > 0);
+        for i in 0..self.knots.len() - 1 {
+            // Skip multiple knots
+            if self.knots.U[i] == self.knots.U[i + 1] {
+                continue;
+            }
+            // Iterate over a grid within this region
+            for u in 0..num_points_per_knot {
+                let frac = (u as f64) / (num_points_per_knot as f64);
+                let u = self.knots.U[i] * (1.0 - frac) + self.knots.U[i + 1] * frac;
+                if u > u_start && u < u_end {
+                    result.push(self.curve_point(u));
+                }
+            }
+        }
+        result.push(self.curve_point(u_end));
+        result
     }
 }
 

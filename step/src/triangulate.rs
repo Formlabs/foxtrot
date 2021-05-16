@@ -2,7 +2,7 @@ use std::convert::TryInto;
 use nalgebra_glm as glm;
 use nalgebra_glm::{DVec2, DVec3, DVec4, DMat4, U32Vec3};
 
-use nurbs::{BSplineSurface, KnotVector};
+use nurbs::{BSplineSurface, BSplineCurve, KnotVector};
 
 use crate::StepFile;
 use crate::ap214_autogen::{DataEntity, Id};
@@ -191,7 +191,7 @@ impl<'a> Triangulator<'a> {
                 assert!(!v_closed);
                 assert!(!self_intersect);
 
-                let control_points_list = self.get_control_points(control_points_list);
+                let control_points_list = self.get_control_points_2d(control_points_list);
 
                 let u_knot_vec = KnotVector::from_multiplicities(*u_degree, u_knots, u_multiplicities);
                 let v_knot_vec = KnotVector::from_multiplicities(*v_degree, v_knots, v_multiplicities);
@@ -212,7 +212,14 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn get_control_points(&self, c: &[Vec<Id>]) -> Vec<Vec<DVec3>> {
+    fn get_control_points_1d(&self, c: &[Id]) -> Vec<DVec3> {
+        let mut result = Vec::new();
+        for i in c {
+            result.push(self.vertex_point(*i));
+        }
+        result
+    }
+    fn get_control_points_2d(&self, c: &[Vec<Id>]) -> Vec<Vec<DVec3>> {
         let mut outer = Vec::new();
         for v in c {
             let mut inner = Vec::new();
@@ -301,12 +308,28 @@ impl<'a> Triangulator<'a> {
             &DataEntity::Ellipse(_, position, radius1, radius2) => {
                 self.ellipse(u, v, position, radius1, radius2, edge_start == edge_end, same_sense ^ flip)
             },
-            DataEntity::BSplineCurveWithKnots(_, _degree, _control_points_list,
-                _curve_form, _closed_curve, _self_intersect, _knot_multiplicities,
-                _knots, _knot_spec) =>
+            DataEntity::BSplineCurveWithKnots(_, curve_degree, control_points_list,
+                _curve_form, closed_curve, self_intersect, knot_multiplicities,
+                knots, _knot_spec) =>
             {
-                eprintln!("Skipping BSpline Curve");
-                panic!("Could not get edge from {:?}", edge_geometry);
+                assert!(!closed_curve);
+                assert!(!self_intersect);
+
+                let control_points_list = self.get_control_points_1d(control_points_list);
+
+                let knot_vec = KnotVector::from_multiplicities(*curve_degree, knots, knot_multiplicities);
+
+                let curve = BSplineCurve::new(
+                    !closed_curve,
+                    knot_vec,
+                    control_points_list,
+                );
+
+                let t_start = curve.u_from_point(u);
+                let t_end = curve.u_from_point(v);
+
+                assert!(t_start <= t_end);
+                curve.as_polyline(t_start, t_end, 8)
             }
             e => panic!("Could not get edge from {:?}", e),
         }
