@@ -141,25 +141,35 @@ impl<'a> Triangulator<'a> {
             }
         }
 
-        let mut t = cdt::Triangulation::new_with_edges(&pts, &edges)
-            .expect("Could not build CDT triangulation");
-        match t.run() {
-            Ok(()) => for (a, b, c) in t.triangles() {
-                let a = (a + offset) as u32;
-                let b = (b + offset) as u32;
-                let c = (c + offset) as u32;
-                self.triangles.push(Triangle { verts:
-                    if same_sense ^ s.sign() {
-                        U32Vec3::new(a, b, c)
-                    } else {
-                        U32Vec3::new(a, c, b)
-                    }
-                });
+        let result = std::panic::catch_unwind(move || {
+            let mut t = cdt::Triangulation::new_with_edges(&pts, &edges)
+                .expect("Could not build CDT triangulation");
+            match t.run() {
+                Ok(()) => t,
+                Err(e) => {
+                    t.save_debug_svg(&format!("out{}.svg", surface.0))
+                        .expect("Could not save debug SVG");
+                    panic!("Triangulation error: {}", e)
+                },
+            }
+        });
+        match result {
+            Ok(t) => {
+                for (a, b, c) in t.triangles() {
+                    let a = (a + offset) as u32;
+                    let b = (b + offset) as u32;
+                    let c = (c + offset) as u32;
+                    self.triangles.push(Triangle { verts:
+                        if same_sense ^ s.sign() {
+                            U32Vec3::new(a, b, c)
+                        } else {
+                            U32Vec3::new(a, c, b)
+                        }
+                    });
+                }
             },
             Err(e) => {
-                eprintln!("Got error when triangulating: {:?}", e);
-                t.save_debug_svg(&format!("out{}.svg", surface.0))
-                    .expect("Could not save debug SVG");
+                eprintln!("Got error while triangulating: {:?}", e);
             }
         }
     }
@@ -445,8 +455,9 @@ impl<'a> Triangulator<'a> {
         // Project back to the line, for sanity-checking
         let u_ = pnt + dir * start;
         let v_ = pnt + dir * end;
-        assert!(glm::distance2(&u_, &u) < std::f64::EPSILON);
-        assert!(glm::distance2(&v_, &v) < std::f64::EPSILON);
+        //assert!(glm::distance2(&u_, &u) < std::f64::EPSILON);
+        //assert!(glm::distance2(&v_, &v) < std::f64::EPSILON);
+        // TODO: check this somehow, or just don't bother?
 
         // Ignore pnt and dir, as we're using u/v instead
         vec![u, v]
