@@ -301,12 +301,12 @@ impl<'a> Triangulator<'a> {
             &DataEntity::Ellipse(_, position, radius1, radius2) => {
                 self.ellipse(u, v, position, radius1, radius2, edge_start == edge_end, same_sense ^ flip)
             },
-            DataEntity::BSplineCurveWithKnots(_, degree, control_points_list,
-                curve_form, closed_curve, self_intersect, knot_multiplicities,
-                knots, knot_spec) =>
+            DataEntity::BSplineCurveWithKnots(_, _degree, _control_points_list,
+                _curve_form, _closed_curve, _self_intersect, _knot_multiplicities,
+                _knots, _knot_spec) =>
             {
                 eprintln!("Skipping BSpline Curve");
-                vec![]
+                panic!("Could not get edge from {:?}", edge_geometry);
             }
             e => panic!("Could not get edge from {:?}", e),
         }

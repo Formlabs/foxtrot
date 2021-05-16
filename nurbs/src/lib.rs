@@ -2,7 +2,7 @@
 // This file is translations of algorithms from the 70s, which use awkward
 // single-character names everywhere, so we're matching their convention.
 
-use nalgebra_glm::{DVec2, DVec3, dot, length, length2, DMat2x2};
+use nalgebra_glm::{dot, length, length2, DMat2x2, DVec2, DVec3};
 use std::cmp::min;
 use std::mem::swap;
 
@@ -31,8 +31,7 @@ pub struct KnotVector {
 
 impl KnotVector {
     /// Constructs a new knot vector of over
-    pub fn from_multiplicities(p: usize, knots: &[f64],
-                               multiplicities: &[usize]) -> Self {
+    pub fn from_multiplicities(p: usize, knots: &[f64], multiplicities: &[usize]) -> Self {
         assert!(knots.len() == multiplicities.len());
         let mut out = Vec::new();
         for (k, m) in knots.iter().zip(multiplicities.iter()) {
@@ -69,10 +68,18 @@ impl KnotVector {
         mid
     }
 
-    pub fn degree(&self) -> usize { self.p }
-    pub fn len(&self) -> usize { self.U.len() }
-    pub fn min_t(&self) -> f64 { self.U[self.p] }
-    pub fn max_t(&self) -> f64 { self.U[self.U.len() - 1 - self.p] }
+    pub fn degree(&self) -> usize {
+        self.p
+    }
+    pub fn len(&self) -> usize {
+        self.U.len()
+    }
+    pub fn min_t(&self) -> f64 {
+        self.U[self.p]
+    }
+    pub fn max_t(&self) -> f64 {
+        self.U[self.U.len() - 1 - self.p]
+    }
 
     /// Computes non-vanishing basis functions of order `p + 1` at point `u`.
     ///
@@ -109,7 +116,7 @@ impl KnotVector {
     /// ALGORITHM A2.3
     /// if ders = basis_funs_derivs_(), then ders[k][j] is the `kth` derivative
     /// of the function `N_{i-p+j, p}` at `u`
-    pub fn basis_funs_derivs(&self, u: f64, n: usize) -> Vec<Vec<f64>>  {
+    pub fn basis_funs_derivs(&self, u: f64, n: usize) -> Vec<Vec<f64>> {
         let i = self.find_span(u);
         self.basis_funs_derivs_for_span(i, u, n)
     }
@@ -124,15 +131,15 @@ impl KnotVector {
 
         ndu[0][0] = 1.0;
         for j in 1..=self.p {
-            left[j] = u - self.U[i+1-j];
-            right[j] = self.U[i+j] - u;
+            left[j] = u - self.U[i + 1 - j];
+            right[j] = self.U[i + j] - u;
             let mut saved = 0.0;
             for r in 0..j {
-                ndu[j][r] = right[r+1] + left[j-r];
-                let temp = ndu[r][j-1] / ndu[j][r];
+                ndu[j][r] = right[r + 1] + left[j - r];
+                let temp = ndu[r][j - 1] / ndu[j][r];
 
-                ndu[r][j] = saved + right[r+1] * temp;
-                saved = left[j-r] * temp;
+                ndu[r][j] = saved + right[r + 1] * temp;
+                saved = left[j - r] * temp;
             }
             ndu[j][j] = saved;
         }
@@ -140,7 +147,8 @@ impl KnotVector {
             ders[0][j] = ndu[j][self.p];
         }
         for r in 0..=self.p {
-            let mut s1 = 0; let mut s2 = 1;
+            let mut s1 = 0;
+            let mut s2 = 1;
             a[0][0] = 1.0;
             for k in 1..=n {
                 let aus = as_usize_assert;
@@ -148,19 +156,23 @@ impl KnotVector {
                 let rk = (r as i32) - (k as i32);
                 let pk = (self.p as i32) - (k as i32);
                 if r >= k {
-                    a[s2][0] = a[s1][0] / ndu[aus(pk+1)][rk as usize];
+                    a[s2][0] = a[s1][0] / ndu[aus(pk + 1)][rk as usize];
                     d = a[s2][0] * ndu[aus(rk)][aus(pk)];
                 }
                 let j1 = aus(if rk >= -1 { 1 } else { -rk });
-                let j2 = aus(if r as i32 - 1 <= pk as i32 { k as i32 - 1 } else { self.p as i32 - r as i32 });
+                let j2 = aus(if r as i32 - 1 <= pk as i32 {
+                    k as i32 - 1
+                } else {
+                    self.p as i32 - r as i32
+                });
 
                 for j in j1..=j2 {
-                    a[s2][j] = (a[s1][j] - a[s1][j-1]) / ndu[aus(pk+1)][aus(rk + j as i32)];
+                    a[s2][j] = (a[s1][j] - a[s1][j - 1]) / ndu[aus(pk + 1)][aus(rk + j as i32)];
                     d += a[s2][j] * ndu[aus(rk + j as i32)][aus(pk)];
                 }
                 if r as i32 <= pk {
-                    a[s2][k] = -a[s1][k-1] / ndu[aus(pk+1)][r];
-                    d+= a[s2][k] * ndu[r][aus(pk)];
+                    a[s2][k] = -a[s1][k - 1] / ndu[aus(pk + 1)][r];
+                    d += a[s2][k] * ndu[r][aus(pk)];
                 }
                 ders[k][r] = d;
                 swap(&mut s1, &mut s2);
@@ -169,14 +181,14 @@ impl KnotVector {
 
         let mut r = self.p;
         for k in 1..=n {
-            for j in 0..=self.p { ders[k][j] *= r as f64; }
+            for j in 0..=self.p {
+                ders[k][j] *= r as f64;
+            }
             r *= self.p - k;
         }
         ders
     }
 }
-
-
 
 #[derive(Debug, Clone)]
 pub struct BSplineSurface {
@@ -189,16 +201,34 @@ pub struct BSplineSurface {
 
 /// Non-rational b-spline surface with 3D control points
 impl BSplineSurface {
-    pub fn new(u_open: bool, v_open: bool, u_knots: KnotVector, v_knots: KnotVector, 
-               control_points: Vec<Vec<DVec3>>) -> Self {
-        Self { u_open, v_open, u_knots, v_knots, control_points }
+    pub fn new(
+        u_open: bool,
+        v_open: bool,
+        u_knots: KnotVector,
+        v_knots: KnotVector,
+        control_points: Vec<Vec<DVec3>>,
+    ) -> Self {
+        Self {
+            u_open,
+            v_open,
+            u_knots,
+            v_knots,
+            control_points,
+        }
     }
 
-
-    pub fn min_u(&self) -> f64 { self.u_knots.min_t() }
-    pub fn max_u(&self) -> f64 { self.u_knots.max_t() }
-    pub fn min_v(&self) -> f64 { self.v_knots.min_t() }
-    pub fn max_v(&self) -> f64 { self.v_knots.max_t() }
+    pub fn min_u(&self) -> f64 {
+        self.u_knots.min_t()
+    }
+    pub fn max_u(&self) -> f64 {
+        self.u_knots.max_t()
+    }
+    pub fn min_v(&self) -> f64 {
+        self.v_knots.min_t()
+    }
+    pub fn max_v(&self) -> f64 {
+        self.v_knots.max_t()
+    }
 
     /// Converts a point at position uv onto the 3D mesh, using basis functions
     /// of order `p + 1` and `q + 1` respectively.
@@ -234,17 +264,17 @@ impl BSplineSurface {
     /// We compute derivatives up to and including the `d`'th order derivatives.
     ///
     /// ALGORITHM A3.6
-    pub fn surface_derivs<const d: usize>(&self, uv: DVec2) -> Vec<Vec<DVec3>> {
+    pub fn surface_derivs<const D: usize>(&self, uv: DVec2) -> Vec<Vec<DVec3>> {
         let p = self.u_knots.degree();
         let q = self.v_knots.degree();
 
         // Simple initialization of du
-        let du = min(d, p);
-        let dv = min(d, q);
+        let du = min(D, p);
+        let dv = min(D, q);
 
         // The output matrix goes all the way to order d, even if some of the
         // surfaces are lower order (those values will be locked at 0)
-        let mut SKL = vec![vec![DVec3::zeros(); d + 1]; d + 1];
+        let mut SKL = vec![vec![DVec3::zeros(); D + 1]; D + 1];
 
         let uspan = self.u_knots.find_span(uv.x);
         let Nu_deriv = self.u_knots.basis_funs_derivs_for_span(uspan, uv.x, du);
@@ -260,7 +290,7 @@ impl BSplineSurface {
                     temp[s] += Nu_deriv[k][r] * self.control_points[uspan - p + r][vspan - q + s];
                 }
             }
-            let dd = min(d-k, dv);
+            let dd = min(D - k, dv);
             for l in 0..=dd {
                 for s in 0..=q {
                     SKL[k][l] += Nv_deriv[l][s] * temp[s];
@@ -272,8 +302,8 @@ impl BSplineSurface {
 
     // Section 6.1 (start middle page 232)
     pub fn uv_from_point_newtons_method(&self, P: DVec3, uv_0: DVec2) -> DVec2 {
-        let eps1 = 0.01;  // a Euclidean distance error bound
-        let eps2 = 0.01;  // a cosine error bound
+        let eps1 = 0.01; // a Euclidean distance error bound
+        let eps2 = 0.01; // a cosine error bound
 
         let mut uv_i = uv_0;
         loop {
@@ -291,9 +321,9 @@ impl BSplineSurface {
             //    |S_u(uv_i) dot (S(uv_i) - P)| / |S_u(uv_i)| / |S(uv_i) - P| < \epsilon_2  and
             //    |S_v(uv_i) dot (S(uv_i) - P)| / |S_v(uv_i)| / |S(uv_i) - P| < \epsilon_2
             // then we are done
-            if length(&r) < eps1 &&
-               dot(&r, &S_u).abs() / length(&S_u) / length(&r) < eps2 &&
-               dot(&r, &S_v).abs() / length(&S_v) / length(&r) < eps2
+            if length(&r) < eps1
+                && dot(&r, &S_u).abs() / length(&S_u) / length(&r) < eps2
+                && dot(&r, &S_v).abs() / length(&S_v) / length(&r) < eps2
             {
                 return uv_i;
             }
@@ -311,9 +341,11 @@ impl BSplineSurface {
             let f = dot(&r, &S_u);
             let g = dot(&r, &S_v);
             let K_i = -DVec2::new(f, g);
-            let J_i = symmetric2x2(length2(&S_u) + dot(&r, &S_uu),
-                                   dot(&S_u, &S_v) + dot(&r, &S_uv),
-                                   length2(&S_v) + dot(&r, &S_vv));
+            let J_i = symmetric2x2(
+                length2(&S_u) + dot(&r, &S_uu),
+                dot(&S_u, &S_v) + dot(&r, &S_uv),
+                length2(&S_v) + dot(&r, &S_vv),
+            );
             let delta_i = J_i.try_inverse().expect("Could not invert") * K_i;
             let mut uv_ip1 = uv_i + delta_i;
 
@@ -383,12 +415,10 @@ impl BSplineSurface {
                 // Iterate over a grid within this region
                 for u in 0..N {
                     let frac = (u as f64) / (N as f64 - 1.0);
-                    let u = self.u_knots.U[i] * (1.0 - frac) +
-                            self.u_knots.U[i + 1] * frac;
+                    let u = self.u_knots.U[i] * (1.0 - frac) + self.u_knots.U[i + 1] * frac;
                     for v in 0..N {
                         let frac = (v as f64) / (N as f64 - 1.0);
-                        let v = self.v_knots.U[j] * (1.0 - frac) +
-                                self.v_knots.U[j + 1] * frac;
+                        let v = self.v_knots.U[j] * (1.0 - frac) + self.v_knots.U[j + 1] * frac;
                         let uv = DVec2::new(u, v);
                         let q = self.surface_point(uv);
                         let score = (p - q).norm();
@@ -404,7 +434,6 @@ impl BSplineSurface {
     }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
@@ -412,7 +441,9 @@ mod tests {
     use super::*;
     #[test]
     fn test_find_span() {
-        let k = KnotVector { U: vec![0.0, 0.0, 0.0, 1.0, 1.0, 1.0] };
+        let k = KnotVector {
+            U: vec![0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        };
         assert!(k.find_span(0, 0.0) == 2);
         assert!(k.find_span(0, 0.99) == 2);
         assert!(k.find_span(1, 0.99) == 2);
