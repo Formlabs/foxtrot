@@ -1,5 +1,7 @@
-[workspace]
+[profile.release]
+debug = true
 
+[workspace]
 members = [
     "cdt",
     "step",
