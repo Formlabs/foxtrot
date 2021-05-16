@@ -190,6 +190,75 @@ impl KnotVector {
     }
 }
 
+
+#[derive(Debug, Clone)]
+pub struct BSplineCurve {
+    open: bool,
+    knots: KnotVector,
+    control_points: Vec<DVec3>,
+}
+
+/// Non-rational b-spline surface with 3D control points
+impl BSplineCurve {
+    pub fn new(
+        open: bool,
+        knots: KnotVector,
+        control_points: Vec<DVec3>,
+    ) -> Self {
+        Self {
+            open,
+            knots,
+            control_points,
+        }
+    }
+
+    pub fn min_u(&self) -> f64 {
+        self.knots.min_t()
+    }
+    pub fn max_u(&self) -> f64 {
+        self.knots.max_t()
+    }
+
+    /// Converts a point at position t onto the 3D line, using basis functions
+    /// of order `p + 1` respectively.
+    ///
+    /// ALGORITHM A3.1
+    pub fn curve_point(&self, u: f64) -> DVec3 {
+        let p = self.knots.degree();
+
+        let span = self.knots.find_span(u);
+        let N = self.knots.basis_funs_for_span(span, u);
+
+        let mut C = DVec3::zeros();
+        for i in 0..=p {
+            C += N[i] * self.control_points[span - p + i]
+        }
+        C
+    }
+
+    /// Computes the derivatives of the curve of order up to and including `d` at location `t`,
+    /// using basis functions of order `p + 1` respectively.
+    ///
+    /// ALGORITHM A3.2
+    pub fn curve_derivs(&self, u: f64, d: usize) -> Vec<DVec3> {
+        let p = self.knots.degree();
+
+        let du = min(d, p);
+
+        let span = self.knots.find_span(u);
+        let N_derivs = self.knots.basis_funs_derivs_for_span(span, u, du);
+
+        let mut CK = vec![DVec3::zeros(); du + 1];
+        for k in 0..=du {
+            for j in 0..=p {
+                CK[k] += N_derivs[k][j] * self.control_points[span - p + j]
+            }
+        }
+        CK
+    }
+}
+
+
 #[derive(Debug, Clone)]
 pub struct BSplineSurface {
     u_open: bool,
