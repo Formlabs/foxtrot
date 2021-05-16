@@ -256,6 +256,81 @@ impl BSplineCurve {
         }
         CK
     }
+
+    // Section 6.1 (start middle page 232)
+    pub fn u_from_point_newtons_method(&self, P: DVec3, u_0: f64) -> f64 {
+        let eps1 = 0.01; // a Euclidean distance error bound
+        let eps2 = 0.01; // a cosine error bound
+
+        let mut u_i = u_0;
+        loop {
+            let derivs = self.curve_derivs(u_i, 2);
+            let C = derivs[0];
+            let C_p = derivs[1];
+            let C_pp = derivs[2];
+            let r = C - P;
+
+            // If we are close to the point and close to the right angle, then return
+            if length(&r) <= eps1 && dot(&C_p, &r) / length(&C_p) / length(&r) <= eps2 {
+                return u_i;
+            }
+
+            // calculate the next `u`
+            // let f(u) = C'(u) dot (C(u) - P)
+            // u_{ip1} = u_i - (f(u_i) / f'(u_i)) = u_i - (C'(u_i) dot (C(u_i) - P)) / (C''(u_i) dot (C(u_i) - P) + |C'(u_i)|^2)
+            let delta_i = -dot(&C_p, &r) / (dot(&C_pp, &r) + length2(&C_p));
+            let mut u_ip1 = u_i + delta_i;
+
+            // clamp the `u` onto the curve
+            if u_ip1 < self.min_u() {
+                u_ip1 = if self.open {
+                    self.min_u()
+                } else {
+                    self.max_u() - (self.min_u() - u_ip1)
+                };
+            }
+            if u_ip1 > self.max_u() {
+                u_ip1 = if self.open {
+                    self.max_u()
+                } else {
+                    self.min_u() + (u_ip1 - self.max_u())
+                };
+            }
+
+            // if the point didnt move much, return
+            if length(&((u_ip1 - u_i) * C_p)) <= eps1 {
+                return u_ip1;
+            }
+
+            u_ip1 = u_i;
+        }
+    }
+
+    pub fn uv_from_point(&self, P: DVec3) -> f64 {
+        let mut best_score = std::f64::INFINITY;
+        let mut best_u = 0.0;
+
+        const N: usize = 8;
+        for i in 0..self.knots.len() - 1 {
+            // Skip multiple knots
+            if self.knots.U[i] == self.knots.U[i + 1] {
+                continue;
+            }
+            // Iterate over a grid within this region
+            for u in 0..N {
+                let frac = (u as f64) / (N as f64 - 1.0);
+                let u = self.knots.U[i] * (1.0 - frac) + self.knots.U[i + 1] * frac;
+                
+                let q = self.curve_point(u);
+                let score = (P - q).norm();
+                if score < best_score {
+                    best_score = score;
+                    best_u = u;
+                }
+            }
+        }
+        self.u_from_point_newtons_method(P, best_u)
+    }
 }
 
 
