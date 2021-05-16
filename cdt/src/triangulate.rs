@@ -1204,7 +1204,10 @@ fn min3(buf: &[(usize, f64)], points: &[(f64, f64)]) -> [usize; 3] {
                 } else if array[1].1.is_infinite() {
                     // If there is one point picked already, then don't
                     // pick it again, since that will be doomed to be colinear.
-                    if points[array[0].0] == points[p] {
+                    let p0 = points[array[0].0];
+                    if (p0.0 - points[p].0).abs() < std::f64::EPSILON &&
+                       (p0.1 - points[p].1).abs() < std::f64::EPSILON
+                    {
                         continue 'outer;
                     }
                 } else {
