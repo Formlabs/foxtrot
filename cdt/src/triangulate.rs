@@ -544,6 +544,9 @@ impl Triangulation {
         let edge = self.half.edge(e_ab);
         let a = edge.src;
         let b = edge.dst;
+        assert!(edge.next != EMPTY_EDGE);
+        assert!(edge.prev != EMPTY_EDGE);
+        assert!(edge.buddy == EMPTY_EDGE);
 
         assert!(a != b);
         assert!(a != p);
@@ -567,6 +570,7 @@ impl Triangulation {
                 line instead of inserting a new triangle.
             */
             assert!(!edge.fixed);
+            assert!(edge.buddy == EMPTY_EDGE);
             let edge_bc = self.half.edge(edge.next);
             let edge_ca = self.half.edge(edge.prev);
             let c = edge_bc.dst;

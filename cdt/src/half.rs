@@ -161,6 +161,7 @@ impl Half {
     /// Panics if the invariants are broken.
     pub fn check(&self) {
         for (index, edge) in self.edges.iter().enumerate() {
+            // Check that deleted edges are fully deleted
             if edge.next == EMPTY_EDGE {
                 assert!(edge.prev == EMPTY_EDGE);
                 assert!(edge.buddy == EMPTY_EDGE);
