@@ -79,11 +79,11 @@ impl KnotVector {
     /// ALGORITHM A2.2
     pub fn basis_funs(&self, u: f64) -> Vec<f64> {
         let i = self.find_span(u);
-        self.basis_funs_(i, u)
+        self.basis_funs_for_span(i, u)
     }
 
     // Inner implementation of basis_funs
-    pub fn basis_funs_(&self, i: usize, u: f64) -> Vec<f64> {
+    pub fn basis_funs_for_span(&self, i: usize, u: f64) -> Vec<f64> {
         let mut N = vec![0.0; self.p + 1];
 
         let mut left = vec![0.0; self.p + 1];
@@ -111,10 +111,10 @@ impl KnotVector {
     /// of the function `N_{i-p+j, p}` at `u`
     pub fn basis_funs_derivs(&self, u: f64, n: usize) -> Vec<Vec<f64>>  {
         let i = self.find_span(u);
-        self.basis_funs_derivs_(i, u, n)
+        self.basis_funs_derivs_for_span(i, u, n)
     }
 
-    pub fn basis_funs_derivs_(&self, i: usize, u: f64, n: usize) -> Vec<Vec<f64>> {
+    pub fn basis_funs_derivs_for_span(&self, i: usize, u: f64, n: usize) -> Vec<Vec<f64>> {
         let mut ndu = vec![vec![0.0; self.p + 1]; self.p + 1];
         let mut a = vec![vec![0.0; self.p + 1]; 2];
         let mut left = vec![0.0; self.p + 1];
@@ -209,10 +209,10 @@ impl BSplineSurface {
         let q = self.v_knots.degree();
 
         let uspan = self.u_knots.find_span(uv.x);
-        let Nu = self.u_knots.basis_funs_(uspan, uv.x);
+        let Nu = self.u_knots.basis_funs_for_span(uspan, uv.x);
 
         let vspan = self.v_knots.find_span(uv.y);
-        let Nv = self.v_knots.basis_funs_(vspan, uv.y);
+        let Nv = self.v_knots.basis_funs_for_span(vspan, uv.y);
 
         let uind = uspan - p;
         let mut S = DVec3::zeros();
@@ -247,10 +247,10 @@ impl BSplineSurface {
         let mut SKL = vec![vec![DVec3::zeros(); d + 1]; d + 1];
 
         let uspan = self.u_knots.find_span(uv.x);
-        let Nu_deriv = self.u_knots.basis_funs_derivs_(uspan, uv.x, du);
+        let Nu_deriv = self.u_knots.basis_funs_derivs_for_span(uspan, uv.x, du);
 
         let vspan = self.v_knots.find_span(uv.y);
-        let Nv_deriv = self.v_knots.basis_funs_derivs_(vspan, uv.y, dv);
+        let Nv_deriv = self.v_knots.basis_funs_derivs_for_span(vspan, uv.y, dv);
 
         let mut temp = vec![DVec3::zeros(); q + 1];
         for k in 0..=du {
