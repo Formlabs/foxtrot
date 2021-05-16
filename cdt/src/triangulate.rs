@@ -1214,7 +1214,7 @@ fn min3(buf: &[(usize, f64)], points: &[(f64, f64)]) -> [usize; 3] {
                     assert!(!array[1].1.is_infinite());
                     let p0 = points[array[0].0];
                     let p1 = points[array[1].0];
-                    if orient2d(p0, p1, points[p]) == 0.0 {
+                    if orient2d(p0, p1, points[p]) < std::f64::EPSILON {
                         continue 'outer;
                     }
                 }
