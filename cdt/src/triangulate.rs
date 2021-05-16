@@ -575,15 +575,31 @@ impl Triangulation {
             let edge_ca = self.half.edge(edge.prev);
             let c = edge_bc.dst;
             assert!(c == edge_ca.src);
+
+            let hull_right = self.hull.right_hull(h_ab);
+            let hull_left = self.hull.left_hull(h_ab);
+
             self.half.erase(e_ab);
 
             let e_pc = self.half.insert(p, c, a, edge_ca.buddy, EMPTY_EDGE, EMPTY_EDGE);
             let e_cp = self.half.insert(c, p, b, EMPTY_EDGE, edge_bc.buddy, e_pc);
 
-            // Patch the hull
+            // Update the hull point at b to point to the new split edge
             self.hull.update(h_ab, self.half.next(e_cp));
+
+            // Split the edge in the hull
             let h_ap = self.hull.insert(
                 h_ab, self.angles[p], p, self.half.prev(e_pc));
+
+            // If either of the other triangle edges (in the now-deleted
+            // triangle) were attached to the hull, then patch them up.
+            if self.hull.edge(hull_right) == edge.prev {
+                self.hull.update(hull_right, self.half.next(e_pc));
+            }
+            if self.hull.edge(hull_left) == edge.next {
+                self.hull.update(hull_left, self.half.prev(e_cp));
+            }
+
             self.legalize(self.half.prev(e_cp));
             self.legalize(self.half.next(e_pc));
             h_ap
