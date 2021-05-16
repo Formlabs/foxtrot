@@ -193,16 +193,17 @@ impl<'a> Triangulator<'a> {
 
                 let control_points_list = self.get_control_points(control_points_list);
 
-                let u_knot_vec = KnotVector::from_multiplicities(u_knots, u_multiplicities);
-                let v_knot_vec = KnotVector::from_multiplicities(v_knots, v_multiplicities);
+                let u_knot_vec = KnotVector::from_multiplicities(*u_degree, u_knots, u_multiplicities);
+                let v_knot_vec = KnotVector::from_multiplicities(*v_degree, v_knots, v_multiplicities);
 
                 let s = BSplineSurface::new(
+                    !u_closed,
+                    !v_closed,
                     u_knot_vec,
                     v_knot_vec,
                     control_points_list,
                 );
-                println!("surf: {:?}", s.surface_point(*u_degree, *v_degree,
-                        DVec2::new(u_knots[0], v_knots[0])));
+                println!("surf: {:?}", s.surface_point(DVec2::new(u_knots[0], v_knots[0])));
 
                 None
             },

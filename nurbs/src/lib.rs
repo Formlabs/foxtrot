@@ -2,15 +2,32 @@
 // This file is translations of algorithms from the 70s, which use awkward
 // single-character names everywhere, so we're matching their convention.
 
-use nalgebra_glm::{DVec2, DVec3};
+use nalgebra_glm::{DVec2, DVec3, dot, length, length2, DMat2x2, make_mat2x2, abs};
+use std::cmp::min;
+use std::mem::swap;
+
+fn as_usize_assert(i: i32) -> usize {
+    assert!(i >= 0);
+    i as usize
+}
+
+// makes matrix [[a, b], [b, d]]
+fn symetric2x2(a: f64, b: f64, d: f64) -> DMat2x2 {
+    // This in in column major order, but because its symmetric it doesnt matter
+    let mut mat = DMat2x2::identity();
+    mat.set_column(0, &DVec2::new(a, b));
+    mat.set_column(1, &DVec2::new(b, d));
+    mat
+}
 
 #[derive(Debug, Clone)]
 pub struct KnotVector {
     U: Vec<f64>,
+    p: usize,  // the degree of the knot basis vector
 }
 
 impl KnotVector {
-    pub fn from_multiplicities(knots: &[f64], multiplicities: &[usize]) -> Self {
+    pub fn from_multiplicities(p: usize, knots: &[f64], multiplicities: &[usize]) -> Self {
         assert!(knots.len() == multiplicities.len());
         let mut out = Vec::new();
         for (k, m) in knots.iter().zip(multiplicities.iter()) {
@@ -18,22 +35,22 @@ impl KnotVector {
                 out.push(*k);
             }
         }
-        Self { U: out }
+        Self { p: p, U: out }
     }
 
     /// For basis functions of order `p + 1`, finds the span in the knot vector
     /// that is relevant for position `u`.
     ///
     /// ALGORITHM A2.1
-    pub fn find_span(&self, p: usize, u: f64) -> usize {
+    pub fn find_span(&self, u: f64) -> usize {
         // U is [u_0, u_1, ... u_m]
         let m = self.U.len() - 1;
-        let n = m - (p + 1); // max basis index
+        let n = m - (self.p + 1); // max basis index
 
         if u == self.U[n + 1] {
             return n;
         }
-        let mut low = p;
+        let mut low = self.p;
         let mut high = n + 1;
         let mut mid = (low + high) / 2;
         while u < self.U[mid] || u >= self.U[mid + 1] {
@@ -47,21 +64,25 @@ impl KnotVector {
         mid
     }
 
+    pub fn degree(&self) -> usize { self.p }
+    pub fn min_t(&self) -> f64 { self.U[self.p] }
+    pub fn max_t(&self) -> f64 { self.U[self.U.len() - 1 - self.p] }
+
     /// Computes non-vanishing basis functions of order `p + 1` at point `u`.
     ///
     /// ALGORITHM A2.2
-    pub fn basis_funs(&self, p: usize, u: f64) -> Vec<f64> {
-        let i = self.find_span(p, u);
-        self.basis_funs_(i, p, u)
+    pub fn basis_funs(&self, u: f64) -> Vec<f64> {
+        let i = self.find_span(u);
+        self.basis_funs_(i, u)
     }
 
-    pub fn basis_funs_(&self, i: usize, p: usize, u: f64) -> Vec<f64> {
-        let mut N = vec![0.0; p + 1];
+    pub fn basis_funs_(&self, i: usize, u: f64) -> Vec<f64> {
+        let mut N = vec![0.0; self.p + 1];
 
-        let mut left = vec![0.0; p + 1];
-        let mut right = vec![0.0; p + 1];
+        let mut left = vec![0.0; self.p + 1];
+        let mut right = vec![0.0; self.p + 1];
         N[0] = 1.0;
-        for j in 1..=p {
+        for j in 1..=self.p {
             left[j] = u - self.U[i + 1 - j];
             right[j] = self.U[i + j] - u;
             let mut saved = 0.0;
@@ -74,10 +95,84 @@ impl KnotVector {
         }
         N
     }
+
+    /// Computes the derivatives (up to and including the `nth` derivative) of non-vanishing
+    /// basis functions of order `p + 1` at point `u`.
+    ///
+    /// ALGORITHM A2.3
+    /// if ders = basis_funs_derivs_(), then ders[k][j] is the `kth` derivative
+    /// of the function `N_{i-p+j, p}` at `u`
+    pub fn basis_funs_derivs(&self, u: f64, n: usize) -> Vec<Vec<f64>>  {
+        let i = self.find_span(u);
+        self.basis_funs_derivs_(i, u, n)
+    }
+
+
+    pub fn basis_funs_derivs_(&self, i: usize, u: f64, n: usize) -> Vec<Vec<f64>> {
+        let mut ndu = vec![vec![0.0; self.p + 1]; self.p + 1];
+        let mut a = vec![vec![0.0; self.p + 1]; 2];
+        let mut left = vec![0.0; self.p + 1];
+        let mut right = vec![0.0; self.p + 1];
+
+        let mut ders : Vec<Vec<f64>> = Vec::new();
+
+        ndu[0][0] = 1.0;
+        for j in 1..=self.p {
+            left[j] = u - self.U[i+1-j];
+            right[j] = self.U[i+j] - u;
+            let mut saved = 0.0;
+            for r in 0..j {
+                ndu[j][r] = right[r+1] + left[j-r];
+                let temp = ndu[r][j-1] / ndu[j][r];
+
+                ndu[r][j] = saved + right[r+1] * temp;
+                saved = left[j-r] * temp;
+            }
+            ndu[j][j] = saved;
+        }
+        for j in 0..=self.p {
+            ders[0][j] = ndu[j][self.p];
+        }
+        for r in 0..=self.p {
+            let mut s1 = 0; let mut s2 = 1;
+            a[0][0] = 1.0;
+            for k in 1..=n {
+                let aus = as_usize_assert;
+                let mut d = 0.0;
+                let rk = (r as i32) - (k as i32); let pk = (self.p as i32) - (k as i32);
+                if r >= k {
+                    a[s2][0] = a[s1][0] / ndu[aus(pk+1)][rk as usize];
+                    d = a[s2][0] * ndu[aus(rk)][aus(pk)];
+                }
+                let j1 = aus(if rk >= -1 { 1 } else { -rk });
+                let j2 = aus(if r as i32 - 1 <= pk as i32 { k as i32 - 1 } else { self.p as i32 - r as i32 });
+
+                for j in j1..=j2 {
+                    a[s2][j] = (a[s1][j] - a[s1][j-1]) / ndu[aus(pk+1)][aus(rk + j as i32)];
+                    d += a[s2][j] * ndu[aus(rk + j as i32)][aus(pk)];
+                }
+                if r as i32 <= pk {
+                    a[s2][k] = -a[s1][k-1] / ndu[aus(pk+1)][r];
+                    d+= a[s2][k] * ndu[r][aus(pk)];
+                }
+                ders[k][r] = d;
+                swap(&mut s1, &mut s2);
+            }
+        }
+        
+        let mut r = self.p;
+        for k in 1..=n {
+            for j in 0..=self.p { ders[k][j] *= r as f64; }
+            r *= self.p - k;
+        }
+        ders
+    }
 }
 
 #[derive(Debug, Clone)]
 pub struct BSplineSurface {
+    u_open: bool,
+    v_open: bool,
     u_knots: KnotVector,
     v_knots: KnotVector,
     control_points: Vec<Vec<DVec3>>,
@@ -85,20 +180,30 @@ pub struct BSplineSurface {
 
 /// Non-rational b-spline surface with 3D control points
 impl BSplineSurface {
-    pub fn new(u_knots: KnotVector, v_knots: KnotVector,
+    pub fn new(u_open: bool, v_open: bool, u_knots: KnotVector, v_knots: KnotVector, 
                control_points: Vec<Vec<DVec3>>) -> Self {
-        Self { u_knots, v_knots, control_points }
+        Self { u_open, v_open, u_knots, v_knots, control_points }
     }
+
+
+    pub fn min_u(&self) -> f64 { self.u_knots.min_t() }
+    pub fn max_u(&self) -> f64 { self.u_knots.max_t() }
+    pub fn min_v(&self) -> f64 { self.v_knots.min_t() }
+    pub fn max_v(&self) -> f64 { self.v_knots.max_t() }
+
     /// Converts a point at position uv onto the 3D mesh, using basis functions
-    /// of order `p + 1` and `u + 1` respectively.
+    /// of order `p + 1` and `q + 1` respectively.
     ///
     /// ALGORITHM A3.5
-    pub fn surface_point(&self, p: usize, q: usize, uv: DVec2) -> DVec3 {
-        let uspan = self.u_knots.find_span(p, uv.x);
-        let Nu = self.u_knots.basis_funs_(uspan, p, uv.x);
+    pub fn surface_point(&self, uv: DVec2) -> DVec3 {
+        let p = self.u_knots.degree();
+        let q = self.v_knots.degree();
 
-        let vspan = self.v_knots.find_span(q, uv.y);
-        let Nv = self.v_knots.basis_funs_(vspan, q, uv.y);
+        let uspan = self.u_knots.find_span(uv.x);
+        let Nu = self.u_knots.basis_funs_(uspan, uv.x);
+
+        let vspan = self.v_knots.find_span(uv.y);
+        let Nv = self.v_knots.basis_funs_(vspan, uv.y);
 
         let uind = uspan - p;
         let mut S = DVec3::zeros();
@@ -112,6 +217,138 @@ impl BSplineSurface {
         }
         S
     }
+
+    /// ALGORITHM A3.6
+    // if you let D = surface_derivs(), D[k][l] is the diriviave of the surface `k` times in the `u` direction and `l` times in the `v` direction
+    // we compute derivates up to and includeing `d`th order derivatives
+    pub fn surface_derivs(&self, uv: DVec2, d: usize) -> Vec<Vec<DVec3>> {
+        let mut SKL: Vec<Vec<DVec3>> = Vec::new();
+        let p = self.u_knots.degree();
+        let q = self.v_knots.degree();
+
+        let du = min(d, p);
+        for k in p+1..=d {
+            for l in 0..=d-k {
+                SKL[k][l] = DVec3::zeros();
+            }
+        }
+
+        let dv = min(d, q);
+        for l in q+1..=d {
+            for k in 0..=d-l {
+                SKL[k][l] = DVec3::zeros();
+            }
+        }
+        let uspan = self.u_knots.find_span(uv.x);
+        let Nu_deriv = self.u_knots.basis_funs_derivs_(uspan, uv.x, du);
+
+        let vspan = self.v_knots.find_span(uv.y);
+        let Nv_deriv = self.v_knots.basis_funs_derivs_(vspan, uv.y, dv);
+
+        let mut temp = Vec::new();
+        temp.resize(q, DVec3::zeros());
+
+        for k in 0..=du {
+            for s in 0..=q {
+                temp[s] = DVec3::zeros();
+                for r in 0..=p {
+                    temp[s] += Nu_deriv[k][r] * self.control_points[uspan - p + r][vspan - q + s];
+                }
+            }
+            let dd = min(d-k, dv);
+            for l in 0..=dd {
+                SKL[k][l] = DVec3::zeros();
+                for s in 0..=q {
+                    SKL[k][l] += Nv_deriv[l][s] * temp[s];
+                }
+            }
+        }
+        SKL
+    }
+
+    // Section 6.1 (start middle page 232)
+    fn uv_from_point_newtons_method(&self, P: &DVec3, uv_0: DVec2) -> DVec2 {
+        let eps1 = 0.01;  // a eucidian distance error bound
+        let eps2 = 0.01;  // a cosine error bound
+
+        let mut uv_i = uv_0;
+        loop {
+            // the surface and its derivatives at uv_i
+            let S = self.surface_point(uv_i);
+            let derivs = self.surface_derivs(uv_i, 2);
+            let S_u = derivs[1][0];
+            let S_v = derivs[0][1];
+            let S_uu = derivs[2][0];
+            let S_uv = derivs[1][1];
+            let S_vu = S_uv;
+            let S_vv = derivs[0][2];
+            let r = S - P;
+
+            // if |S(uv_i) - P| < \epsilon_1  and
+            //    |S_u(uv_i) dot (S(uv_i) - P)| / |S_u(uv_i)| / |S(uv_i) - P| < \epsilon_2  and
+            //    |S_v(uv_i) dot (S(uv_i) - P)| / |S_v(uv_i)| / |S(uv_i) - P| < \epsilon_2
+            // then we are done
+            if length(&r) < eps1 &&
+               dot(&r, &S_u).abs() / length(&S_u) / length(&r) < eps2 &&
+               dot(&r, &S_v).abs() / length(&S_v) / length(&r) < eps2 {
+                return uv_i;
+            }
+
+            // otherwise, compute uv_{i+1} by computing:
+            // let r(u, v) = S(u, v) - P
+            // let f(u, v) = r(u, v) dot S_u(u, v)
+            // let g(u, v) = r(u, v) dot S_v(u, v)
+            // let K_i = -(f(uv_{i}), g(uv_{i}))
+            // let J_i = [[df/du, df/dv], [dg/du, dg/dv]]
+            //           = [[|S_u|^2 + r dot S_uu, S_u dot S_v + r dot S_uv],
+            //              [S_u dot S_v + r dot S_vu, |S_v|^2 + r dot S_vv]]
+            // let delta_i = (J_i)^{-1} * K_i
+            // let uv_{i+1} = delta_i + uv_i
+            let f = dot(&r, &S_u);
+            let g = dot(&r, &S_v);
+            let K_i = -DVec2::new(f, g);
+            let J_i = symetric2x2(length2(&S_u) + dot(&r, &S_uu),
+                                  dot(&S_u, &S_v) + dot(&r, &S_uv),
+                                  length2(&S_v) + dot(&r, &S_vv));
+            let delta_i = J_i.try_inverse().expect("Could not invert") * K_i;
+            let mut uv_ip1 = uv_i + delta_i;
+
+            // clamp uv_{i+p} by doing:
+            // if u_{i+1} < min_u: u_{i+1} = min_u if u_open else max_u - (min_u - u_{i+1})
+            // if u_{i+1} > max_u: u_{i+1} = max_u if u_open else min_u + (u_{i+1} - max_u)
+            // if v_{i+1} < min_v: v_{i+1} = min_v if v_open else max_v - (min_v - v_{i+1})
+            // if v_{i+1} > max_v: v_{i+1} = max_v if v_open else min_v + (v_{i+1} - max_v)
+
+            if uv_ip1.x < self.min_u() {
+                uv_ip1.x = match self.u_open { true => self.min_u(), false=> self.max_u() - (self.min_u() - uv_ip1.x) }
+            }
+            if uv_ip1.x > self.max_u() {
+                uv_ip1.x = match self.u_open { true => self.max_u(), false=> self.min_u() + (uv_ip1.x - self.max_u()) }
+            }
+
+            if uv_ip1.y < self.min_v() {
+                uv_ip1.y = match self.v_open { true => self.min_v(), false=> self.max_v() - (self.min_v() - uv_ip1.y) }
+            }
+            if uv_ip1.y > self.max_v() {
+                uv_ip1.y = match self.v_open { true => self.max_v(), false=> self.min_v() + (uv_ip1.y - self.max_v()) }
+            }
+
+            // If the values didnt change much, we are as close as we are going to get:
+            // if |(u_{i+1} - u_i) * S_u(u_i, v_i) + (v_{i+1} - v_i) * S_v(u_i, v_i) | < \epsilon_1
+
+            let delta_i = uv_ip1 - uv_i;
+            if length(&(delta_i.x * S_u + delta_i.y * S_v)) < eps1 {
+                return uv_ip1;
+            }
+        
+            // otherwise, iterate again
+            uv_i = uv_ip1;
+        }
+    }
+
+    // pub fn uv_from_point(&self, p: DVec3) -> DVec2 {
+        
+    // }
 }
 
 
