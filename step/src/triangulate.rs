@@ -542,7 +542,9 @@ impl Surface {
             Surface::BSpline { surf } => {
                 // Calculate first order derivs, then cross them to get normal
                 let derivs = surf.surface_derivs::<1>(uv);
-                derivs[1][0].cross(&derivs[0][1])
+                let n = derivs[1][0].cross(&derivs[0][1]);
+                println!("{}", n);
+                n.normalize()
             },
         }
     }
