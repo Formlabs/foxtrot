@@ -176,6 +176,8 @@ impl KnotVector {
     }
 }
 
+
+
 #[derive(Debug, Clone)]
 pub struct BSplineSurface {
     u_open: bool,
@@ -232,7 +234,7 @@ impl BSplineSurface {
     /// We compute derivatives up to and including the `d`'th order derivatives.
     ///
     /// ALGORITHM A3.6
-    pub fn surface_derivs(&self, uv: DVec2, d: usize) -> Vec<Vec<DVec3>> {
+    pub fn surface_derivs<const d: usize>(&self, uv: DVec2) -> Vec<Vec<DVec3>> {
         let p = self.u_knots.degree();
         let q = self.v_knots.degree();
 
@@ -276,8 +278,8 @@ impl BSplineSurface {
         let mut uv_i = uv_0;
         loop {
             // The surface and its derivatives at uv_i
-            let S = self.surface_point(uv_i);
-            let derivs = self.surface_derivs(uv_i, 2);
+            let derivs = self.surface_derivs::<2>(uv_i);
+            let S = derivs[0][0];
             let S_u = derivs[1][0];
             let S_v = derivs[0][1];
             let S_uu = derivs[2][0];

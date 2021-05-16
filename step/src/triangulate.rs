@@ -525,7 +525,7 @@ impl Surface {
     }
 
     // Calculate the surface normal, using either the 3D or 2D position
-    pub fn normal(&self, p: DVec3, q: DVec2) -> DVec3 {
+    pub fn normal(&self, p: DVec3, uv: DVec2) -> DVec3 {
         match self {
             Surface::Plane { normal, .. } => *normal,
             Surface::Cylinder { location, axis, .. } => {
@@ -541,7 +541,7 @@ impl Surface {
             },
             Surface::BSpline { surf } => {
                 // Calculate first order derivs, then cross them to get normal
-                let derivs = surf.surface_derivs(q, 1);
+                let derivs = surf.surface_derivs::<1>(uv);
                 derivs[1][0].cross(&derivs[0][1])
             },
         }
