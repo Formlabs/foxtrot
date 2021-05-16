@@ -248,7 +248,7 @@ impl BSplineCurve {
         let span = self.knots.find_span(u);
         let N_derivs = self.knots.basis_funs_derivs_for_span(span, u, du);
 
-        let mut CK = vec![DVec3::zeros(); du + 1];
+        let mut CK = vec![DVec3::zeros(); d + 1];
         for k in 0..=du {
             for j in 0..=p {
                 CK[k] += N_derivs[k][j] * self.control_points[span - p + j]

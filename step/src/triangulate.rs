@@ -328,8 +328,13 @@ impl<'a> Triangulator<'a> {
                 let t_start = curve.u_from_point(u);
                 let t_end = curve.u_from_point(v);
 
-                assert!(t_start <= t_end);
-                curve.as_polyline(t_start, t_end, 8)
+                if (t_start <= t_end) {
+                    curve.as_polyline(t_start, t_end, 8)
+                } else {
+                    let mut r = curve.as_polyline(t_end, t_start, 8);
+                    r.reverse();
+                    r
+                }
             }
             e => panic!("Could not get edge from {:?}", e),
         }
