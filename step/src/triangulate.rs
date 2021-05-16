@@ -196,16 +196,14 @@ impl<'a> Triangulator<'a> {
                 let u_knot_vec = KnotVector::from_multiplicities(*u_degree, u_knots, u_multiplicities);
                 let v_knot_vec = KnotVector::from_multiplicities(*v_degree, v_knots, v_multiplicities);
 
-                let s = BSplineSurface::new(
+                let surf = BSplineSurface::new(
                     !u_closed,
                     !v_closed,
                     u_knot_vec,
                     v_knot_vec,
                     control_points_list,
                 );
-                println!("surf: {:?}", s.surface_point(DVec2::new(u_knots[0], v_knots[0])));
-
-                None
+                Some(Surface::new_bspline(surf))
             },
             e => {
                 eprintln!("Could not get surface {:?}", e);
@@ -452,9 +450,7 @@ enum Surface {
         mat_i: DMat4,
     },
     BSpline {
-        control_points: Vec<Vec<DVec3>>,
-        u_knots: KnotVector,
-        v_knots: KnotVector,
+        surf: BSplineSurface,
     }
 }
 
@@ -477,10 +473,9 @@ impl Surface {
         }
     }
 
-    pub fn new_bspline(control_points: Vec<Vec<DVec3>>,
-                       u_knots: KnotVector, v_knots: KnotVector) -> Self
+    pub fn new_bspline(surf: BSplineSurface) -> Self
     {
-        Surface::BSpline { control_points, u_knots, v_knots }
+        Surface::BSpline {surf }
     }
 
     fn make_affine_transform(z_world: DVec3, x_world: DVec3, y_world: DVec3, origin_world: DVec3) -> DMat4 {
@@ -523,8 +518,8 @@ impl Surface {
                 let scale = 1.0 / (1.0 + (-p.z / radius).exp());
                 DVec2::new(p.x * scale, p.y * scale)
             },
-            Surface::BSpline { control_points, u_knots, v_knots } => {
-                DVec2::new(0.0, 0.0)
+            Surface::BSpline {surf } => {
+                surf.uv_from_point(p.xyz())
             },
         }
     }
@@ -544,10 +539,10 @@ impl Surface {
                 // (same hack as below)
                 -(p - nearest).normalize()
             },
-            Surface::BSpline { control_points, u_knots, v_knots } => {
-                // Eventually: use UV coordinates
-                let _q = q;
-                DVec3::new(0.0, 0.0, 0.0)
+            Surface::BSpline { surf } => {
+                // Calculate first order derivs, then cross them to get normal
+                let derivs = surf.surface_derivs(q, 1);
+                derivs[1][0].cross(&derivs[0][1])
             },
         }
     }

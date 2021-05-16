@@ -70,6 +70,7 @@ impl KnotVector {
     }
 
     pub fn degree(&self) -> usize { self.p }
+    pub fn len(&self) -> usize { self.U.len() }
     pub fn min_t(&self) -> f64 { self.U[self.p] }
     pub fn max_t(&self) -> f64 { self.U[self.U.len() - 1 - self.p] }
 
@@ -119,7 +120,7 @@ impl KnotVector {
         let mut left = vec![0.0; self.p + 1];
         let mut right = vec![0.0; self.p + 1];
 
-        let mut ders : Vec<Vec<f64>> = Vec::new();
+        let mut ders = vec![vec![0.0; self.p + 1]; n + 1];
 
         ndu[0][0] = 1.0;
         for j in 1..=self.p {
@@ -238,7 +239,10 @@ impl BSplineSurface {
         // Simple initialization of du
         let du = min(d, p);
         let dv = min(d, q);
-        let mut SKL = vec![vec![DVec3::zeros(); dv]; du];
+
+        // The output matrix goes all the way to order d, even if some of the
+        // surfaces are lower order (those values will be locked at 0)
+        let mut SKL = vec![vec![DVec3::zeros(); d + 1]; d + 1];
 
         let uspan = self.u_knots.find_span(uv.x);
         let Nu_deriv = self.u_knots.basis_funs_derivs_(uspan, uv.x, du);
@@ -246,7 +250,7 @@ impl BSplineSurface {
         let vspan = self.v_knots.find_span(uv.y);
         let Nv_deriv = self.v_knots.basis_funs_derivs_(vspan, uv.y, dv);
 
-        let mut temp = vec![DVec3::zeros(); q];
+        let mut temp = vec![DVec3::zeros(); q + 1];
         for k in 0..=du {
             for s in 0..=q {
                 temp[s] = DVec3::zeros();
@@ -265,7 +269,7 @@ impl BSplineSurface {
     }
 
     // Section 6.1 (start middle page 232)
-    pub fn uv_from_point_newtons_method(&self, P: &DVec3, uv_0: DVec2) -> DVec2 {
+    pub fn uv_from_point_newtons_method(&self, P: DVec3, uv_0: DVec2) -> DVec2 {
         let eps1 = 0.01;  // a Euclidean distance error bound
         let eps2 = 0.01;  // a cosine error bound
 
@@ -361,7 +365,40 @@ impl BSplineSurface {
     }
 
     pub fn uv_from_point(&self, p: DVec3) -> DVec2 {
-        unimplemented!()
+        let mut best_score = std::f64::INFINITY;
+        let mut best_uv = DVec2::zeros();
+
+        const N: usize = 8;
+        for i in 0..self.u_knots.len() - 1 {
+            // Skip multiple knots
+            if self.u_knots.U[i] == self.u_knots.U[i + 1] {
+                continue;
+            }
+            for j in 0..self.v_knots.len() - 1 {
+                if self.v_knots.U[j] == self.v_knots.U[j + 1] {
+                    continue;
+                }
+                // Iterate over a grid within this region
+                for u in 0..N {
+                    let frac = (u as f64) / (N as f64 - 1.0);
+                    let u = self.u_knots.U[i] * (1.0 - frac) +
+                            self.u_knots.U[i + 1] * frac;
+                    for v in 0..N {
+                        let frac = (v as f64) / (N as f64 - 1.0);
+                        let v = self.v_knots.U[j] * (1.0 - frac) +
+                                self.v_knots.U[j + 1] * frac;
+                        let uv = DVec2::new(u, v);
+                        let q = self.surface_point(uv);
+                        let score = (p - q).norm();
+                        if score < best_score {
+                            best_score = score;
+                            best_uv = uv;
+                        }
+                    }
+                }
+            }
+        }
+        self.uv_from_point_newtons_method(p, best_uv)
     }
 }
 
