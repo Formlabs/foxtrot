@@ -1163,6 +1163,28 @@ fn data_entity_representation<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>
     })
 }
 
+fn data_entity_representation_relationship_with_transformation<'a>(
+    input: &'a str,
+) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_id),
+            after_wscomma(step_id),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2, x3, x4) = res;
+            DataEntity::RepresentationRelationshipWithTransformation(x0, x1, x2, x3, x4)
+        })
+    })
+}
+
 fn data_entity_shape_aspect<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
@@ -1472,6 +1494,46 @@ fn data_entity_vertex_point<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> 
     })
 }
 
+pub fn data_entity_shape_representation_relationship_ext(input: &str) -> Res<&str, DataEntity> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            // Parse the first block
+            delimited(
+                after_ws(tag("REPRESENTATION_RELATIONSHIP(")),
+                tuple((
+                    after_ws(step_string),
+                    after_wscomma(step_string),
+                    after_wscomma(step_id),
+                    after_wscomma(step_id),
+                )),
+                after_ws(tag(")")),
+            ),
+            delimited(
+                after_ws(tag("REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION(")),
+                after_ws(step_id),
+                after_ws(tag(")")),
+            ),
+            after_ws(tag("SHAPE_REPRESENTATION_RELATIONSHIP()")),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(
+        |(next_input, ((name, desc, rep_1, rep_2), transformation_operator, _))| {
+            (
+                next_input,
+                DataEntity::RepresentationRelationshipWithTransformation(
+                    name,
+                    desc,
+                    rep_1,
+                    rep_2,
+                    transformation_operator,
+                ),
+            )
+        },
+    )
+}
+
 pub fn data_entity_complex_bucket_type(input: &str) -> Res<&str, DataEntity> {
     terminated(paren_tup, after_ws(tag(";")))(input)
         .map(|(next_input, _)| (next_input, DataEntity::ComplexBucketType))
@@ -1489,6 +1551,10 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
     let (next_input, (id, _, opt_iden)) = res.expect("should be ok");
 
     if opt_iden.is_none() {
+        // Special-case to parse one particular bucket type
+        if let Ok((next, e)) = data_entity_shape_representation_relationship_ext(next_input) {
+            return Ok((next, (id, e)));
+        }
         return data_entity_complex_bucket_type(next_input)
             .map(|(next_input, ent)| (next_input, (id, ent)));
     }
@@ -1570,6 +1636,9 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
             data_entity_property_definition_representation(next_input)
         }
         "REPRESENTATION" => data_entity_representation(next_input),
+        "REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION" => {
+            data_entity_representation_relationship_with_transformation(next_input)
+        }
         "SHAPE_ASPECT" => data_entity_shape_aspect(next_input),
         "SHAPE_DEFINITION_REPRESENTATION" => {
             data_entity_shape_definition_representation(next_input)
@@ -2505,6 +2574,9 @@ mod tests {
         assert!(data_entity_representation("($  ,(),$\n    );").is_ok());
         assert!(data_entity_representation("($  ,(),$\n    );").is_ok());
     }
+
+    #[test]
+    fn test_representation_relationship_with_transformation() {}
 
     #[test]
     fn test_shape_aspect() {

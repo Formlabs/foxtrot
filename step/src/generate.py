@@ -245,6 +245,7 @@ data_entity = {
     "PropertyDefinition": ["str", "str", "id"],
     "PropertyDefinitionRepresentation": ["id", "id"],
     "Representation": ["opt_str", "vec_id", "opt_id"],
+    "RepresentationRelationshipWithTransformation": ["str", "str", "id", "id", "id"],
     "ShellBasedSurfaceModel": ["str", "vec_id"],
     "SphericalSurface": ["str", "id", "float"],
     "ShapeAspect": ["str", "str", "id", "bool"],
@@ -320,6 +321,33 @@ for name, tps in data_entity:
 # write functions which gather data entitys together
 
 o_parse_autogen.write("""
+pub fn data_entity_shape_representation_relationship_ext(input: &str) -> Res<&str, DataEntity> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            // Parse the first block
+            delimited(
+                after_ws(tag("REPRESENTATION_RELATIONSHIP(")),
+                tuple((
+                    after_ws(step_string),
+                    after_wscomma(step_string),
+                    after_wscomma(step_id),
+                    after_wscomma(step_id),
+                )),
+                after_ws(tag(")"))),
+            delimited(
+                after_ws(tag("REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION(")),
+                after_ws(step_id),
+                after_ws(tag(")"))),
+
+            after_ws(tag("SHAPE_REPRESENTATION_RELATIONSHIP()")))),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))))
+    (input)
+        .map(|(next_input, ((name, desc, rep_1, rep_2), transformation_operator, _))|
+            (next_input, DataEntity::RepresentationRelationshipWithTransformation(
+                name, desc, rep_1, rep_2, transformation_operator)))
+}
+
 pub fn data_entity_complex_bucket_type(input: &str) -> Res<&str, DataEntity> {
     terminated( paren_tup, after_ws(tag(";")) ) (input).map(|(next_input, _)| (next_input, DataEntity::ComplexBucketType) )
 }
@@ -334,6 +362,10 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {{
     let (next_input, (id, _, opt_iden)) = res.expect("should be ok");
 
     if opt_iden.is_none() {{
+        // Special-case to parse one particular bucket type
+        if let Ok((next, e)) = data_entity_shape_representation_relationship_ext(next_input) {{
+            return Ok((next, (id, e)));
+        }}
         return data_entity_complex_bucket_type(next_input).map(|(next_input, ent)| (next_input, (id, ent)) );
     }}
 

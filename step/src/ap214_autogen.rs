@@ -142,6 +142,7 @@ pub enum DataEntity<'a> {
     PropertyDefinition(&'a str, &'a str, Id),
     PropertyDefinitionRepresentation(Id, Id),
     Representation(Option<&'a str>, Vec<Id>, Option<Id>),
+    RepresentationRelationshipWithTransformation(&'a str, &'a str, Id, Id, Id),
     ShapeAspect(&'a str, &'a str, Id, bool),
     ShapeDefinitionRepresentation(Id, Id),
     ShapeRepresentation(&'a str, Vec<Id>, Id),
@@ -500,6 +501,13 @@ impl DataEntity<'_> {
                 if let Some(i) = x2 {
                     r.push(i.clone());
                 };
+                r
+            }
+            RepresentationRelationshipWithTransformation(_, _, x2, x3, x4) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x2.clone());
+                r.push(x3.clone());
+                r.push(x4.clone());
                 r
             }
             ShapeAspect(_, _, x2, _) => {
