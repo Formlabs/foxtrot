@@ -302,7 +302,7 @@ impl BSplineCurve {
                 return u_ip1;
             }
 
-            u_ip1 = u_i;
+            u_i = u_ip1;
         }
     }
 
