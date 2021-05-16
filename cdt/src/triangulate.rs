@@ -550,8 +550,8 @@ impl Triangulation {
         assert!(b != p);
 
         let o = self.orient2d(b, a, p);
-        assert!(o >= 0.0);
-        let h_p = if o == 0.0 {
+        assert!(o >= 0.0 || o.powf(2.0) < std::f64::EPSILON);
+        let h_p = if o <= 0.0 {
             /*
                     b<-------p<------a
                      \      ^|      ^
