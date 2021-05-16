@@ -580,8 +580,8 @@ impl Triangulation {
             self.hull.update(h_ab, self.half.next(e_cp));
             let h_ap = self.hull.insert(
                 h_ab, self.angles[p], p, self.half.prev(e_pc));
-            self.legalize(e_pc);
-            self.legalize(e_cp);
+            self.legalize(self.half.prev(e_cp));
+            self.legalize(self.half.next(e_pc));
             h_ap
         } else {
             let f = self.half.insert(b, a, p, EMPTY_EDGE, EMPTY_EDGE, e_ab);
