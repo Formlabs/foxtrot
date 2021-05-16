@@ -334,8 +334,10 @@ impl BSplineCurve {
 
 
     pub fn as_polyline(&self, u_start: f64, u_end: f64, num_points_per_knot: usize) -> Vec<DVec3> {
+        let (u_min, u_max) = if u_start < u_end { (u_start, u_end) } else { (u_end, u_start) };
+
         let mut result: Vec<DVec3> = Vec::new();
-        result.push(self.curve_point(u_start));
+        result.push(self.curve_point(u_min));
 
         // TODO this could be faster if we skip to the right start/end sections
 
@@ -349,12 +351,16 @@ impl BSplineCurve {
             for u in 0..num_points_per_knot {
                 let frac = (u as f64) / (num_points_per_knot as f64);
                 let u = self.knots.U[i] * (1.0 - frac) + self.knots.U[i + 1] * frac;
-                if u > u_start && u < u_end {
+                if u > u_min && u < u_max {
                     result.push(self.curve_point(u));
                 }
             }
         }
-        result.push(self.curve_point(u_end));
+        result.push(self.curve_point(u_max));
+
+        if u_start > u_end {
+            result.reverse();
+        }
         result
     }
 }
