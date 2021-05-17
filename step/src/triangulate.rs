@@ -89,7 +89,7 @@ impl<'a> Triangulator<'a> {
             DataEntity::AdvancedBrepShapeRepresentation(_, items, _) |
             DataEntity::ShapeRepresentation(_, items, _) => {
                 let items = items.clone();
-                for i in items[1..].iter() {
+                for i in items.iter() {
                     match self.entity(*i) {
                         &DataEntity::ManifoldSolidBrep(_, outer) =>
                             self.closed_shell_(outer),
