@@ -65,13 +65,12 @@ impl<'a> Triangulator<'a> {
         for e in self.data {
             match e {
                 DataEntity::ShapeRepresentationRelationship(_, _, rep1, rep2) => {
-                    self.advanced_brep_shape_representation_(*rep2);
+                    self.shape_representation_(*rep2);
                 },
                 DataEntity::RepresentationRelationshipWithTransformation(_, _, rep1, rep2, transformation_operator) => {
                     let mat = self.item_defined_transformation_(*transformation_operator);
                     let vert_start = self.vertices.len();
-                    println!("{:?}, {:?}", self.entity(*rep1), self.entity(*rep2));
-                    self.advanced_brep_shape_representation_(*rep1);
+                    self.shape_representation_(*rep1);
 
                     for v in vert_start..self.vertices.len() {
                         let p = self.vertices[v].pos;
@@ -85,15 +84,20 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn advanced_brep_shape_representation_(&mut self, b: Id) {
+    fn shape_representation_(&mut self, b: Id) {
         match self.entity(b) {
-            DataEntity::AdvancedBrepShapeRepresentation(_, items, _) => {
-                let i = *items.last().unwrap(); // YOLO
-                self.manifold_solid_brep_(i);
+            DataEntity::AdvancedBrepShapeRepresentation(_, items, _) |
+            DataEntity::ShapeRepresentation(_, items, _) => {
+                let items = items.clone();
+                for i in items[1..].iter() {
+                    match self.entity(*i) {
+                        &DataEntity::ManifoldSolidBrep(_, outer) =>
+                            self.closed_shell_(outer),
+                        e => eprintln!("Skipping {:?} (not a ManifoldSolidBrep)", e),
+                    }
+                }
             },
-            e => {
-                eprintln!("Skipping {:?} (not an advanced brep shape", e);
-            },
+            e => eprintln!("Skipping {:?} (not an advanced brep shape)", e),
         }
     }
 
@@ -123,13 +127,10 @@ impl<'a> Triangulator<'a> {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(*rep2);
 
                 // Build a rotation matrix to go from flat (XY) to 3D space
-                let world_from_obj = Surface::make_affine_transform(axis,
+                Surface::make_affine_transform(axis,
                     ref_direction,
                     axis.cross(&ref_direction),
-                    location);
-                world_from_obj
-                    .try_inverse()
-                    .expect("Could not invert")
+                    location)
             },
             e => panic!("Could not get item defined transformation from {:?}", e),
         }
