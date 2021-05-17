@@ -64,15 +64,91 @@ impl<'a> Triangulator<'a> {
     fn triangulate(&mut self) {
         for e in self.data {
             match e {
-                DataEntity::AdvancedFace(_, bounds, surface, same_sense) =>
-                    self.advanced_face(bounds, *surface, *same_sense),
+                DataEntity::ShapeRepresentationRelationship(_, _, rep1, rep2) => {
+                    self.advanced_brep_shape_representation_(*rep2);
+                },
+                DataEntity::RepresentationRelationshipWithTransformation(_, _, rep1, rep2, transformation_operator) => {
+                    let mat = self.item_defined_transformation_(*transformation_operator);
+                    let vert_start = self.vertices.len();
+                    println!("{:?}, {:?}", self.entity(*rep1), self.entity(*rep2));
+                    self.advanced_brep_shape_representation_(*rep1);
+
+                    for v in vert_start..self.vertices.len() {
+                        let p = self.vertices[v].pos;
+                        self.vertices[v].pos = (mat * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
+                        let n = self.vertices[v].norm;
+                        self.vertices[v].norm = (mat * DVec4::new(n.x, n.y, n.z, 0.0)).xyz();
+                    }
+                }
                 _ => (),
             }
         }
     }
 
+    fn advanced_brep_shape_representation_(&mut self, b: Id) {
+        match self.entity(b) {
+            DataEntity::AdvancedBrepShapeRepresentation(_, items, _) => {
+                let i = *items.last().unwrap(); // YOLO
+                self.manifold_solid_brep_(i);
+            },
+            e => {
+                eprintln!("Skipping {:?} (not an advanced brep shape", e);
+            },
+        }
+    }
+
+    fn manifold_solid_brep_(&mut self, id: Id) {
+        match self.entity(id) {
+            &DataEntity::ManifoldSolidBrep(_, outer) =>
+                self.closed_shell_(outer),
+            e => panic!("Could not get ManifoldSolidBrep from {:?}", e),
+        }
+    }
+
+    fn closed_shell_(&mut self, id: Id) {
+        match self.entity(id) {
+            DataEntity::ClosedShell(_, cfs_faces) => {
+                let cfs_faces = cfs_faces.clone(); // TODO: this is inefficient
+                for c in cfs_faces {
+                    self.advanced_face_(c);
+                }
+            },
+            e => panic!("Could not get ClosedShell from {:?}", e),
+        }
+    }
+
+    fn item_defined_transformation_(&self, id: Id) -> DMat4 {
+        match self.entity(id) {
+            DataEntity::ItemDefinedTransformation(_, _, rep1, rep2) => {
+                let (location, axis, ref_direction) = self.axis2_placement_3d_(*rep2);
+
+                // Build a rotation matrix to go from flat (XY) to 3D space
+                let world_from_obj = Surface::make_affine_transform(axis,
+                    ref_direction,
+                    axis.cross(&ref_direction),
+                    location);
+                world_from_obj
+                    .try_inverse()
+                    .expect("Could not invert")
+            },
+            e => panic!("Could not get item defined transformation from {:?}", e),
+        }
+    }
+
     fn entity(&self, i: Id) -> &DataEntity {
         &self.data[i.0]
+    }
+
+    fn advanced_face_(&mut self, id: Id) {
+        match self.entity(id) {
+            DataEntity::AdvancedFace(_, bounds, surface, same_sense) => {
+                let surface = *surface;
+                let same_sense = *same_sense;
+                let bounds = bounds.clone();
+                self.advanced_face(&bounds, surface, same_sense);
+            },
+            e => panic!("Could not get AdvancedFace from {:?}", e),
+        }
     }
 
     fn advanced_face(&mut self, bounds: &[Id], surface: Id, same_sense: bool) {
