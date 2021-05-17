@@ -1,6 +1,8 @@
 use std::convert::TryInto;
+
 use nalgebra_glm as glm;
 use nalgebra_glm::{DVec2, DVec3, DVec4, DMat4, U32Vec3};
+use rayon::prelude::*;
 
 use nurbs::{BSplineSurface, BSplineCurve, KnotVector};
 
@@ -22,6 +24,32 @@ pub struct Triangulator<'a> {
     data: &'a [DataEntity<'a>],
     vertices: Vec<Vertex>,
     triangles: Vec<Triangle>,
+}
+
+#[derive(Default)]
+pub struct Triangulation {
+    verts: Vec<Vertex>,
+    index: Vec<Triangle>,
+    num_shells: usize,
+    num_faces: usize,
+    num_errors: usize,
+    num_panics: usize,
+}
+
+impl Triangulation {
+    // Combine two triangulations with an associative binary operator
+    // (why yes, this _is_ a monoid)
+    pub fn combine(mut a: Self, b: Self) -> Self {
+        let dv = a.verts.len().try_into().expect("too many triangles");
+        a.verts.extend(b.verts);
+        a.index.extend(b.index.into_iter()
+            .map(|t| Triangle { verts: t.verts.add_scalar(dv) }));
+        a.num_shells += b.num_shells;
+        a.num_faces += b.num_faces;
+        a.num_errors += b.num_errors;
+        a.num_panics += b.num_panics;
+        a
+    }
 }
 
 impl<'a> Triangulator<'a> {
@@ -62,59 +90,69 @@ impl<'a> Triangulator<'a> {
     }
 
     fn triangulate(&mut self) {
-        for e in self.data {
-            match e {
-                DataEntity::ShapeRepresentationRelationship(_, _, rep1, rep2) => {
-                    self.shape_representation_(*rep2);
-                },
-                DataEntity::RepresentationRelationshipWithTransformation(_, _, rep1, rep2, transformation_operator) => {
-                    let mat = self.item_defined_transformation_(*transformation_operator);
-                    let vert_start = self.vertices.len();
-                    self.shape_representation_(*rep1);
+        let t = self.data.par_iter()
+            .filter(|e|
+                match e {
+                    DataEntity::ShapeRepresentationRelationship(..) |
+                    DataEntity::RepresentationRelationshipWithTransformation(..)
+                    => true,
+                    _ => false,
+                })
+            .map(|e| self.triangulate_entity(e))
+            .reduce(Triangulation::default, Triangulation::combine);
+        self.vertices = t.verts;
+        self.triangles = t.index;
+        println!("num_shells: {}", t.num_shells);
+        println!("num_faces: {}", t.num_faces);
+        println!("num_errors: {}", t.num_errors);
+        println!("num_panics: {}", t.num_panics);
+    }
 
-                    for v in vert_start..self.vertices.len() {
-                        let p = self.vertices[v].pos;
-                        self.vertices[v].pos = (mat * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
-                        let n = self.vertices[v].norm;
-                        self.vertices[v].norm = (mat * DVec4::new(n.x, n.y, n.z, 0.0)).xyz();
-                    }
-                }
-                _ => (),
+    fn triangulate_entity(&self, e: &DataEntity) -> Triangulation {
+        match e {
+            DataEntity::ShapeRepresentationRelationship(_, _, _rep1, rep2) => {
+                self.shape_representation_(*rep2)
+            },
+            DataEntity::RepresentationRelationshipWithTransformation(_, _, rep1, _rep2, transformation_operator) => {
+                let mat = self.item_defined_transformation_(*transformation_operator);
+                let mut out = self.shape_representation_(*rep1);
+
+                for v in 0..out.verts.len() {
+                     let p = out.verts[v].pos;
+                     out.verts[v].pos = (mat * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
+                     let n = out.verts[v].norm;
+                     out.verts[v].norm = (mat * DVec4::new(n.x, n.y, n.z, 0.0)).xyz();
+                 }
+                out
             }
+            _ => unreachable!("triangulate_entity must be passed a valid id"),
         }
     }
 
-    fn shape_representation_(&mut self, b: Id) {
+    fn shape_representation_(&self, b: Id) -> Triangulation {
+        let mut out = Triangulation::default();
         match self.entity(b) {
             DataEntity::AdvancedBrepShapeRepresentation(_, items, _) |
             DataEntity::ShapeRepresentation(_, items, _) => {
-                let items = items.clone();
-                for i in items.iter() {
+                for i in items {
                     match self.entity(*i) {
                         &DataEntity::ManifoldSolidBrep(_, outer) =>
-                            self.closed_shell_(outer),
+                            self.closed_shell_(outer, &mut out),
                         e => eprintln!("Skipping {:?} (not a ManifoldSolidBrep)", e),
                     }
                 }
             },
             e => eprintln!("Skipping {:?} (not an advanced brep shape)", e),
         }
+        out
     }
 
-    fn manifold_solid_brep_(&mut self, id: Id) {
-        match self.entity(id) {
-            &DataEntity::ManifoldSolidBrep(_, outer) =>
-                self.closed_shell_(outer),
-            e => panic!("Could not get ManifoldSolidBrep from {:?}", e),
-        }
-    }
-
-    fn closed_shell_(&mut self, id: Id) {
+    fn closed_shell_(&self, id: Id, out: &mut Triangulation) {
         match self.entity(id) {
             DataEntity::ClosedShell(_, cfs_faces) => {
-                let cfs_faces = cfs_faces.clone(); // TODO: this is inefficient
+                out.num_shells += 1;
                 for c in cfs_faces {
-                    self.advanced_face_(c);
+                    self.advanced_face_(*c, out);
                 }
             },
             e => panic!("Could not get ClosedShell from {:?}", e),
@@ -123,7 +161,7 @@ impl<'a> Triangulator<'a> {
 
     fn item_defined_transformation_(&self, id: Id) -> DMat4 {
         match self.entity(id) {
-            DataEntity::ItemDefinedTransformation(_, _, rep1, rep2) => {
+            DataEntity::ItemDefinedTransformation(_, _, _rep1, rep2) => {
                 let (location, axis, ref_direction) = self.axis2_placement_3d_(*rep2);
 
                 // Build a rotation matrix to go from flat (XY) to 3D space
@@ -140,22 +178,22 @@ impl<'a> Triangulator<'a> {
         &self.data[i.0]
     }
 
-    fn advanced_face_(&mut self, id: Id) {
+    fn advanced_face_(&self, id: Id, out: &mut Triangulation) {
         match self.entity(id) {
             DataEntity::AdvancedFace(_, bounds, surface, same_sense) => {
+                out.num_faces += 1;
                 let surface = *surface;
                 let same_sense = *same_sense;
-                let bounds = bounds.clone();
-                self.advanced_face(&bounds, surface, same_sense);
+                self.advanced_face(&bounds, surface, same_sense, out);
             },
             e => panic!("Could not get AdvancedFace from {:?}", e),
         }
     }
 
-    fn advanced_face(&mut self, bounds: &[Id], surface: Id, same_sense: bool) {
+    fn advanced_face(&self, bounds: &[Id], surface: Id, same_sense: bool, out: &mut Triangulation) {
         // For each contour, project from 3D down to the surface, then
         // start collecting them as constrained edges for triangulation
-        let offset = self.vertices.len();
+        let offset = out.verts.len();
         let s = match self.get_surface(surface) {
             Some(s) => s,
             None => return,
@@ -174,7 +212,7 @@ impl<'a> Triangulator<'a> {
                         let proj = s.lower(bc[0]);
                         pts.push((proj.x, proj.y));
 
-                        self.vertices.push(Vertex {
+                        out.verts.push(Vertex {
                             pos: bc[0],
                             norm: s.normal(bc[0], proj),
                             color: DVec3::new(0.0, 0.0, 0.0),
@@ -198,7 +236,7 @@ impl<'a> Triangulator<'a> {
                         pts.push((proj.x, proj.y));
 
                         // Also store this vertex in the 3D triangulation
-                        self.vertices.push(Vertex {
+                        out.verts.push(Vertex {
                             pos: pt,
                             norm: s.normal(pt, proj),
                             color: DVec3::new(0.0, 0.0, 0.0),
@@ -208,7 +246,7 @@ impl<'a> Triangulator<'a> {
                     // contours, so we skip it here and reattach the contour to
                     // the start.
                     pts.pop();
-                    self.vertices.pop();
+                    out.verts.pop();
 
                     // Close the loop by returning to the starting point
                     edges.pop();
@@ -222,21 +260,21 @@ impl<'a> Triangulator<'a> {
             let mut t = cdt::Triangulation::new_with_edges(&pts, &edges)
                 .expect("Could not build CDT triangulation");
             match t.run() {
-                Ok(()) => t,
+                Ok(()) => Ok(t),
                 Err(e) => {
                     t.save_debug_svg(&format!("out{}.svg", surface.0))
                         .expect("Could not save debug SVG");
-                    panic!("Triangulation error: {}", e)
+                    Err(e)
                 },
             }
         });
         match result {
-            Ok(t) => {
+            Ok(Ok(t)) => {
                 for (a, b, c) in t.triangles() {
                     let a = (a + offset) as u32;
                     let b = (b + offset) as u32;
                     let c = (c + offset) as u32;
-                    self.triangles.push(Triangle { verts:
+                    out.index.push(Triangle { verts:
                         if same_sense ^ s.sign() {
                             U32Vec3::new(a, b, c)
                         } else {
@@ -245,8 +283,13 @@ impl<'a> Triangulator<'a> {
                     });
                 }
             },
-            Err(e) => {
+            Ok(Err(e)) => {
                 eprintln!("Got error while triangulating: {:?}", e);
+                out.num_errors += 1;
+            },
+            Err(e) => {
+                eprintln!("Got panic while triangulating: {:?}", e);
+                out.num_panics += 1;
             }
         }
     }
@@ -322,10 +365,9 @@ impl<'a> Triangulator<'a> {
         outer
     }
 
-    fn face_bounds(&mut self, bound: Id, orientation: bool) -> Vec<DVec3> {
+    fn face_bounds(&self, bound: Id, orientation: bool) -> Vec<DVec3> {
         match self.entity(bound) {
             DataEntity::EdgeLoop(_, edge_list) => {
-                let edge_list = edge_list.clone(); // TODO: this is inefficient
                 let mut d = self.edge_loop(&edge_list);
                 if !orientation {
                     d.reverse()
@@ -345,7 +387,7 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn edge_loop(&mut self, edge_list: &[Id]) -> Vec<DVec3> {
+    fn edge_loop(&self, edge_list: &[Id]) -> Vec<DVec3> {
         let mut out = Vec::new();
         for (i, e) in edge_list.iter().enumerate() {
             // Remove the last item from the list, since it's the beginning
@@ -369,7 +411,7 @@ impl<'a> Triangulator<'a> {
         out
     }
 
-    fn oriented_edge(&mut self, element: Id, orientation: bool) -> Vec<DVec3> {
+    fn oriented_edge(&self, element: Id, orientation: bool) -> Vec<DVec3> {
         match self.entity(element) {
             &DataEntity::EdgeCurve(_, edge_start, edge_end, edge_geometry, same_sense) =>
             {
@@ -384,7 +426,7 @@ impl<'a> Triangulator<'a> {
         }
     }
 
-    fn edge_curve(&mut self, edge_start: Id, edge_end: Id, edge_geometry: Id, same_sense: bool, flip: bool) -> Vec<DVec3> {
+    fn edge_curve(&self, edge_start: Id, edge_end: Id, edge_geometry: Id, same_sense: bool, flip: bool) -> Vec<DVec3> {
         let u = match self.entity(edge_start) {
             &DataEntity::VertexPoint(_, i) => self.vertex_point(i),
             e => panic!("Could not get vertex from {:?}", e),
@@ -427,7 +469,7 @@ impl<'a> Triangulator<'a> {
                 curve.as_polyline(t_start, t_end, 8)
             },
             e => {
-                eprintln!("Could not get edge from {:?}", e);
+                eprintln!("Could not get edge from {:?} at #{}", e, edge_geometry.0);
                 vec![]
             },
         }
