@@ -165,27 +165,6 @@ impl<'a> Triangulator<'a> {
         println!("num_panics: {}", t.num_panics);
     }
 
-    fn triangulate_entity(&self, e: &DataEntity) -> Triangulation {
-        match e {
-            DataEntity::ShapeRepresentationRelationship(_, _, _rep1, rep2) => {
-                self.shape_representation_(*rep2)
-            },
-            DataEntity::RepresentationRelationshipWithTransformation(_, _, rep1, _rep2, transformation_operator) => {
-                let mat = self.item_defined_transformation_(*transformation_operator);
-                let mut out = self.shape_representation_(*rep1);
-
-                for v in 0..out.verts.len() {
-                     let p = out.verts[v].pos;
-                     out.verts[v].pos = (mat * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
-                     let n = out.verts[v].norm;
-                     out.verts[v].norm = (mat * DVec4::new(n.x, n.y, n.z, 0.0)).xyz();
-                 }
-                out
-            }
-            _ => unreachable!("triangulate_entity must be passed a valid id"),
-        }
-    }
-
     fn shape_representation_(&self, b: Id) -> Triangulation {
         let mut out = Triangulation::default();
         match self.entity(b) {
