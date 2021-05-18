@@ -8,6 +8,8 @@ import random
 def camel_to_snake(s):
     if s == "Axis2Placement3d":
         return "AXIS2_PLACEMENT_3D"
+    elif s == "Axis2Placement2d":
+        return "AXIS2_PLACEMENT_2D"
     return re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
 
 
@@ -73,7 +75,7 @@ use nom::{{ branch::alt, bytes::complete::{{ tag }}, combinator::opt, sequence::
 # add strongly typed floats
 
 strongly_typed_floats = {
-    "LengthMeasure", "CountMeasure", "PositiveLengthMeasure", "AreaMeasure", "VolumeMeasure", "ParameterValue",
+    "LengthMeasure", "CountMeasure", "PositiveLengthMeasure", "AreaMeasure", "VolumeMeasure", "ParameterValue", "PositiveRatioMeasure",
 }
 
 STRONGLY_TYPED_FLOAT_TEMPLATE_T = """
@@ -98,7 +100,7 @@ for name in sorted(strongly_typed_floats):
 # add strongly typed floats combinations as enums
 
 strongly_typed_enum_combination = {
-    "AreaMeasureOrVolumeMeasure": ["AreaMeasure", "VolumeMeasure"]
+    "MeasureValue": ["AreaMeasure", "VolumeMeasure", "PositiveRatioMeasure"]
 }
 STRONGLY_TYPED_ENUM_COMBINATION_TEMPLATE_T = """
 #[derive(Debug, Copy, Clone)]
@@ -145,6 +147,7 @@ enums = {
     "BSplineEnum1": ["Unspecified", "SurfOfLinearExtrusion"],
     "BSplineEnum2": ["PiecewiseBezierKnots", "Unspecified", "QuasiUniformKnots"],
     "TrimmedCurveEnum": ["Parameter", "WeDontSupportOneElmentEnumsYet"],
+    "PreferredSurfaceCurveRepresentation": ["PcurveS1", "NoSuchEnum"],
 }
 ENUM_TEMPLATE_T = """
 #[derive(Debug, Copy, Clone)]
@@ -194,6 +197,8 @@ data_entity = {
     "ApplicationContext": ["str"],
     "ApplicationProtocolDefinition": ["str", "str", "usize", "id"],
     "Axis2Placement3d": ["str", "id", "id", "id"],
+    "Axis2Placement2d": ["str", "id", "id"],
+    "Axis1Placement": ["str", "id", "id"],
     "BrepWithVoids": ["str", "id", "vec_id"],
     "BSplineCurveWithKnots": ["str", "usize", "vec_id", "BSplineEnum1", "bool", "bool", "vec_usize", "vec_float", "BSplineEnum2"],
     "BSplineSurfaceWithKnots": ["str", "usize", "usize", "vec_vec_id", "BSplineEnum1", "bool", "bool", "bool", "vec_usize", "vec_usize", "vec_float", "vec_float", "BSplineEnum2"],
@@ -210,42 +215,49 @@ data_entity = {
     "DraughtingPreDefinedCurveFont": ["str"],
     "DerivedUnit": ["vec_id"],
     "DerivedUnitElement": ["id", "float"],
+    "DefinitionalRepresentation": ["str", "vec_id", "id"],
     "Direction": ["str", "vec_float"],
     "Ellipse": ["str", "id", "float", "float"],
     "EdgeCurve": ["str", "id", "id", "id", "bool"],
     "EdgeLoop": ["str", "vec_id"],
     "FaceBound": ["str", "id", "bool"],
+    "FaceOuterBound": ["str", "id", "bool"],
     "FillAreaStyle": ["str", "vec_id"],
     "FillAreaStyleColour": ["str", "id"],
     "GeometricCurveSet": ["str", "vec_id"],
+    "Hyperbola": ["str", "id", "float", "float"],
     "ItemDefinedTransformation": ["str", "str", "id", "id"],
     "Line": ["str", "id", "id"],
     "ManifoldSolidBrep": ["str", "id"],
     "ManifoldSurfaceShapeRepresentation": ["str", "vec_id", "id"],
-    "MeasureRepresentationItem": ["str", "AreaMeasureOrVolumeMeasure", "id"],
+    "MeasureRepresentationItem": ["str", "MeasureValue", "id"],
+    "MechanicalContext": ["str", "id", "str"],
     "MechanicalDesignGeometricPresentationRepresentation": ["str", "vec_id", "id"],
     "NextAssemblyUsageOccurrence": ["str", "str", "str", "id", "id", "opt_str"],
     "OpenShell": ["str", "vec_id"],
     "OrientedEdge": ["str", "*", "*", "id", "bool"],
     "OrientedClosedShell": ["str", "*", "id", "bool"],
     "OverRidingStyledItem": ["str", "vec_id", "id", "id"],
+    "Pcurve": ["str", "id", "id"],
     "Plane": ["str", "id"],
     "PresentationLayerAssignment": ["str", "str", "vec_id"],
     "PresentationStyleAssignment": ["vec_id"],
     "PresentationStyleByContext": ["vec_id", "id"],
-    "Product": ["str", "str", "str", "vec_id"],
+    "Product": ["str", "str", "opt_str", "vec_id"],
     "ProductCategory": ["str", "str"],
     "ProductContext": ["str", "id", "str"],
     "ProductDefinition": ["str", "str", "id", "id"],
     "ProductDefinitionContext": ["str", "id", "str"],
-    "ProductDefinitionFormation": ["str", "str", "id"],
+    "ProductDefinitionFormation": ["str", "opt_str", "id"],
     "ProductDefinitionFormationWithSpecifiedSource": ["str", "str", "id", "Source"],
-    "ProductDefinitionShape": ["str", "str", "id"],
+    "ProductDefinitionShape": ["str", "opt_str", "id"],
     "ProductRelatedProductCategory": ["str", "opt_str", "vec_id"],
+    "ProductType": ["str", "opt_str", "vec_id"],
     "PropertyDefinition": ["str", "str", "id"],
     "PropertyDefinitionRepresentation": ["id", "id"],
     "Representation": ["opt_str", "vec_id", "opt_id"],
     "RepresentationRelationshipWithTransformation": ["str", "str", "id", "id", "id"],
+    "SeamCurve": ["str", "id", "vec_id", "PreferredSurfaceCurveRepresentation"],
     "ShellBasedSurfaceModel": ["str", "vec_id"],
     "SphericalSurface": ["str", "id", "float"],
     "ShapeAspect": ["str", "str", "id", "bool"],
@@ -253,6 +265,8 @@ data_entity = {
     "ShapeRepresentation": ["str", "vec_id", "id"],
     "ShapeRepresentationRelationship": ["str", "str", "id", "id"],
     "StyledItem": ["str", "vec_id", "id"],
+    "SurfaceCurve": ["str", "id", "vec_id", "PreferredSurfaceCurveRepresentation"],
+    "SurfaceOfRevolution": ["str", "id", "id"],
     "SurfaceStyleUsage": ["SurfaceSide", "id"],
     "SurfaceSideStyle": ["str", "vec_id"],
     "SurfaceStyleFillArea": ["id"],

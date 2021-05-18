@@ -57,6 +57,15 @@ pub fn step_stf_positive_length_measure(input: &str) -> Res<&str, PositiveLength
     .map(|(next_input, res)| (next_input, PositiveLengthMeasure(res)))
 }
 
+pub fn step_stf_positive_ratio_measure(input: &str) -> Res<&str, PositiveRatioMeasure> {
+    delimited(
+        tuple((tag("POSITIVE_RATIO_MEASURE"), after_ws(tag("(")))),
+        after_ws(step_float),
+        after_ws(tag(")")),
+    )(input)
+    .map(|(next_input, res)| (next_input, PositiveRatioMeasure(res)))
+}
+
 pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
     delimited(
         tuple((tag("VOLUME_MEASURE"), after_ws(tag("(")))),
@@ -66,17 +75,24 @@ pub fn step_stf_volume_measure(input: &str) -> Res<&str, VolumeMeasure> {
     .map(|(next_input, res)| (next_input, VolumeMeasure(res)))
 }
 
-pub fn step_c_area_measure_or_volume_measure(input: &str) -> Res<&str, AreaMeasureOrVolumeMeasure> {
+pub fn step_c_measure_value(input: &str) -> Res<&str, MeasureValue> {
     tuple((
-        alt((tag("AREA_MEASURE"), tag("VOLUME_MEASURE"))),
+        alt((
+            tag("AREA_MEASURE"),
+            tag("VOLUME_MEASURE"),
+            tag("POSITIVE_RATIO_MEASURE"),
+        )),
         delimited(after_ws(tag("(")), after_ws(step_float), after_ws(tag(")"))),
     ))(input)
     .map(|(next_input, res)| {
         (next_input, {
             let (tg, flt) = res;
             match tg {
-                "AREA_MEASURE" => AreaMeasureOrVolumeMeasure::AreaMeasure(AreaMeasure(flt)),
-                "VOLUME_MEASURE" => AreaMeasureOrVolumeMeasure::VolumeMeasure(VolumeMeasure(flt)),
+                "AREA_MEASURE" => MeasureValue::AreaMeasure(AreaMeasure(flt)),
+                "VOLUME_MEASURE" => MeasureValue::VolumeMeasure(VolumeMeasure(flt)),
+                "POSITIVE_RATIO_MEASURE" => {
+                    MeasureValue::PositiveRatioMeasure(PositiveRatioMeasure(flt))
+                }
                 _ => panic!("unexpected string"),
             }
         })
@@ -185,6 +201,26 @@ pub fn step_enum_trimmed_curve_enum(input: &str) -> Res<&str, TrimmedCurveEnum> 
     })
 }
 
+pub fn step_enum_preferred_surface_curve_representation(
+    input: &str,
+) -> Res<&str, PreferredSurfaceCurveRepresentation> {
+    delimited(
+        tag("."),
+        alt((tag("PCURVE_S1"), tag("NO_SUCH_ENUM"))),
+        tag("."),
+    )(input)
+    .map(|(next_input, res)| {
+        (
+            next_input,
+            match res {
+                "PCURVE_S1" => PreferredSurfaceCurveRepresentation::PcurveS1,
+                "NO_SUCH_ENUM" => PreferredSurfaceCurveRepresentation::NoSuchEnum,
+                _ => panic!("unepected string"),
+            },
+        )
+    })
+}
+
 fn data_entity_advanced_brep_shape_representation<'a>(
     input: &'a str,
 ) -> Res<&'a str, DataEntity<'a>> {
@@ -253,6 +289,42 @@ fn data_entity_application_protocol_definition<'a>(input: &'a str) -> Res<&'a st
         (next_input, {
             let (x0, x1, x2, x3) = res;
             DataEntity::ApplicationProtocolDefinition(x0, x1, x2, x3)
+        })
+    })
+}
+
+fn data_entity_axis1_placement<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_id),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2) = res;
+            DataEntity::Axis1Placement(x0, x1, x2)
+        })
+    })
+}
+
+fn data_entity_axis2_placement_2d<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_id),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2) = res;
+            DataEntity::Axis2Placement2d(x0, x1, x2)
         })
     })
 }
@@ -485,6 +557,24 @@ fn data_entity_cylindrical_surface<'a>(input: &'a str) -> Res<&'a str, DataEntit
     })
 }
 
+fn data_entity_definitional_representation<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_vec(step_id)),
+            after_wscomma(step_id),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2) = res;
+            DataEntity::DefinitionalRepresentation(x0, x1, x2)
+        })
+    })
+}
+
 fn data_entity_derived_unit<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
@@ -642,6 +732,24 @@ fn data_entity_face_bound<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     })
 }
 
+fn data_entity_face_outer_bound<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_bool),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2) = res;
+            DataEntity::FaceOuterBound(x0, x1, x2)
+        })
+    })
+}
+
 fn data_entity_fill_area_style<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
@@ -680,6 +788,25 @@ fn data_entity_geometric_curve_set<'a>(input: &'a str) -> Res<&'a str, DataEntit
         (next_input, {
             let (x0, x1) = res;
             DataEntity::GeometricCurveSet(x0, x1)
+        })
+    })
+}
+
+fn data_entity_hyperbola<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_float),
+            after_wscomma(step_float),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2, x3) = res;
+            DataEntity::Hyperbola(x0, x1, x2, x3)
         })
     })
 }
@@ -760,7 +887,7 @@ fn data_entity_measure_representation_item<'a>(input: &'a str) -> Res<&'a str, D
         after_ws(tag("(")),
         tuple((
             after_ws(step_string),
-            after_wscomma(step_c_area_measure_or_volume_measure),
+            after_wscomma(step_c_measure_value),
             after_wscomma(step_id),
         )),
         tuple((after_ws(tag(")")), after_ws(tag(";")))),
@@ -769,6 +896,24 @@ fn data_entity_measure_representation_item<'a>(input: &'a str) -> Res<&'a str, D
         (next_input, {
             let (x0, x1, x2) = res;
             DataEntity::MeasureRepresentationItem(x0, x1, x2)
+        })
+    })
+}
+
+fn data_entity_mechanical_context<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_string),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2) = res;
+            DataEntity::MechanicalContext(x0, x1, x2)
         })
     })
 }
@@ -886,6 +1031,24 @@ fn data_entity_over_riding_styled_item<'a>(input: &'a str) -> Res<&'a str, DataE
     })
 }
 
+fn data_entity_pcurve<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_id),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2) = res;
+            DataEntity::Pcurve(x0, x1, x2)
+        })
+    })
+}
+
 fn data_entity_plane<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
@@ -952,7 +1115,7 @@ fn data_entity_product<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
         tuple((
             after_ws(step_string),
             after_wscomma(step_string),
-            after_wscomma(step_string),
+            after_wscomma(step_opt(step_string)),
             after_wscomma(step_vec(step_id)),
         )),
         tuple((after_ws(tag(")")), after_ws(tag(";")))),
@@ -1039,7 +1202,7 @@ fn data_entity_product_definition_formation<'a>(input: &'a str) -> Res<&'a str, 
         after_ws(tag("(")),
         tuple((
             after_ws(step_string),
-            after_wscomma(step_string),
+            after_wscomma(step_opt(step_string)),
             after_wscomma(step_id),
         )),
         tuple((after_ws(tag(")")), after_ws(tag(";")))),
@@ -1078,7 +1241,7 @@ fn data_entity_product_definition_shape<'a>(input: &'a str) -> Res<&'a str, Data
         after_ws(tag("(")),
         tuple((
             after_ws(step_string),
-            after_wscomma(step_string),
+            after_wscomma(step_opt(step_string)),
             after_wscomma(step_id),
         )),
         tuple((after_ws(tag(")")), after_ws(tag(";")))),
@@ -1107,6 +1270,24 @@ fn data_entity_product_related_product_category<'a>(
         (next_input, {
             let (x0, x1, x2) = res;
             DataEntity::ProductRelatedProductCategory(x0, x1, x2)
+        })
+    })
+}
+
+fn data_entity_product_type<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_opt(step_string)),
+            after_wscomma(step_vec(step_id)),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2) = res;
+            DataEntity::ProductType(x0, x1, x2)
         })
     })
 }
@@ -1181,6 +1362,25 @@ fn data_entity_representation_relationship_with_transformation<'a>(
         (next_input, {
             let (x0, x1, x2, x3, x4) = res;
             DataEntity::RepresentationRelationshipWithTransformation(x0, x1, x2, x3, x4)
+        })
+    })
+}
+
+fn data_entity_seam_curve<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_vec(step_id)),
+            after_wscomma(step_enum_preferred_surface_curve_representation),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2, x3) = res;
+            DataEntity::SeamCurve(x0, x1, x2, x3)
         })
     })
 }
@@ -1307,6 +1507,25 @@ fn data_entity_styled_item<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     })
 }
 
+fn data_entity_surface_curve<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_vec(step_id)),
+            after_wscomma(step_enum_preferred_surface_curve_representation),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2, x3) = res;
+            DataEntity::SurfaceCurve(x0, x1, x2, x3)
+        })
+    })
+}
+
 fn data_entity_surface_of_linear_extrusion<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
     delimited(
         after_ws(tag("(")),
@@ -1321,6 +1540,24 @@ fn data_entity_surface_of_linear_extrusion<'a>(input: &'a str) -> Res<&'a str, D
         (next_input, {
             let (x0, x1, x2) = res;
             DataEntity::SurfaceOfLinearExtrusion(x0, x1, x2)
+        })
+    })
+}
+
+fn data_entity_surface_of_revolution<'a>(input: &'a str) -> Res<&'a str, DataEntity<'a>> {
+    delimited(
+        after_ws(tag("(")),
+        tuple((
+            after_ws(step_string),
+            after_wscomma(step_id),
+            after_wscomma(step_id),
+        )),
+        tuple((after_ws(tag(")")), after_ws(tag(";")))),
+    )(input)
+    .map(|(next_input, res)| {
+        (next_input, {
+            let (x0, x1, x2) = res;
+            DataEntity::SurfaceOfRevolution(x0, x1, x2)
         })
     })
 }
@@ -1568,6 +1805,8 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
         "APPLICATION_PROTOCOL_DEFINITION" => {
             data_entity_application_protocol_definition(next_input)
         }
+        "AXIS1_PLACEMENT" => data_entity_axis1_placement(next_input),
+        "AXIS2_PLACEMENT_2D" => data_entity_axis2_placement_2d(next_input),
         "AXIS2_PLACEMENT_3D" => data_entity_axis2_placement_3d(next_input),
         "B_SPLINE_CURVE_WITH_KNOTS" => data_entity_b_spline_curve_with_knots(next_input),
         "B_SPLINE_SURFACE_WITH_KNOTS" => data_entity_b_spline_surface_with_knots(next_input),
@@ -1582,6 +1821,7 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
         }
         "CURVE_STYLE" => data_entity_curve_style(next_input),
         "CYLINDRICAL_SURFACE" => data_entity_cylindrical_surface(next_input),
+        "DEFINITIONAL_REPRESENTATION" => data_entity_definitional_representation(next_input),
         "DERIVED_UNIT" => data_entity_derived_unit(next_input),
         "DERIVED_UNIT_ELEMENT" => data_entity_derived_unit_element(next_input),
         "DESCRIPTIVE_REPRESENTATION_ITEM" => {
@@ -1596,9 +1836,11 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
         "EDGE_LOOP" => data_entity_edge_loop(next_input),
         "ELLIPSE" => data_entity_ellipse(next_input),
         "FACE_BOUND" => data_entity_face_bound(next_input),
+        "FACE_OUTER_BOUND" => data_entity_face_outer_bound(next_input),
         "FILL_AREA_STYLE" => data_entity_fill_area_style(next_input),
         "FILL_AREA_STYLE_COLOUR" => data_entity_fill_area_style_colour(next_input),
         "GEOMETRIC_CURVE_SET" => data_entity_geometric_curve_set(next_input),
+        "HYPERBOLA" => data_entity_hyperbola(next_input),
         "ITEM_DEFINED_TRANSFORMATION" => data_entity_item_defined_transformation(next_input),
         "LINE" => data_entity_line(next_input),
         "MANIFOLD_SOLID_BREP" => data_entity_manifold_solid_brep(next_input),
@@ -1606,6 +1848,7 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
             data_entity_manifold_surface_shape_representation(next_input)
         }
         "MEASURE_REPRESENTATION_ITEM" => data_entity_measure_representation_item(next_input),
+        "MECHANICAL_CONTEXT" => data_entity_mechanical_context(next_input),
         "MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION" => {
             data_entity_mechanical_design_geometric_presentation_representation(next_input)
         }
@@ -1614,6 +1857,7 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
         "ORIENTED_CLOSED_SHELL" => data_entity_oriented_closed_shell(next_input),
         "ORIENTED_EDGE" => data_entity_oriented_edge(next_input),
         "OVER_RIDING_STYLED_ITEM" => data_entity_over_riding_styled_item(next_input),
+        "PCURVE" => data_entity_pcurve(next_input),
         "PLANE" => data_entity_plane(next_input),
         "PRESENTATION_LAYER_ASSIGNMENT" => data_entity_presentation_layer_assignment(next_input),
         "PRESENTATION_STYLE_ASSIGNMENT" => data_entity_presentation_style_assignment(next_input),
@@ -1631,6 +1875,7 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
         "PRODUCT_RELATED_PRODUCT_CATEGORY" => {
             data_entity_product_related_product_category(next_input)
         }
+        "PRODUCT_TYPE" => data_entity_product_type(next_input),
         "PROPERTY_DEFINITION" => data_entity_property_definition(next_input),
         "PROPERTY_DEFINITION_REPRESENTATION" => {
             data_entity_property_definition_representation(next_input)
@@ -1639,6 +1884,7 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
         "REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION" => {
             data_entity_representation_relationship_with_transformation(next_input)
         }
+        "SEAM_CURVE" => data_entity_seam_curve(next_input),
         "SHAPE_ASPECT" => data_entity_shape_aspect(next_input),
         "SHAPE_DEFINITION_REPRESENTATION" => {
             data_entity_shape_definition_representation(next_input)
@@ -1650,7 +1896,9 @@ pub fn data_line(input: &str) -> Res<&str, (Id, DataEntity)> {
         "SHELL_BASED_SURFACE_MODEL" => data_entity_shell_based_surface_model(next_input),
         "SPHERICAL_SURFACE" => data_entity_spherical_surface(next_input),
         "STYLED_ITEM" => data_entity_styled_item(next_input),
+        "SURFACE_CURVE" => data_entity_surface_curve(next_input),
         "SURFACE_OF_LINEAR_EXTRUSION" => data_entity_surface_of_linear_extrusion(next_input),
+        "SURFACE_OF_REVOLUTION" => data_entity_surface_of_revolution(next_input),
         "SURFACE_SIDE_STYLE" => data_entity_surface_side_style(next_input),
         "SURFACE_STYLE_FILL_AREA" => data_entity_surface_style_fill_area(next_input),
         "SURFACE_STYLE_USAGE" => data_entity_surface_style_usage(next_input),
@@ -1731,6 +1979,12 @@ mod tests {
         )
         .is_ok());
     }
+
+    #[test]
+    fn test_axis1_placement() {}
+
+    #[test]
+    fn test_axis2_placement_2d() {}
 
     #[test]
     fn test_axis2_placement_3d() {
@@ -1943,6 +2197,9 @@ mod tests {
     }
 
     #[test]
+    fn test_definitional_representation() {}
+
+    #[test]
     fn test_derived_unit() {
         assert!(data_entity_derived_unit("((#427287));").is_ok());
         assert!(data_entity_derived_unit("((#427258));").is_ok());
@@ -2063,6 +2320,9 @@ mod tests {
     }
 
     #[test]
+    fn test_face_outer_bound() {}
+
+    #[test]
     fn test_fill_area_style() {
         assert!(data_entity_fill_area_style("('',(#412124));").is_ok());
         assert!(data_entity_fill_area_style("('',(#424065));").is_ok());
@@ -2095,6 +2355,9 @@ mod tests {
         assert!(data_entity_geometric_curve_set("('',(#371717,#371725));").is_ok());
         assert!(data_entity_geometric_curve_set("('',(#371700,#371708));").is_ok());
     }
+
+    #[test]
+    fn test_hyperbola() {}
 
     #[test]
     fn test_item_defined_transformation() {
@@ -2184,6 +2447,9 @@ mod tests {
         )
         .is_ok());
     }
+
+    #[test]
+    fn test_mechanical_context() {}
 
     #[test]
     fn test_mechanical_design_geometric_presentation_representation() {
@@ -2336,6 +2602,9 @@ mod tests {
         )
         .is_ok());
     }
+
+    #[test]
+    fn test_pcurve() {}
 
     #[test]
     fn test_plane() {
@@ -2505,6 +2774,9 @@ mod tests {
     }
 
     #[test]
+    fn test_product_type() {}
+
+    #[test]
     fn test_property_definition() {
         assert!(data_entity_property_definition(
             "('geometric_validation_property','centroid'\n  ,#427273);"
@@ -2577,6 +2849,9 @@ mod tests {
 
     #[test]
     fn test_representation_relationship_with_transformation() {}
+
+    #[test]
+    fn test_seam_curve() {}
 
     #[test]
     fn test_shape_aspect() {
@@ -2657,10 +2932,16 @@ mod tests {
     }
 
     #[test]
+    fn test_surface_curve() {}
+
+    #[test]
     fn test_surface_of_linear_extrusion() {
         assert!(data_entity_surface_of_linear_extrusion("('',#349510,#349517);").is_ok());
         assert!(data_entity_surface_of_linear_extrusion("('',#349488,#349495);").is_ok());
     }
+
+    #[test]
+    fn test_surface_of_revolution() {}
 
     #[test]
     fn test_surface_side_style() {

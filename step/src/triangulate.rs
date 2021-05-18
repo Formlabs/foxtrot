@@ -98,18 +98,21 @@ impl<'a> Triangulator<'a> {
         // from root to REPRESENTATION_RELATIONSHIP id
         let mut lookup: HashMap<Id, Vec<Id>> = HashMap::new();
         for (i, e) in self.data.iter().enumerate() {
-            match e {
+            let r = match e {
                 DataEntity::RepresentationRelationshipWithTransformation(_, _, rep1, rep2, _) => {
-                    roots.insert(*rep2);
                     leaves.insert(*rep1);
-                    lookup.entry(*rep2).or_insert_with(Vec::new).push(Id(i));
+                    *rep2
                 },
                 DataEntity::ShapeRepresentationRelationship(_, _, _rep1, rep2) => {
-                    roots.insert(*rep2);
-                    lookup.entry(*rep2).or_insert_with(Vec::new).push(Id(i));
+                    *rep2
                 },
-                _ => (),
-            }
+                DataEntity::ShapeDefinitionRepresentation(_, used_representation) => {
+                    *used_representation
+                },
+                _ => continue,
+            };
+            roots.insert(r);
+            lookup.entry(r).or_insert_with(Vec::new).push(Id(i));
         }
         // Pick out the roots of the transformation DAG
         let mut todo: Vec<(Id, DMat4)> = roots.difference(&leaves)
@@ -134,12 +137,15 @@ impl<'a> Triangulator<'a> {
                         } else {
                             to_mesh.push((*rep1, mat * next_mat));
                         }
-                    }
+                    },
                     DataEntity::ShapeRepresentationRelationship(
                         _, _, _rep1, rep2)
                     => {
                         to_mesh.push((*rep2, mat));
-                    }
+                    },
+                    DataEntity::ShapeDefinitionRepresentation(_, used_representation) => {
+                        to_mesh.push((*used_representation, mat));
+                    },
                     e => panic!("Invalid entity {:?}", e),
                 }
             }
@@ -174,6 +180,7 @@ impl<'a> Triangulator<'a> {
                     match self.entity(*i) {
                         &DataEntity::ManifoldSolidBrep(_, outer) =>
                             self.closed_shell_(outer, &mut out),
+                        DataEntity::Axis2Placement3d(..) => (), // continue silently
                         e => eprintln!("Skipping {:?} (not a ManifoldSolidBrep)", e),
                     }
                 }

@@ -17,12 +17,16 @@ pub struct ParameterValue(pub f64);
 pub struct PositiveLengthMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone, PartialEq)]
+pub struct PositiveRatioMeasure(pub f64);
+
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct VolumeMeasure(pub f64);
 
 #[derive(Debug, Copy, Clone)]
-pub enum AreaMeasureOrVolumeMeasure {
+pub enum MeasureValue {
     AreaMeasure(AreaMeasure),
     VolumeMeasure(VolumeMeasure),
+    PositiveRatioMeasure(PositiveRatioMeasure),
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -58,6 +62,12 @@ pub enum TrimmedCurveEnum {
     WeDontSupportOneElmentEnumsYet,
 }
 
+#[derive(Debug, Copy, Clone)]
+pub enum PreferredSurfaceCurveRepresentation {
+    PcurveS1,
+    NoSuchEnum,
+}
+
 #[derive(Debug)]
 pub enum DataEntity<'a> {
     Null,
@@ -66,6 +76,8 @@ pub enum DataEntity<'a> {
     AdvancedFace(&'a str, Vec<Id>, Id, bool),
     ApplicationContext(&'a str),
     ApplicationProtocolDefinition(&'a str, &'a str, usize, Id),
+    Axis1Placement(&'a str, Id, Id),
+    Axis2Placement2d(&'a str, Id, Id),
     Axis2Placement3d(&'a str, Id, Id, Id),
     BSplineCurveWithKnots(
         &'a str,
@@ -102,6 +114,7 @@ pub enum DataEntity<'a> {
     ContextDependentShapeRepresentation(Id, Id),
     CurveStyle(&'a str, Id, PositiveLengthMeasure, Id),
     CylindricalSurface(&'a str, Id, f64),
+    DefinitionalRepresentation(&'a str, Vec<Id>, Id),
     DerivedUnit(Vec<Id>),
     DerivedUnitElement(Id, f64),
     DescriptiveRepresentationItem(&'a str, &'a str),
@@ -112,37 +125,43 @@ pub enum DataEntity<'a> {
     EdgeLoop(&'a str, Vec<Id>),
     Ellipse(&'a str, Id, f64, f64),
     FaceBound(&'a str, Id, bool),
+    FaceOuterBound(&'a str, Id, bool),
     FillAreaStyle(&'a str, Vec<Id>),
     FillAreaStyleColour(&'a str, Id),
     GeometricCurveSet(&'a str, Vec<Id>),
+    Hyperbola(&'a str, Id, f64, f64),
     ItemDefinedTransformation(&'a str, &'a str, Id, Id),
     Line(&'a str, Id, Id),
     ManifoldSolidBrep(&'a str, Id),
     ManifoldSurfaceShapeRepresentation(&'a str, Vec<Id>, Id),
-    MeasureRepresentationItem(&'a str, AreaMeasureOrVolumeMeasure, Id),
+    MeasureRepresentationItem(&'a str, MeasureValue, Id),
+    MechanicalContext(&'a str, Id, &'a str),
     MechanicalDesignGeometricPresentationRepresentation(&'a str, Vec<Id>, Id),
     NextAssemblyUsageOccurrence(&'a str, &'a str, &'a str, Id, Id, Option<&'a str>),
     OpenShell(&'a str, Vec<Id>),
     OrientedClosedShell(&'a str, Id, bool),
     OrientedEdge(&'a str, Id, bool),
     OverRidingStyledItem(&'a str, Vec<Id>, Id, Id),
+    Pcurve(&'a str, Id, Id),
     Plane(&'a str, Id),
     PresentationLayerAssignment(&'a str, &'a str, Vec<Id>),
     PresentationStyleAssignment(Vec<Id>),
     PresentationStyleByContext(Vec<Id>, Id),
-    Product(&'a str, &'a str, &'a str, Vec<Id>),
+    Product(&'a str, &'a str, Option<&'a str>, Vec<Id>),
     ProductCategory(&'a str, &'a str),
     ProductContext(&'a str, Id, &'a str),
     ProductDefinition(&'a str, &'a str, Id, Id),
     ProductDefinitionContext(&'a str, Id, &'a str),
-    ProductDefinitionFormation(&'a str, &'a str, Id),
+    ProductDefinitionFormation(&'a str, Option<&'a str>, Id),
     ProductDefinitionFormationWithSpecifiedSource(&'a str, &'a str, Id, Source),
-    ProductDefinitionShape(&'a str, &'a str, Id),
+    ProductDefinitionShape(&'a str, Option<&'a str>, Id),
     ProductRelatedProductCategory(&'a str, Option<&'a str>, Vec<Id>),
+    ProductType(&'a str, Option<&'a str>, Vec<Id>),
     PropertyDefinition(&'a str, &'a str, Id),
     PropertyDefinitionRepresentation(Id, Id),
     Representation(Option<&'a str>, Vec<Id>, Option<Id>),
     RepresentationRelationshipWithTransformation(&'a str, &'a str, Id, Id, Id),
+    SeamCurve(&'a str, Id, Vec<Id>, PreferredSurfaceCurveRepresentation),
     ShapeAspect(&'a str, &'a str, Id, bool),
     ShapeDefinitionRepresentation(Id, Id),
     ShapeRepresentation(&'a str, Vec<Id>, Id),
@@ -150,7 +169,9 @@ pub enum DataEntity<'a> {
     ShellBasedSurfaceModel(&'a str, Vec<Id>),
     SphericalSurface(&'a str, Id, f64),
     StyledItem(&'a str, Vec<Id>, Id),
+    SurfaceCurve(&'a str, Id, Vec<Id>, PreferredSurfaceCurveRepresentation),
     SurfaceOfLinearExtrusion(&'a str, Id, Id),
+    SurfaceOfRevolution(&'a str, Id, Id),
     SurfaceSideStyle(&'a str, Vec<Id>),
     SurfaceStyleFillArea(Id),
     SurfaceStyleUsage(SurfaceSide, Id),
@@ -197,6 +218,18 @@ impl DataEntity<'_> {
             ApplicationProtocolDefinition(_, _, _, x3) => {
                 let mut r: Vec<Id> = Vec::new();
                 r.push(x3.clone());
+                r
+            }
+            Axis1Placement(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.clone());
+                r
+            }
+            Axis2Placement2d(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.clone());
                 r
             }
             Axis2Placement3d(_, x1, x2, x3) => {
@@ -270,6 +303,14 @@ impl DataEntity<'_> {
                 r.push(x1.clone());
                 r
             }
+            DefinitionalRepresentation(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x1 {
+                    r.push(n0.clone());
+                }
+                r.push(x2.clone());
+                r
+            }
             DerivedUnit(x0) => {
                 let mut r: Vec<Id> = Vec::new();
                 for n0 in x0 {
@@ -318,6 +359,11 @@ impl DataEntity<'_> {
                 r.push(x1.clone());
                 r
             }
+            FaceOuterBound(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r
+            }
             FillAreaStyle(_, x1) => {
                 let mut r: Vec<Id> = Vec::new();
                 for n0 in x1 {
@@ -335,6 +381,11 @@ impl DataEntity<'_> {
                 for n0 in x1 {
                     r.push(n0.clone());
                 }
+                r
+            }
+            Hyperbola(_, x1, _, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
                 r
             }
             ItemDefinedTransformation(_, _, x2, x3) => {
@@ -365,6 +416,11 @@ impl DataEntity<'_> {
             MeasureRepresentationItem(_, _, x2) => {
                 let mut r: Vec<Id> = Vec::new();
                 r.push(x2.clone());
+                r
+            }
+            MechanicalContext(_, x1, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
                 r
             }
             MechanicalDesignGeometricPresentationRepresentation(_, x1, x2) => {
@@ -405,6 +461,12 @@ impl DataEntity<'_> {
                 }
                 r.push(x2.clone());
                 r.push(x3.clone());
+                r
+            }
+            Pcurve(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.clone());
                 r
             }
             Plane(_, x1) => {
@@ -482,6 +544,13 @@ impl DataEntity<'_> {
                 }
                 r
             }
+            ProductType(_, _, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                for n0 in x2 {
+                    r.push(n0.clone());
+                }
+                r
+            }
             PropertyDefinition(_, _, x2) => {
                 let mut r: Vec<Id> = Vec::new();
                 r.push(x2.clone());
@@ -508,6 +577,14 @@ impl DataEntity<'_> {
                 r.push(x2.clone());
                 r.push(x3.clone());
                 r.push(x4.clone());
+                r
+            }
+            SeamCurve(_, x1, x2, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                for n0 in x2 {
+                    r.push(n0.clone());
+                }
                 r
             }
             ShapeAspect(_, _, x2, _) => {
@@ -555,7 +632,21 @@ impl DataEntity<'_> {
                 r.push(x2.clone());
                 r
             }
+            SurfaceCurve(_, x1, x2, _) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                for n0 in x2 {
+                    r.push(n0.clone());
+                }
+                r
+            }
             SurfaceOfLinearExtrusion(_, x1, x2) => {
+                let mut r: Vec<Id> = Vec::new();
+                r.push(x1.clone());
+                r.push(x2.clone());
+                r
+            }
+            SurfaceOfRevolution(_, x1, x2) => {
                 let mut r: Vec<Id> = Vec::new();
                 r.push(x1.clone());
                 r.push(x2.clone());
