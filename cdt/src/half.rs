@@ -13,8 +13,34 @@ pub struct Edge {
     pub next: EdgeIndex,
     /// Matched edge in the graph, [`EMPTY_EDGE`] if empty
     pub buddy: EdgeIndex,
+
     /// Marks whether this edge is fixed in the triangulation
-    pub fixed: bool,
+    ///
+    /// If it is `None`, then the edge is unfixed.  If it is `Some(_)`, then
+    /// the edge is fixed; the flag marks whether the edge transition counts as
+    /// an inside-outside transition.  For example, consider this donut with
+    /// double horizontal edges (marked with `=`)
+    ///
+    /// ```text
+    ///      /---------\
+    ///     /           \
+    ///     |  -------  |
+    ///     |  |     |  |
+    ///     |  |     |==|
+    ///     |  |     |  |
+    ///     |  -------  |
+    ///     \           /
+    ///      \---------/
+    /// ```
+    /// All of the area inside the donut should be filled, so crossing the
+    /// doubled edge should not count as an inside-outside transition
+    pub sign: Option<bool>,
+}
+
+impl Edge {
+    pub fn fixed(&self) -> bool {
+        self.sign.is_some()
+    }
 }
 
 /// A half-edge graph structure, implicitly storing triangles.
@@ -33,16 +59,27 @@ impl Half {
         }
     }
 
-    /// Locks an edge and its buddy (if present)
-    pub fn lock(&mut self, e: EdgeIndex) {
-        self.set_lock(e, true);
-    }
-
-    pub fn set_lock(&mut self, e: EdgeIndex, v: bool) {
-        self.edges[e].fixed = v;
+    pub fn set_sign(&mut self, e: EdgeIndex, v: Option<bool>) {
+        self.edges[e].sign = v;
         let buddy = self.edges[e].buddy;
         if buddy != EMPTY_EDGE {
-            self.edges[buddy].fixed = v;
+            self.edges[buddy].sign = self.edges[e].sign;
+        }
+    }
+
+    /// Toggles the lock sign of an edge and its buddy (if present)
+    ///
+    /// See discussion of [`Edge::sign`] for why this is signed, rather than
+    /// a simple flag.
+    pub fn toggle_lock_sign(&mut self, e: EdgeIndex) {
+        if let Some(b) = self.edges[e].sign {
+            self.edges[e].sign = Some(!b);
+        } else {
+            self.edges[e].sign = Some(true);
+        }
+        let buddy = self.edges[e].buddy;
+        if buddy != EMPTY_EDGE {
+            self.edges[buddy].sign = self.edges[e].sign;
         }
     }
 
@@ -63,7 +100,7 @@ impl Half {
 
         // Link against a buddy if present, copying its fixed value
         if edge.buddy != EMPTY_EDGE {
-            self.edges[index].fixed = self.edges[edge.buddy].fixed;
+            self.edges[index].sign = self.edges[edge.buddy].sign;
             std::mem::swap(&mut self.edges[edge.buddy].buddy, &mut index);
             assert!(index == EMPTY_EDGE);
         }
@@ -81,19 +118,19 @@ impl Half {
             src: a, dst: b,
             prev: e_ca, next: e_bc,
             buddy: e_ba,
-            fixed: false,
+            sign: None,
         });
         self.push_edge(Edge {
             src: b, dst: c,
             prev: e_ab, next: e_ca,
             buddy: e_cb,
-            fixed: false,
+            sign: None,
         });
         self.push_edge(Edge {
             src: c, dst: a,
             prev: e_bc, next: e_ab,
             buddy: e_ac,
-            fixed: false,
+            sign: None,
         });
 
         e_ab
@@ -102,7 +139,7 @@ impl Half {
     pub fn iter_edges(&self) -> impl Iterator<Item=(PointIndex, PointIndex, bool)> + '_ {
         return self.edges.iter()
             .filter(|e| e.next != EMPTY_EDGE)
-            .map(|e| (e.src, e.dst, e.fixed))
+            .map(|e| (e.src, e.dst, e.fixed()))
     }
 
     pub fn iter_triangles(&self) -> impl Iterator<Item=(PointIndex, PointIndex, PointIndex)> + '_ {
@@ -130,7 +167,7 @@ impl Half {
     pub fn flood_erase_from(&mut self, e: EdgeIndex) {
         assert!(self.edge(e).buddy == EMPTY_EDGE);
         let mut seen = EdgeVec::of(vec![false; self.edges.len()]);
-        let mut todo = vec![(e, self.edge(e).fixed)];
+        let mut todo = vec![(e, self.edge(e).fixed())];
         while let Some((e, inside)) = todo.pop() {
             if e == EMPTY_EDGE || seen[e] {
                 continue;
@@ -145,8 +182,8 @@ impl Half {
 
             let next = self.edge(edge.next);
             let prev = self.edge(edge.prev);
-            todo.push((next.buddy, inside ^ next.fixed));
-            todo.push((prev.buddy, inside ^ prev.fixed));
+            todo.push((next.buddy, inside ^ (next.sign == Some(true))));
+            todo.push((prev.buddy, inside ^ (prev.sign == Some(true))));
             if !inside {
                 self.erase(e);
             }
@@ -175,7 +212,7 @@ impl Half {
                 assert!(edge.src == buddy.dst);
                 assert!(edge.dst == buddy.src);
                 assert!(buddy.buddy == index);
-                assert!(edge.fixed == buddy.fixed);
+                assert!(edge.fixed() == buddy.fixed());
             }
             let next_index = edge.next;
             let next = self.edge(next_index);
@@ -199,7 +236,7 @@ impl Half {
     /// Swaps the target edge, which must be have a matched pair.
     pub fn swap(&mut self, e_ba: EdgeIndex) {
         // We refuse to swap fixed edges, though the caller may ask for it
-        if self.edges[e_ba].fixed {
+        if self.edges[e_ba].fixed() {
             return;
         }
         /* Before:
@@ -252,7 +289,7 @@ impl Half {
             prev: e_ac,
             next: e_da,
             buddy: e_ab,
-            fixed: false,
+            sign: None,
         };
         self.edges[e_ab] = Edge {
             src: d,
@@ -260,7 +297,7 @@ impl Half {
             prev: e_bd,
             next: e_cb,
             buddy: e_ba,
-            fixed: false,
+            sign: None,
         };
         // Repair the other edges in the triangle
         self.edges[e_ac].prev = e_da;
@@ -312,7 +349,7 @@ impl Half {
     /// # Panics
     /// Panics if the edges are not compatible or already have buddies.
     pub fn link_new(&mut self, old: EdgeIndex, new: EdgeIndex) {
-        self.edges[new].fixed = self.edges[old].fixed;
+        self.edges[new].sign = self.edges[old].sign;
         self.link(old, new)
     }
 
@@ -325,7 +362,7 @@ impl Half {
     pub fn link(&mut self, a: EdgeIndex, b: EdgeIndex) {
         assert!(self.edges[a].buddy == EMPTY_EDGE);
         assert!(self.edges[b].buddy == EMPTY_EDGE);
-        assert!(self.edges[a].fixed == self.edges[b].fixed);
+        assert!(self.edges[a].fixed() == self.edges[b].fixed());
         assert!(self.edges[a].src == self.edges[b].dst);
         assert!(self.edges[a].dst == self.edges[b].src);
 

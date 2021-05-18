@@ -8,7 +8,7 @@ use crate::{
 pub enum ContourData {
     None,
     Buddy(EdgeIndex),
-    Hull(HullIndex, bool), // record whether this edge was fixed
+    Hull(HullIndex, Option<bool>), // record the fixed sign of this edge
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -159,17 +159,17 @@ impl Contour {
             let e_bc = edge_ab.next;
             match a.data {
                 ContourData::None => (),
-                ContourData::Hull(hull_index, fixed) => {
+                ContourData::Hull(hull_index, sign) => {
                     t.hull.update(hull_index, e_ca);
-                    t.half.set_lock(e_bc, fixed);
+                    t.half.set_sign(e_bc, sign);
                 },
                 ContourData::Buddy(b) => t.half.link_new(b, e_ca),
             };
             match c.data {
                 ContourData::None => (),
-                ContourData::Hull(hull_index, fixed) => {
+                ContourData::Hull(hull_index, sign) => {
                     t.hull.update(hull_index, e_bc);
-                    t.half.set_lock(e_bc, fixed);
+                    t.half.set_sign(e_bc, sign);
                 },
                 ContourData::Buddy(b) => t.half.link_new(b, e_bc),
             };
@@ -209,17 +209,17 @@ impl Contour {
             let e_ac = edge_ba.next;
             match a.data {
                 ContourData::None => (),
-                ContourData::Hull(hull_index, fixed) => {
+                ContourData::Hull(hull_index, sign) => {
                     t.hull.update(hull_index, e_ac);
-                    t.half.set_lock(e_ac, fixed);
+                    t.half.set_sign(e_ac, sign);
                 },
                 ContourData::Buddy(b) => t.half.link_new(b, e_ac),
             };
             match c.data {
                 ContourData::None => (),
-                ContourData::Hull(hull_index, fixed) => {
+                ContourData::Hull(hull_index, sign) => {
                     t.hull.update(hull_index, e_cb);
-                    t.half.set_lock(e_cb, fixed);
+                    t.half.set_sign(e_cb, sign);
                 },
                 ContourData::Buddy(b) => t.half.link_new(b, e_cb),
             };

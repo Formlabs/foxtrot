@@ -330,11 +330,11 @@ impl Triangulation {
             // (src, dst) tuple is sorted, there are only three possible
             // matches here.
             if (src, dst) == (pa, pb) {
-                out.half.lock(e_ab);
+                out.half.toggle_lock_sign(e_ab);
             } else if (src, dst) == (pa, pc) {
-                out.half.lock(e_ca);
+                out.half.toggle_lock_sign(e_ca);
             } else if (src, dst) == (pb, pc) {
-                out.half.lock(e_bc);
+                out.half.toggle_lock_sign(e_bc);
             }
             termination_count[dst] += 1;
         }
@@ -569,7 +569,7 @@ impl Triangulation {
                 Special case: if p is exactly on the line, then we split the
                 line instead of inserting a new triangle.
             */
-            assert!(!edge.fixed);
+            assert!(!edge.fixed());
             assert!(edge.buddy == EMPTY_EDGE);
             let edge_bc = self.half.edge(edge.next);
             let edge_ca = self.half.edge(edge.prev);
@@ -920,7 +920,7 @@ impl Triangulation {
             } else {
                 let hl = self.hull.index_of(edge_cb.dst);
                 assert!(self.hull.edge(hl) == e_cb);
-                ContourData::Hull(hl, edge_cb.fixed)
+                ContourData::Hull(hl, edge_cb.sign)
             });
         steps_right.push(self, edge_ba.dst,
             if edge_ac.buddy != EMPTY_EDGE {
@@ -928,12 +928,12 @@ impl Triangulation {
             } else {
                 let hr = self.hull.index_of(edge_ac.dst);
                 assert!(self.hull.edge(hr) == e_ac);
-                ContourData::Hull(hr, edge_ac.fixed)
+                ContourData::Hull(hr, edge_ac.sign)
             });
 
         // Exit this triangle, either onto the hull or continuing inside
         // the triangulation.
-        if edge_ba.fixed {
+        if edge_ba.fixed() {
             return Err(Error::CrossingFixedEdge);
         }
         assert!(edge_ba.buddy != EMPTY_EDGE);
@@ -971,7 +971,7 @@ impl Triangulation {
                     if edge_bc.buddy == EMPTY_EDGE {
                         let h = self.hull.index_of(edge_bc.dst);
                         assert!(self.hull.edge(h) == e_bc);
-                        ContourData::Hull(h, edge_bc.fixed)
+                        ContourData::Hull(h, edge_bc.sign)
                     } else {
                         ContourData::Buddy(edge_bc.buddy)
                     }).expect("Failed to create fixed edge");
@@ -989,7 +989,7 @@ impl Triangulation {
                     if edge_ca.buddy == EMPTY_EDGE {
                         let h = self.hull.index_of(edge_ca.dst);
                         assert!(self.hull.edge(h) == e_ca);
-                        ContourData::Hull(h, edge_ca.fixed)
+                        ContourData::Hull(h, edge_ca.sign)
                     } else {
                         ContourData::Buddy(edge_ca.buddy)
                     })
@@ -1001,7 +1001,7 @@ impl Triangulation {
                 assert!(self.half.edge(e_src_dst).dst == dst);
 
                 self.half.link(e_src_dst, e_dst_src);
-                self.half.lock(e_src_dst); // locks both sides
+                self.half.toggle_lock_sign(e_src_dst); // locks both sides
 
                 break;
             }
@@ -1014,14 +1014,14 @@ impl Triangulation {
                     if edge_ca.buddy == EMPTY_EDGE {
                         let h = self.hull.index_of(edge_ca.dst);
                         assert!(self.hull.edge(h) == e_ca);
-                        ContourData::Hull(h, edge_ca.fixed)
+                        ContourData::Hull(h, edge_ca.sign)
                     } else {
                         ContourData::Buddy(edge_ca.buddy)
                     });
 
                 // Exit the triangle, either onto the hull or staying
                 // in the triangulation
-                if edge_bc.fixed {
+                if edge_bc.fixed() {
                     return Err(Error::CrossingFixedEdge);
                 }
                 assert!(edge_bc.buddy != EMPTY_EDGE);
@@ -1044,12 +1044,12 @@ impl Triangulation {
                     if edge_bc.buddy == EMPTY_EDGE {
                         let h = self.hull.index_of(edge_bc.dst);
                         assert!(self.hull.edge(h) == e_bc);
-                        ContourData::Hull(h, edge_bc.fixed)
+                        ContourData::Hull(h, edge_bc.sign)
                     } else {
                         ContourData::Buddy(edge_bc.buddy)
                     });
 
-                if edge_ca.fixed {
+                if edge_ca.fixed() {
                     return Err(Error::CrossingFixedEdge);
                 }
                 assert!(edge_ca.buddy != EMPTY_EDGE);
@@ -1065,7 +1065,7 @@ impl Triangulation {
         match self.find_hull_walk_mode(h, src, dst)? {
             // Easy mode: the fixed edge is directly connected to the new
             // point, so we lock it and return immediately.
-            Walk::Done(e) => { self.half.lock(e); Ok(()) },
+            Walk::Done(e) => { self.half.toggle_lock_sign(e); Ok(()) },
 
             // Otherwise, we're guaranteed to be inside the triangulation,
             // because the hull is convex by construction.
@@ -1097,7 +1097,7 @@ impl Triangulation {
          *  recursing; in that case, then return immediately.
          */
         let edge = self.half.edge(e_ab);
-        if edge.fixed || edge.buddy == EMPTY_EDGE {
+        if edge.fixed() || edge.buddy == EMPTY_EDGE {
             return;
         }
         let a = edge.src;
