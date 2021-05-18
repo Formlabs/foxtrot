@@ -1,4 +1,5 @@
 use std::convert::TryInto;
+use std::collections::{HashMap, HashSet};
 
 use nalgebra_glm as glm;
 use nalgebra_glm::{DVec2, DVec3, DVec4, DMat4, U32Vec3};
@@ -90,15 +91,71 @@ impl<'a> Triangulator<'a> {
     }
 
     fn triangulate(&mut self) {
-        let t = self.data.par_iter()
-            .filter(|e|
-                match e {
-                    DataEntity::ShapeRepresentationRelationship(..) |
-                    DataEntity::RepresentationRelationshipWithTransformation(..)
-                    => true,
-                    _ => false,
-                })
-            .map(|e| self.triangulate_entity(e))
+        // Build the tree of transforms, from the root up
+        let mut roots = HashSet::new();
+        let mut leaves = HashSet::new();
+
+        // from root to REPRESENTATION_RELATIONSHIP id
+        let mut lookup: HashMap<Id, Vec<Id>> = HashMap::new();
+        for (i, e) in self.data.iter().enumerate() {
+            match e {
+                DataEntity::RepresentationRelationshipWithTransformation(_, _, rep1, rep2, _) => {
+                    roots.insert(*rep2);
+                    leaves.insert(*rep1);
+                    lookup.entry(*rep2).or_insert_with(Vec::new).push(Id(i));
+                },
+                DataEntity::ShapeRepresentationRelationship(_, _, _rep1, rep2) => {
+                    roots.insert(*rep2);
+                    lookup.entry(*rep2).or_insert_with(Vec::new).push(Id(i));
+                },
+                _ => (),
+            }
+        }
+        // Pick out the roots of the transformation DAG
+        let mut todo: Vec<(Id, DMat4)> = roots.difference(&leaves)
+            .map(|i| (*i, DMat4::identity()))
+            .collect();
+
+        // We'll store leaves of the graph along with their transform here
+        let mut to_mesh: Vec<(Id, DMat4)> = Vec::new();
+
+        // Iterate through the transformation DAG
+        while let Some((id, mat)) = todo.pop() {
+            for v in &lookup[&id] {
+                match self.entity(*v) {
+                    DataEntity::RepresentationRelationshipWithTransformation(
+                            _, _, rep1, rep2, transformation_operator)
+                    => {
+                        assert!(*rep2 == id);
+                        let next_mat = self.item_defined_transformation_(
+                            *transformation_operator);
+                        if roots.contains(rep1) {
+                            todo.push((*rep1, mat * next_mat));
+                        } else {
+                            to_mesh.push((*rep1, mat * next_mat));
+                        }
+                    }
+                    DataEntity::ShapeRepresentationRelationship(
+                        _, _, _rep1, rep2)
+                    => {
+                        to_mesh.push((*rep2, mat));
+                    }
+                    e => panic!("Invalid entity {:?}", e),
+                }
+            }
+        }
+
+        let t = to_mesh.par_iter()
+            .map(|(id, mat)| {
+                let mut out = self.shape_representation_(*id);
+                for v in 0..out.verts.len() {
+                     let p = out.verts[v].pos;
+                     out.verts[v].pos = (mat * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
+                     let n = out.verts[v].norm;
+                     out.verts[v].norm = (mat * DVec4::new(n.x, n.y, n.z, 0.0)).xyz();
+                 }
+                out
+            })
             .reduce(Triangulation::default, Triangulation::combine);
         self.vertices = t.verts;
         self.triangles = t.index;
