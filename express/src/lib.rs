@@ -1,10 +1,12 @@
 use memchr::{memchr, memchr2, memchr_iter};
 use nom::{
-    character::complete::{alpha1, alphanumeric1},
-    multi::{many0, many1},
+    branch::{alt},
+    bytes::complete::{tag},
+    character::complete::{alpha1, alphanumeric0, alphanumeric1, digit1, char},
+    multi::{fold_many1, many0, many1},
     combinator::{recognize},
+    sequence::{pair, preceded},
 };
-
 
 enum Parse {
     KeywordAbs,
@@ -131,11 +133,11 @@ enum Parse {
     KeywordWith,
     KeywordXor,
 }
-pub type IResult<T, U> = nom::IResult<T, U, nom::error::VerboseError<T>>;
+pub type IResult<'a, U> = nom::IResult<&'a str, U, nom::error::VerboseError<&'a str>>;
 
 /// Keyword parser (A.1.1)
-fn keyword<'a>(s: &'a str) -> IResult<&'a str, Parse> {
-    let (rest, s) = recognize(many1(alpha1))(s)?;
+fn keyword(s: &str) -> IResult<Parse> {
+    let (rest, s) = alpha1(s)?;
     use Parse::*;
     Ok((rest, match s {
         "abs" => KeywordAbs,
@@ -261,8 +263,30 @@ fn keyword<'a>(s: &'a str) -> IResult<&'a str, Parse> {
         "while" => KeywordWhile,
         "with" => KeywordWith,
         "xor" => KeywordXor,
-        _ => return Err(nom::Err::Failure(nom::error::VerboseError { errors: vec![] })),
+        _ => {
+            use nom::error::*;
+            return Err(nom::Err::Failure(VerboseError {
+                errors: vec![("Missing keyword",
+                              VerboseErrorKind::Nom(ErrorKind::Alt))]
+            }));
+        },
     }))
+}
+
+fn digits(s: &str) -> IResult<usize> {
+    digit1(s).map(|v| (v.0, v.1.parse().unwrap()))
+}
+
+fn simple_id(s: &str) -> IResult<&str> {
+    recognize(pair(alpha1, alt((alphanumeric0, tag("_")))))(s)
+}
+
+fn bits(s: &str) -> IResult<usize> {
+    fold_many1(alt((char('0'), char('1'))), 0, |mut acc: usize, item| acc * 2 + item.to_digit(10).unwrap() as usize)(s)
+}
+
+fn binary_literal(s: &str) -> IResult<usize> {
+    preceded(char('%'), bits)(s)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -277,7 +301,7 @@ mod tests {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/// Flattens an EXPRESS file, removing comments
+/// Remove comments from an EXPRESS file and converts to lower-case
 pub fn strip_flatten(data: &[u8]) -> Vec<u8> {
     let mut out = Vec::with_capacity(data.len());
     let mut i = 0;
