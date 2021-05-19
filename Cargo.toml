@@ -4,6 +4,7 @@ debug = true
 [workspace]
 members = [
     "cdt",
+    "express",
     "step",
     "gui",
     "nurbs",
