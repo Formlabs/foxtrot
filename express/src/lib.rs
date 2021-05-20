@@ -127,6 +127,12 @@ fn simple_string_literal(s: &str) -> IResult<String> {
             char('\''))(s)
 }
 
+// 154
+struct FunctionRef<'a>(FunctionId<'a>);
+fn function_ref(s: &str) -> IResult<FunctionRef> {
+    map(function_id, FunctionRef)(s)
+}
+
 // 155
 struct ParameterRef<'a>(ParameterId<'a>);
 fn parameter_ref(s: &str) -> IResult<ParameterRef> {
@@ -179,6 +185,16 @@ fn type_ref(s: &str) -> IResult<TypeRef> {
 struct VariableRef<'a>(VariableId<'a>);
 fn variable_ref(s: &str) -> IResult<VariableRef> {
     map(variable_id, VariableRef)(s)
+}
+
+// 167
+struct ActualParameterList<'a>(Vec<Parameter<'a>>);
+fn actual_parameter_list(s: &str) -> IResult<ActualParameterList> {
+    map(delimited(
+            ws(char('(')),
+            separated_list1(ws(char(',')), parameter),
+            ws(char(')'))),
+        ActualParameterList)(s)
 }
 
 // 169
@@ -286,6 +302,7 @@ fn bound_spec(s: &str) -> IResult<BoundSpec> {
     )), |(_, b1, _, b2, _)| BoundSpec(b1, b2))(s)
 }
 
+// 186
 enum BuiltInConstant { ConstE, Pi, Self_, Indeterminant }
 fn built_in_constant(s: &str) -> IResult<BuiltInConstant> {
     use BuiltInConstant::*;
@@ -295,6 +312,52 @@ fn built_in_constant(s: &str) -> IResult<BuiltInConstant> {
         map(tag("self"),    |_| Self_),
         map(char('?'),      |_| Indeterminant),
     ))(s)
+}
+
+// 187
+enum BuiltInFunction {
+    Abs, Acos, Asin, Atan, Blength, Cos, Exists, Exp, Format, Hibound, HiIndex,
+    Length, LoBound, LoIndex, Log, Log2, Log10, Nvl, Odd, RolesOf, Sin, SizeOf,
+    Sqrt, Tan, Typeof, Usedin, Value, ValueIn, ValueUnique
+}
+fn built_in_function(s: &str) -> IResult<BuiltInFunction> {
+    use BuiltInFunction::*;
+    // Tokenize then match the keyword, instead of doing a huge alt(...)
+    let (rest, kw) = alpha1(s)?;
+    Ok((rest, match kw {
+        "abs" => Abs,
+        "acos" => Acos,
+        "asin" => Asin,
+        "atan" => Atan,
+        "blength" => Blength,
+        "cos" => Cos,
+        "exists" => Exists,
+        "exp" => Exp,
+        "format" => Format,
+        "hibound" => Hibound,
+        "hiindex" => HiIndex,
+
+        "length" => Length,
+        "lobound" => LoBound,
+        "loindex" => LoIndex,
+        "log" => Log,
+        "log2" => Log2,
+        "log10" => Log10,
+        "nvl" => Nvl,
+        "odd" => Odd,
+        "rolesof" => RolesOf,
+        "sin" => Sin,
+        "sizeof" => SizeOf,
+
+        "sqrt" => Sqrt,
+        "tan" => Tan,
+        "typeof" => Typeof,
+        "usedin" => Usedin,
+        "value" => Value,
+        "value_in" => ValueIn,
+        "value_unique" => ValueUnique,
+        _ => return build_err(s, "No such built-in function"),
+    }))
 }
 
 // 193
@@ -456,6 +519,26 @@ fn factor(s: &str) -> IResult<Factor> {
         |(a, b)| Factor(a, b))(s)
 }
 
+// 219
+enum BuiltInOrFunctionRef<'a> {
+    BuiltIn(BuiltInFunction),
+    Ref(FunctionRef<'a>),
+}
+struct FunctionCall<'a>(BuiltInOrFunctionRef<'a>, ActualParameterList<'a>);
+fn function_call(s: &str) -> IResult<FunctionCall> {
+    map(pair(
+            ws(alt((map(built_in_function, BuiltInOrFunctionRef::BuiltIn),
+                    map(function_ref, BuiltInOrFunctionRef::Ref)))),
+            actual_parameter_list),
+        |(a, b)| FunctionCall(a, b))(s)
+}
+
+// 222
+struct FunctionId<'a>(SimpleId<'a>);
+fn function_id(s: &str) -> IResult<FunctionId> {
+    map(simple_id, FunctionId)(s)
+}
+
 // 228
 enum GeneralRef<'a> {
     Parameter(ParameterRef<'a>),
@@ -464,6 +547,43 @@ enum GeneralRef<'a> {
 }
 fn general_ref(s: &str) -> IResult<GeneralRef> {
     map(simple_id, GeneralRef::_SimpleId)(s)
+}
+
+
+// 232
+struct GroupQualifier<'a>(EntityRef<'a>);
+fn group_qualifier(s: &str) -> IResult<GroupQualifier> {
+    map(preceded(ws(char('\\')), entity_ref), GroupQualifier)(s)
+}
+
+// 236
+struct Index<'a>(NumericalExpression<'a>);
+fn index(s: &str) -> IResult<Index> {
+    map(numerical_expression, Index)(s)
+}
+
+// 237
+struct Index1<'a>(Index<'a>);
+fn index_1(s: &str) -> IResult<Index1> {
+    map(index, Index1)(s)
+}
+
+// 238
+struct Index2<'a>(Index<'a>);
+fn index_2(s: &str) -> IResult<Index2> {
+    map(index, Index2)(s)
+}
+
+// 239
+struct IndexQualifier<'a>(Index1<'a>, Index2<'a>);
+fn index_qualifier(s: &str) -> IResult<IndexQualifier> {
+    map(tuple((
+        ws(char('[')),
+        ws(index_1),
+        ws(char(';')),
+        ws(index_2),
+        ws(char(']')),
+    )), |(_, a, _, b, _)| IndexQualifier(a, b))(s)
 }
 
 // 240
@@ -612,6 +732,12 @@ fn numerical_expression(s: &str) -> IResult<NumericalExpression> {
     map(simple_expression, NumericalExpression)(s)
 }
 
+// 264
+struct Parameter<'a>(Expression<'a>);
+fn parameter(s: &str) -> IResult<Parameter> {
+    map(expression, Parameter)(s)
+}
+
 // 265
 struct ParameterId<'a>(SimpleId<'a>);
 fn parameter_id(s: &str) -> IResult<ParameterId> {
@@ -648,7 +774,7 @@ fn primary(s: &str) -> IResult<Primary> {
 enum QualifiableFactor<'a> {
     AttributeRef(AttributeRef<'a>),
     ConstantFactor(ConstantFactor<'a>),
-    FunctionCall(FunctionCall),
+    FunctionCall(FunctionCall<'a>),
     GeneralRef(GeneralRef<'a>),
     Population(Population<'a>),
 
@@ -667,8 +793,8 @@ fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
 // 276
 enum Qualifier<'a> {
     Attribute(AttributeQualifier<'a>),
-    Group(GroupQualifier),
-    Index(IndexQualifier),
+    Group(GroupQualifier<'a>),
+    Index(IndexQualifier<'a>),
 }
 fn qualifier(s: &str) -> IResult<Qualifier> {
     use Qualifier::*;
