@@ -157,6 +157,18 @@ fn entity_ref(s: &str) -> IResult<EntityRef> {
     map(entity_id, EntityRef)(s)
 }
 
+// 162
+struct TypeRef<'a>(TypeId<'a>);
+fn type_ref(s: &str) -> IResult<TypeRef> {
+    map(type_id, TypeRef)(s)
+}
+
+// 170
+struct AggregateSource<'a>(SimpleExpression<'a>);
+fn aggregate_source(s: &str) -> IResult<AggregateSource> {
+    map(simple_expression, AggregateSource)(s)
+}
+
 // 172
 enum AggregationTypes<'a> {
     Array(ArrayType<'a>),
@@ -176,7 +188,7 @@ fn aggregation_types(s: &str) -> IResult<AggregationTypes> {
 
 // 175
 struct ArrayType<'a> {
-    bounds: BoundSpec,
+    bounds: BoundSpec<'a>,
     optional: bool,
     unique: bool,
     instantiable_type: Box<InstantiableType<'a>>,
@@ -210,7 +222,7 @@ fn attribute_qualifier(s: &str) -> IResult<AttributeRef> {
 }
 
 // 180
-struct BagType<'a>(Option<BoundSpec>, Box<InstantiableType<'a>>);
+struct BagType<'a>(Option<BoundSpec<'a>>, Box<InstantiableType<'a>>);
 fn bag_type(s: &str) -> IResult<BagType> {
     map(tuple((
             ws(tag("BAG")),
@@ -222,19 +234,19 @@ fn bag_type(s: &str) -> IResult<BagType> {
 }
 
 // 183
-struct Bound1(NumericalExpression);
+struct Bound1<'a>(NumericalExpression<'a>);
 fn bound_1(s: &str) -> IResult<Bound1> {
     map(numerical_expression, Bound1)(s)
 }
 
 // 184
-struct Bound2(NumericalExpression);
+struct Bound2<'a>(NumericalExpression<'a>);
 fn bound_2(s: &str) -> IResult<Bound2> {
     map(numerical_expression, Bound2)(s)
 }
 
 // 185
-struct BoundSpec(Bound1, Bound2);
+struct BoundSpec<'a>(Bound1<'a>, Bound2<'a>);
 fn bound_spec(s: &str) -> IResult<BoundSpec> {
     map(tuple((
         ws(char('[')),
@@ -248,8 +260,8 @@ fn bound_spec(s: &str) -> IResult<BoundSpec> {
 // 193
 enum ConcreteTypes<'a> {
     Aggregation(AggregationTypes<'a>),
-    Simple(SimpleTypes),
-    TypeRef(TypeRef),
+    Simple(SimpleTypes<'a>),
+    TypeRef(TypeRef<'a>),
 }
 fn concrete_types(s: &str) -> IResult<ConcreteTypes> {
     use ConcreteTypes::*;
@@ -267,22 +279,22 @@ fn constant_id(s: &str) -> IResult<ConstantId> {
 }
 
 // 198
-enum ConstructedTypes {
+enum ConstructedTypes<'a> {
     Enumeration(EnumerationType),
-    Select(SelectType),
+    Select(SelectType<'a>),
 }
 fn constructed_types(s: &str) -> IResult<ConstructedTypes> {
     use ConstructedTypes::*;
     alt((
-        map(enumeration_type, EnumerationType),
-        map(select_type, SelectType),
+        map(enumeration_type, Enumeration),
+        map(select_type, Select),
     ))(s)
 }
 
 // 202
 struct DomainRule<'a> {
     rule_label_id: Option<RuleLabelId<'a>>,
-    expression: Expression,
+    expression: Expression<'a>,
 }
 fn domain_rule(s: &str) -> IResult<DomainRule> {
     map(pair(opt(terminated(ws(rule_label_id), ws(char(':')))), expression),
@@ -294,6 +306,15 @@ fn domain_rule(s: &str) -> IResult<DomainRule> {
 struct EntityId<'a>(SimpleId<'a>);
 fn entity_id(s: &str) -> IResult<EntityId> {
     map(simple_id, EntityId)(s)
+}
+
+// 212
+struct EnumerationReference<'a>(Option<TypeRef<'a>>, EnumerationRef);
+fn enumeration_reference(s: &str) -> IResult<EnumerationReference> {
+    map(tuple((
+        ws(terminated(ws(type_ref), char('.'))),
+        enumeration_ref
+    )), |(a, b)| EnumerationReference(a, b))(s)
 }
 
 // 213
@@ -319,14 +340,14 @@ fn enumeration_type(s: &str) -> IResult<EnumerationType> {
 }
 
 // 216
-struct Expression(SimpleExpression, Option<(RelOpExtended, SimpleExpression)>);
+struct Expression<'a>(SimpleExpression<'a>, Option<(RelOpExtended, SimpleExpression<'a>)>);
 fn expression(s: &str) -> IResult<Expression> {
     map(pair(simple_expression, opt(pair(rel_op_extended, simple_expression))),
         |(a, b)| Expression(a, b))(s)
 }
 
 // 217
-struct Factor(SimpleFactor, Option<SimpleFactor>);
+struct Factor<'a>(SimpleFactor<'a>, Option<SimpleFactor<'a>>);
 fn factor(s: &str) -> IResult<Factor> {
     map(pair(simple_factor, opt(preceded(tag("**"), simple_factor))),
         |(a, b)| Factor(a, b))(s)
@@ -345,9 +366,59 @@ fn instantiable_type(s: &str) -> IResult<InstantiableType> {
     ))(s)
 }
 
+// 243
+struct Interval<'a> {
+    low: IntervalLow<'a>,
+    op1: IntervalOp,
+    item: IntervalItem<'a>,
+    op2: IntervalOp,
+    high: IntervalHigh<'a>,
+}
+fn interval(s: &str) -> IResult<Interval> {
+    map(delimited(
+        ws(char('{')),
+        ws(tuple((
+            interval_low,
+            interval_op,
+            interval_item,
+            interval_op,
+            interval_high,
+        ))),
+        char('}')),
+        |(low, op1, item, op2, high)| Interval { low, op1, item, op2, high })
+    (s)
+}
+
+// 244
+struct IntervalHigh<'a>(SimpleExpression<'a>);
+fn interval_high(s: &str) -> IResult<IntervalHigh> {
+    map(simple_expression, IntervalHigh)(s)
+}
+
+// 245
+struct IntervalItem<'a>(SimpleExpression<'a>);
+fn interval_item(s: &str) -> IResult<IntervalItem> {
+    map(simple_expression, IntervalItem)(s)
+}
+
+// 246
+struct IntervalLow<'a>(SimpleExpression<'a>);
+fn interval_low(s: &str) -> IResult<IntervalLow> {
+    map(simple_expression, IntervalLow)(s)
+}
+
+// 247
+enum IntervalOp { LessThan, LessThanOrEqual }
+fn interval_op(s: &str) -> IResult<IntervalOp> {
+    alt((
+        map(char('<'), |_| IntervalOp::LessThan),
+        map(tag("<="), |_| IntervalOp::LessThanOrEqual),
+    ))(s)
+}
+
 // 250
 struct ListType<'a> {
-    bounds: BoundSpec,
+    bounds: BoundSpec<'a>,
     unique: bool,
     instantiable_type: Box<InstantiableType<'a>>,
 }
@@ -362,6 +433,24 @@ fn list_type(s: &str) -> IResult<ListType> {
     |(_, b, _, uniq, t)| ListType {
         bounds: b,
         unique: uniq.is_some(),
+        instantiable_type: Box::new(t),
+    })(s)
+}
+
+// 250
+struct SetType<'a> {
+    bounds: BoundSpec<'a>,
+    instantiable_type: Box<InstantiableType<'a>>,
+}
+fn set_type(s: &str) -> IResult<SetType> {
+    map(tuple((
+        ws(tag("set")),
+        ws(bound_spec),
+        ws(tag("of")),
+        ws(instantiable_type),
+    )),
+    |(_, b, _, t)| SetType {
+        bounds: b,
         instantiable_type: Box::new(t),
     })(s)
 }
@@ -407,9 +496,15 @@ fn multiplication_like_op(s: &str) -> IResult<MultiplicationLikeOp> {
 }
 
 // 262
-struct NumericalExpression(SimpleExpression);
+struct NumericalExpression<'a>(SimpleExpression<'a>);
 fn numerical_expression(s: &str) -> IResult<NumericalExpression> {
     map(simple_expression, NumericalExpression)(s)
+}
+
+// 268
+struct PrecisionSpec<'a>(NumericalExpression<'a>);
+fn precision_spec(s: &str) -> IResult<PrecisionSpec> {
+    map(numerical_expression, PrecisionSpec)(s)
 }
 
 // 269
@@ -439,6 +534,29 @@ fn qualifier(s: &str) -> IResult<Qualifier> {
         map(group_qualifier, Group),
         map(index_qualifier, Index),
     ))(s)
+}
+
+// 277
+struct QueryExpression<'a> {
+    var: VariableId,
+    aggregate: AggregateSource<'a>,
+    logical_expression: LogicalExpression,
+}
+fn query_expression(s: &str) -> IResult<QueryExpression> {
+    map(tuple((
+        ws(tag("QUERY")),
+        ws(char('(')),
+        ws(variable_id),
+        ws(tag("<*")),
+        ws(aggregate_source),
+        ws(char('|')),
+        ws(logical_expression,),
+        ws(char(')')),
+    )), |(_, _, var, _, aggregate, _, log, _)| QueryExpression {
+        var,
+        aggregate,
+        logical_expression: log,
+    })(s)
 }
 
 // 282
@@ -474,34 +592,18 @@ fn rule_label_id(s: &str) -> IResult<RuleLabelId> {
     map(simple_id, RuleLabelId)(s)
 }
 
-// 250
-struct SetType<'a> {
-    bounds: BoundSpec,
-    instantiable_type: Box<InstantiableType<'a>>,
-}
-fn set_type(s: &str) -> IResult<SetType> {
-    map(tuple((
-        ws(tag("set")),
-        ws(bound_spec),
-        ws(tag("of")),
-        ws(instantiable_type),
-    )),
-    |(_, b, _, t)| SetType {
-        bounds: b,
-        instantiable_type: Box::new(t),
-    })(s)
-}
-
 // 300 select_extension = BASED_ON type_ref [ WITH select_list ] .
-struct SelectExtension {
-    type_ref: TypeRef,
+struct SelectExtension<'a> {
+    type_ref: TypeRef<'a>,
     select_list: Option<SelectList>,
 }
 fn select_extension(s: &str) -> IResult<SelectExtension> {
     map(tuple((
         ws(tag("based_on")), type_ref,
         opt(preceeded(ws(tag("with")), select_list))
-    )), |(a, b)| SelectExtension(a, b))(s)
+    )), |(_, a, b)| SelectExtension {
+        type_ref: a, select_list: b
+    })(s)
 }
 
 // 301
@@ -510,19 +612,19 @@ fn select_list(s: &str) -> IResult<SelectList> {
     map(delimited(
         ws(char('(')),
         separated_list1(ws(named_types), ws(char(','))),
-        char('(')),
+        char(')')),
         SelectList)(s)
 }
 
 // 302
-enum SelectListOrExtension {
+enum SelectListOrExtension<'a> {
     List(SelectList),
-    Extension(SelectExtension),
+    Extension(SelectExtension<'a>),
 }
-struct SelectType {
+struct SelectType<'a> {
     extensible: bool,
     generic_entity: bool,
-    list_or_extension: SelectListOrExtension
+    list_or_extension: SelectListOrExtension<'a>,
 }
 fn select_type(s: &str) -> IResult<SelectType> {
     map(tuple((
@@ -532,17 +634,19 @@ fn select_type(s: &str) -> IResult<SelectType> {
             map(select_list, SelectListOrExtension::List),
             map(select_extension, SelectListOrExtension::Extension),
         ))
-    )), |(a, _, c)| SelectType(
+    )), |(a, _, c)| SelectType{
         extensible: a.is_some(),
         generic_entity: a.is_some() && a.unwrap().1.is_some(),
-        list_or_extension(c)))(s)
+        list_or_extension: c
+    })(s)
 }
 
 // 305
-struct SimpleExpression(Term, Option<(AddLikeOp, Term)>);
+struct SimpleExpression<'a>(Box<Term<'a>>, Option<(AddLikeOp, Box<Term<'a>>)>);
 fn simple_expression(s: &str) -> IResult<SimpleExpression> {
     map(pair(term, opt(pair(add_like_op, term))),
-        |(a, b)| SimpleExpression(a, b))(s)
+        |(a, b)| SimpleExpression(Box::new(a),
+                                  b.map(|p| (p.0, Box::new(p.1)))))(s)
 }
 
 // 304
@@ -551,24 +655,24 @@ fn sign(s: &str) -> IResult<char> {
 }
 
 // 305
-struct Term(Factor, Option<(MultiplicationLikeOp, Factor)>);
+struct Term<'a>(Factor<'a>, Option<(MultiplicationLikeOp, Factor<'a>)>);
 fn term(s: &str) -> IResult<Term> {
     map(pair(factor, opt(pair(multiplication_like_op, factor))),
         |(a, b)| Term(a, b))(s)
 }
 
 // 306
-enum ExpressionOrPrimary {
-    Expression(Box<Expression>),
+enum ExpressionOrPrimary<'a> {
+    Expression(Box<Expression<'a>>),
     Primary(Primary),
 }
-enum SimpleFactor {
+enum SimpleFactor<'a> {
     AggregateInitializer(AggregateInitializer),
     EntityConstructor(EntityConstructor),
-    EnumerationReference(EnumerationReference),
-    Interval(Interval),
-    QueryExpression(QueryExpression),
-    Unary(Option<UnaryOp>, ExpressionOrPrimary)
+    EnumerationReference(EnumerationReference<'a>),
+    Interval(Interval<'a>),
+    QueryExpression(QueryExpression<'a>),
+    Unary(Option<UnaryOp>, ExpressionOrPrimary<'a>)
 }
 fn simple_factor(s: &str) -> IResult<SimpleFactor> {
     use SimpleFactor::*;
@@ -578,8 +682,8 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
         map(enumeration_reference, EnumerationReference),
         map(interval, Interval),
         map(query_expression, QueryExpression),
-        map(pair(opt(unary_op), alt((
-            map(delimited(char('('), expression, char('(')),
+        map(pair(opt(ws(unary_op)), alt((
+            map(delimited(ws(char('(')), ws(expression), char(')')),
                 |e| ExpressionOrPrimary::Expression(Box::new(e))),
             map(primary, ExpressionOrPrimary::Primary)))),
             |(op, p)| Unary(op, p))
@@ -587,9 +691,9 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
 }
 
 // 307
-enum SimpleTypes {
-    Binary(Option<WidthSpec>), Boolean, Integer, Logical, Number,
-    Real(Option<PrecisionSpec>), String(Option<WidthSpec>),
+enum SimpleTypes<'a> {
+    Binary(Option<WidthSpec<'a>>), Boolean, Integer, Logical, Number,
+    Real(Option<PrecisionSpec<'a>>), String(Option<WidthSpec<'a>>),
 }
 fn simple_types(s: &str) -> IResult<SimpleTypes> {
     use SimpleTypes::*;
@@ -600,11 +704,11 @@ fn simple_types(s: &str) -> IResult<SimpleTypes> {
         map(tag("logical"), |_| Logical),
         map(tag("number"), |_| Number),
         map(preceded(ws(tag("real")), opt(
-            map(delimited(
+            delimited(
                 ws(char('(')),
                 ws(precision_spec),
                 char(')')),
-            |p| Real(p.1))))),
+            )), Real),
         map(preceded(ws(tag("string")), opt(width_spec)), String),
     ))(s)
 }
@@ -634,7 +738,7 @@ fn unary_op(s: &str) -> IResult<UnaryOp> {
 // 332
 enum UnderlyingType<'a> {
     Concrete(ConcreteTypes<'a>),
-    Constructed(ConstructedTypes),
+    Constructed(ConstructedTypes<'a>),
 }
 fn underlying_type(s: &str) -> IResult<UnderlyingType> {
     use UnderlyingType::*;
@@ -676,8 +780,14 @@ fn type_decl(s: &str) -> IResult<TypeDecl> {
     })(s)
 }
 
+// 340
+struct Width<'a>(NumericalExpression<'a>);
+fn width(s: &str) -> IResult<Width> {
+    map(numerical_expression, Width)(s)
+}
+
 // 341
-struct WidthSpec { expression: NumericalExpression, fixed: bool }
+struct WidthSpec<'a> { expression: Width<'a>, fixed: bool }
 fn width_spec(s: &str) -> IResult<WidthSpec> {
     map(tuple((
         ws(char('(')),
