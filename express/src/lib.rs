@@ -161,8 +161,8 @@ fn entity_ref(s: &str) -> IResult<EntityRef> {
 enum AggregationTypes<'a> {
     Array(ArrayType<'a>),
     Bag(BagType<'a>),
-    List(ListType),
-    Set(SetType),
+    List(ListType<'a>),
+    Set(SetType<'a>),
 }
 fn aggregation_types(s: &str) -> IResult<AggregationTypes> {
     use AggregationTypes::*;
@@ -263,7 +263,20 @@ fn concrete_types(s: &str) -> IResult<ConcreteTypes> {
 // 197
 struct ConstantId<'a>(SimpleId<'a>);
 fn constant_id(s: &str) -> IResult<ConstantId> {
-    map(constant_id, ConstantId)(s)
+    map(simple_id, ConstantId)(s)
+}
+
+// 198
+enum ConstructedTypes {
+    Enumeration(EnumerationType),
+    Select(SelectType),
+}
+fn constructed_types(s: &str) -> IResult<ConstructedTypes> {
+    use ConstructedTypes::*;
+    alt((
+        map(enumeration_type, EnumerationType),
+        map(select_type, SelectType),
+    ))(s)
 }
 
 // 202
@@ -281,6 +294,28 @@ fn domain_rule(s: &str) -> IResult<DomainRule> {
 struct EntityId<'a>(SimpleId<'a>);
 fn entity_id(s: &str) -> IResult<EntityId> {
     map(simple_id, EntityId)(s)
+}
+
+// 213
+enum EnumerationSubtype {
+    Items(EnumerationItems),
+    Extension(EnumerationExtension),
+}
+struct EnumerationType {
+    extensible: bool,
+    items_or_extension: Option<EnumerationSubtype>
+}
+fn enumeration_type(s: &str) -> IResult<EnumerationType> {
+    map(tuple((
+        ws(opt(tag("extensible"))),
+        ws(tag("enumeration")),
+        ws(opt(alt((
+            map(preceded(ws(tag("of")), enumeration_items),
+                EnumerationSubtype::Items),
+            map(enumeration_extension, EnumerationSubtype::Extension)))))
+    )), |(e, _, p)| EnumerationType {
+        extensible: e.is_some(),
+        items_or_extension: p })(s)
 }
 
 // 216
@@ -308,6 +343,27 @@ fn instantiable_type(s: &str) -> IResult<InstantiableType> {
         map(concrete_types, Concrete),
         map(entity_ref, EntityRef),
     ))(s)
+}
+
+// 250
+struct ListType<'a> {
+    bounds: BoundSpec,
+    unique: bool,
+    instantiable_type: Box<InstantiableType<'a>>,
+}
+fn list_type(s: &str) -> IResult<ListType> {
+    map(tuple((
+        ws(tag("list")),
+        ws(bound_spec),
+        ws(tag("of")),
+        ws(opt(tag("unique"))),
+        ws(instantiable_type),
+    )),
+    |(_, b, _, uniq, t)| ListType {
+        bounds: b,
+        unique: uniq.is_some(),
+        instantiable_type: Box::new(t),
+    })(s)
 }
 
 // 251
@@ -418,11 +474,87 @@ fn rule_label_id(s: &str) -> IResult<RuleLabelId> {
     map(simple_id, RuleLabelId)(s)
 }
 
+// 250
+struct SetType<'a> {
+    bounds: BoundSpec,
+    instantiable_type: Box<InstantiableType<'a>>,
+}
+fn set_type(s: &str) -> IResult<SetType> {
+    map(tuple((
+        ws(tag("set")),
+        ws(bound_spec),
+        ws(tag("of")),
+        ws(instantiable_type),
+    )),
+    |(_, b, _, t)| SetType {
+        bounds: b,
+        instantiable_type: Box::new(t),
+    })(s)
+}
+
+// 300 select_extension = BASED_ON type_ref [ WITH select_list ] .
+struct SelectExtension {
+    type_ref: TypeRef,
+    select_list: Option<SelectList>,
+}
+fn select_extension(s: &str) -> IResult<SelectExtension> {
+    map(tuple((
+        ws(tag("based_on")), type_ref,
+        opt(preceeded(ws(tag("with")), select_list))
+    )), |(a, b)| SelectExtension(a, b))(s)
+}
+
+// 301
+struct SelectList(Vec<NamedTypes>);
+fn select_list(s: &str) -> IResult<SelectList> {
+    map(delimited(
+        ws(char('(')),
+        separated_list1(ws(named_types), ws(char(','))),
+        char('(')),
+        SelectList)(s)
+}
+
+// 302
+enum SelectListOrExtension {
+    List(SelectList),
+    Extension(SelectExtension),
+}
+struct SelectType {
+    extensible: bool,
+    generic_entity: bool,
+    list_or_extension: SelectListOrExtension
+}
+fn select_type(s: &str) -> IResult<SelectType> {
+    map(tuple((
+        opt(pair(ws(tag("extensible")), opt(ws(tag("generic_entity"))))),
+        ws(tag("select")),
+        alt((
+            map(select_list, SelectListOrExtension::List),
+            map(select_extension, SelectListOrExtension::Extension),
+        ))
+    )), |(a, _, c)| SelectType(
+        extensible: a.is_some(),
+        generic_entity: a.is_some() && a.unwrap().1.is_some(),
+        list_or_extension(c)))(s)
+}
+
 // 305
 struct SimpleExpression(Term, Option<(AddLikeOp, Term)>);
 fn simple_expression(s: &str) -> IResult<SimpleExpression> {
     map(pair(term, opt(pair(add_like_op, term))),
         |(a, b)| SimpleExpression(a, b))(s)
+}
+
+// 304
+fn sign(s: &str) -> IResult<char> {
+    alt((char('+'), char('-')))(s)
+}
+
+// 305
+struct Term(Factor, Option<(MultiplicationLikeOp, Factor)>);
+fn term(s: &str) -> IResult<Term> {
+    map(pair(factor, opt(pair(multiplication_like_op, factor))),
+        |(a, b)| Term(a, b))(s)
 }
 
 // 306
@@ -454,16 +586,27 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
     ))(s)
 }
 
-// 304
-fn sign(s: &str) -> IResult<char> {
-    alt((char('+'), char('-')))(s)
+// 307
+enum SimpleTypes {
+    Binary(Option<WidthSpec>), Boolean, Integer, Logical, Number,
+    Real(Option<PrecisionSpec>), String(Option<WidthSpec>),
 }
-
-// 305
-struct Term(Factor, Option<(MultiplicationLikeOp, Factor)>);
-fn term(s: &str) -> IResult<Term> {
-    map(pair(factor, opt(pair(multiplication_like_op, factor))),
-        |(a, b)| Term(a, b))(s)
+fn simple_types(s: &str) -> IResult<SimpleTypes> {
+    use SimpleTypes::*;
+    alt((
+        map(preceded(ws(tag("binary")), opt(width_spec)), Binary),
+        map(tag("boolean"), |_| Boolean),
+        map(tag("integer"), |_| Integer),
+        map(tag("logical"), |_| Logical),
+        map(tag("number"), |_| Number),
+        map(preceded(ws(tag("real")), opt(
+            map(delimited(
+                ws(char('(')),
+                ws(precision_spec),
+                char(')')),
+            |p| Real(p.1))))),
+        map(preceded(ws(tag("string")), opt(width_spec)), String),
+    ))(s)
 }
 
 // 310
@@ -531,6 +674,17 @@ fn type_decl(s: &str) -> IResult<TypeDecl> {
         underlying_type: u,
         where_clause: w,
     })(s)
+}
+
+// 341
+struct WidthSpec { expression: NumericalExpression, fixed: bool }
+fn width_spec(s: &str) -> IResult<WidthSpec> {
+    map(tuple((
+        ws(char('(')),
+        ws(width),
+        ws(char(')')),
+        opt(tag("fixed"))
+    )), |(_, w, _, f)| WidthSpec { expression: w, fixed: f.is_some() })(s)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
