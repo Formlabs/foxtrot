@@ -2,9 +2,9 @@ use memchr::{memchr, memchr_iter};
 use nom::{
     branch::{alt},
     bytes::complete::{tag},
-    character::complete::{one_of, alpha1, alphanumeric0, alphanumeric1, multispace0, digit1, char},
+    character::complete::{one_of, alpha1, multispace0, digit1, char},
     error::*,
-    multi::{fold_many1, fold_many0, many0_count, many0, many1},
+    multi::{fold_many1, fold_many0, many0_count, separated_list0, separated_list1, many0, many1},
     combinator::{map, recognize, opt},
     sequence::{delimited, pair, preceded, tuple, terminated},
 };
@@ -127,6 +127,12 @@ fn simple_string_literal(s: &str) -> IResult<String> {
             char('\''))(s)
 }
 
+// 155
+struct ParameterRef<'a>(ParameterId<'a>);
+fn parameter_ref(s: &str) -> IResult<ParameterRef> {
+    map(parameter_id, ParameterRef)(s)
+}
+
 // 168
 enum AddLikeOp { Add, Sub, Or, Xor }
 fn add_like_op(s: &str) -> IResult<AddLikeOp> {
@@ -157,10 +163,32 @@ fn entity_ref(s: &str) -> IResult<EntityRef> {
     map(entity_id, EntityRef)(s)
 }
 
+// 153
+struct EnumerationRef<'a>(EnumerationId<'a>);
+fn enumeration_ref(s: &str) -> IResult<EnumerationRef> {
+    map(enumeration_id, EnumerationRef)(s)
+}
+
 // 162
 struct TypeRef<'a>(TypeId<'a>);
 fn type_ref(s: &str) -> IResult<TypeRef> {
     map(type_id, TypeRef)(s)
+}
+
+// 163
+struct VariableRef<'a>(VariableId<'a>);
+fn variable_ref(s: &str) -> IResult<VariableRef> {
+    map(variable_id, VariableRef)(s)
+}
+
+// 169
+struct AggregateInitializer<'a>(Vec<Element<'a>>);
+fn aggregate_initializer(s: &str) -> IResult<AggregateInitializer> {
+    map(delimited(
+            ws(char('[')),
+            separated_list0(ws(char(',')), ws(element)),
+            ws(char(']'))),
+        AggregateInitializer)(s)
 }
 
 // 170
@@ -217,8 +245,9 @@ fn attribute_id(s: &str) -> IResult<AttributeId> {
 }
 
 // 179
-fn attribute_qualifier(s: &str) -> IResult<AttributeRef> {
-    preceded(char('.'), attribute_ref)(s)
+struct AttributeQualifier<'a>(AttributeRef<'a>);
+fn attribute_qualifier(s: &str) -> IResult<AttributeQualifier> {
+    map(preceded(ws(char('.')), attribute_ref), AttributeQualifier)(s)
 }
 
 // 180
@@ -257,6 +286,17 @@ fn bound_spec(s: &str) -> IResult<BoundSpec> {
     )), |(_, b1, _, b2, _)| BoundSpec(b1, b2))(s)
 }
 
+enum BuiltInConstant { ConstE, Pi, Self_, Indeterminant }
+fn built_in_constant(s: &str) -> IResult<BuiltInConstant> {
+    use BuiltInConstant::*;
+    alt((
+        map(tag("const_e"), |_| ConstE),
+        map(tag("pi"),      |_| Pi),
+        map(tag("self"),    |_| Self_),
+        map(char('?'),      |_| Indeterminant),
+    ))(s)
+}
+
 // 193
 enum ConcreteTypes<'a> {
     Aggregation(AggregationTypes<'a>),
@@ -272,6 +312,19 @@ fn concrete_types(s: &str) -> IResult<ConcreteTypes> {
     ))(s)
 }
 
+// 196
+enum ConstantFactor<'a> {
+    BuiltIn(BuiltInConstant),
+    ConstantRef(ConstantRef<'a>),
+}
+fn constant_factor(s: &str) -> IResult<ConstantFactor> {
+    use ConstantFactor::*;
+    alt((
+        map(built_in_constant, BuiltIn),
+        map(constant_ref, ConstantRef),
+    ))(s)
+}
+
 // 197
 struct ConstantId<'a>(SimpleId<'a>);
 fn constant_id(s: &str) -> IResult<ConstantId> {
@@ -280,7 +333,7 @@ fn constant_id(s: &str) -> IResult<ConstantId> {
 
 // 198
 enum ConstructedTypes<'a> {
-    Enumeration(EnumerationType),
+    Enumeration(EnumerationType<'a>),
     Select(SelectType<'a>),
 }
 fn constructed_types(s: &str) -> IResult<ConstructedTypes> {
@@ -302,29 +355,78 @@ fn domain_rule(s: &str) -> IResult<DomainRule> {
         (s)
 }
 
+// 203
+struct Element<'a>(Expression<'a>, Option<Repetition<'a>>);
+fn element(s: &str) -> IResult<Element> {
+    map(pair(ws(expression), opt(preceded(ws(char(':')), repetition))),
+        |(a, b)| Element(a, b))(s)
+}
+
+// 205
+struct EntityConstructor<'a> {
+    entity_ref: EntityRef<'a>,
+    args: Vec<Expression<'a>>,
+}
+fn entity_constructor(s: &str) -> IResult<EntityConstructor> {
+    map(pair(
+        ws(entity_ref),
+        delimited(
+            ws(char('(')),
+            separated_list0(ws(char(',')), ws(expression)),
+            ws(char(')')),
+        )), |(r, a)| EntityConstructor { entity_ref: r, args: a} )(s)
+}
+
 // 208
 struct EntityId<'a>(SimpleId<'a>);
 fn entity_id(s: &str) -> IResult<EntityId> {
     map(simple_id, EntityId)(s)
 }
 
+// 209
+struct EnumerationExtension<'a> {
+    type_ref: TypeRef<'a>,
+    enumeration_items: Option<EnumerationItems<'a>>,
+}
+fn enumeration_extension(s: &str) -> IResult<EnumerationExtension> {
+    map(preceded(
+        ws(tag("based_on")),
+        pair(type_ref, opt(preceded(ws(tag("with")), enumeration_items)))),
+        |(a, b)| EnumerationExtension { type_ref: a, enumeration_items: b })(s)
+}
+
+// 210
+struct EnumerationId<'a>(SimpleId<'a>);
+fn enumeration_id(s: &str) -> IResult<EnumerationId> {
+    map(simple_id, EnumerationId)(s)
+}
+
+// 211
+struct EnumerationItems<'a>(Vec<EnumerationId<'a>>);
+fn enumeration_items(s: &str) -> IResult<EnumerationItems> {
+    map(delimited(
+        ws(char('(')),
+        separated_list1(ws(char(',')), ws(enumeration_id)),
+        ws(char(')'))), EnumerationItems)(s)
+}
+
 // 212
-struct EnumerationReference<'a>(Option<TypeRef<'a>>, EnumerationRef);
+struct EnumerationReference<'a>(Option<TypeRef<'a>>, EnumerationRef<'a>);
 fn enumeration_reference(s: &str) -> IResult<EnumerationReference> {
     map(tuple((
-        ws(terminated(ws(type_ref), char('.'))),
+        ws(opt(terminated(ws(type_ref), char('.')))),
         enumeration_ref
     )), |(a, b)| EnumerationReference(a, b))(s)
 }
 
 // 213
-enum EnumerationSubtype {
-    Items(EnumerationItems),
-    Extension(EnumerationExtension),
+enum EnumerationItemsOrExtension<'a> {
+    Items(EnumerationItems<'a>),
+    Extension(EnumerationExtension<'a>),
 }
-struct EnumerationType {
+struct EnumerationType<'a> {
     extensible: bool,
-    items_or_extension: Option<EnumerationSubtype>
+    items_or_extension: Option<EnumerationItemsOrExtension<'a>>
 }
 fn enumeration_type(s: &str) -> IResult<EnumerationType> {
     map(tuple((
@@ -332,8 +434,9 @@ fn enumeration_type(s: &str) -> IResult<EnumerationType> {
         ws(tag("enumeration")),
         ws(opt(alt((
             map(preceded(ws(tag("of")), enumeration_items),
-                EnumerationSubtype::Items),
-            map(enumeration_extension, EnumerationSubtype::Extension)))))
+                EnumerationItemsOrExtension::Items),
+            map(enumeration_extension,
+                EnumerationItemsOrExtension::Extension)))))
     )), |(e, _, p)| EnumerationType {
         extensible: e.is_some(),
         items_or_extension: p })(s)
@@ -351,6 +454,16 @@ struct Factor<'a>(SimpleFactor<'a>, Option<SimpleFactor<'a>>);
 fn factor(s: &str) -> IResult<Factor> {
     map(pair(simple_factor, opt(preceded(tag("**"), simple_factor))),
         |(a, b)| Factor(a, b))(s)
+}
+
+// 228
+enum GeneralRef<'a> {
+    Parameter(ParameterRef<'a>),
+    Variable(VariableRef<'a>),
+    _SimpleId(SimpleId<'a>),
+}
+fn general_ref(s: &str) -> IResult<GeneralRef> {
+    map(simple_id, GeneralRef::_SimpleId)(s)
 }
 
 // 240
@@ -437,24 +550,6 @@ fn list_type(s: &str) -> IResult<ListType> {
     })(s)
 }
 
-// 250
-struct SetType<'a> {
-    bounds: BoundSpec<'a>,
-    instantiable_type: Box<InstantiableType<'a>>,
-}
-fn set_type(s: &str) -> IResult<SetType> {
-    map(tuple((
-        ws(tag("set")),
-        ws(bound_spec),
-        ws(tag("of")),
-        ws(instantiable_type),
-    )),
-    |(_, b, _, t)| SetType {
-        bounds: b,
-        instantiable_type: Box::new(t),
-    })(s)
-}
-
 // 251
 enum Literal {
     String(String),
@@ -470,6 +565,12 @@ fn literal(s: &str) -> IResult<Literal> {
         map(logical_literal, Logical),
         map(real_literal, Real)
     ))(s)
+}
+
+// 254
+struct LogicalExpression<'a>(Expression<'a>);
+fn logical_expression(s: &str) -> IResult<LogicalExpression> {
+    map(expression, LogicalExpression)(s)
 }
 
 // 255
@@ -495,10 +596,32 @@ fn multiplication_like_op(s: &str) -> IResult<MultiplicationLikeOp> {
     ))(s)
 }
 
+// 258
+enum NamedTypes<'a> {
+    Entity(EntityRef<'a>),
+    Type(TypeRef<'a>),
+    _EntityOrTypeRef(SimpleId<'a>), // Used before disambiguation
+}
+fn named_types(s: &str) -> IResult<NamedTypes> {
+    map(simple_id, NamedTypes::_EntityOrTypeRef)(s)
+}
+
 // 262
 struct NumericalExpression<'a>(SimpleExpression<'a>);
 fn numerical_expression(s: &str) -> IResult<NumericalExpression> {
     map(simple_expression, NumericalExpression)(s)
+}
+
+// 265
+struct ParameterId<'a>(SimpleId<'a>);
+fn parameter_id(s: &str) -> IResult<ParameterId> {
+    map(simple_id, ParameterId)(s)
+}
+
+// 267
+struct Population<'a>(EntityRef<'a>);
+fn population(s: &str) -> IResult<Population> {
+    map(entity_ref, Population)(s)
 }
 
 // 268
@@ -508,22 +631,42 @@ fn precision_spec(s: &str) -> IResult<PrecisionSpec> {
 }
 
 // 269
-enum Primary {
+enum Primary<'a> {
     Literal(Literal),
-    Quantifiable(QuantifiableFactor, Vec<Qualifier>),
+    Qualifiable(QualifiableFactor<'a>, Vec<Qualifier<'a>>),
 }
 fn primary(s: &str) -> IResult<Primary> {
     use Primary::*;
     alt((
         map(literal, Literal),
         map(pair(qualifiable_factor, many0(qualifier)),
-            |(f, qs)| Quantifiable(f, qs))
+            |(f, qs)| Qualifiable(f, qs))
+    ))(s)
+}
+
+// 274
+enum QualifiableFactor<'a> {
+    AttributeRef(AttributeRef<'a>),
+    ConstantFactor(ConstantFactor<'a>),
+    FunctionCall(FunctionCall),
+    GeneralRef(GeneralRef<'a>),
+    Population(Population<'a>),
+
+    // catch-all for attribute, constant, general, population
+    _SimpleId(SimpleId<'a>),
+}
+fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
+    use QualifiableFactor::*;
+    alt((
+        map(simple_id, _SimpleId),
+        map(constant_factor, ConstantFactor),
+        map(function_call, FunctionCall),
     ))(s)
 }
 
 // 276
-enum Qualifier {
-    Attribute(AttributeQualifier),
+enum Qualifier<'a> {
+    Attribute(AttributeQualifier<'a>),
     Group(GroupQualifier),
     Index(IndexQualifier),
 }
@@ -538,9 +681,9 @@ fn qualifier(s: &str) -> IResult<Qualifier> {
 
 // 277
 struct QueryExpression<'a> {
-    var: VariableId,
+    var: VariableId<'a>,
     aggregate: AggregateSource<'a>,
-    logical_expression: LogicalExpression,
+    logical_expression: LogicalExpression<'a>,
 }
 fn query_expression(s: &str) -> IResult<QueryExpression> {
     map(tuple((
@@ -586,39 +729,45 @@ fn rel_op_extended(s: &str) -> IResult<RelOpExtended> {
         map(rel_op, RelOp)))(s)
 }
 
+// 287
+struct Repetition<'a>(NumericalExpression<'a>);
+fn repetition(s: &str) -> IResult<Repetition> {
+    map(numerical_expression, Repetition)(s)
+}
+
 // 294
 struct RuleLabelId<'a>(SimpleId<'a>);
 fn rule_label_id(s: &str) -> IResult<RuleLabelId> {
     map(simple_id, RuleLabelId)(s)
 }
 
-// 300 select_extension = BASED_ON type_ref [ WITH select_list ] .
+// 300
 struct SelectExtension<'a> {
     type_ref: TypeRef<'a>,
-    select_list: Option<SelectList>,
+    select_list: Option<SelectList<'a>>,
 }
 fn select_extension(s: &str) -> IResult<SelectExtension> {
     map(tuple((
         ws(tag("based_on")), type_ref,
-        opt(preceeded(ws(tag("with")), select_list))
+        opt(preceded(ws(tag("with")), select_list))
     )), |(_, a, b)| SelectExtension {
         type_ref: a, select_list: b
     })(s)
 }
 
 // 301
-struct SelectList(Vec<NamedTypes>);
+struct SelectList<'a>(Vec<NamedTypes<'a>>);
 fn select_list(s: &str) -> IResult<SelectList> {
     map(delimited(
         ws(char('(')),
-        separated_list1(ws(named_types), ws(char(','))),
+        separated_list1(ws(char(',')), ws(named_types)),
         char(')')),
         SelectList)(s)
 }
 
 // 302
 enum SelectListOrExtension<'a> {
-    List(SelectList),
+    List(SelectList<'a>),
     Extension(SelectExtension<'a>),
 }
 struct SelectType<'a> {
@@ -638,6 +787,24 @@ fn select_type(s: &str) -> IResult<SelectType> {
         extensible: a.is_some(),
         generic_entity: a.is_some() && a.unwrap().1.is_some(),
         list_or_extension: c
+    })(s)
+}
+
+// 303
+struct SetType<'a> {
+    bounds: BoundSpec<'a>,
+    instantiable_type: Box<InstantiableType<'a>>,
+}
+fn set_type(s: &str) -> IResult<SetType> {
+    map(tuple((
+        ws(tag("set")),
+        ws(bound_spec),
+        ws(tag("of")),
+        ws(instantiable_type),
+    )),
+    |(_, b, _, t)| SetType {
+        bounds: b,
+        instantiable_type: Box::new(t),
     })(s)
 }
 
@@ -664,11 +831,11 @@ fn term(s: &str) -> IResult<Term> {
 // 306
 enum ExpressionOrPrimary<'a> {
     Expression(Box<Expression<'a>>),
-    Primary(Primary),
+    Primary(Primary<'a>),
 }
 enum SimpleFactor<'a> {
-    AggregateInitializer(AggregateInitializer),
-    EntityConstructor(EntityConstructor),
+    AggregateInitializer(AggregateInitializer<'a>),
+    EntityConstructor(EntityConstructor<'a>),
     EnumerationReference(EnumerationReference<'a>),
     Interval(Interval<'a>),
     QueryExpression(QueryExpression<'a>),
@@ -718,6 +885,29 @@ fn string_literal(s: &str) -> IResult<String> {
     alt((simple_string_literal, encoded_string_literal))(s)
 }
 
+// 327
+struct TypeDecl<'a> {
+    type_id: TypeId<'a>,
+    underlying_type: UnderlyingType<'a>,
+    where_clause: Option<WhereClause<'a>>,
+}
+fn type_decl(s: &str) -> IResult<TypeDecl> {
+    map(tuple((
+        ws(tag("type")),
+        ws(type_id),
+        ws(char('=')),
+        ws(underlying_type),
+        ws(char(';')),
+        ws(opt(where_clause)),
+        ws(tag("end_type")),
+        ws(char(';')),
+    )), |(_, t, _, u, _, w, _, _)| TypeDecl {
+        type_id: t,
+        underlying_type: u,
+        where_clause: w,
+    })(s)
+}
+
 // 328
 struct TypeId<'a>(SimpleId<'a>);
 fn type_id(s: &str) -> IResult<TypeId> {
@@ -757,27 +947,10 @@ fn where_clause(s: &str) -> IResult<WhereClause> {
         |v| WhereClause(v))(s)
 }
 
-// 327
-struct TypeDecl<'a> {
-    type_id: TypeId<'a>,
-    underlying_type: UnderlyingType<'a>,
-    where_clause: Option<WhereClause<'a>>,
-}
-fn type_decl(s: &str) -> IResult<TypeDecl> {
-    map(tuple((
-        ws(tag("type")),
-        ws(type_id),
-        ws(char('=')),
-        ws(underlying_type),
-        ws(char(';')),
-        ws(opt(where_clause)),
-        ws(tag("end_type")),
-        ws(char(';')),
-    )), |(_, t, _, u, _, w, _, _)| TypeDecl {
-        type_id: t,
-        underlying_type: u,
-        where_clause: w,
-    })(s)
+// 337
+struct VariableId<'a>(SimpleId<'a>);
+fn variable_id(s: &str) -> IResult<VariableId> {
+    map(simple_id, VariableId)(s)
 }
 
 // 340
