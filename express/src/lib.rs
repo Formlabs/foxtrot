@@ -29,6 +29,22 @@ fn ws<'a, U, F>(p: F) -> impl FnMut(&'a str) -> IResult<'a, U>
     terminated(p, multispace0)
 }
 
+macro_rules! alias {
+    // `()` indicates that the macro takes no argument.
+    ($a:ident $(< $lt:lifetime >)?,
+     $b:ident, $parse_a:ident) => {
+        struct $a $(< $lt >)?($b $(< $lt >)?);
+        impl $(< $lt >)? $a $(< $lt >)?  {
+            fn parse(s: &$( $lt )? str) -> IResult<Self> {
+                map($b::parse, Self)(s)
+            }
+        }
+        fn $parse_a(s: &str) -> IResult<$a> {
+            $a::parse(s)
+        }
+    };
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -105,12 +121,15 @@ fn real_literal(s: &str) -> IResult<f64> {
 
 // 143
 struct SimpleId<'a>(&'a str);
-fn simple_id(s: &str) -> IResult<SimpleId> {
-    map(pair(
-            alpha1,
-            many0_count(alt((letter, digit, char('_'))))),
-        |(_c, i)| SimpleId(&s[1..(i + 1)]))(s)
+impl<'a> SimpleId<'a> {
+    fn parse(s: &'a str) -> IResult<Self> {
+        map(pair(
+                alpha1,
+                many0_count(alt((letter, digit, char('_'))))),
+            |(_c, i)| SimpleId(&s[1..(i + 1)]))(s)
+    }
 }
+fn simple_id(s: &str) -> IResult<SimpleId> { SimpleId::parse(s) }
 
 // 144
 fn simple_string_literal(s: &str) -> IResult<String> {
@@ -128,16 +147,10 @@ fn simple_string_literal(s: &str) -> IResult<String> {
 }
 
 // 154
-struct FunctionRef<'a>(FunctionId<'a>);
-fn function_ref(s: &str) -> IResult<FunctionRef> {
-    map(function_id, FunctionRef)(s)
-}
+alias!(FunctionRef<'a>, FunctionId, function_ref);
 
 // 155
-struct ParameterRef<'a>(ParameterId<'a>);
-fn parameter_ref(s: &str) -> IResult<ParameterRef> {
-    map(parameter_id, ParameterRef)(s)
-}
+alias!(ParameterRef<'a>, ParameterId, parameter_ref);
 
 // 168
 enum AddLikeOp { Add, Sub, Or, Xor }
@@ -151,41 +164,21 @@ fn add_like_op(s: &str) -> IResult<AddLikeOp> {
     ))(s)
 }
 
-// 150
-struct AttributeRef<'a>(AttributeId<'a>);
-fn attribute_ref(s: &str) -> IResult<AttributeRef> {
-    map(attribute_id, AttributeRef)(s)
-}
-
-// 151
-struct ConstantRef<'a>(ConstantId<'a>);
-fn constant_ref(s: &str) -> IResult<ConstantRef> {
-    map(constant_id, ConstantRef)(s)
-}
-
-// 152
-struct EntityRef<'a>(EntityId<'a>);
-fn entity_ref(s: &str) -> IResult<EntityRef> {
-    map(entity_id, EntityRef)(s)
-}
-
-// 153
-struct EnumerationRef<'a>(EnumerationId<'a>);
-fn enumeration_ref(s: &str) -> IResult<EnumerationRef> {
-    map(enumeration_id, EnumerationRef)(s)
-}
-
-// 162
-struct TypeRef<'a>(TypeId<'a>);
-fn type_ref(s: &str) -> IResult<TypeRef> {
-    map(type_id, TypeRef)(s)
-}
-
-// 163
-struct VariableRef<'a>(VariableId<'a>);
-fn variable_ref(s: &str) -> IResult<VariableRef> {
-    map(variable_id, VariableRef)(s)
-}
+// 150-163
+alias!(AttributeRef<'a>, AttributeId, attribute_ref);
+alias!(ConstantRef<'a>, ConstantId, constant_ref);
+alias!(EntityRef<'a>, EntityId, entity_ref);
+alias!(EnumerationRef<'a>, EnumerationId, enumeration_ref);
+alias!(FunctionRef<'a>, FunctionId, function_ref);
+alias!(ParameterRef<'a>, ParameterId, parameter_ref);
+alias!(ProcedureRef<'a>, ProcedureId, procedure_ref);
+alias!(RuleLabelRef<'a>, RuleLabelId, rule_label_ref);
+alias!(RuleRef<'a>, RuleId, rule_ref);
+alias!(SchemaRef<'a>, SchemaId, schema_ref);
+alias!(SubtypeConstraintRef<'a>, SubtypeConstraintId, subtype_constraint_ref);
+alias!(TypeLabelRef<'a>, TypeLabelId, type_label_ref);
+alias!(TypeRef<'a>, TypeId, type_ref);
+alias!(VariableRef<'a>, VariableId, variable_ref);
 
 // 167
 struct ActualParameterList<'a>(Vec<Parameter<'a>>);
@@ -208,10 +201,7 @@ fn aggregate_initializer(s: &str) -> IResult<AggregateInitializer> {
 }
 
 // 170
-struct AggregateSource<'a>(SimpleExpression<'a>);
-fn aggregate_source(s: &str) -> IResult<AggregateSource> {
-    map(simple_expression, AggregateSource)(s)
-}
+alias!(AggregateSource<'a>, SimpleExpression, aggregate_source);
 
 // 172
 enum AggregationTypes<'a> {
@@ -255,16 +245,10 @@ fn array_type(s: &str) -> IResult<ArrayType> {
 }
 
 // 178
-struct AttributeId<'a>(SimpleId<'a>);
-fn attribute_id(s: &str) -> IResult<AttributeId> {
-    map(simple_id, AttributeId)(s)
-}
+alias!(AttributeId<'a>, SimpleId, attribute_id);
 
 // 179
-struct AttributeQualifier<'a>(AttributeRef<'a>);
-fn attribute_qualifier(s: &str) -> IResult<AttributeQualifier> {
-    map(preceded(ws(char('.')), attribute_ref), AttributeQualifier)(s)
-}
+alias!(AttributeQualifier<'a>, AttributeRef, attribute_qualifier);
 
 // 180
 struct BagType<'a>(Option<BoundSpec<'a>>, Box<InstantiableType<'a>>);
@@ -279,16 +263,10 @@ fn bag_type(s: &str) -> IResult<BagType> {
 }
 
 // 183
-struct Bound1<'a>(NumericalExpression<'a>);
-fn bound_1(s: &str) -> IResult<Bound1> {
-    map(numerical_expression, Bound1)(s)
-}
+alias!(Bound1<'a>, NumericalExpression, bound_1);
 
 // 184
-struct Bound2<'a>(NumericalExpression<'a>);
-fn bound_2(s: &str) -> IResult<Bound2> {
-    map(numerical_expression, Bound2)(s)
-}
+alias!(Bound2<'a>, NumericalExpression, bound_2);
 
 // 185
 struct BoundSpec<'a>(Bound1<'a>, Bound2<'a>);
@@ -375,6 +353,38 @@ fn concrete_types(s: &str) -> IResult<ConcreteTypes> {
     ))(s)
 }
 
+// 195
+struct ConstantDecl<'a>(Vec<ConstantBody<'a>>);
+fn constant_decl(s: &str) -> IResult<ConstantDecl> {
+    map(tuple((
+        ws(tag("constant")),
+        many1(ws(constant_body)),
+        ws(tag("end_constant")),
+        ws(char(';')),
+    )), |(_, b, _, _)| ConstantDecl(b))(s)
+}
+
+// 194
+struct ConstantBody<'a> {
+    constant_id: ConstantId<'a>,
+    instantiable_type: InstantiableType<'a>,
+    expression: Expression<'a>,
+}
+fn constant_body(s: &str) -> IResult<ConstantBody> {
+    map(tuple((
+        ws(constant_id),
+        ws(char(':')),
+        ws(instantiable_type),
+        ws(tag(":=")),
+        ws(expression),
+        ws(char(';')),
+    )), |(a, _, b, _, c, _)| ConstantBody {
+        constant_id: a,
+        instantiable_type: b,
+        expression: c,
+    })(s)
+}
+
 // 196
 enum ConstantFactor<'a> {
     BuiltIn(BuiltInConstant),
@@ -389,10 +399,7 @@ fn constant_factor(s: &str) -> IResult<ConstantFactor> {
 }
 
 // 197
-struct ConstantId<'a>(SimpleId<'a>);
-fn constant_id(s: &str) -> IResult<ConstantId> {
-    map(simple_id, ConstantId)(s)
-}
+alias!(ConstantId<'a>, SimpleId, constant_id);
 
 // 198
 enum ConstructedTypes<'a> {
@@ -441,10 +448,7 @@ fn entity_constructor(s: &str) -> IResult<EntityConstructor> {
 }
 
 // 208
-struct EntityId<'a>(SimpleId<'a>);
-fn entity_id(s: &str) -> IResult<EntityId> {
-    map(simple_id, EntityId)(s)
-}
+alias!(EntityId<'a>, SimpleId, entity_id);
 
 // 209
 struct EnumerationExtension<'a> {
@@ -459,10 +463,7 @@ fn enumeration_extension(s: &str) -> IResult<EnumerationExtension> {
 }
 
 // 210
-struct EnumerationId<'a>(SimpleId<'a>);
-fn enumeration_id(s: &str) -> IResult<EnumerationId> {
-    map(simple_id, EnumerationId)(s)
-}
+alias!(EnumerationId<'a>, SimpleId, enumeration_id);
 
 // 211
 struct EnumerationItems<'a>(Vec<EnumerationId<'a>>);
@@ -507,10 +508,14 @@ fn enumeration_type(s: &str) -> IResult<EnumerationType> {
 
 // 216
 struct Expression<'a>(SimpleExpression<'a>, Option<(RelOpExtended, SimpleExpression<'a>)>);
-fn expression(s: &str) -> IResult<Expression> {
-    map(pair(simple_expression, opt(pair(rel_op_extended, simple_expression))),
-        |(a, b)| Expression(a, b))(s)
+impl<'a> Expression<'a> {
+    fn parse(s: &'a str) -> IResult<Self> {
+        map(pair(simple_expression,
+                 opt(pair(rel_op_extended, simple_expression))),
+            |(a, b)| Self(a, b))(s)
+    }
 }
+fn expression(s: &str) -> IResult<Expression> { Expression::parse(s) }
 
 // 217
 struct Factor<'a>(SimpleFactor<'a>, Option<SimpleFactor<'a>>);
@@ -534,10 +539,7 @@ fn function_call(s: &str) -> IResult<FunctionCall> {
 }
 
 // 222
-struct FunctionId<'a>(SimpleId<'a>);
-fn function_id(s: &str) -> IResult<FunctionId> {
-    map(simple_id, FunctionId)(s)
-}
+alias!(FunctionId<'a>, SimpleId, function_id);
 
 // 228
 enum GeneralRef<'a> {
@@ -551,28 +553,16 @@ fn general_ref(s: &str) -> IResult<GeneralRef> {
 
 
 // 232
-struct GroupQualifier<'a>(EntityRef<'a>);
-fn group_qualifier(s: &str) -> IResult<GroupQualifier> {
-    map(preceded(ws(char('\\')), entity_ref), GroupQualifier)(s)
-}
+alias!(GroupQualifier<'a>, EntityRef, group_qualifier);
 
 // 236
-struct Index<'a>(NumericalExpression<'a>);
-fn index(s: &str) -> IResult<Index> {
-    map(numerical_expression, Index)(s)
-}
+alias!(Index<'a>, NumericalExpression, index);
 
 // 237
-struct Index1<'a>(Index<'a>);
-fn index_1(s: &str) -> IResult<Index1> {
-    map(index, Index1)(s)
-}
+alias!(Index1<'a>, Index, index_1);
 
 // 238
-struct Index2<'a>(Index<'a>);
-fn index_2(s: &str) -> IResult<Index2> {
-    map(index, Index2)(s)
-}
+alias!(Index2<'a>, Index, index_2);
 
 // 239
 struct IndexQualifier<'a>(Index1<'a>, Index2<'a>);
@@ -599,6 +589,17 @@ fn instantiable_type(s: &str) -> IResult<InstantiableType> {
     ))(s)
 }
 
+// 242
+enum InterfaceSpecification<'a> {
+    ReferenceClause(ReferenceClause<'a>),
+    UseClause(UseClause),
+}
+fn interface_specification(s: &str) -> IResult<InterfaceSpecification> {
+    use InterfaceSpecification::*;
+    alt((map(reference_clause, ReferenceClause),
+         map(use_clause, UseClause)))(s)
+}
+
 // 243
 struct Interval<'a> {
     low: IntervalLow<'a>,
@@ -623,22 +624,13 @@ fn interval(s: &str) -> IResult<Interval> {
 }
 
 // 244
-struct IntervalHigh<'a>(SimpleExpression<'a>);
-fn interval_high(s: &str) -> IResult<IntervalHigh> {
-    map(simple_expression, IntervalHigh)(s)
-}
+alias!(IntervalHigh<'a>, SimpleExpression, interval_high);
 
 // 245
-struct IntervalItem<'a>(SimpleExpression<'a>);
-fn interval_item(s: &str) -> IResult<IntervalItem> {
-    map(simple_expression, IntervalItem)(s)
-}
+alias!(IntervalItem<'a>, SimpleExpression, interval_item);
 
 // 246
-struct IntervalLow<'a>(SimpleExpression<'a>);
-fn interval_low(s: &str) -> IResult<IntervalLow> {
-    map(simple_expression, IntervalLow)(s)
-}
+alias!(IntervalLow<'a>, SimpleExpression, interval_low);
 
 // 247
 enum IntervalOp { LessThan, LessThanOrEqual }
@@ -672,7 +664,7 @@ fn list_type(s: &str) -> IResult<ListType> {
 
 // 251
 enum Literal {
-    String(String),
+    String(StringLiteral),
     Binary(usize),
     Logical(LogicalLiteral),
     Real(f64),
@@ -727,34 +719,19 @@ fn named_types(s: &str) -> IResult<NamedTypes> {
 }
 
 // 262
-struct NumericalExpression<'a>(SimpleExpression<'a>);
-fn numerical_expression(s: &str) -> IResult<NumericalExpression> {
-    map(simple_expression, NumericalExpression)(s)
-}
+alias!(NumericalExpression<'a>, SimpleExpression, numerical_expression);
 
 // 264
-struct Parameter<'a>(Expression<'a>);
-fn parameter(s: &str) -> IResult<Parameter> {
-    map(expression, Parameter)(s)
-}
+alias!(Parameter<'a>, Expression, parameter);
 
 // 265
-struct ParameterId<'a>(SimpleId<'a>);
-fn parameter_id(s: &str) -> IResult<ParameterId> {
-    map(simple_id, ParameterId)(s)
-}
+alias!(ParameterId<'a>, SimpleId, parameter_id);
 
 // 267
-struct Population<'a>(EntityRef<'a>);
-fn population(s: &str) -> IResult<Population> {
-    map(entity_ref, Population)(s)
-}
+alias!(Population<'a>, EntityRef, population);
 
 // 268
-struct PrecisionSpec<'a>(NumericalExpression<'a>);
-fn precision_spec(s: &str) -> IResult<PrecisionSpec> {
-    map(numerical_expression, PrecisionSpec)(s)
-}
+alias!(PrecisionSpec<'a>, NumericalExpression, precision_spec);
 
 // 269
 enum Primary<'a> {
@@ -828,6 +805,27 @@ fn query_expression(s: &str) -> IResult<QueryExpression> {
     })(s)
 }
 
+// 281
+struct ReferenceClause<'a> {
+    schema_ref: SchemaRef,
+    resource_or_rename: Option<Vec<ResourceOrRename<'a>>>,
+}
+fn reference_clause(s: &str) -> IResult<ReferenceClause> {
+    map(tuple((
+        ws(tag("reference")),
+        ws(tag("front")),
+        ws(schema_ref),
+        opt(delimited(
+            ws(char('[')),
+            separated_list1(ws(char(',')), ws(resource_or_rename)),
+            ws(char(']')))),
+        ws(char(';')),
+    )), |(_, _, s, r, _)| ReferenceClause {
+        schema_ref: s,
+        resource_or_rename: r,
+    })(s)
+}
+
 // 282
 enum RelOp { LessThan, GreaterThan, LessThanOrEqual, GreaterThanOrEqual,
              NotEqual, Equal, InstanceEqual, InstanceNotEqual }
@@ -855,17 +853,94 @@ fn rel_op_extended(s: &str) -> IResult<RelOpExtended> {
         map(rel_op, RelOp)))(s)
 }
 
+// 289
+enum RenameId<'a> {
+    Constant(ConstantId<'a>),
+    Entity(EntityId<'a>),
+    Function(FunctionId<'a>),
+    Procedure(ProcedureId<'a>),
+    Type(TypeId<'a>),
+    _Ambiguous(SimpleId<'a>),
+}
+fn rename_id(s: &str) -> IResult<RenameId> {
+    map(simple_id, RenameId::_Ambiguous)(s)
+}
+
 // 287
-struct Repetition<'a>(NumericalExpression<'a>);
-fn repetition(s: &str) -> IResult<Repetition> {
-    map(numerical_expression, Repetition)(s)
+alias!(Repetition<'a>, NumericalExpression, repetition);
+
+// 288
+struct ResourceOrRename<'a>(ResourceRef<'a>, Option<RenameId<'a>>);
+fn resource_or_rename(s: &str) -> IResult<ResourceOrRename> {
+    map(pair(ws(resource_ref), opt(preceded(ws(tag("as")), ws(rename_id)))),
+        |(a, b)| ResourceOrRename(a, b))(s)
+}
+
+// 289
+enum ResourceRef<'a> {
+    Constant(ConstantRef<'a>),
+    Entity(EntityRef<'a>),
+    Function(FunctionRef<'a>),
+    Procedure(ProcedureRef<'a>),
+    Type(TypeRef<'a>),
+    _Ambiguous(SimpleRef<'a>),
+}
+fn resource_ref(s: &str) -> IResult<ResourceRef> {
+    map(simple_ref, ResourceRef::_Ambiguous)(s)
 }
 
 // 294
-struct RuleLabelId<'a>(SimpleId<'a>);
-fn rule_label_id(s: &str) -> IResult<RuleLabelId> {
-    map(simple_id, RuleLabelId)(s)
+alias!(RuleLabelId<'a>, SimpleId, rule_label_id);
+
+// 295
+enum DeclarationOrRuleDecl {
+    Declaration(Declaration),
+    RuleDecl(RuleDecl),
 }
+struct SchemaBody<'a> {
+    interfaces: Vec<InterfaceSpecification<'a>>,
+    constants: Option<ConstantDecl<'a>>,
+    declarations: Vec<DeclarationOrRuleDecl>,
+}
+fn schema_body(s: &str) -> IResult<SchemaBody> {
+    map(tuple((
+        many0(interface_specification),
+        opt(constant_decl),
+        many0(alt((
+            map(declaration, DeclarationOrRuleDecl::Declaration),
+            map(rule_decl, DeclarationOrRuleDecl::RuleDecl),
+        ))),
+    )), |(a, b, c)| SchemaBody {
+        interfaces: a,
+        constants: b,
+        declarations: c})(s)
+}
+
+// 296
+struct SchemaDecl<'a> {
+    id: SchemaId<'a>,
+    version: Option<SchemaVersionId>,
+    body: SchemaBody<'a>,
+}
+fn schema_decl(s: &str) -> IResult<SchemaDecl> {
+    map(tuple((
+        ws(tag("schema")),
+        ws(schema_id),
+        opt(ws(schema_version_id)),
+        ws(char(';')),
+        ws(schema_body),
+        ws(tag("end_schema")),
+        ws(char(';'))
+    )), |(_, id, version, _, body, _, _)| SchemaDecl {
+        id, version, body
+    })(s)
+}
+
+// 297
+alias!(SchemaId<'a>, SimpleId, schema_id);
+
+// 298
+alias!(SchemaVersionId, StringLiteral, schema_version_id);
 
 // 300
 struct SelectExtension<'a> {
@@ -936,10 +1011,15 @@ fn set_type(s: &str) -> IResult<SetType> {
 
 // 305
 struct SimpleExpression<'a>(Box<Term<'a>>, Option<(AddLikeOp, Box<Term<'a>>)>);
+impl<'a> SimpleExpression<'a> {
+    fn parse(s: &'a str) -> IResult<Self> {
+        map(pair(term, opt(pair(add_like_op, term))),
+            |(a, b)| SimpleExpression(Box::new(a),
+                                      b.map(|p| (p.0, Box::new(p.1)))))(s)
+    }
+}
 fn simple_expression(s: &str) -> IResult<SimpleExpression> {
-    map(pair(term, opt(pair(add_like_op, term))),
-        |(a, b)| SimpleExpression(Box::new(a),
-                                  b.map(|p| (p.0, Box::new(p.1)))))(s)
+    SimpleExpression::parse(s)
 }
 
 // 304
@@ -1007,9 +1087,13 @@ fn simple_types(s: &str) -> IResult<SimpleTypes> {
 }
 
 // 310
-fn string_literal(s: &str) -> IResult<String> {
-    alt((simple_string_literal, encoded_string_literal))(s)
+struct StringLiteral(String);
+impl StringLiteral {
+    fn parse(s: &str) -> IResult<Self> {
+        map(alt((simple_string_literal, encoded_string_literal)), Self)(s)
+    }
 }
+fn string_literal(s: &str) -> IResult<StringLiteral> { StringLiteral::parse(s) }
 
 // 327
 struct TypeDecl<'a> {
@@ -1035,10 +1119,7 @@ fn type_decl(s: &str) -> IResult<TypeDecl> {
 }
 
 // 328
-struct TypeId<'a>(SimpleId<'a>);
-fn type_id(s: &str) -> IResult<TypeId> {
-    map(simple_id, TypeId)(s)
-}
+alias!(TypeId<'a>, SimpleId, type_id);
 
 // 331
 enum UnaryOp { Add, Sub, Not }
@@ -1074,16 +1155,10 @@ fn where_clause(s: &str) -> IResult<WhereClause> {
 }
 
 // 337
-struct VariableId<'a>(SimpleId<'a>);
-fn variable_id(s: &str) -> IResult<VariableId> {
-    map(simple_id, VariableId)(s)
-}
+alias!(VariableId<'a>, SimpleId, variable_id);
 
 // 340
-struct Width<'a>(NumericalExpression<'a>);
-fn width(s: &str) -> IResult<Width> {
-    map(numerical_expression, Width)(s)
-}
+alias!(Width<'a>, NumericalExpression, width);
 
 // 341
 struct WidthSpec<'a> { expression: Width<'a>, fixed: bool }
