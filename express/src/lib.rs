@@ -2,7 +2,7 @@ use memchr::{memchr, memchr_iter};
 use nom::{
     branch::{alt},
     bytes::complete::{tag},
-    character::complete::{one_of, alpha1, multispace0, digit1, char},
+    character::complete::{alpha1, multispace0, digit1, char},
     error::*,
     multi::{fold_many1, fold_many0, many0_count, separated_list0, separated_list1, many0, many1},
     combinator::{map, recognize, opt},
@@ -29,6 +29,27 @@ fn ws<'a, U, F>(p: F) -> impl FnMut(&'a str) -> IResult<'a, U>
     terminated(p, multispace0)
 }
 
+/// Returns a parser which recognizes '(' p ')' with optional whitespace
+fn parens<'a, U, F>(p: F) -> impl FnMut(&'a str) -> IResult<'a, U>
+    where F: FnMut(&'a str) -> IResult<'a, U>
+{
+    delimited(ws(char('(')), ws(p), ws(char(')')))
+}
+
+/// Returns a parser for zero or more items p, delimited by c with whitespace
+fn list0<'a, U, F>(c: char, p: F) -> impl FnMut(&'a str) -> IResult<'a, Vec<U>>
+    where F: FnMut(&'a str) -> IResult<'a, U>
+{
+    separated_list0(ws(char(p)), ws(p))
+}
+
+/// Returns a parser for zero or more items p, delimited by c with whitespace
+fn list1<'a, U, F>(c: char, p: F) -> impl FnMut(&'a str) -> IResult<'a, Vec<U>>
+    where F: FnMut(&'a str) -> IResult<'a, U>
+{
+    separated_list1(ws(char(p)), ws(p))
+}
+
 macro_rules! alias {
     // `()` indicates that the macro takes no argument.
     ($a:ident $(< $lt:lifetime >)?,
@@ -50,7 +71,7 @@ macro_rules! alias {
 
 // 124
 fn digit(s: &str) -> IResult<char> {
-    one_of("0123456789")(s)
+    nom::character::complete::one_of("0123456789")(s)
 }
 
 // 125
@@ -67,22 +88,23 @@ fn encoded_character(s: &str) -> IResult<char> {
 
 // 127
 fn hex_digit(s: &str) -> IResult<char> {
-    alt((digit, one_of("abcdef")))(s)
+    alt((digit, nom::character::complete::one_of("abcdef")))(s)
 }
 
 // 128
 fn letter(s: &str) -> IResult<char> {
-    one_of("abcdefghijklmnopqrstuvwxyz")(s)
+    nom::character::complete::one_of("abcdefghijklmnopqrstuvwxyz")(s)
 }
 
 // 132
 fn not_paren_star_quote_special(s: &str) -> IResult<char> {
-    one_of("!\"#$%&+,-./:;<=>?@[\\]^_‘{|}~")(s)
+    nom::character::complete::one_of("!\"#$%&+,-./:;<=>?@[\\]^_‘{|}~")(s)
 }
 
 // 134
 fn not_quote(s: &str) -> IResult<char> {
-    alt((not_paren_star_quote_special, letter, digit, one_of("()*")))(s)
+    alt((not_paren_star_quote_special, letter, digit,
+         nom::character::complete::one_of("()*")))(s)
 }
 
 // 136
@@ -123,10 +145,10 @@ fn real_literal(s: &str) -> IResult<f64> {
 struct SimpleId<'a>(&'a str);
 impl<'a> SimpleId<'a> {
     fn parse(s: &'a str) -> IResult<Self> {
-        map(pair(
+        ws(map(pair(
                 alpha1,
                 many0_count(alt((letter, digit, char('_'))))),
-            |(_c, i)| SimpleId(&s[1..(i + 1)]))(s)
+            |(_c, i)| SimpleId(&s[1..(i + 1)])))(s)
     }
 }
 fn simple_id(s: &str) -> IResult<SimpleId> { SimpleId::parse(s) }
@@ -138,7 +160,7 @@ fn simple_string_literal(s: &str) -> IResult<String> {
         not_paren_star_quote_special,
         letter,
         digit,
-        one_of("()*")
+        nom::character::complete::one_of("()*")
     ));
     delimited(
             char('\''),
@@ -179,7 +201,7 @@ fn abstract_supertype(s: &str) -> IResult<()> {
 }
 
 // 166 abstract_supertype_declaration = ABSTRACT SUPERTYPE [ subtype_constraint ] .
-struct AbstractSupertypeDeclaration(Option<SubtypeConstraint>);
+struct AbstractSupertypeDeclaration<'a>(Option<SubtypeConstraint<'a>>);
 fn abstract_supertype_declaration(s: &str) -> IResult<AbstractSupertypeDeclaration> {
     map(tuple((
         ws(tag("abstract")),
@@ -188,14 +210,10 @@ fn abstract_supertype_declaration(s: &str) -> IResult<AbstractSupertypeDeclarati
     )), |(_, _, a)| AbstractSupertypeDeclaration(a))(s)
 }
 
-// 167
+// 167 actual_parameter_list = ’(’ parameter { ’,’ parameter } ’)’ .
 struct ActualParameterList<'a>(Vec<Parameter<'a>>);
 fn actual_parameter_list(s: &str) -> IResult<ActualParameterList> {
-    map(delimited(
-            ws(char('(')),
-            separated_list1(ws(char(',')), parameter),
-            ws(char(')'))),
-        ActualParameterList)(s)
+    map(parens(list1(',', parameter)), ActualParameterList)(s)
 }
 
 // 168
@@ -215,7 +233,7 @@ struct AggregateInitializer<'a>(Vec<Element<'a>>);
 fn aggregate_initializer(s: &str) -> IResult<AggregateInitializer> {
     map(delimited(
             ws(char('[')),
-            separated_list0(ws(char(',')), ws(element)),
+            list0(',', element),
             ws(char(']'))),
         AggregateInitializer)(s)
 }
@@ -470,7 +488,7 @@ fn built_in_procedure(s: &str) -> IResult<BuiltInProcedure> {
 struct CaseAction<'a>(Vec<CaseLabel<'a>>, Stmt<'a>);
 fn case_action(s: &str) -> IResult<CaseAction> {
     map(tuple((
-        separated_list1(ws(char(',')), ws(case_label)),
+        list1(',', case_label),
         ws(char(':')),
         ws(stmt),
     )), |(a, _, b)| CaseAction(a, b))(s)
@@ -673,7 +691,7 @@ fn entity_body(s: &str) -> IResult<EntityBody> {
     })(s)
 }
 
-// 205
+// 205 entity_constructor = entity_ref ’(’ [ expression { ’,’ expression } ] ’)’ .
 struct EntityConstructor<'a> {
     entity_ref: EntityRef<'a>,
     args: Vec<Expression<'a>>,
@@ -681,11 +699,8 @@ struct EntityConstructor<'a> {
 fn entity_constructor(s: &str) -> IResult<EntityConstructor> {
     map(pair(
         ws(entity_ref),
-        delimited(
-            ws(char('(')),
-            separated_list0(ws(char(',')), ws(expression)),
-            ws(char(')')),
-        )), |(r, a)| EntityConstructor { entity_ref: r, args: a} )(s)
+        parens(list0(',', expression)),
+    ), |(r, a)| EntityConstructor { entity_ref: r, args: a} )(s)
 }
 
 // 206 entity_decl = entity_head entity_body END_ENTITY ’;’ .
@@ -728,13 +743,10 @@ fn enumeration_extension(s: &str) -> IResult<EnumerationExtension> {
 // 210
 alias!(EnumerationId<'a>, SimpleId, enumeration_id);
 
-// 211
+// 211 enumeration_items = ’(’ enumeration_id { ’,’ enumeration_id } ’)’ .
 struct EnumerationItems<'a>(Vec<EnumerationId<'a>>);
 fn enumeration_items(s: &str) -> IResult<EnumerationItems> {
-    map(delimited(
-        ws(char('(')),
-        separated_list1(ws(char(',')), ws(enumeration_id)),
-        ws(char(')'))), EnumerationItems)(s)
+    map(parens(list1(',', enumeration_id)), EnumerationItems)(s)
 }
 
 // 212
@@ -783,7 +795,7 @@ struct ExplicitAttr<'a> {
 }
 fn explicit_attr(s: &str) -> IResult<ExplicitAttr> {
     map(tuple((
-        separated_list1(ws(','), ws(attribute_decl)),
+        list1(',', attribute_decl),
         ws(char(':')),
         opt(ws(tag("optional"))),
         ws(parameter_type),
@@ -817,7 +829,7 @@ fn factor(s: &str) -> IResult<Factor> {
 struct FormalParameter<'a>(Vec<ParameterId<'a>>, ParameterType<'a>);
 fn formal_parameter(s: &str) -> IResult<FormalParameter> {
     map(tuple((
-        separated_list1(ws(char(',')), ws(parameter_id)),
+        list1(',', parameter_id),
         ws(char(':')),
         ws(parameter_type)
     )), |(a, _, b)| FormalParameter(a, b))(s)
@@ -867,10 +879,7 @@ fn function_head(s: &str) -> IResult<FunctionHead> {
     map(tuple((
         ws(tag("function")),
         ws(function_id),
-        opt(delimited(
-            ws(char('(')),
-            separated_list1(ws(char(';')), ws(formal_parameter)),
-            ws(char(')')))),
+        opt(parens(list1(';', formal_parameter))),
         ws(char(':')),
         ws(parameter_type),
         ws(char(';')),
@@ -1160,6 +1169,46 @@ fn interval_op(s: &str) -> IResult<IntervalOp> {
     ))(s)
 }
 
+// 248 inverse_attr = attribute_decl ’:’ [ ( SET | BAG ) [ bound_spec ] OF ] entity_ref
+//                    FOR [ entity_ref ’.’ ] attribute_ref ’;’ .
+enum SetOrBag { Set, Bag }
+struct InverseAttr<'a> {
+    attribute_decl: AttributeDecl<'a>,
+    bounds: Option<(SetOrBag, Option<BoundSpec<'a>>)>,
+    entity: EntityRef<'a>,
+    entity_for: Option<EntityRef<'a>>,
+    attribute_ref: AttributeRef<'a>,
+}
+fn inverse_attr(s: &str) -> IResult<InverseAttr> {
+    map(tuple((
+        ws(attribute_decl),
+        ws(char(':')),
+        opt(map(tuple((
+            ws(alt(map(tag("set"), |_| SetOrBag::Set),
+                   map(tag("bag"), |_| SetOrBag::Bag))),
+            ws(opt(bound_spec))),
+            ws(tag("of")),
+        )), |(t, b, _)| (t, b)),
+        ws(entity_ref),
+        ws(tag("for")),
+        opt(terminated(ws(entity_ref), ws(char('.')))),
+        ws(attribute_ref),
+        ws(char(';')),
+    )), |(a, _, b, c, _, d, e, _)| InverseAttr {
+        attribute_decl: a,
+        bounds: b,
+        entity: c,
+        entity_for: d,
+        attribute_ref: e,
+    })(s)
+}
+
+// 249 inverse_clause = INVERSE inverse_attr { inverse_attr } .
+struct InverseClause<'a>(Vec<InverseAttr<'a>>);
+fn inverse_clause(s: &str) -> IResult<InverseClause> {
+    map(preceded(ws(tag("inverse")), many1(inverse_attr)), InverseClause)(s)
+}
+
 // 250
 struct ListType<'a> {
     bounds: Option<BoundSpec<'a>>,
@@ -1216,7 +1265,7 @@ struct LocalVariable<'a> {
 }
 fn local_variable(s: &str) -> IResult<LocalVariable> {
     map(tuple((
-        separated_list1(ws(char(',')), ws(variable_id)),
+        list1(',', variable_id),
         ws(char(':')),
         ws(parameter_type),
         opt(preceded(ws(tag(":=")), ws(expression))),
@@ -1300,6 +1349,15 @@ fn number_type(s: &str) -> IResult<()> {
 // 262
 alias!(NumericalExpression<'a>, SimpleExpression, numerical_expression);
 
+// 263 one_of = ONEOF ’(’ supertype_expression { ’,’ supertype_expression } ’)’
+struct OneOf<'a>(Vec<SupertypeExpression<'a>>);
+fn one_of(s: &str) -> IResult<OneOf> {
+    map(preceded(
+        ws(tag("oneof")),
+        parens(list1(',', supertype_expression)),
+    ), OneOf)(s)
+}
+
 // 264
 alias!(Parameter<'a>, Expression, parameter);
 
@@ -1341,7 +1399,62 @@ fn primary(s: &str) -> IResult<Primary> {
     ))(s)
 }
 
-// 268
+// 270 procedure_call_stmt = ( built_in_procedure | procedure_ref )
+//                           [ actual_parameter_list ] ’;’ .
+enum BuiltInOrProcedureRef<'a> {
+    BuiltIn(BuiltInProcedure),
+    ProcedureRef(ProcedureRef<'a>),
+}
+struct ProcedureCallStmt<'a> {
+    proc: BuiltInOrProcedureRef<'a>,
+    params: Option<ActualParameterList<'a>>,
+}
+fn procedure_call_stmt(s: &str) -> IResult<ProcedureCallStmt> {
+    map(tuple((
+        ws(alt((map(built_in_procedure, BuiltInOrProcedureRef::BuiltIn),
+                map(procedure_ref, BuiltInOrProcedureRef::Procecure),
+        ))),
+        ws(opt(actual_parameter_list)),
+        ws(char(';')),
+    )), |(a, b, _)| ProcedureCallStmt {
+        proc: a,
+        params: b,
+    })(s)
+}
+// 271 procedure_decl = procedure_head algorithm_head { stmt } END_PROCEDURE ’;’ .
+struct ProcedureDecl<'a>(ProcedureHead<'a>, AlgorithmHead<'a>, Vec<Stmt<'a>>);
+fn procedure_decl(s: &str) -> IResult<ProcedureDecl> {
+    map(tuple((
+        ws(procedure_head),
+        ws(algorithm_head),
+        many0(ws(stmt)),
+        ws(tag("end_procedure")),
+        ws(char(';')),
+    )), |(p, a, s, _, _)| ProcedureDecl(p, a, s))(s)
+}
+
+// 272 procedure_head = PROCEDURE procedure_id [ ’(’ [ VAR ] formal_parameter
+//                      { ’;’ [ VAR ] formal_parameter } ’)’ ] ’;’ .
+struct ProcedureHead<'a> {
+    procedure_id: ProcedureId<'a>,
+    args: Option<Vec<(bool, FormalParameter<'a>)>>,
+}
+fn procedure_head(s: &str) -> IResult<ProcedureHead> {
+    map(tuple((
+        ws(tag("procedure")),
+        ws(procedure_id),
+        opt(parens(list1(';',
+                map(tuple(opt(ws(tag("var"))), ws(format_parameter)),
+                    |(v, f)| (v.is_some(), f))),
+        )),
+        ws(char(';')),
+    )), |(_, p, args, _)| ProcedureHead {
+        procedure_id: p,
+        args
+    })(s)
+}
+
+// 273
 alias!(ProcedureId<'a>, SimpleId, procedure_id);
 
 // 274
@@ -1362,6 +1475,16 @@ fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
         map(constant_factor, ConstantFactor),
         map(function_call, FunctionCall),
     ))(s)
+}
+
+// 275 qualified_attribute = SELF group_qualifier attribute_qualifier .
+struct QualifiedAttribute<'a>(GroupQualifier<'a>, AttributeQualifier<'a>);
+fn qualified_attribute(s: &str) -> IResult<QualifiedAttribute> {
+    map(tuple((
+        ws(tag("self")),
+        ws(group_qualifier),
+        ws(attribute_qualifier),
+    )), |(_, a, b)| QualifiedAttribute(a, b))(s)
 }
 
 // 276
@@ -1402,6 +1525,35 @@ fn query_expression(s: &str) -> IResult<QueryExpression> {
     })(s)
 }
 
+// 278 real_type = REAL [ ’(’ precision_spec ’)’ ] .
+struct RealType<'a>(Option<PrecisionSpec<'a>>);
+fn real_type(s: &str) -> IResult<RealType> {
+    map(preceded(ws(tag("real")),
+        opt(parens(precision_spec))),
+        RealType)(s)
+}
+
+// 279 redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
+struct RedeclaredAttribute<'a>(QualifiedAttribute<'a>, Option<AttributeId<'a>>);
+fn redeclared_attribute(s: &str) -> IResult<RedeclaredAttribute> {
+    map(pair(ws(qualified_attribute),
+             opt(preceded(ws(tag("renamed")), ws(attribute_id)))),
+        |(a, b)| RedeclaredAttribute(a, b))(s)
+}
+
+// 280 referenced_attribute = attribute_ref | qualified_attribute .
+enum ReferencedAttribute<'a> {
+    Ref(AttributeRef<'a>),
+    Qualified(QualifiedAttribute<'a>),
+}
+fn referenced_attribute(s: &str) -> IResult<ReferencedAttribute> {
+    use ReferencedAttribute::*;
+    alt((
+        map(ws(attribute_ref), Ref),
+        map(ws(qualified_attribute), Qualified),
+    ))(s)
+}
+
 // 281
 struct ReferenceClause<'a> {
     schema_ref: SchemaRef<'a>,
@@ -1412,10 +1564,7 @@ fn reference_clause(s: &str) -> IResult<ReferenceClause> {
         ws(tag("reference")),
         ws(tag("front")),
         ws(schema_ref),
-        opt(delimited(
-            ws(char('[')),
-            separated_list1(ws(char(',')), ws(resource_or_rename)),
-            ws(char(']')))),
+        opt(parens(list1(resource_or_rename))),
         ws(char(';')),
     )), |(_, _, s, r, _)| ReferenceClause {
         schema_ref: s,
@@ -1487,6 +1636,15 @@ fn resource_ref(s: &str) -> IResult<ResourceRef> {
     map(simple_id, ResourceRef::_Ambiguous)(s)
 }
 
+// 290 return_stmt = RETURN [ ’(’ expression ’)’ ] ’;’ .
+struct ReturnStmt<'a>(Option<Expression<'a>>);
+fn return_stmt(s:  &str) -> IResult<ReturnStmt> {
+    map(delimited(
+        ws(tag("return")),
+        opt(parens(expression)),
+        ws(char(';'))), ReturnStmt)(s)
+}
+
 // 291 rule_decl = rule_head algorithm_head { stmt } where_clause END_RULE ’;’ .
 struct RuleDecl<'a> {
     rule_head: RuleHead<'a>,
@@ -1520,11 +1678,7 @@ fn rule_head(s: &str) -> IResult<RuleHead> {
         ws(tag("rule")),
         ws(rule_id),
         ws(tag("for")),
-        delimited(
-            ws(char('(')),
-            separated_list1(ws(char(',')), ws(entity_ref)),
-            ws(char(')')),
-        ),
+        parens(list1(',', entity_ref)),
         ws(char(';')),
     )), |(_, id, _, es, _)| RuleHead {
         rule_id: id,
@@ -1608,11 +1762,7 @@ fn select_extension(s: &str) -> IResult<SelectExtension> {
 // 301
 struct SelectList<'a>(Vec<NamedTypes<'a>>);
 fn select_list(s: &str) -> IResult<SelectList> {
-    map(delimited(
-        ws(char('(')),
-        separated_list1(ws(char(',')), ws(named_types)),
-        char(')')),
-        SelectList)(s)
+    map(parens(list1(',', named_types)), SelectList)(s)
 }
 
 // 302
@@ -1703,33 +1853,29 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
         map(interval, Interval),
         map(query_expression, QueryExpression),
         map(pair(opt(ws(unary_op)), alt((
-            map(delimited(ws(char('(')), ws(expression), char(')')),
+            map(parens(expression),
                 |e| ExpressionOrPrimary::Expression(Box::new(e))),
             map(primary, ExpressionOrPrimary::Primary)))),
             |(op, p)| Unary(op, p))
     ))(s)
 }
 
-// 307
+// 307 simple_types = binary_type | boolean_type | integer_type | logical_type |
+//                    number_type | real_type | string_type .
 enum SimpleTypes<'a> {
-    Binary(Option<WidthSpec<'a>>), Boolean, Integer, Logical, Number,
-    Real(Option<PrecisionSpec<'a>>), String(Option<WidthSpec<'a>>),
+    Binary(BinaryType), Boolean, Integer, Logical, Number,
+    Real(RealType<'a>), String(StringType<'a>),
 }
 fn simple_types(s: &str) -> IResult<SimpleTypes> {
     use SimpleTypes::*;
     alt((
-        map(preceded(ws(tag("binary")), opt(width_spec)), Binary),
-        map(tag("boolean"), |_| Boolean),
-        map(tag("integer"), |_| Integer),
-        map(tag("logical"), |_| Logical),
-        map(tag("number"), |_| Number),
-        map(preceded(ws(tag("real")), opt(
-            delimited(
-                ws(char('(')),
-                ws(precision_spec),
-                char(')')),
-            )), Real),
-        map(preceded(ws(tag("string")), opt(width_spec)), String),
+        map(ws(binary_type),   |_| Binary),
+        map(ws(boolean_type), |_| Boolean),
+        map(ws(integer_type), |_| Integer),
+        map(ws(logical_type), |_| Logical),
+        map(ws(number_type),  |_| Number),
+        map(ws(real_type), Real),
+        map(ws(string_type), String),
     ))(s)
 }
 
@@ -1780,14 +1926,156 @@ impl StringLiteral {
 }
 fn string_literal(s: &str) -> IResult<StringLiteral> { StringLiteral::parse(s) }
 
+// 311 string_type = STRING [ width_spec ] .
+struct StringType<'a>(WidthSpec<'a>);
+fn string_type(s: &str) -> IResult<StringType> {
+    map(preceded(ws(tag("string")), opt(ws(width_spec))), StringType)(s)
+}
+
+// 312 subsuper = [ supertype_constraint ] [ subtype_declaration ] .
+struct Subsuper<'a>(Option<SupertypeConstrant<'a>>,
+                    Option<SubtypeDeclaration<'a>>);
+fn subsuper(s: &str) -> IResult<Subsuper> {
+    map(pair(ws(opt(supertype_constraint)), ws(opt(subtype_declaration))),
+        |(a, b)| Subsuper(a, b))(s)
+}
+
+// 313 subtype_constraint = OF ’(’ supertype_expression ’)’ .
+struct SubtypeConstraint<'a>(SupertypeExpression<'a>);
+fn subtype_constraint(s: &str) -> IResult<SubtypeConstraint> {
+    map(preceded(ws(tag("of")), parens(supertype_expression)),
+        SubtypeConstraint)(s)
+}
+
+// 314 subtype_constraint_body = [ abstract_supertype ] [ total_over ]
+//                               [ supertype_expression ’;’ ] .
+struct SubtypeConstraintBody<'a> {
+    abstract_super: Option<AbstractSupertype<'a>>,
+    total_over: Option<TotalOver<'a>>,
+    supertype: Option<SupertypeExpression<'a>>,
+}
+fn subtype_constraint_body(s: &str) -> IResult<SubtypeConstraintBody> {
+    map(tuple((
+        ws(abstract_supertype),
+        ws(total_over),
+        terminated(ws(supertype_expression), ws(char(';'))),
+    )), |(a, b, c)| SubtypeConstraintBody {
+        abstract_super: a,
+        total_over: b,
+        supertype: c
+    })(s)
+}
+
+// 315 subtype_constraint_decl = subtype_constraint_head subtype_constraint_body
+//                               END_SUBTYPE_CONSTRAINT ’;’ .
+struct SubtypeConstraintDecl<'a>(SubtypeConstraintHead<'a>,
+                                 SubtypeConstraintBody<'a>);
+fn subtype_constraint_decl(s: &str) -> IResult<SubtypeConstraintDecl> {
+    map(tuple((
+        ws(subtype_constraint_head),
+        ws(subtype_constraint_body),
+        ws(tag("end_subtype_constraint")),
+        ws(char(';'))
+    )), |(a, b, _, _)| SubtypeConstraintDecl(a, b))(s)
+}
+
+// 316 subtype_constraint_head = SUBTYPE_CONSTRAINT subtype_constraint_id FOR
+//                               entity_ref ’;’ .
+struct SubtypeConstraintHead<'a>(SubtypeConstraintId<'a>, EntityRef<'a>);
+fn subtype_constraint_head(s: &str) -> IResult<SubtypeConstraintHead> {
+    map(tuple((
+        ws(tag("subtype_constraint")),
+        subtype_constraint_id,
+        ws(tag("for")),
+        entity_ref,
+        ws(char(';'))
+    )), |(_, a, _, b, _)| SubtypeConstraintHead(a, b))(s)
+}
+
 // 317
 alias!(SubtypeConstraintId<'a>, SimpleId, subtype_constraint_id);
+
+// 318 subtype_declaration = SUBTYPE OF ’(’ entity_ref { ’,’ entity_ref } ’)’ .
+struct SubtypeDeclaration<'a>(Vec<EntityRef<'a>>);
+fn subtype_declaration(s: &str) -> SubtypeDeclaration {
+    map(preceded(tuple((ws(tag("subtype")), ws(tag("of")))),
+                 parens(list1(',' entity_ref))),
+        SubtypeDeclaration)(s)
+}
+
+// 319 supertype_constraint = abstract_entity_declaration |
+//                            abstract_supertype_declaration | supertype_rule .
+enum SupertypeConstraint<'a> {
+    AbstractEntity(AbstractEntityDeclaration<'a>),
+    AbstractSupertype(AbstractSupertypeDeclaration<'a>),
+    SupertypeRule(SupertypeRule<'a>)
+}
+fn supertype_constraint(s: &str) -> SupertypeConstraint {
+    use SupertypeConstraint::*;
+    alt((
+        map(abstract_entity_declaration, AbstractEntity),
+        map(abstract_supertype_declaration, AbstractSupertype),
+        map(supertype_rule, SupertypeRule),
+    ))(s)
+}
+
+// 320 supertype_expression = supertype_factor { ANDOR supertype_factor } .
+struct SupertypeExpression<'a>(SupertypeFactor<'a>,
+                               Option<SupertypeFactor<'a>>);
+fn supertype_expression(s: &str) -> SupertypeExpression {
+    map(pair(supertype_factor, ws(opt(supertype_factor)))
+        |(a, b)| SupertypeExpression(a, b))(s)
+}
+
+// 321 supertype_factor = supertype_term { AND supertype_term } .
+struct SupertypeFactor<'a>(Vec<SupertypeTerm<'a>>);
+fn supertype_factor(s: &str) -> SupertypeFactor {
+    map(ws(separated_list1(ws(tag("and")), supertype_term)),
+        SupertypeFactor)(s)
+}
+
+// 322 supertype_rule = SUPERTYPE subtype_constraint .
+struct SupertypeRule<'a>(SubtypeConstraint<'a>);
+fn supertype_rule(s: &str) -> SupertypeRule {
+    map(preceded(ws(tag("supertype")), subtype_constraint), SupertypeRule)(s)
+}
+
+// 323 supertype_term = entity_ref | one_of | ’(’ supertype_expression ’)’ .
+enum SupertypeTerm<'a> {
+    Entity(EntityRef<'a>),
+    OneOf(OneOf<'a>),
+    Expression(SupertypeExpression<'a>),
+}
+fn supertype_term(s: &str) -> SupertypeTerm {
+    use SupertypeTerm::*;
+    alt((
+        map(entity_ref, Entity),
+        map(one_of, OneOf),
+        map(parens(supertype_expression), Expression),
+    ))(s)
+}
+
+// 324 syntax = schema_decl { schema_decl } .
+struct Syntax<'a>(Vec<SchemaDecl<'a>>);
+fn syntax(s: &str) -> Syntax {
+    map(many1(ws(schema_decl)), Syntax)(s)
+}
 
 // 325
 struct Term<'a>(Factor<'a>, Option<(MultiplicationLikeOp, Factor<'a>)>);
 fn term(s: &str) -> IResult<Term> {
     map(pair(factor, opt(pair(multiplication_like_op, factor))),
         |(a, b)| Term(a, b))(s)
+}
+
+// 326 total_over = TOTAL_OVER ’(’ entity_ref { ’,’ entity_ref } ’)’ ’;’ .
+struct TotalOver<'a>(Vec<EntityRef<'a>>);
+fn total_over(s: &str) -> IResult<Term> {
+    map(delimited(
+            ws(tag("total_over")),
+            parens(list1(',', entity_ref)),
+            ws_tag(";")),
+        TotalOver)(s)
 }
 
 // 327
@@ -1816,6 +2104,16 @@ fn type_decl(s: &str) -> IResult<TypeDecl> {
 // 328
 alias!(TypeId<'a>, SimpleId, type_id);
 
+// 329 type_label = type_label_id | type_label_ref .
+enum TypeLabel<'a> {
+    Id(TypeLabelId<'a>),
+    Ref(TypeLabelRef<'a>),
+    _Ambiguous(SimpleId<'a>),
+}
+fn type_label(s: &str) -> IResult<TypeLabel> {
+    map(simple_id, TypeLabel::_Ambiguous)(s)
+}
+
 // 330
 alias!(TypeLabelId<'a>, SimpleId, type_label_id);
 
@@ -1843,16 +2141,24 @@ fn underlying_type(s: &str) -> IResult<UnderlyingType> {
     ))(s)
 }
 
-// 338
-struct WhereClause<'a>(Vec<DomainRule<'a>>);
-fn where_clause(s: &str) -> IResult<WhereClause> {
-    map(preceded(
-            ws(tag("where")),
-            many1(terminated(ws(domain_rule), ws(char(';'))))),
-        |v| WhereClause(v))(s)
+// TODO
+// 333 unique_clause = UNIQUE unique_rule ’;’ { unique_rule ’;’ } .
+struct UniqueClause<'a>(Vec<UniqueRule<'a>>);
+fn unique_clause(s: &str) -> IResult<UniqueRule> {
+    map(preceded(ws(tag("unique")), list1(';', unique_rule)), UniqueClause)(s)
 }
 
-// 336
+// 334 unique_rule = [ rule_label_id ’:’ ] referenced_attribute { ’,’
+//                   referenced_attribute } .
+
+// 335 until_control = UNTIL logical_expression .
+struct UntilControl<'a>(LogicalExpression<'a>);
+fn until_control(s: &str) -> IResult<UntilControl> {
+    map(preceded(ws(tag("until")), logical_expression), UntilControl)(s)
+}
+
+// 336 use_clause = USE FROM schema_ref [ ’(’ named_type_or_rename
+//                  { ’,’ named_type_or_rename } ’)’ ] ’;’ .
 struct UseClause<'a> {
     schema_ref: SchemaRef<'a>,
     named_type_or_rename: Option<Vec<NamedTypeOrRename<'a>>>,
@@ -1862,9 +2168,7 @@ fn use_clause(s: &str) -> IResult<UseClause> {
         ws(tag("use")),
         ws(tag("from")),
         ws(schema_ref),
-        opt(delimited(ws(char(')')),
-            separated_list1(ws(char(',')), ws(named_type_or_rename)),
-            ws(char(')')))),
+        opt(parens(list1(',', named_type_or_rename))),
         ws(char(';')),
     )), |(_, _, s, r, _)| UseClause {
         schema_ref: s,
@@ -1872,8 +2176,17 @@ fn use_clause(s: &str) -> IResult<UseClause> {
     })(s)
 }
 
-// 337
+// 337 variable_id = simple_id .
 alias!(VariableId<'a>, SimpleId, variable_id);
+
+// 338
+struct WhereClause<'a>(Vec<DomainRule<'a>>);
+fn where_clause(s: &str) -> IResult<WhereClause> {
+    map(preceded(
+            ws(tag("where")),
+            many1(terminated(ws(domain_rule), ws(char(';'))))),
+        |v| WhereClause(v))(s)
+}
 
 // 339 while_control = WHILE logical_expression .
 struct WhileControl<'a>(LogicalExpression<'a>);
@@ -1884,15 +2197,11 @@ fn while_control(s: &str) -> IResult<WhileControl> {
 // 340
 alias!(Width<'a>, NumericalExpression, width);
 
-// 341
+// 341 width_spec = ’(’ width ’)’ [ FIXED ] .
 struct WidthSpec<'a> { expression: Width<'a>, fixed: bool }
 fn width_spec(s: &str) -> IResult<WidthSpec> {
-    map(tuple((
-        ws(char('(')),
-        ws(width),
-        ws(char(')')),
-        opt(tag("fixed"))
-    )), |(_, w, _, f)| WidthSpec { expression: w, fixed: f.is_some() })(s)
+    map(pair(parens(width), opt(ws(tag("fixed")))),
+        |(w, f)| WidthSpec { expression: w, fixed: f.is_some() })(s)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
