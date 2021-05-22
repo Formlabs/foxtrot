@@ -723,9 +723,9 @@ pub struct DomainRule<'a> {
     pub expression: Expression<'a>,
 }
 fn domain_rule(s: &str) -> IResult<DomainRule> {
-    map(pair(opt(terminated(rule_label_id, char(':'))), expression),
-         |(rule_label_id, expression)| DomainRule {rule_label_id, expression})
-        (s)
+    let (s, rule_label_id) = opt(terminated(rule_label_id, char(':')))(s)?;
+    let (s, expression) = expression(s)?;
+    Ok((s, DomainRule { rule_label_id, expression }))
 }
 
 // 203
@@ -747,19 +747,12 @@ pub struct EntityBody<'a> {
     pub where_: Option<WhereClause<'a>>,
 }
 fn entity_body(s: &str) -> IResult<EntityBody> {
-    map(tuple((
-        many0(explicit_attr),
-        opt(derive_clause),
-        opt(inverse_clause),
-        opt(unique_clause),
-        opt(where_clause),
-    )), |(a, b, c, d, e)| EntityBody {
-        explicit_attr: a,
-        derive: b,
-        inverse: c,
-        unique: d,
-        where_: e,
-    })(s)
+    let (s, explicit_attr) = many0(explicit_attr)(s)?;
+    let (s, derive) = opt(derive_clause)(s)?;
+    let (s, inverse) = opt(inverse_clause)(s)?;
+    let (s, unique) = opt(unique_clause)(s)?;
+    let (s, where_) = opt(where_clause)(s)?;
+    Ok((s, EntityBody { explicit_attr, derive, inverse, unique, where_ }))
 }
 
 // 205 entity_constructor = entity_ref ’(’ [ expression { ’,’ expression } ] ’)’ .
@@ -777,12 +770,11 @@ fn entity_constructor(s: &str) -> IResult<EntityConstructor> {
 #[derive(Debug)]
 pub struct EntityDecl<'a>(EntityHead<'a>, EntityBody<'a>);
 fn entity_decl(s: &str) -> IResult<EntityDecl> {
-    map(tuple((
-        entity_head,
-        entity_body,
-        tag("end_entity"),
-        char(';'),
-    )), |(a, b, _, _)| EntityDecl(a, b))(s)
+    let (s, a) = entity_head(s)?;
+    let (s, b) = entity_body(s)?;
+    let (s, _) = tag("end_entity")(s)?;
+    let (s, _) = char(';')(s)?;
+    Ok((s, EntityDecl(a, b)))
 }
 
 // 207 entity_head = ENTITY entity_id subsuper ’;’ .
@@ -890,14 +882,14 @@ fn explicit_attr(s: &str) -> IResult<ExplicitAttr> {
 pub struct Expression<'a>(SimpleExpression<'a>, Option<(RelOpExtended, SimpleExpression<'a>)>);
 impl<'a> Expression<'a> {
     fn parse(s: &'a str) -> IResult<Self> {
-        map(pair(simple_expression,
-                 opt(pair(rel_op_extended, simple_expression))),
-            |(a, b)| Self(a, b))(s)
+        let (s, a) = simple_expression(s)?;
+        let (s, b) = opt(pair(rel_op_extended, simple_expression))(s)?;
+        Ok((s, Self(a, b)))
     }
 }
 fn expression(s: &str) -> IResult<Expression> { Expression::parse(s) }
 
-// 217
+// 217 factor = simple_factor [ ’**’ simple_factor ] .
 #[derive(Debug)]
 pub struct Factor<'a>(SimpleFactor<'a>, Option<SimpleFactor<'a>>);
 fn factor(s: &str) -> IResult<Factor> {
@@ -1184,17 +1176,15 @@ alias!(Index1<'a>, Index, index_1);
 // 238
 alias!(Index2<'a>, Index, index_2);
 
-// 239
+// 239 index_qualifier = ’[’ index_1 [ ’:’ index_2 ] ’]’ .
 #[derive(Debug)]
-pub struct IndexQualifier<'a>(Index1<'a>, Index2<'a>);
+pub struct IndexQualifier<'a>(Index1<'a>, Option<Index2<'a>>);
 fn index_qualifier(s: &str) -> IResult<IndexQualifier> {
-    map(tuple((
-        char('['),
-        index_1,
-        char(';'),
-        index_2,
-        char(']'),
-    )), |(_, a, _, b, _)| IndexQualifier(a, b))(s)
+    let (s, _) = char('[')(s)?;
+    let (s, index1) = index_1(s)?;
+    let (s, index2) = opt(preceded(char(';'), index_2))(s)?;
+    let (s, _) = char(']')(s)?;
+    Ok((s, IndexQualifier(index1, index2)))
 }
 
 // 240
@@ -1997,8 +1987,9 @@ fn set_type(s: &str) -> IResult<SetType> {
 pub struct SimpleExpression<'a>(Box<Term<'a>>, Vec<(AddLikeOp, Term<'a>)>);
 impl<'a> SimpleExpression<'a> {
     fn parse(s: &'a str) -> IResult<Self> {
-        map(pair(term, many0(pair(add_like_op, term))),
-            |(a, b)| SimpleExpression(Box::new(a), b))(s)
+        let (s, a) = term(s)?;
+        let (s, b) = many0(pair(add_like_op, term))(s)?;
+        Ok((s, SimpleExpression(Box::new(a), b)))
     }
 }
 fn simple_expression(s: &str) -> IResult<SimpleExpression> {
@@ -2403,10 +2394,9 @@ alias!(VariableId<'a>, SimpleId, variable_id);
 #[derive(Debug)]
 pub struct WhereClause<'a>(Vec<DomainRule<'a>>);
 fn where_clause(s: &str) -> IResult<WhereClause> {
-    map(preceded(
-            tag("where"),
-            many1(terminated(domain_rule, char(';')))),
-        |v| WhereClause(v))(s)
+    let (s, _) = tag("where")(s)?;
+    let (s, v) = many1(terminated(domain_rule, char(';')))(s)?;
+    Ok((s, WhereClause(v)))
 }
 
 // 339 while_control = WHILE logical_expression .
@@ -2535,6 +2525,22 @@ where
   wr1 : alternate :<>: base;
 end_entity;  "#).unwrap();
         assert_eq!(e.0, "");
+
+        let e = entity_decl(r#"entity annotation_fill_area
+subtype of (geometric_representation_item);
+  boundaries : set [1:?] of curve;
+where
+  wr1 : (self\geometric_representation_item.dim = 3) or (sizeof(query(curve <* 
+    self.boundaries | not (('automotive_design.circle' in typeof(curve)) or 
+    ('automotive_design.ellipse' in typeof(curve)) or (
+    'automotive_design.b_spline_curve' in typeof(curve)) and (curve\
+    b_spline_curve.closed_curve = true) or (
+    'automotive_design.composite_curve' in typeof(curve)) and (curve\
+    composite_curve.closed_curve = true) or ('automotive_design.polyline' in
+     typeof(curve)) and (curve\polyline.points[loindex(curve\polyline.points)]
+     = curve\polyline.points[hiindex(curve\polyline.points)])))) = 0);
+end_entity;  "#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
@@ -2640,6 +2646,16 @@ wr1 : self >= 0.0; "#).unwrap();
     typeof(oe\edge.edge_end\vertex_point.vertex_geometry))))) = 0))) = 0;"#).unwrap();
         assert_eq!(e.0, ";");
 
+        let e = domain_rule(r#"wr1 : (self\geometric_representation_item.dim = 3) or (sizeof(query(curve <* 
+    self.boundaries | not (('automotive_design.circle' in typeof(curve)) or 
+    ('automotive_design.ellipse' in typeof(curve)) or (
+    'automotive_design.b_spline_curve' in typeof(curve)) and (curve\
+    b_spline_curve.closed_curve = true) or (
+    'automotive_design.composite_curve' in typeof(curve)) and (curve\
+    composite_curve.closed_curve = true) or ('automotive_design.polyline' in
+     typeof(curve)) and (curve\polyline.points[loindex(curve\polyline.points)]
+     = curve\polyline.points[hiindex(curve\polyline.points)])))) = 0);"#).unwrap();
+        assert_eq!(e.0, ";");
     }
 
     #[test]
@@ -2782,12 +2798,6 @@ wr1 : self >= 0.0; "#).unwrap();
     }
 
     #[test]
-    fn test_simple_expression() {
-        let e = simple_expression("csh\\connected_face_set.cfs_faces").unwrap();
-        assert_eq!(e.0, "");
-    }
-
-    #[test]
     fn test_primary() {
         let e = primary("1 ").unwrap();
         assert_eq!(e.0, "");
@@ -2796,6 +2806,9 @@ wr1 : self >= 0.0; "#).unwrap();
         assert_eq!(e.0, "");
 
         let e = primary("csh\\connected_face_set.cfs_faces").unwrap();
+        assert_eq!(e.0, "");
+
+        let e = primary(r#"curve\polyline.points[loindex(curve\polyline.points)]"#).unwrap();
         assert_eq!(e.0, "");
     }
 
