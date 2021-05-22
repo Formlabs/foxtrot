@@ -4,7 +4,7 @@ use nom::{
     character::complete::{alpha1, multispace0},
     error::*,
     multi::{fold_many1, fold_many0, many0_count, separated_list0, separated_list1, many0, many1},
-    combinator::{map, recognize, opt},
+    combinator::{map, recognize, opt, not, peek},
     sequence::{delimited, pair, preceded, tuple, terminated},
 };
 
@@ -643,7 +643,7 @@ fn constant_decl(s: &str) -> IResult<ConstantDecl> {
     )), |(_, b, _, _)| ConstantDecl(b))(s)
 }
 
-// 196
+// 196 constant_factor = built_in_constant | constant_ref .
 #[derive(Debug)]
 pub enum ConstantFactor<'a> {
     BuiltIn(BuiltInConstant),
@@ -1572,7 +1572,8 @@ fn procedure_head(s: &str) -> IResult<ProcedureHead> {
 // 273
 alias!(ProcedureId<'a>, SimpleId, procedure_id);
 
-// 274
+// 274 qualifiable_factor = attribute_ref | constant_factor | function_call |
+//                          general_ref | population .
 #[derive(Debug)]
 pub enum QualifiableFactor<'a> {
     AttributeRef(AttributeRef<'a>),
@@ -1582,14 +1583,32 @@ pub enum QualifiableFactor<'a> {
     Population(Population<'a>),
 
     // catch-all for attribute, constant, general, population
-    _SimpleId(SimpleId<'a>),
+    _Ambiguous(SimpleId<'a>),
 }
 fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
-    use QualifiableFactor::*;
     alt((
-        map(simple_id, _SimpleId),
-        map(constant_factor, ConstantFactor),
-        map(function_call, FunctionCall),
+        // Try parsing the function call first.  One valid parse is just a
+        // function_ref, so we convert that case to _Ambiguous, since it may
+        // not actually be a function.
+        map(function_call, |b| if b.1.0.is_empty() {
+            match b.0 {
+                BuiltInOrFunctionRef::BuiltIn(_) =>
+                    QualifiableFactor::FunctionCall(b),
+                BuiltInOrFunctionRef::Ref(b) =>
+                    QualifiableFactor::_Ambiguous(b.0.0),
+            }
+        } else {
+            QualifiableFactor::FunctionCall(b)
+        }),
+        // Same thing for constant_factor, which could match a constant_ref
+        // (which in fact matches every ref)
+        map(constant_factor, |b| match b {
+            ConstantFactor::BuiltIn(_) =>
+                QualifiableFactor::ConstantFactor(b),
+            ConstantFactor::ConstantRef(b) =>
+                QualifiableFactor::_Ambiguous(b.0.0),
+        }),
+        map(simple_id, QualifiableFactor::_Ambiguous),
     ))(s)
 }
 
@@ -2017,7 +2036,11 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
     use SimpleFactor::*;
     alt((
         map(aggregate_initializer, AggregateInitializer),
-        map(entity_constructor, EntityConstructor),
+
+        // EntityConstructor has a special-case to avoid eating a primary
+        // function call, e.g. "cross_product(axis, ref_direction).magnitude"
+        map(terminated(entity_constructor, not(peek(char('.')))),
+            EntityConstructor),
         map(interval, Interval),
         map(query_expression, QueryExpression),
         map(pair(
@@ -2207,10 +2230,11 @@ fn supertype_constraint(s: &str) -> IResult<SupertypeConstraint> {
 // 320 supertype_expression = supertype_factor { ANDOR supertype_factor } .
 #[derive(Debug)]
 pub struct SupertypeExpression<'a>(SupertypeFactor<'a>,
-                               Option<SupertypeFactor<'a>>);
+                               Vec<SupertypeFactor<'a>>);
 fn supertype_expression(s: &str) -> IResult<SupertypeExpression> {
-    map(pair(supertype_factor, opt(supertype_factor)),
-        |(a, b)| SupertypeExpression(a, b))(s)
+    let (s, a) = supertype_factor(s)?;
+    let (s, b) = many0(preceded(tag("andor"), supertype_factor))(s)?;
+    Ok((s, SupertypeExpression(a, b)))
 }
 
 // 321 supertype_factor = supertype_term { AND supertype_term } .
@@ -2251,7 +2275,7 @@ pub fn syntax(s: &str) -> IResult<Syntax> {
     preceded(multispace0, map(many1(schema_decl), Syntax))(s)
 }
 
-// 325
+// 325 term = factor { multiplication_like_op factor } .
 #[derive(Debug)]
 pub struct Term<'a>(Factor<'a>, Vec<(MultiplicationLikeOp, Factor<'a>)>);
 fn term(s: &str) -> IResult<Term> {
@@ -2541,6 +2565,43 @@ where
      = curve\polyline.points[hiindex(curve\polyline.points)])))) = 0);
 end_entity;  "#).unwrap();
         assert_eq!(e.0, "");
+
+        let e = entity_decl(r#"entity axis2_placement_3d
+subtype of (placement);
+  axis :  optional direction;
+  ref_direction :  optional direction;
+derive
+  p :  list [3:3] of direction := build_axes(axis, ref_direction);
+where
+  wr1 : self\placement.location.dim = 3;
+  wr2 : not exists(axis) or (axis.dim = 3);
+  wr3 : not exists(ref_direction) or (ref_direction.dim = 3);
+  wr4 : not exists(axis) or not exists(ref_direction) or (cross_product(axis, 
+    ref_direction).magnitude > 0.0);
+end_entity;  "#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = entity_decl(r#"entity b_spline_curve
+supertype of (oneof (uniform_curve, b_spline_curve_with_knots, 
+quasi_uniform_curve, bezier_curve) andor rational_b_spline_curve)
+subtype of (bounded_curve);
+  degree : integer;
+  control_points_list :  list [2:?] of cartesian_point;
+  curve_form : b_spline_curve_form;
+  closed_curve : logical;
+  self_intersect : logical;
+derive
+  upper_index_on_control_points : integer := sizeof(control_points_list) - 1;
+  control_points :  array [0 : upper_index_on_control_points] of 
+  cartesian_point := list_to_array(control_points_list, 0, 
+  upper_index_on_control_points);
+where
+  wr1 : ('automotive_design.uniform_curve' in typeof(self)) or (
+    'automotive_design.quasi_uniform_curve' in typeof(self)) or (
+    'automotive_design.bezier_curve' in typeof(self)) or (
+    'automotive_design.b_spline_curve_with_knots' in typeof(self));
+end_entity;  "#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
@@ -2705,6 +2766,11 @@ wr1 : self >= 0.0; "#).unwrap();
     query(csh <* msb_shells(msb) | not (sizeof(query(fcs <* csh\
     connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
      typeof(fcs)))) = 0))) = 0)))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = expression(r#"cross_product(axis, 
+    ref_direction).magnitude"#).unwrap();
+        eprintln!("{:?}", e.1);
         assert_eq!(e.0, "");
     }
 
