@@ -2353,7 +2353,7 @@ fn underlying_type(s: &str) -> IResult<UnderlyingType> {
 #[derive(Debug)]
 pub struct UniqueClause<'a>(Vec<UniqueRule<'a>>);
 fn unique_clause(s: &str) -> IResult<UniqueClause> {
-    map(preceded(tag("unique"), list1(';', unique_rule)), UniqueClause)(s)
+    map(preceded(tag("unique"), many1(terminated(unique_rule, char(';')))), UniqueClause)(s)
 }
 
 // 334 unique_rule = [ rule_label_id ’:’ ] referenced_attribute { ’,’
@@ -2521,6 +2521,19 @@ where
     edge_curve.edge_geometry)) and not (sizeof(oe\oriented_edge.edge_element\
     edge_curve.edge_geometry\polyline.points) >= 3))) = 0))) = 0);
 end_entity; "#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = entity_decl(r#"entity alternate_product_relationship;
+  name : label;
+  definition :  optional text;
+  alternate : product;
+  base : product;
+  basis : text;
+unique
+  ur1 : alternate, base;
+where
+  wr1 : alternate :<>: base;
+end_entity;  "#).unwrap();
         assert_eq!(e.0, "");
     }
 
