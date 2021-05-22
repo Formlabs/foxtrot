@@ -34,6 +34,14 @@ fn tag<'a>(s: &'a str) -> impl FnMut(&'a str) -> IResult<&'a str> {
     ws(nom::bytes::complete::tag(s))
 }
 
+/// Matches a specific keyword, which ensuring that it's not followed by
+/// a letter.  This avoids cases like `generic_expression` being parsed as
+/// `generic`, `_expression`.
+fn kw<'a>(s: &'a str) -> impl FnMut(&'a str) -> IResult<&'a str> {
+    ws(terminated(nom::bytes::complete::tag(s),
+                  not(alt((letter, digit, char('_'))))))
+}
+
 /// Returns a parser which recognizes '(' p ')' with optional whitespace
 fn parens<'a, U, F>(p: F) -> impl FnMut(&'a str) -> IResult<'a, U>
     where F: FnMut(&'a str) -> IResult<'a, U>
@@ -224,14 +232,14 @@ pub struct VariableRef<'a>(VariableId<'a>);
 
 // 164 abstract_entity_declaration = ABSTRACT .
 fn abstract_entity_declaration(s: &str) -> IResult<()> {
-    map(tag("abstract"), |_| ())(s)
+    map(kw("abstract"), |_| ())(s)
 }
 
 // 165 abstract_supertype = ABSTRACT SUPERTYPE ’;’ .
 fn abstract_supertype(s: &str) -> IResult<()> {
     map(tuple((
-        tag("abstract"),
-        tag("supertype"),
+        kw("abstract"),
+        kw("supertype"),
         char(';')
     )), |_| ())(s)
 }
@@ -241,8 +249,8 @@ fn abstract_supertype(s: &str) -> IResult<()> {
 pub struct AbstractSupertypeDeclaration<'a>(Option<SubtypeConstraint<'a>>);
 fn abstract_supertype_declaration(s: &str) -> IResult<AbstractSupertypeDeclaration> {
     map(tuple((
-        tag("abstract"),
-        tag("supertype"),
+        kw("abstract"),
+        kw("supertype"),
         opt(subtype_constraint),
     )), |(_, _, a)| AbstractSupertypeDeclaration(a))(s)
 }
@@ -262,8 +270,8 @@ fn add_like_op(s: &str) -> IResult<AddLikeOp> {
     alt((
         map(char('+'),  |_| Add),
         map(char('-'),  |_| Sub),
-        map(tag("or"),  |_| Or),
-        map(tag("xor"), |_| Xor),
+        map(kw("or"),  |_| Or),
+        map(kw("xor"), |_| Xor),
     ))(s)
 }
 
@@ -286,9 +294,9 @@ alias!(AggregateSource<'a>, SimpleExpression, aggregate_source);
 pub struct AggregateType<'a>(Option<TypeLabel<'a>>, Box<ParameterType<'a>>);
 fn aggregate_type(s: &str) -> IResult<AggregateType> {
     map(tuple((
-        tag("aggregate"),
+        kw("aggregate"),
         opt(preceded(char(':'), type_label)),
-        tag("of"),
+        kw("of"),
         parameter_type,
     )), |(_, t, _, p)| AggregateType(t, Box::new(p)))(s)
 }
@@ -341,9 +349,9 @@ pub struct AliasStmt<'a> {
 }
 fn alias_stmt(s: &str) -> IResult<AliasStmt> {
     map(tuple((
-        tag("alias"),
+        kw("alias"),
         variable_id,
-        tag("for"),
+        kw("for"),
         general_ref,
         many0(qualifier),
         char(';'),
@@ -366,11 +374,11 @@ pub struct ArrayType<'a> {
 }
 fn array_type(s: &str) -> IResult<ArrayType> {
     map(tuple((
-        tag("array"),
+        kw("array"),
         bound_spec,
-        tag("of"),
-        opt(tag("optional")),
-        opt(tag("unique")),
+        kw("of"),
+        opt(kw("optional")),
+        opt(kw("unique")),
         instantiable_type,
     )),
     |(_, b, _, opt, uniq, t)| ArrayType {
@@ -431,9 +439,9 @@ fn attribute_qualifier(s: &str) -> IResult<AttributeQualifier> {
 pub struct BagType<'a>(Option<BoundSpec<'a>>, Box<InstantiableType<'a>>);
 fn bag_type(s: &str) -> IResult<BagType> {
     map(tuple((
-            tag("bag"),
+            kw("bag"),
             opt(bound_spec),
-            tag("of"),
+            kw("of"),
             instantiable_type
         )), |(_, b, _, t)| BagType(b, Box::new(t)))
         (s)
@@ -443,12 +451,12 @@ fn bag_type(s: &str) -> IResult<BagType> {
 #[derive(Debug)]
 pub struct BinaryType<'a>(Option<WidthSpec<'a>>);
 fn binary_type(s: &str) -> IResult<BinaryType> {
-    map(preceded(tag("binary"), opt(width_spec)), BinaryType)(s)
+    map(preceded(kw("binary"), opt(width_spec)), BinaryType)(s)
 }
 
 // 182 boolean_type = BOOLEAN .
 fn boolean_type(s: &str) -> IResult<()> {
-    map(tag("boolean"), |_| ())(s)
+    map(kw("boolean"), |_| ())(s)
 }
 
 // 183
@@ -476,9 +484,9 @@ pub enum BuiltInConstant { ConstE, Pi, Self_, Indeterminant }
 fn built_in_constant(s: &str) -> IResult<BuiltInConstant> {
     use BuiltInConstant::*;
     alt((
-        map(tag("const_e"), |_| ConstE),
-        map(tag("pi"),      |_| Pi),
-        map(tag("self"),    |_| Self_),
+        map(kw("const_e"), |_| ConstE),
+        map(kw("pi"),      |_| Pi),
+        map(kw("self"),    |_| Self_),
         map(char('?'),      |_| Indeterminant),
     ))(s)
 }
@@ -536,8 +544,8 @@ pub enum BuiltInProcedure { Insert, Remove }
 fn built_in_procedure(s: &str) -> IResult<BuiltInProcedure> {
     use BuiltInProcedure::*;
     alt((
-        map(tag("insert"), |_| Insert),
-        map(tag("remove"), |_| Remove),
+        map(kw("insert"), |_| Insert),
+        map(kw("remove"), |_| Remove),
     ))(s)
 }
 
@@ -565,15 +573,15 @@ pub struct CaseStmt<'a> {
 }
 fn case_stmt(s: &str) -> IResult<CaseStmt> {
     map(tuple((
-        tag("case"),
+        kw("case"),
         selector,
-        tag("of"),
+        kw("of"),
         many0(case_action),
         opt(map(tuple((
-            tag("otherwise"),
+            kw("otherwise"),
             char(':'),
             stmt)), |(_, _, s)| s)),
-        tag("end_case"),
+        kw("end_case"),
         char(';'))),
         |(_, s, _, a, t, _, _)| CaseStmt {
             selector: s,
@@ -587,9 +595,9 @@ fn case_stmt(s: &str) -> IResult<CaseStmt> {
 pub struct CompoundStmt<'a>(Vec<Stmt<'a>>);
 fn compound_stmt(s: &str) -> IResult<CompoundStmt> {
     map(delimited(
-            tag("begin"),
+            kw("begin"),
             many1(stmt),
-            pair(tag("end"), char(';'))),
+            pair(kw("end"), char(';'))),
         CompoundStmt)(s)
 }
 
@@ -636,9 +644,9 @@ fn constant_body(s: &str) -> IResult<ConstantBody> {
 pub struct ConstantDecl<'a>(Vec<ConstantBody<'a>>);
 fn constant_decl(s: &str) -> IResult<ConstantDecl> {
     map(tuple((
-        tag("constant"),
+        kw("constant"),
         many1(constant_body),
-        tag("end_constant"),
+        kw("end_constant"),
         char(';'),
     )), |(_, b, _, _)| ConstantDecl(b))(s)
 }
@@ -713,7 +721,7 @@ fn derived_attr(s: &str) -> IResult<DerivedAttr> {
 #[derive(Debug)]
 pub struct DeriveClause<'a>(Vec<DerivedAttr<'a>>);
 fn derive_clause(s: &str) -> IResult<DeriveClause> {
-    map(preceded(tag("derive"), many1(derived_attr)), DeriveClause)(s)
+    map(preceded(kw("derive"), many1(derived_attr)), DeriveClause)(s)
 }
 
 // 202 domain_rule = [ rule_label_id ’:’ ] expression .
@@ -772,7 +780,7 @@ pub struct EntityDecl<'a>(EntityHead<'a>, EntityBody<'a>);
 fn entity_decl(s: &str) -> IResult<EntityDecl> {
     let (s, a) = entity_head(s)?;
     let (s, b) = entity_body(s)?;
-    let (s, _) = tag("end_entity")(s)?;
+    let (s, _) = kw("end_entity")(s)?;
     let (s, _) = char(';')(s)?;
     Ok((s, EntityDecl(a, b)))
 }
@@ -782,7 +790,7 @@ fn entity_decl(s: &str) -> IResult<EntityDecl> {
 pub struct EntityHead<'a>(EntityId<'a>, Subsuper<'a>);
 fn entity_head(s: &str) -> IResult<EntityHead> {
     map(tuple((
-        tag("entity"),
+        kw("entity"),
         entity_id,
         subsuper,
         char(';'),
@@ -800,8 +808,8 @@ pub struct EnumerationExtension<'a> {
 }
 fn enumeration_extension(s: &str) -> IResult<EnumerationExtension> {
     map(preceded(
-        tag("based_on"),
-        pair(type_ref, opt(preceded(tag("with"), enumeration_items)))),
+        kw("based_on"),
+        pair(type_ref, opt(preceded(kw("with"), enumeration_items)))),
         |(a, b)| EnumerationExtension { type_ref: a, enumeration_items: b })(s)
 }
 
@@ -838,10 +846,10 @@ pub struct EnumerationType<'a> {
 }
 fn enumeration_type(s: &str) -> IResult<EnumerationType> {
     map(tuple((
-        opt(tag("extensible")),
-        tag("enumeration"),
+        opt(kw("extensible")),
+        kw("enumeration"),
         opt(alt((
-            map(preceded(tag("of"), enumeration_items),
+            map(preceded(kw("of"), enumeration_items),
                 EnumerationItemsOrExtension::Items),
             map(enumeration_extension,
                 EnumerationItemsOrExtension::Extension))))
@@ -852,7 +860,7 @@ fn enumeration_type(s: &str) -> IResult<EnumerationType> {
 
 // 214 escape_stmt = ESCAPE ’;’ .
 fn escape_stmt(s: &str) -> IResult<()> {
-    map(pair(tag("escape"), char(';')), |_| ())(s)
+    map(pair(kw("escape"), char(';')), |_| ())(s)
 }
 
 // 215 explicit_attr = attribute_decl { ’,’ attribute_decl } ’:’ [ OPTIONAL ]
@@ -867,7 +875,7 @@ fn explicit_attr(s: &str) -> IResult<ExplicitAttr> {
     map(tuple((
         list1(',', attribute_decl),
         char(':'),
-        opt(tag("optional")),
+        opt(kw("optional")),
         parameter_type,
         char(';'),
     )), |(a, _, o, t, _)| ExplicitAttr {
@@ -935,7 +943,7 @@ fn function_decl(s: &str) -> IResult<FunctionDecl> {
         function_head,
         algorithm_head,
         many1(stmt),
-        tag("end_function"),
+        kw("end_function"),
         char(';'),
     )), |(a, b, c, _, _)| FunctionDecl {
         function_head: a,
@@ -954,7 +962,7 @@ pub struct FunctionHead<'a> {
 }
 fn function_head(s: &str) -> IResult<FunctionHead> {
     map(tuple((
-        tag("function"),
+        kw("function"),
         function_id,
         opt(parens(list1(';', formal_parameter))),
         char(':'),
@@ -1019,11 +1027,11 @@ pub struct GeneralArrayType<'a> {
 }
 fn general_array_type(s: &str) -> IResult<GeneralArrayType> {
     map(tuple((
-        tag("array"),
+        kw("array"),
         bound_spec,
-        tag("of"),
-        opt(tag("optional")),
-        opt(tag("unique")),
+        kw("of"),
+        opt(kw("optional")),
+        opt(kw("unique")),
         parameter_type,
     )),
     |(_, b, _, opt, uniq, t)| GeneralArrayType {
@@ -1039,9 +1047,9 @@ fn general_array_type(s: &str) -> IResult<GeneralArrayType> {
 pub struct GeneralBagType<'a>(Option<BoundSpec<'a>>, Box<ParameterType<'a>>);
 fn general_bag_type(s: &str) -> IResult<GeneralBagType> {
     map(tuple((
-            tag("bag"),
+            kw("bag"),
             opt(bound_spec),
-            tag("of"),
+            kw("of"),
             parameter_type
         )), |(_, b, _, t)| GeneralBagType(b, Box::new(t)))
         (s)
@@ -1056,10 +1064,10 @@ pub struct GeneralListType<'a> {
 }
 fn general_list_type(s: &str) -> IResult<GeneralListType> {
     map(tuple((
-        tag("list"),
+        kw("list"),
         opt(bound_spec),
-        tag("of"),
-        opt(tag("unique")),
+        kw("of"),
+        opt(kw("unique")),
         parameter_type,
     )),
     |(_, b, _, uniq, t)| GeneralListType {
@@ -1088,9 +1096,9 @@ pub struct GeneralSetType<'a> {
 }
 fn general_set_type(s: &str) -> IResult<GeneralSetType> {
     map(tuple((
-        tag("set"),
+        kw("set"),
         opt(bound_spec),
-        tag("of"),
+        kw("of"),
         parameter_type,
     )),
     |(_, b, _, t)| GeneralSetType {
@@ -1103,7 +1111,7 @@ fn general_set_type(s: &str) -> IResult<GeneralSetType> {
 #[derive(Debug)]
 pub struct GenericEntityType<'a>(Option<TypeLabel<'a>>);
 fn generic_entity_type(s: &str) -> IResult<GenericEntityType> {
-    map(preceded(tag("generic_entity"),
+    map(preceded(kw("generic_entity"),
                  opt(preceded(char(':'), type_label))),
         GenericEntityType)(s)
 }
@@ -1112,7 +1120,7 @@ fn generic_entity_type(s: &str) -> IResult<GenericEntityType> {
 #[derive(Debug)]
 pub struct GenericType<'a>(Option<TypeLabel<'a>>);
 fn generic_type(s: &str) -> IResult<GenericType> {
-    map(preceded(tag("generic"),
+    map(preceded(kw("generic"),
                  opt(preceded(char(':'), type_label))),
         GenericType)(s)
 }
@@ -1130,12 +1138,12 @@ fn group_qualifier(s: &str) -> IResult<GroupQualifier> {
 pub struct IfStmt<'a>(LogicalExpression<'a>, Vec<Stmt<'a>>, Option<Vec<Stmt<'a>>>);
 fn if_stmt(s: &str) -> IResult<IfStmt> {
     map(tuple((
-        tag("if"),
+        kw("if"),
         logical_expression,
-        tag("then"),
+        kw("then"),
         many1(stmt),
-        opt(preceded(tag("else"), many1(stmt))),
-        tag("end_if"),
+        opt(preceded(kw("else"), many1(stmt))),
+        kw("end_if"),
         char(';'),
     )), |(_, cond, _, a, b, _, _)| IfStmt(cond, a, b))(s)
 }
@@ -1156,9 +1164,9 @@ fn increment_control(s: &str) -> IResult<IncrementControl> {
         variable_id,
         tag(":="),
         bound_1,
-        tag("to"),
+        kw("to"),
         bound_2,
-        opt(preceded(tag("by"), increment)),
+        opt(preceded(kw("by"), increment)),
     )), |(v, _, b1, _, b2, i)| IncrementControl {
         var: v,
         bound1: b1,
@@ -1203,7 +1211,7 @@ fn instantiable_type(s: &str) -> IResult<InstantiableType> {
 
 // 241 integer_type = INTEGER .
 fn integer_type(s: &str) -> IResult<()> {
-    map(tag("integer"), |_| ())(s)
+    map(kw("integer"), |_| ())(s)
 }
 
 // 242
@@ -1279,13 +1287,13 @@ fn inverse_attr(s: &str) -> IResult<InverseAttr> {
         attribute_decl,
         char(':'),
         opt(map(tuple((
-            alt((map(tag("set"), |_| SetOrBag::Set),
-                 map(tag("bag"), |_| SetOrBag::Bag))),
+            alt((map(kw("set"), |_| SetOrBag::Set),
+                 map(kw("bag"), |_| SetOrBag::Bag))),
             opt(bound_spec),
-            tag("of"),
+            kw("of"),
         )), |(t, b, _)| (t, b))),
         entity_ref,
-        tag("for"),
+        kw("for"),
         opt(terminated(entity_ref, char('.'))),
         attribute_ref,
         char(';'),
@@ -1302,7 +1310,7 @@ fn inverse_attr(s: &str) -> IResult<InverseAttr> {
 #[derive(Debug)]
 pub struct InverseClause<'a>(Vec<InverseAttr<'a>>);
 fn inverse_clause(s: &str) -> IResult<InverseClause> {
-    map(preceded(tag("inverse"), many1(inverse_attr)), InverseClause)(s)
+    map(preceded(kw("inverse"), many1(inverse_attr)), InverseClause)(s)
 }
 
 // 250
@@ -1314,10 +1322,10 @@ pub struct ListType<'a> {
 }
 fn list_type(s: &str) -> IResult<ListType> {
     map(tuple((
-        tag("list"),
+        kw("list"),
         opt(bound_spec),
-        tag("of"),
-        opt(tag("unique")),
+        kw("of"),
+        opt(kw("unique")),
         instantiable_type,
     )),
     |(_, b, _, uniq, t)| ListType {
@@ -1349,9 +1357,9 @@ fn literal(s: &str) -> IResult<Literal> {
 pub struct LocalDecl<'a>(Vec<LocalVariable<'a>>);
 fn local_decl(s: &str) -> IResult<LocalDecl> {
     map(tuple((
-        tag("local"),
+        kw("local"),
         many1(local_variable),
-        tag("end_local"),
+        kw("end_local"),
         char(';'),
     )), |(_, vs, _, _)| LocalDecl(vs))(s)
 }
@@ -1386,14 +1394,14 @@ pub enum LogicalLiteral {
     True, False, Unknown
 }
 fn logical_literal(s: &str) -> IResult<LogicalLiteral> {
-    alt((map(tag("false"),   |_| LogicalLiteral::False),
-         map(tag("true"),    |_| LogicalLiteral::True),
-         map(tag("unknown"), |_| LogicalLiteral::Unknown)))(s)
+    alt((map(kw("false"),   |_| LogicalLiteral::False),
+         map(kw("true"),    |_| LogicalLiteral::True),
+         map(kw("unknown"), |_| LogicalLiteral::Unknown)))(s)
 }
 
 // 256 logical_type = LOGICAL .
 fn logical_type(s: &str) -> IResult<()> {
-    map(tag("logical"), |_| ())(s)
+    map(kw("logical"), |_| ())(s)
 }
 
 // 257
@@ -1404,9 +1412,9 @@ fn multiplication_like_op(s: &str) -> IResult<MultiplicationLikeOp> {
     alt((
         map(char('*'),  |_| Mul),
         map(char('/'),  |_| Div),
-        map(tag("div"), |_| IntegerDiv),
-        map(tag("mod"), |_| Mod),
-        map(tag("and"), |_| And),
+        map(kw("div"), |_| IntegerDiv),
+        map(kw("mod"), |_| Mod),
+        map(kw("and"), |_| And),
         map(tag("||"),  |_| ComplexEntity),
     ))(s)
 }
@@ -1437,7 +1445,7 @@ pub struct NamedTypeOrRename<'a> {
 fn named_type_or_rename(s: &str) -> IResult<NamedTypeOrRename> {
     map(pair(
         named_types,
-        opt(preceded(tag("as"),
+        opt(preceded(kw("as"),
             map(simple_id, EntityOrTypeId::_Ambiguous)))),
         |(a, b)| NamedTypeOrRename { named_types: a, rename: b })(s)
 }
@@ -1449,7 +1457,7 @@ fn null_stmt(s: &str) -> IResult<()> {
 
 // 261 number_type = NUMBER .
 fn number_type(s: &str) -> IResult<()> {
-    map(tag("number"), |_| ())(s)
+    map(kw("number"), |_| ())(s)
 }
 
 // 262
@@ -1460,7 +1468,7 @@ alias!(NumericExpression<'a>, SimpleExpression, numeric_expression);
 pub struct OneOf<'a>(Vec<SupertypeExpression<'a>>);
 fn one_of(s: &str) -> IResult<OneOf> {
     map(preceded(
-        tag("oneof"),
+        kw("oneof"),
         parens(list1(',', supertype_expression)),
     ), OneOf)(s)
 }
@@ -1542,7 +1550,7 @@ fn procedure_decl(s: &str) -> IResult<ProcedureDecl> {
         procedure_head,
         algorithm_head,
         many0(stmt),
-        tag("end_procedure"),
+        kw("end_procedure"),
         char(';'),
     )), |(p, a, s, _, _)| ProcedureDecl(p, a, s))(s)
 }
@@ -1556,10 +1564,10 @@ pub struct ProcedureHead<'a> {
 }
 fn procedure_head(s: &str) -> IResult<ProcedureHead> {
     map(tuple((
-        tag("procedure"),
+        kw("procedure"),
         procedure_id,
         opt(parens(list1(';',
-                map(tuple((opt(tag("var")), formal_parameter)),
+                map(tuple((opt(kw("var")), formal_parameter)),
                     |(v, f)| (v.is_some(), f))),
         )),
         char(';'),
@@ -1617,7 +1625,7 @@ fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
 pub struct QualifiedAttribute<'a>(GroupQualifier<'a>, AttributeQualifier<'a>);
 fn qualified_attribute(s: &str) -> IResult<QualifiedAttribute> {
     map(tuple((
-        tag("self"),
+        kw("self"),
         group_qualifier,
         attribute_qualifier,
     )), |(_, a, b)| QualifiedAttribute(a, b))(s)
@@ -1649,7 +1657,7 @@ pub struct QueryExpression<'a> {
 }
 fn query_expression(s: &str) -> IResult<QueryExpression> {
     map(tuple((
-        tag("query"),
+        kw("query"),
         char('('),
         variable_id,
         tag("<*"),
@@ -1668,7 +1676,7 @@ fn query_expression(s: &str) -> IResult<QueryExpression> {
 #[derive(Debug)]
 pub struct RealType<'a>(Option<PrecisionSpec<'a>>);
 fn real_type(s: &str) -> IResult<RealType> {
-    map(preceded(tag("real"),
+    map(preceded(kw("real"),
                  opt(parens(precision_spec))),
         RealType)(s)
 }
@@ -1678,7 +1686,7 @@ fn real_type(s: &str) -> IResult<RealType> {
 pub struct RedeclaredAttribute<'a>(QualifiedAttribute<'a>, Option<AttributeId<'a>>);
 fn redeclared_attribute(s: &str) -> IResult<RedeclaredAttribute> {
     map(pair(qualified_attribute,
-             opt(preceded(tag("renamed"), attribute_id))),
+             opt(preceded(kw("renamed"), attribute_id))),
         |(a, b)| RedeclaredAttribute(a, b))(s)
 }
 
@@ -1705,8 +1713,8 @@ pub struct ReferenceClause<'a> {
 }
 fn reference_clause(s: &str) -> IResult<ReferenceClause> {
     map(tuple((
-        tag("reference"),
-        tag("front"),
+        kw("reference"),
+        kw("front"),
         schema_ref,
         opt(parens(list1(',', resource_or_rename))),
         char(';'),
@@ -1741,8 +1749,8 @@ pub enum RelOpExtended { RelOp(RelOp), In, Like }
 fn rel_op_extended(s: &str) -> IResult<RelOpExtended> {
     use RelOpExtended::*;
     alt((
-        map(tag("in"),   |_| In),
-        map(tag("like"), |_| Like),
+        map(kw("in"),   |_| In),
+        map(kw("like"), |_| Like),
         map(rel_op, RelOp)))(s)
 }
 
@@ -1779,11 +1787,11 @@ fn repeat_control(s: &str) -> IResult<RepeatControl> {
 pub struct RepeatStmt<'a>(RepeatControl<'a>, Vec<Stmt<'a>>);
 fn repeat_stmt(s: &str) -> IResult<RepeatStmt> {
     map(tuple((
-        tag("repeat"),
+        kw("repeat"),
         repeat_control,
         char(';'),
         many1(stmt),
-        tag("end_repeat"),
+        kw("end_repeat"),
         char(';'),
     )), |(_, r, _, s, _, _)| RepeatStmt(r, s))(s)
 }
@@ -1795,7 +1803,7 @@ alias!(Repetition<'a>, NumericExpression, repetition);
 #[derive(Debug)]
 pub struct ResourceOrRename<'a>(ResourceRef<'a>, Option<RenameId<'a>>);
 fn resource_or_rename(s: &str) -> IResult<ResourceOrRename> {
-    map(pair(resource_ref, opt(preceded(tag("as"), rename_id))),
+    map(pair(resource_ref, opt(preceded(kw("as"), rename_id))),
         |(a, b)| ResourceOrRename(a, b))(s)
 }
 
@@ -1819,7 +1827,7 @@ fn resource_ref(s: &str) -> IResult<ResourceRef> {
 pub struct ReturnStmt<'a>(Option<Expression<'a>>);
 fn return_stmt(s:  &str) -> IResult<ReturnStmt> {
     map(delimited(
-        tag("return"),
+        kw("return"),
         opt(parens(expression)),
         char(';')), ReturnStmt)(s)
 }
@@ -1838,7 +1846,7 @@ fn rule_decl(s: &str) -> IResult<RuleDecl> {
         algorithm_head,
         many0(stmt),
         where_clause,
-        tag("end_rule"),
+        kw("end_rule"),
         char(';'),
     )), |(r, a, s, w, _, _)| RuleDecl {
         rule_head: r,
@@ -1856,9 +1864,9 @@ pub struct RuleHead<'a> {
 }
 fn rule_head(s: &str) -> IResult<RuleHead> {
     map(tuple((
-        tag("rule"),
+        kw("rule"),
         rule_id,
-        tag("for"),
+        kw("for"),
         parens(list1(',', entity_ref)),
         char(';'),
     )), |(_, id, _, es, _)| RuleHead {
@@ -1908,12 +1916,12 @@ pub struct SchemaDecl<'a> {
 }
 fn schema_decl(s: &str) -> IResult<SchemaDecl> {
     map(tuple((
-        tag("schema"),
+        kw("schema"),
         schema_id,
         opt(schema_version_id),
         char(';'),
         schema_body,
-        tag("end_schema"),
+        kw("end_schema"),
         char(';')
     )), |(_, id, version, _, body, _, _)| SchemaDecl {
         id, version, body
@@ -1937,8 +1945,8 @@ pub struct SelectExtension<'a> {
 }
 fn select_extension(s: &str) -> IResult<SelectExtension> {
     map(tuple((
-        tag("based_on"), type_ref,
-        opt(preceded(tag("with"), select_list))
+        kw("based_on"), type_ref,
+        opt(preceded(kw("with"), select_list))
     )), |(_, a, b)| SelectExtension {
         type_ref: a, select_list: b
     })(s)
@@ -1966,8 +1974,8 @@ pub struct SelectType<'a> {
 }
 fn select_type(s: &str) -> IResult<SelectType> {
     map(tuple((
-        opt(pair(tag("extensible"), opt(tag("generic_entity")))),
-        tag("select"),
+        opt(pair(kw("extensible"), opt(kw("generic_entity")))),
+        kw("select"),
         alt((
             map(select_list, SelectListOrExtension::List),
             map(select_extension, SelectListOrExtension::Extension),
@@ -1987,9 +1995,9 @@ pub struct SetType<'a> {
 }
 fn set_type(s: &str) -> IResult<SetType> {
     map(tuple((
-        tag("set"),
+        kw("set"),
         opt(bound_spec),
-        tag("of"),
+        kw("of"),
         instantiable_type,
     )),
     |(_, b, _, t)| SetType {
@@ -2078,7 +2086,7 @@ fn simple_types(s: &str) -> IResult<SimpleTypes> {
 
 // 308 skip_stmt = SKIP ’;’ .
 fn skip_stmt(s: &str) -> IResult<()> {
-    map(pair(tag("skip"), char(';')), |_| ())(s)
+    map(pair(kw("skip"), char(';')), |_| ())(s)
 }
 
 // 309 stmt = alias_stmt | assignment_stmt | case_stmt | compound_stmt | escape_stmt |
@@ -2129,7 +2137,7 @@ fn string_literal(s: &str) -> IResult<StringLiteral> { StringLiteral::parse(s) }
 #[derive(Debug)]
 pub struct StringType<'a>(Option<WidthSpec<'a>>);
 fn string_type(s: &str) -> IResult<StringType> {
-    map(preceded(tag("string"), opt(width_spec)), StringType)(s)
+    map(preceded(kw("string"), opt(width_spec)), StringType)(s)
 }
 
 // 312 subsuper = [ supertype_constraint ] [ subtype_declaration ] .
@@ -2145,7 +2153,7 @@ fn subsuper(s: &str) -> IResult<Subsuper> {
 #[derive(Debug)]
 pub struct SubtypeConstraint<'a>(SupertypeExpression<'a>);
 fn subtype_constraint(s: &str) -> IResult<SubtypeConstraint> {
-    map(preceded(tag("of"), parens(supertype_expression)),
+    map(preceded(kw("of"), parens(supertype_expression)),
         SubtypeConstraint)(s)
 }
 
@@ -2178,7 +2186,7 @@ fn subtype_constraint_decl(s: &str) -> IResult<SubtypeConstraintDecl> {
     map(tuple((
         subtype_constraint_head,
         subtype_constraint_body,
-        tag("end_subtype_constraint"),
+        kw("end_subtype_constraint"),
         char(';')
     )), |(a, b, _, _)| SubtypeConstraintDecl(a, b))(s)
 }
@@ -2189,9 +2197,9 @@ fn subtype_constraint_decl(s: &str) -> IResult<SubtypeConstraintDecl> {
 pub struct SubtypeConstraintHead<'a>(SubtypeConstraintId<'a>, EntityRef<'a>);
 fn subtype_constraint_head(s: &str) -> IResult<SubtypeConstraintHead> {
     map(tuple((
-        tag("subtype_constraint"),
+        kw("subtype_constraint"),
         subtype_constraint_id,
-        tag("for"),
+        kw("for"),
         entity_ref,
         char(';')
     )), |(_, a, _, b, _)| SubtypeConstraintHead(a, b))(s)
@@ -2204,7 +2212,7 @@ alias!(SubtypeConstraintId<'a>, SimpleId, subtype_constraint_id);
 #[derive(Debug)]
 pub struct SubtypeDeclaration<'a>(Vec<EntityRef<'a>>);
 fn subtype_declaration(s: &str) -> IResult<SubtypeDeclaration> {
-    map(preceded(tuple((tag("subtype"), tag("of"))),
+    map(preceded(tuple((kw("subtype"), kw("of"))),
                  parens(list1(',', entity_ref))),
         SubtypeDeclaration)(s)
 }
@@ -2233,7 +2241,7 @@ pub struct SupertypeExpression<'a>(SupertypeFactor<'a>,
                                Vec<SupertypeFactor<'a>>);
 fn supertype_expression(s: &str) -> IResult<SupertypeExpression> {
     let (s, a) = supertype_factor(s)?;
-    let (s, b) = many0(preceded(tag("andor"), supertype_factor))(s)?;
+    let (s, b) = many0(preceded(kw("andor"), supertype_factor))(s)?;
     Ok((s, SupertypeExpression(a, b)))
 }
 
@@ -2241,7 +2249,7 @@ fn supertype_expression(s: &str) -> IResult<SupertypeExpression> {
 #[derive(Debug)]
 pub struct SupertypeFactor<'a>(Vec<SupertypeTerm<'a>>);
 fn supertype_factor(s: &str) -> IResult<SupertypeFactor> {
-    map(separated_list1(tag("and"), supertype_term),
+    map(separated_list1(kw("and"), supertype_term),
         SupertypeFactor)(s)
 }
 
@@ -2249,7 +2257,7 @@ fn supertype_factor(s: &str) -> IResult<SupertypeFactor> {
 #[derive(Debug)]
 pub struct SupertypeRule<'a>(SubtypeConstraint<'a>);
 fn supertype_rule(s: &str) -> IResult<SupertypeRule> {
-    map(preceded(tag("supertype"), subtype_constraint), SupertypeRule)(s)
+    map(preceded(kw("supertype"), subtype_constraint), SupertypeRule)(s)
 }
 
 // 323 supertype_term = entity_ref | one_of | ’(’ supertype_expression ’)’ .
@@ -2288,9 +2296,9 @@ fn term(s: &str) -> IResult<Term> {
 pub struct TotalOver<'a>(Vec<EntityRef<'a>>);
 fn total_over(s: &str) -> IResult<TotalOver> {
     map(delimited(
-            tag("total_over"),
+            kw("total_over"),
             parens(list1(',', entity_ref)),
-            tag(";")),
+            char(';')),
         TotalOver)(s)
 }
 
@@ -2303,13 +2311,13 @@ pub struct TypeDecl<'a> {
 }
 fn type_decl(s: &str) -> IResult<TypeDecl> {
     map(tuple((
-        tag("type"),
+        kw("type"),
         type_id,
         char('='),
         underlying_type,
         char(';'),
         opt(where_clause),
-        tag("end_type"),
+        kw("end_type"),
         char(';'),
     )), |(_, t, _, u, _, w, _, _)| TypeDecl {
         type_id: t,
@@ -2344,7 +2352,7 @@ fn unary_op(s: &str) -> IResult<UnaryOp> {
     alt((
         map(char('+'),  |_| Add),
         map(char('-'),  |_| Sub),
-        map(tag("not"), |_| Not),
+        map(kw("not"), |_| Not),
     ))(s)
 }
 
@@ -2368,7 +2376,7 @@ fn underlying_type(s: &str) -> IResult<UnderlyingType> {
 #[derive(Debug)]
 pub struct UniqueClause<'a>(Vec<UniqueRule<'a>>);
 fn unique_clause(s: &str) -> IResult<UniqueClause> {
-    map(preceded(tag("unique"), many1(terminated(unique_rule, char(';')))), UniqueClause)(s)
+    map(preceded(kw("unique"), many1(terminated(unique_rule, char(';')))), UniqueClause)(s)
 }
 
 // 334 unique_rule = [ rule_label_id ’:’ ] referenced_attribute { ’,’
@@ -2388,7 +2396,7 @@ fn unique_rule(s: &str) -> IResult<UniqueRule> {
 #[derive(Debug)]
 pub struct UntilControl<'a>(LogicalExpression<'a>);
 fn until_control(s: &str) -> IResult<UntilControl> {
-    map(preceded(tag("until"), logical_expression), UntilControl)(s)
+    map(preceded(kw("until"), logical_expression), UntilControl)(s)
 }
 
 // 336 use_clause = USE FROM schema_ref [ ’(’ named_type_or_rename
@@ -2400,8 +2408,8 @@ pub struct UseClause<'a> {
 }
 fn use_clause(s: &str) -> IResult<UseClause> {
     map(tuple((
-        tag("use"),
-        tag("from"),
+        kw("use"),
+        kw("from"),
         schema_ref,
         opt(parens(list1(',', named_type_or_rename))),
         char(';'),
@@ -2418,7 +2426,7 @@ alias!(VariableId<'a>, SimpleId, variable_id);
 #[derive(Debug)]
 pub struct WhereClause<'a>(Vec<DomainRule<'a>>);
 fn where_clause(s: &str) -> IResult<WhereClause> {
-    let (s, _) = tag("where")(s)?;
+    let (s, _) = kw("where")(s)?;
     let (s, v) = many1(terminated(domain_rule, char(';')))(s)?;
     Ok((s, WhereClause(v)))
 }
@@ -2427,7 +2435,7 @@ fn where_clause(s: &str) -> IResult<WhereClause> {
 #[derive(Debug)]
 pub struct WhileControl<'a>(LogicalExpression<'a>);
 fn while_control(s: &str) -> IResult<WhileControl> {
-    map(preceded(tag("while"), logical_expression), WhileControl)(s)
+    map(preceded(kw("while"), logical_expression), WhileControl)(s)
 }
 
 // 340
@@ -2437,7 +2445,7 @@ alias!(Width<'a>, NumericExpression, width);
 #[derive(Debug)]
 pub struct WidthSpec<'a> { pub expression: Width<'a>, pub fixed: bool }
 fn width_spec(s: &str) -> IResult<WidthSpec> {
-    map(pair(parens(width), opt(tag("fixed"))),
+    map(pair(parens(width), opt(kw("fixed"))),
         |(w, f)| WidthSpec { expression: w, fixed: f.is_some() })(s)
 }
 
@@ -2452,6 +2460,12 @@ mod tests {
         assert!(real_literal("1.E6").unwrap().1 == 1.0e6);
         assert!(real_literal("3.5e-5").unwrap().1 == 3.5e-5);
         assert!(real_literal("359.62").unwrap().1 == 359.62);
+    }
+
+    #[test]
+    fn test_explicit_attr() {
+        let e = explicit_attr(r#"operands :  list [2:2] of generic_expression;"#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
@@ -2601,6 +2615,12 @@ where
     'automotive_design.bezier_curve' in typeof(self)) or (
     'automotive_design.b_spline_curve_with_knots' in typeof(self));
 end_entity;  "#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = entity_decl(r#"entity binary_generic_expression abstract supertype
+subtype of (generic_expression);
+  operands :  list [2:2] of generic_expression;
+end_entity; "#).unwrap();
         assert_eq!(e.0, "");
     }
 
