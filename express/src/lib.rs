@@ -1416,6 +1416,7 @@ fn multiplication_like_op(s: &str) -> IResult<MultiplicationLikeOp> {
         map(char('/'),  |_| Div),
         map(tag("div"), |_| IntegerDiv),
         map(tag("mod"), |_| Mod),
+        map(tag("and"), |_| And),
         map(tag("||"),  |_| ComplexEntity),
     ))(s)
 }
@@ -2035,6 +2036,8 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
                     |e| ExpressionOrPrimary::Expression(Box::new(e))),
                 map(primary, ExpressionOrPrimary::Primary)
             ))), |(op, p)| Unary(op, p)),
+
+        // At the bottom, because this will consume a single ref
         map(enumeration_reference, EnumerationReference),
     ))(s)
 }
@@ -2259,9 +2262,9 @@ pub fn syntax(s: &str) -> IResult<Syntax> {
 
 // 325
 #[derive(Debug)]
-pub struct Term<'a>(Factor<'a>, Option<(MultiplicationLikeOp, Factor<'a>)>);
+pub struct Term<'a>(Factor<'a>, Vec<(MultiplicationLikeOp, Factor<'a>)>);
 fn term(s: &str) -> IResult<Term> {
-    map(pair(factor, opt(pair(multiplication_like_op, factor))),
+    map(pair(factor, many0(pair(multiplication_like_op, factor))),
         |(a, b)| Term(a, b))(s)
 }
 
@@ -2319,7 +2322,7 @@ fn type_label(s: &str) -> IResult<TypeLabel> {
 pub struct TypeLabelId<'a>(SimpleId<'a>);
 
 // 331
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum UnaryOp { Add, Sub, Not }
 fn unary_op(s: &str) -> IResult<UnaryOp> {
     use UnaryOp::*;
@@ -2458,6 +2461,67 @@ where
     'automotive_design.axis2_placement_3d'] * typeof(it)) = 1))) = 0;
 end_entity; "#).unwrap();
         assert!(e.0 == "");
+
+        let e = entity_decl(r#"entity advanced_face
+subtype of (face_surface);
+where
+  wr1 : sizeof(['automotive_design.elementary_surface', 
+    'automotive_design.b_spline_surface', 
+    'automotive_design.swept_surface'] * typeof(face_geometry)) = 1;
+  wr2 : sizeof(query(elp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.edge_loop' in typeof(bnds.bound)) | not (sizeof(
+    query(oe <* elp_fbnds.bound\path.edge_list | not (
+    'automotive_design.edge_curve' in typeof(oe\oriented_edge.edge_element))
+    )) = 0))) = 0;
+  wr3 : sizeof(query(elp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.edge_loop' in typeof(bnds.bound)) | not (sizeof(
+    query(oe <* elp_fbnds.bound\path.edge_list | not (sizeof([
+    'automotive_design.line', 'automotive_design.conic', 
+    'automotive_design.polyline', 'automotive_design.surface_curve', 
+    'automotive_design.b_spline_curve'] * typeof(oe.edge_element\edge_curve.
+    edge_geometry)) = 1))) = 0))) = 0;
+  wr4 : sizeof(query(elp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.edge_loop' in typeof(bnds.bound)) | not (sizeof(
+    query(oe <* elp_fbnds.bound\path.edge_list | not ((
+    'automotive_design.vertex_point' in typeof(oe\edge.edge_start)) and (
+    'automotive_design.cartesian_point' in typeof(oe\edge.edge_start\
+    vertex_point.vertex_geometry)) and ('automotive_design.vertex_point' in 
+    typeof(oe\edge.edge_end)) and ('automotive_design.cartesian_point' in 
+    typeof(oe\edge.edge_end\vertex_point.vertex_geometry))))) = 0))) = 0;
+  wr5 : sizeof(query(elp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.edge_loop' in typeof(bnds.bound)) | 
+    'automotive_design.oriented_path' in typeof(elp_fbnds.bound))) = 0;
+  wr6 : not ('automotive_design.swept_surface' in typeof(face_geometry)) or 
+    (sizeof(['automotive_design.line', 'automotive_design.conic', 
+    'automotive_design.polyline', 'automotive_design.b_spline_curve'] * 
+    typeof(face_geometry\swept_surface.swept_curve)) = 1);
+  wr7 : sizeof(query(vlp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.vertex_loop' in typeof(bnds.bound)) | not ((
+    'automotive_design.vertex_point' in typeof(vlp_fbnds\face_bound.bound\
+    vertex_loop.loop_vertex)) and ('automotive_design.cartesian_point' in 
+    typeof(vlp_fbnds\face_bound.bound\vertex_loop.loop_vertex\vertex_point.
+    vertex_geometry))))) = 0;
+  wr8 : sizeof(query(bnd <* bounds | not (sizeof([
+    'automotive_design.edge_loop', 'automotive_design.vertex_loop'] * 
+    typeof(bnd.bound)) = 1))) = 0;
+  wr9 : sizeof(query(elp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.edge_loop' in typeof(bnds.bound)) | not (sizeof(
+    query(oe <* elp_fbnds.bound\path.edge_list | (
+    'automotive_design.surface_curve' in typeof(oe\oriented_edge.
+    edge_element\edge_curve.edge_geometry)) and not (sizeof(query(sc_ag <* oe.
+    edge_element\edge_curve.edge_geometry\surface_curve.associated_geometry | 
+    not ('automotive_design.pcurve' in typeof(sc_ag)))) = 0))) = 0))) = 0;
+  wr10 : (not ('automotive_design.swept_surface' in typeof(face_geometry)) 
+    or not ('automotive_design.polyline' in typeof(face_geometry\
+    swept_surface.swept_curve)) or (sizeof(face_geometry\swept_surface.
+    swept_curve\polyline.points) >= 3)) and (sizeof(query(elp_fbnds <* query(
+    bnds <* bounds | 'automotive_design.edge_loop' in typeof(bnds.bound)) | 
+    not (sizeof(query(oe <* elp_fbnds.bound\path.edge_list | (
+    'automotive_design.polyline' in typeof(oe\oriented_edge.edge_element\
+    edge_curve.edge_geometry)) and not (sizeof(oe\oriented_edge.edge_element\
+    edge_curve.edge_geometry\polyline.points) >= 3))) = 0))) = 0);
+end_entity; "#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
@@ -2541,6 +2605,28 @@ wr1 : self >= 0.0; "#).unwrap();
     connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
      typeof(fcs)))) = 0))) = 0))) = 0;"#).unwrap();
         assert_eq!(e.0, ";");
+
+        let e = domain_rule(r#"wr10 : (not ('automotive_design.swept_surface' in typeof(face_geometry)) 
+    or not ('automotive_design.polyline' in typeof(face_geometry\
+    swept_surface.swept_curve)) or (sizeof(face_geometry\swept_surface.
+    swept_curve\polyline.points) >= 3)) and (sizeof(query(elp_fbnds <* query(
+    bnds <* bounds | 'automotive_design.edge_loop' in typeof(bnds.bound)) | 
+    not (sizeof(query(oe <* elp_fbnds.bound\path.edge_list | (
+    'automotive_design.polyline' in typeof(oe\oriented_edge.edge_element\
+    edge_curve.edge_geometry)) and not (sizeof(oe\oriented_edge.edge_element\
+    edge_curve.edge_geometry\polyline.points) >= 3))) = 0))) = 0);"#).unwrap();
+        assert_eq!(e.0, ";");
+
+        let e = domain_rule(r#"wr4 : sizeof(query(elp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.edge_loop' in typeof(bnds.bound)) | not (sizeof(
+    query(oe <* elp_fbnds.bound\path.edge_list | not ((
+    'automotive_design.vertex_point' in typeof(oe\edge.edge_start)) and (
+    'automotive_design.cartesian_point' in typeof(oe\edge.edge_start\
+    vertex_point.vertex_geometry)) and ('automotive_design.vertex_point' in 
+    typeof(oe\edge.edge_end)) and ('automotive_design.cartesian_point' in 
+    typeof(oe\edge.edge_end\vertex_point.vertex_geometry))))) = 0))) = 0;"#).unwrap();
+        assert_eq!(e.0, ";");
+
     }
 
     #[test]
@@ -2567,6 +2653,16 @@ wr1 : self >= 0.0; "#).unwrap();
     query(csh <* msb_shells(msb) | not (sizeof(query(fcs <* csh\
     connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
      typeof(fcs)))) = 0))) = 0))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = query_expression(r#"query(elp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.edge_loop' in typeof(bnds.bound)) | not (sizeof(
+    query(oe <* elp_fbnds.bound\path.edge_list | not ((
+    'automotive_design.vertex_point' in typeof(oe\edge.edge_start)) and (
+    'automotive_design.cartesian_point' in typeof(oe\edge.edge_start\
+    vertex_point.vertex_geometry)) and ('automotive_design.vertex_point' in 
+    typeof(oe\edge.edge_end)) and ('automotive_design.cartesian_point' in 
+    typeof(oe\edge.edge_end\vertex_point.vertex_geometry))))) = 0))"#).unwrap();
         assert_eq!(e.0, "");
     }
 
@@ -2601,6 +2697,16 @@ wr1 : self >= 0.0; "#).unwrap();
     query(csh <* msb_shells(msb) | not (sizeof(query(fcs <* csh\
     connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
      typeof(fcs)))) = 0))) = 0)))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = function_call(r#"sizeof(query(elp_fbnds <* query(bnds <* bounds | 
+    'automotive_design.edge_loop' in typeof(bnds.bound)) | not (sizeof(
+    query(oe <* elp_fbnds.bound\path.edge_list | not ((
+    'automotive_design.vertex_point' in typeof(oe\edge.edge_start)) and (
+    'automotive_design.cartesian_point' in typeof(oe\edge.edge_start\
+    vertex_point.vertex_geometry)) and ('automotive_design.vertex_point' in 
+    typeof(oe\edge.edge_end)) and ('automotive_design.cartesian_point' in 
+    typeof(oe\edge.edge_end\vertex_point.vertex_geometry))))) = 0)))"#).unwrap();
         assert_eq!(e.0, "");
     }
 
@@ -2644,6 +2750,21 @@ wr1 : self >= 0.0; "#).unwrap();
         assert_eq!(e.0, "");
 
         let e = simple_factor("csh\\connected_face_set.cfs_faces").unwrap();
+        assert_eq!(e.0, "");
+
+        let e = simple_factor(r#"((
+    'automotive_design.vertex_point' in typeof(oe\edge.edge_start)) and (
+    'automotive_design.cartesian_point' in typeof(oe\edge.edge_start\
+    vertex_point.vertex_geometry)) and ('automotive_design.vertex_point' in 
+    typeof(oe\edge.edge_end)))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = simple_factor(r#"not ((
+    'automotive_design.vertex_point' in typeof(oe\edge.edge_start)) and (
+    'automotive_design.cartesian_point' in typeof(oe\edge.edge_start\
+    vertex_point.vertex_geometry)) and ('automotive_design.vertex_point' in 
+    typeof(oe\edge.edge_end)) and ('automotive_design.cartesian_point' in 
+    typeof(oe\edge.edge_end\vertex_point.vertex_geometry)))"#).unwrap();
         assert_eq!(e.0, "");
     }
 
