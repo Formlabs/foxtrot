@@ -2112,7 +2112,7 @@ fn string_type(s: &str) -> IResult<StringType> {
 // 312 subsuper = [ supertype_constraint ] [ subtype_declaration ] .
 #[derive(Debug)]
 pub struct Subsuper<'a>(Option<SupertypeConstraint<'a>>,
-                    Option<SubtypeDeclaration<'a>>);
+                        Option<SubtypeDeclaration<'a>>);
 fn subsuper(s: &str) -> IResult<Subsuper> {
     map(pair(opt(supertype_constraint), opt(subtype_declaration)),
         |(a, b)| Subsuper(a, b))(s)
@@ -2197,8 +2197,9 @@ pub enum SupertypeConstraint<'a> {
 fn supertype_constraint(s: &str) -> IResult<SupertypeConstraint> {
     use SupertypeConstraint::*;
     alt((
-        map(abstract_entity_declaration, |_| AbstractEntity),
+        // Ordered so that "abstract supertype" is parsed before "abstract"
         map(abstract_supertype_declaration, AbstractSupertype),
+        map(abstract_entity_declaration, |_| AbstractEntity),
         map(supertype_rule, SupertypeRule),
     ))(s)
 }
@@ -2428,6 +2429,30 @@ mod tests {
         assert!(real_literal("1.E6").unwrap().1 == 1.0e6);
         assert!(real_literal("3.5e-5").unwrap().1 == 3.5e-5);
         assert!(real_literal("359.62").unwrap().1 == 359.62);
+    }
+
+    #[test]
+    fn test_entity_decl() {
+        let e = entity_decl(r#"entity action_assignment abstract supertype;
+  assigned_action : action;
+derive
+  role : object_role := get_role(self);
+where
+  wr1 : sizeof(usedin(self, 
+    'automotive_design.role_association.item_with_role')) <= 1;
+end_entity;  "#).unwrap();
+    }
+
+    #[test]
+    fn test_subsuper() {
+        let e = subsuper("abstract supertype;").unwrap();
+        assert_eq!(e.0, ";");
+    }
+
+    #[test]
+    fn test_supertype_constraint() {
+        let e = supertype_constraint("abstract supertype;").unwrap();
+        assert_eq!(e.0, ";");
     }
 
     #[test]
