@@ -420,16 +420,20 @@ fn attribute_decl(s: &str) -> IResult<AttributeDecl> {
 alias!(AttributeId<'a>, SimpleId, attribute_id);
 
 // 179
-alias!(AttributeQualifier<'a>, AttributeRef, attribute_qualifier);
+#[derive(Debug)]
+pub struct AttributeQualifier<'a>(AttributeRef<'a>);
+fn attribute_qualifier(s: &str) -> IResult<AttributeQualifier> {
+    map(preceded(char('.'), attribute_ref), AttributeQualifier)(s)
+}
 
 // 180
 #[derive(Debug)]
 pub struct BagType<'a>(Option<BoundSpec<'a>>, Box<InstantiableType<'a>>);
 fn bag_type(s: &str) -> IResult<BagType> {
     map(tuple((
-            tag("BAG"),
+            tag("bag"),
             opt(bound_spec),
-            tag("OF"),
+            tag("of"),
             instantiable_type
         )), |(_, b, _, t)| BagType(b, Box::new(t)))
         (s)
@@ -819,7 +823,7 @@ fn enumeration_items(s: &str) -> IResult<EnumerationItems> {
     map(parens(list1(',', enumeration_id)), EnumerationItems)(s)
 }
 
-// 212
+// 212 enumeration_reference = [ type_ref ’.’ ] enumeration_ref .
 #[derive(Debug)]
 pub struct EnumerationReference<'a>(Option<TypeRef<'a>>, EnumerationRef<'a>);
 fn enumeration_reference(s: &str) -> IResult<EnumerationReference> {
@@ -881,7 +885,7 @@ fn explicit_attr(s: &str) -> IResult<ExplicitAttr> {
     })(s)
 }
 
-// 216
+// 216 expression = simple_expression [ rel_op_extended simple_expression ] .
 #[derive(Debug)]
 pub struct Expression<'a>(SimpleExpression<'a>, Option<(RelOpExtended, SimpleExpression<'a>)>);
 impl<'a> Expression<'a> {
@@ -912,7 +916,7 @@ fn formal_parameter(s: &str) -> IResult<FormalParameter> {
     )), |(a, _, b)| FormalParameter(a, b))(s)
 }
 
-// 219
+// 219 function_call = ( built_in_function | function_ref ) [ actual_parameter_list ] .
 #[derive(Debug)]
 pub enum BuiltInOrFunctionRef<'a> {
     BuiltIn(BuiltInFunction),
@@ -1043,9 +1047,9 @@ fn general_array_type(s: &str) -> IResult<GeneralArrayType> {
 pub struct GeneralBagType<'a>(Option<BoundSpec<'a>>, Box<ParameterType<'a>>);
 fn general_bag_type(s: &str) -> IResult<GeneralBagType> {
     map(tuple((
-            tag("BAG"),
+            tag("bag"),
             opt(bound_spec),
-            tag("OF"),
+            tag("of"),
             parameter_type
         )), |(_, b, _, t)| GeneralBagType(b, Box::new(t)))
         (s)
@@ -1121,7 +1125,7 @@ fn generic_type(s: &str) -> IResult<GenericType> {
         GenericType)(s)
 }
 
-// 232
+// 232 group_qualifier = ’\’ entity_ref .
 #[derive(Debug)]
 pub struct GroupQualifier<'a>(EntityRef<'a>);
 fn group_qualifier(s: &str) -> IResult<GroupQualifier> {
@@ -1499,7 +1503,7 @@ pub struct Population<'a>(EntityRef<'a>); // never parsed
 // 268
 alias!(PrecisionSpec<'a>, NumericExpression, precision_spec);
 
-// 269
+// 269 primary = literal | ( qualifiable_factor { qualifier } ) .
 #[derive(Debug)]
 pub enum Primary<'a> {
     Literal(Literal),
@@ -1508,9 +1512,10 @@ pub enum Primary<'a> {
 fn primary(s: &str) -> IResult<Primary> {
     use Primary::*;
     alt((
-        map(literal, Literal),
+        // Order so that the longest parser runs first
         map(pair(qualifiable_factor, many0(qualifier)),
-            |(f, qs)| Qualifiable(f, qs))
+            |(f, qs)| Qualifiable(f, qs)),
+        map(literal, Literal),
     ))(s)
 }
 
@@ -1624,7 +1629,8 @@ fn qualifier(s: &str) -> IResult<Qualifier> {
     ))(s)
 }
 
-// 277
+// 277 query_expression = QUERY ’(’ variable_id ’<*’ aggregate_source ’|’
+//                        logical_expression ’)’ .
 #[derive(Debug)]
 pub struct QueryExpression<'a> {
     pub var: VariableId<'a>,
@@ -1633,7 +1639,7 @@ pub struct QueryExpression<'a> {
 }
 fn query_expression(s: &str) -> IResult<QueryExpression> {
     map(tuple((
-        tag("QUERY"),
+        tag("query"),
         char('('),
         variable_id,
         tag("<*"),
@@ -2020,7 +2026,6 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
     alt((
         map(aggregate_initializer, AggregateInitializer),
         map(entity_constructor, EntityConstructor),
-        map(enumeration_reference, EnumerationReference),
         map(interval, Interval),
         map(query_expression, QueryExpression),
         map(pair(
@@ -2029,7 +2034,8 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
                 map(parens(expression),
                     |e| ExpressionOrPrimary::Expression(Box::new(e))),
                 map(primary, ExpressionOrPrimary::Primary)
-            ))), |(op, p)| Unary(op, p))
+            ))), |(op, p)| Unary(op, p)),
+        map(enumeration_reference, EnumerationReference),
     ))(s)
 }
 
@@ -2441,6 +2447,17 @@ where
   wr1 : sizeof(usedin(self, 
     'automotive_design.role_association.item_with_role')) <= 1;
 end_entity;  "#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = entity_decl(r#"entity advanced_brep_shape_representation
+subtype of (shape_representation);
+where
+  wr1 : sizeof(query(it <* self.items | not (sizeof([
+    'automotive_design.manifold_solid_brep', 
+    'automotive_design.faceted_brep', 'automotive_design.mapped_item', 
+    'automotive_design.axis2_placement_3d'] * typeof(it)) = 1))) = 0;
+end_entity; "#).unwrap();
+        assert!(e.0 == "");
     }
 
     #[test]
@@ -2507,11 +2524,84 @@ end_type;  "#).unwrap();
         let e = where_clause(r#"where
 wr1 : self >= 0.0; "#).unwrap();
         assert_eq!(e.0, "");
+
+        let e = where_clause(r#"where
+  wr1 : sizeof(query(it <* self.items | not (sizeof([
+    'automotive_design.manifold_solid_brep', 
+    'automotive_design.faceted_brep', 'automotive_design.mapped_item', 
+    'automotive_design.axis2_placement_3d'] * typeof(it)) = 1))) = 0;"#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_domain_rule() {
+        let e = domain_rule(r#"wr3 : sizeof(query(msb <* query(it <* self.items | 
+    'automotive_design.manifold_solid_brep' in typeof(it)) | not (sizeof(
+    query(csh <* msb_shells(msb) | not (sizeof(query(fcs <* csh\
+    connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
+     typeof(fcs)))) = 0))) = 0))) = 0;"#).unwrap();
+        assert_eq!(e.0, ";");
+    }
+
+    #[test]
+    fn test_aggregate_source() {
+        let e = aggregate_source("csh\\connected_face_set.cfs_faces").unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_query_expression() {
+        let e = query_expression(r#"query(fcs <* csh\
+    connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
+     typeof(fcs)))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = query_expression(r#"query(it <* self.items | not (sizeof([
+    'automotive_design.manifold_solid_brep', 
+    'automotive_design.faceted_brep', 'automotive_design.mapped_item', 
+    'automotive_design.axis2_placement_3d'] * typeof(it)) = 1))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = query_expression(r#"query(msb <* query(it <* self.items | 
+    'automotive_design.manifold_solid_brep' in typeof(it)) | not (sizeof(
+    query(csh <* msb_shells(msb) | not (sizeof(query(fcs <* csh\
+    connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
+     typeof(fcs)))) = 0))) = 0))"#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
     fn test_expression() {
-        expression(r#"{1 <= self <= 31}"#).unwrap();
+        let e = expression(r#"{1 <= self <= 31}"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = expression(r#"sizeof(query(msb <* query(it <* self.items | 
+    'automotive_design.manifold_solid_brep' in typeof(it)) | not (sizeof(
+    query(csh <* msb_shells(msb) | not (sizeof(query(fcs <* csh\
+    connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
+     typeof(fcs)))) = 0))) = 0)))"#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_function_call() {
+        let e = function_call(r#"sizeof(query(fcs <* csh\
+    connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
+     typeof(fcs))))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = function_call(r#"sizeof(
+    query(csh <* msb_shells(msb) | not (sizeof(query(fcs <* csh\
+    connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
+     typeof(fcs)))) = 0)))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = function_call(r#"sizeof(query(msb <* query(it <* self.items | 
+    'automotive_design.manifold_solid_brep' in typeof(it)) | not (sizeof(
+    query(csh <* msb_shells(msb) | not (sizeof(query(fcs <* csh\
+    connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
+     typeof(fcs)))) = 0))) = 0)))"#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
@@ -2534,11 +2624,17 @@ wr1 : self >= 0.0; "#).unwrap();
     fn test_term() {
         let e = term("1 ").unwrap();
         assert_eq!(e.0, "");
+
+        let e = term("csh\\connected_face_set.cfs_faces").unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
     fn test_factor() {
         let e = factor("1 ").unwrap();
+        assert_eq!(e.0, "");
+
+        let e = factor("csh\\connected_face_set.cfs_faces").unwrap();
         assert_eq!(e.0, "");
     }
 
@@ -2546,11 +2642,26 @@ wr1 : self >= 0.0; "#).unwrap();
     fn test_simple_factor() {
         let e = simple_factor("1 ").unwrap();
         assert_eq!(e.0, "");
+
+        let e = simple_factor("csh\\connected_face_set.cfs_faces").unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_simple_expression() {
+        let e = simple_expression("csh\\connected_face_set.cfs_faces").unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
     fn test_primary() {
         let e = primary("1 ").unwrap();
+        assert_eq!(e.0, "");
+
+        let e = primary("self.items").unwrap();
+        assert_eq!(e.0, "");
+
+        let e = primary("csh\\connected_face_set.cfs_faces").unwrap();
         assert_eq!(e.0, "");
     }
 
