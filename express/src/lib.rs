@@ -498,7 +498,7 @@ pub enum BuiltInFunction {
     Length, LoBound, LoIndex, Log, Log2, Log10, Nvl, Odd, RolesOf, Sin, SizeOf,
     Sqrt, Tan, Typeof, Usedin, Value, ValueIn, ValueUnique
 }
-fn built_in_function(s: &str) -> IResult<BuiltInFunction> {
+fn built_in_function_(s: &str) -> IResult<BuiltInFunction> {
     use BuiltInFunction::*;
     // Tokenize then match the keyword, instead of doing a huge alt(...)
     let (rest, kw) = alpha1(s)?;
@@ -536,6 +536,9 @@ fn built_in_function(s: &str) -> IResult<BuiltInFunction> {
         "value_unique" => ValueUnique,
         _ => return build_err(s, "No such built-in function"),
     }))
+}
+fn built_in_function(s: &str) -> IResult<BuiltInFunction> {
+    ws(built_in_function_)(s)
 }
 
 // 188 built_in_procedure = INSERT | REMOVE .
@@ -2622,6 +2625,48 @@ subtype of (generic_expression);
   operands :  list [2:2] of generic_expression;
 end_entity; "#).unwrap();
         assert_eq!(e.0, "");
+
+        let e = entity_decl(r#"entity composite_hole
+subtype of (compound_feature);
+where
+  wr1 : self\characterized_object.description in ['counterbore', 'countersunk']
+    ;
+  wr2 : sizeof(query(sa <* get_shape_aspects(self) | ('automotive_design.'
+     + 'composite_shape_aspect' in typeof(sa)) and (sa.name = 
+    'compound feature in solid') and (sizeof(query(sar <* usedin(sa, 
+    'automotive_design.shape_aspect_relationship.relating_shape_aspect') | 
+    'automotive_design.' + 'feature_component_relationship' in typeof(sar)))
+     = 2))) = 1;
+  wr3 : sizeof(query(sa <* get_shape_aspects(self) | ('automotive_design.'
+     + 'composite_shape_aspect' in typeof(sa)) and (sa.name = 
+    'compound feature in solid') and (sizeof(query(sar <* usedin(sa, 
+    'automotive_design.shape_aspect_relationship.relating_shape_aspect') | 
+    'automotive_design.' + 'feature_component_relationship' in typeof(sar)))
+     = 2) and (sizeof(get_round_holes_for_composite_hole(bag_to_set(usedin(sa, 
+    'automotive_design.shape_aspect_relationship.relating_shape_aspect'))))
+     = 2))) = 1;
+  wr4 : sizeof(query(sa <* get_shape_aspects(self) | ('automotive_design.'
+     + 'composite_shape_aspect' in typeof(sa)) and (sa.name = 
+    'compound feature in solid') and (sizeof(query(rh1 <* 
+    get_round_holes_for_composite_hole(bag_to_set(usedin(sa, 
+    'automotive_design.shape_aspect_relationship.relating_shape_aspect')))
+     | sizeof(query(rh2 <* get_round_holes_for_composite_hole(bag_to_set(usedin
+    (sa, 'automotive_design.shape_aspect_relationship.relating_shape_aspect'
+    ))) | (rh1 :<>: rh2) and (get_diameter_for_round_hole(rh1) = 
+    get_diameter_for_round_hole(rh2)))) = 0)) = 0))) = 1;
+  wr5 : (self.description <> 'countersunk') or (sizeof(query(sa <* 
+    get_shape_aspects(self) | ('automotive_design.' + 
+    'composite_shape_aspect' in typeof(sa)) and (sa.name = 
+    'compound feature in solid') and (sizeof(query(rh <* 
+    get_round_holes_for_composite_hole(bag_to_set(usedin(sa, 
+    'automotive_design.shape_aspect_relationship.relating_shape_aspect')))
+     | sizeof(query(sa1 <* get_shape_aspects(rh) | (sa.description = 
+    'change in diameter occurrence') and (sizeof(query(sar <* usedin(sa1, 
+    'automotive_design.shape_aspect_relationship.related_shape_aspect') | (
+    sar.description = 'taper usage') and ('automotive_design.' + 'taper' in 
+    typeof(sar.relating_shape_aspect)))) = 1))) = 1)) = 1))) = 1);
+end_entity;  "#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
@@ -2737,6 +2782,17 @@ wr1 : self >= 0.0; "#).unwrap();
      typeof(curve)) and (curve\polyline.points[loindex(curve\polyline.points)]
      = curve\polyline.points[hiindex(curve\polyline.points)])))) = 0);"#).unwrap();
         assert_eq!(e.0, ";");
+
+        let e = domain_rule(r#"wr4 : sizeof(query(sa <* get_shape_aspects(self) | ('automotive_design.'
+     + 'composite_shape_aspect' in typeof(sa)) and (sa.name = 
+    'compound feature in solid') and (sizeof(query(rh1 <* 
+    get_round_holes_for_composite_hole(bag_to_set(usedin(sa, 
+    'automotive_design.shape_aspect_relationship.relating_shape_aspect')))
+     | sizeof(query(rh2 <* get_round_holes_for_composite_hole(bag_to_set(usedin
+    (sa, 'automotive_design.shape_aspect_relationship.relating_shape_aspect'
+    ))) | (rh1 :<>: rh2) and (get_diameter_for_round_hole(rh1) = 
+    get_diameter_for_round_hole(rh2)))) = 0)) = 0))) = 1;"#).unwrap();
+        assert_eq!(e.0, ";");
     }
 
     #[test]
@@ -2790,12 +2846,27 @@ wr1 : self >= 0.0; "#).unwrap();
 
         let e = expression(r#"cross_product(axis, 
     ref_direction).magnitude"#).unwrap();
-        eprintln!("{:?}", e.1);
+        assert_eq!(e.0, "");
+
+        let e = expression(r#"sizeof(query(sa <* get_shape_aspects(self) | ('automotive_design.'
+     + 'composite_shape_aspect' in typeof(sa)) and (sa.name = 
+    'compound feature in solid') and (sizeof(query(rh1 <* 
+    get_round_holes_for_composite_hole(bag_to_set(usedin(sa, 
+    'automotive_design.shape_aspect_relationship.relating_shape_aspect')))
+     | sizeof(query(rh2 <* get_round_holes_for_composite_hole(bag_to_set(usedin
+    (sa, 'automotive_design.shape_aspect_relationship.relating_shape_aspect'
+    ))) | (rh1 :<>: rh2) and (get_diameter_for_round_hole(rh1) = 
+    get_diameter_for_round_hole(rh2)))) = 0)) = 0))) = 1"#).unwrap();
         assert_eq!(e.0, "");
     }
 
     #[test]
     fn test_function_call() {
+        let e = function_call(r#"usedin
+    (sa, 'automotive_design.shape_aspect_relationship.relating_shape_aspect'
+    )"#).unwrap();
+        assert_eq!(e.0, "");
+
         let e = function_call(r#"sizeof(query(fcs <* csh\
     connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
      typeof(fcs))))"#).unwrap();
