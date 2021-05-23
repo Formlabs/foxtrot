@@ -772,10 +772,8 @@ pub struct EntityConstructor<'a> {
     pub entity_ref: EntityRef<'a>,
     pub args: Vec<Expression<'a>>,
 }
-fn entity_constructor(s: &str) -> IResult<EntityConstructor> {
-    map(pair(entity_ref, parens(list0(',', expression))),
-        |(r, a)| EntityConstructor { entity_ref: r, args: a} )(s)
-}
+// We never parse entity_constructor directly, because it's always in parsers
+// which could be ambiguous where it could be ambiguous with function_call
 
 // 206 entity_decl = entity_head entity_body END_ENTITY ’;’ .
 #[derive(Debug)]
@@ -1341,7 +1339,7 @@ fn list_type(s: &str) -> IResult<ListType> {
 // 251
 #[derive(Debug)]
 pub enum Literal {
-    String(StringLiteral),
+    String(String),
     Binary(usize),
     Logical(LogicalLiteral),
     Real(f64),
@@ -1350,7 +1348,7 @@ fn literal(s: &str) -> IResult<Literal> {
     use Literal::*;
     alt((
         map(binary_literal, Binary),
-        map(string_literal, String),
+        map(string_literal, |s| String(s.0)),
         map(logical_literal, Logical),
         map(real_literal, Real)
     ))(s)
@@ -2039,6 +2037,11 @@ pub enum ExpressionOrPrimary<'a> {
 }
 #[derive(Debug)]
 pub enum SimpleFactor<'a> {
+    // Both EntityConstructor and primary -> qualifiable_factor -> function_call
+    // can match things of the form function_ref(expression, expression, ...),
+    // so we match them with an "ambiguous" branch here
+
+    _AmbiguousFunctionCall(SimpleId<'a>, Vec<Expression<'a>>),
     AggregateInitializer(AggregateInitializer<'a>),
     EntityConstructor(EntityConstructor<'a>),
     EnumerationReference(EnumerationReference<'a>),
@@ -2046,16 +2049,26 @@ pub enum SimpleFactor<'a> {
     QueryExpression(QueryExpression<'a>),
     Unary(Option<UnaryOp>, ExpressionOrPrimary<'a>)
 }
+
+fn ambiguous_function_call(s: &str) -> IResult<SimpleFactor> {
+    // ambiguous_function_call has a special-case to avoid eating a primary
+    // function call, e.g. "cross_product(axis, ref_direction).magnitude"
+    map(terminated(
+        pair(simple_id, parens(list0(',', expression))),
+        not(peek(alt((char('.'), char('\\')))))),
+        |(a, b)| SimpleFactor::_AmbiguousFunctionCall(a, b))(s)
+}
+
 fn simple_factor(s: &str) -> IResult<SimpleFactor> {
     use SimpleFactor::*;
     alt((
         map(aggregate_initializer, AggregateInitializer),
 
-        // EntityConstructor has a special-case to avoid eating a primary
-        // function call, e.g. "cross_product(axis, ref_direction).magnitude"
-        //
-        map(terminated(entity_constructor, not(peek(alt((char('.'), char('\\')))))),
-            EntityConstructor),
+        // This produces _AmbiguousFunctionCall objects which can represent
+        // either an `EntityConstructor` or a `FunctionCall` without a trailing
+        // qualifier.
+        ambiguous_function_call,
+
         map(interval, Interval),
         map(query_expression, QueryExpression),
 
