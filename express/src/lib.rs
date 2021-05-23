@@ -4,7 +4,7 @@ use nom::{
     character::complete::{alpha1, multispace0},
     error::*,
     multi::{fold_many1, fold_many0, many0_count, separated_list0, separated_list1, many0, many1},
-    combinator::{map, recognize, opt, not, peek},
+    combinator::{map, map_opt, recognize, opt, not, peek, verify},
     sequence::{delimited, pair, preceded, tuple, terminated},
 };
 
@@ -63,9 +63,9 @@ fn list1<'a, U, F>(c: char, p: F) -> impl FnMut(&'a str) -> IResult<'a, Vec<U>>
     separated_list1(char(c), ws(p))
 }
 
-
+/// Some rules are simple wrappers around other rules.  The `alias` macro
+/// lets you define them without as much boilerplate.
 macro_rules! alias {
-    // `()` indicates that the macro takes no argument.
     ($a:ident $(< $lt:lifetime >)?,
      $b:ident, $parse_a:ident) => {
         #[derive(Debug)]
@@ -79,6 +79,26 @@ macro_rules! alias {
             $a::parse(s)
         }
     };
+}
+
+/// `id_type` lets you easy construct a type which wraps a `&str` and uses the
+/// parse rules for [`SimpleId`].  This is useful for semantic types types which
+/// are equivalent to `simple_id`; using this macro means we don't have to
+/// deference `a.0.0.0` to get from a `TypeRef` to a `TypeId` to a `SimpleId`
+/// to the inner `&str`.
+macro_rules! id_type {
+    ($a:ident, $parse_a:ident) => {
+        #[derive(Debug)]
+        pub struct $a<'a>(&'a str);
+        fn $parse_a(s: &str) -> IResult<$a> {
+            let (s, r) = SimpleId::parse(s)?;
+            Ok((s, $a(r.0)))
+        }
+    };
+    ($a:ident) => {
+        #[derive(Debug)]
+        pub struct $a<'a>(&'a str);
+    }
 }
 
 
@@ -210,25 +230,20 @@ fn simple_string_literal(s: &str) -> IResult<String> {
 // 145-149 (remarks) are parsed beforehand
 
 // 150-163
-alias!(AttributeRef<'a>, AttributeId, attribute_ref);
-alias!(ConstantRef<'a>, ConstantId, constant_ref);
-alias!(EntityRef<'a>, EntityId, entity_ref);
-alias!(EnumerationRef<'a>, EnumerationId, enumeration_ref);
-alias!(FunctionRef<'a>, FunctionId, function_ref);
-#[derive(Debug)]
-pub struct ParameterRef<'a>(ParameterId<'a>);
-alias!(ProcedureRef<'a>, ProcedureId, procedure_ref);
-#[derive(Debug)]
-pub struct RuleLabelRef<'a>(RuleLabelId<'a>);
-#[derive(Debug)]
-pub struct RuleRef<'a>(RuleId<'a>);
-alias!(SchemaRef<'a>, SchemaId, schema_ref);
-alias!(SubtypeConstraintRef<'a>, SubtypeConstraintId, subtype_constraint_ref);
-#[derive(Debug)]
-pub struct TypeLabelRef<'a>(TypeLabelId<'a>);
-alias!(TypeRef<'a>, TypeId, type_ref);
-#[derive(Debug)]
-pub struct VariableRef<'a>(VariableId<'a>);
+id_type!(AttributeRef, attribute_ref);
+id_type!(ConstantRef, constant_ref);
+id_type!(EntityRef, entity_ref);
+id_type!(EnumerationRef, enumeration_ref);
+id_type!(FunctionRef, function_ref);
+id_type!(ParameterRef);
+id_type!(ProcedureRef, procedure_ref);
+id_type!(RuleLabelRef);
+id_type!(RuleRef);
+id_type!(SchemaRef, schema_ref);
+id_type!(SubtypeConstraintRef);
+id_type!(TypeLabelRef);
+id_type!(TypeRef, type_ref);
+id_type!(VariableRef);
 
 // 164 abstract_entity_declaration = ABSTRACT .
 fn abstract_entity_declaration(s: &str) -> IResult<()> {
@@ -425,7 +440,7 @@ fn attribute_decl(s: &str) -> IResult<AttributeDecl> {
 }
 
 // 178
-alias!(AttributeId<'a>, SimpleId, attribute_id);
+id_type!(AttributeId, attribute_id);
 
 // 179
 #[derive(Debug)]
@@ -498,11 +513,9 @@ pub enum BuiltInFunction {
     Length, LoBound, LoIndex, Log, Log2, Log10, Nvl, Odd, RolesOf, Sin, SizeOf,
     Sqrt, Tan, Typeof, Usedin, Value, ValueIn, ValueUnique
 }
-fn built_in_function_(s: &str) -> IResult<BuiltInFunction> {
+fn to_built_in_function(s: &str) -> Option<BuiltInFunction> {
     use BuiltInFunction::*;
-    // Tokenize then match the keyword, instead of doing a huge alt(...)
-    let (rest, kw) = alpha1(s)?;
-    Ok((rest, match kw {
+    Some(match s {
         "abs" => Abs,
         "acos" => Acos,
         "asin" => Asin,
@@ -534,11 +547,12 @@ fn built_in_function_(s: &str) -> IResult<BuiltInFunction> {
         "value" => Value,
         "value_in" => ValueIn,
         "value_unique" => ValueUnique,
-        _ => return build_err(s, "No such built-in function"),
-    }))
+        _ => return None,
+    })
 }
 fn built_in_function(s: &str) -> IResult<BuiltInFunction> {
-    ws(built_in_function_)(s)
+    // Tokenize then match the keyword, instead of doing a huge alt(...)
+    ws(map_opt(alpha1, to_built_in_function))(s)
 }
 
 // 188 built_in_procedure = INSERT | REMOVE .
@@ -669,7 +683,7 @@ fn constant_factor(s: &str) -> IResult<ConstantFactor> {
 }
 
 // 197
-alias!(ConstantId<'a>, SimpleId, constant_id);
+id_type!(ConstantId, constant_id);
 
 // 198
 #[derive(Debug)]
@@ -799,7 +813,7 @@ fn entity_head(s: &str) -> IResult<EntityHead> {
 }
 
 // 208
-alias!(EntityId<'a>, SimpleId, entity_id);
+id_type!(EntityId, entity_id);
 
 // 209
 #[derive(Debug)]
@@ -815,7 +829,7 @@ fn enumeration_extension(s: &str) -> IResult<EnumerationExtension> {
 }
 
 // 210
-alias!(EnumerationId<'a>, SimpleId, enumeration_id);
+id_type!(EnumerationId, enumeration_id);
 
 // 211 enumeration_items = ’(’ enumeration_id { ’,’ enumeration_id } ’)’ .
 #[derive(Debug)]
@@ -977,7 +991,7 @@ fn function_head(s: &str) -> IResult<FunctionHead> {
 }
 
 // 222
-alias!(FunctionId<'a>, SimpleId, function_id);
+id_type!(FunctionId, function_id);
 
 // 223 generalized_types = aggregate_type | general_aggregation_types |
 //                         generic_entity_type | generic_type .
@@ -1478,7 +1492,7 @@ fn one_of(s: &str) -> IResult<OneOf> {
 alias!(Parameter<'a>, Expression, parameter);
 
 // 265
-alias!(ParameterId<'a>, SimpleId, parameter_id);
+id_type!(ParameterId, parameter_id);
 
 // 266
 #[derive(Debug)]
@@ -1579,7 +1593,7 @@ fn procedure_head(s: &str) -> IResult<ProcedureHead> {
 }
 
 // 273
-alias!(ProcedureId<'a>, SimpleId, procedure_id);
+id_type!(ProcedureId, procedure_id);
 
 // 274 qualifiable_factor = attribute_ref | constant_factor | function_call |
 //                          general_ref | population .
@@ -1595,7 +1609,7 @@ pub enum QualifiableFactor<'a> {
     Population(Population<'a>),
 
     // catch-all for attribute, constant, general, population
-    _Ambiguous(SimpleId<'a>),
+    _Ambiguous(&'a str),
 }
 fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
     alt((
@@ -1607,7 +1621,7 @@ fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
                 BuiltInOrFunctionRef::BuiltIn(_) =>
                     QualifiableFactor::FunctionCall(b),
                 BuiltInOrFunctionRef::Ref(b) =>
-                    QualifiableFactor::_Ambiguous(b.0.0),
+                    QualifiableFactor::_Ambiguous(b.0),
             }
         } else {
             QualifiableFactor::FunctionCall(b)
@@ -1618,9 +1632,9 @@ fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
             ConstantFactor::BuiltIn(_) =>
                 QualifiableFactor::ConstantFactor(b),
             ConstantFactor::ConstantRef(b) =>
-                QualifiableFactor::_Ambiguous(b.0.0),
+                QualifiableFactor::_Ambiguous(b.0),
         }),
-        map(simple_id, QualifiableFactor::_Ambiguous),
+        map(simple_id, |b| QualifiableFactor::_Ambiguous(b.0)),
     ))(s)
 }
 
@@ -1880,10 +1894,10 @@ fn rule_head(s: &str) -> IResult<RuleHead> {
 }
 
 // 293
-alias!(RuleId<'a>, SimpleId, rule_id);
+id_type!(RuleId, rule_id);
 
 // 294
-alias!(RuleLabelId<'a>, SimpleId, rule_label_id);
+id_type!(RuleLabelId, rule_label_id);
 
 // 295
 #[derive(Debug)]
@@ -1933,7 +1947,7 @@ fn schema_decl(s: &str) -> IResult<SchemaDecl> {
 }
 
 // 297
-alias!(SchemaId<'a>, SimpleId, schema_id);
+id_type!(SchemaId, schema_id);
 
 // 298
 alias!(SchemaVersionId, StringLiteral, schema_version_id);
@@ -2054,7 +2068,8 @@ fn ambiguous_function_call(s: &str) -> IResult<SimpleFactor> {
     // ambiguous_function_call has a special-case to avoid eating a primary
     // function call, e.g. "cross_product(axis, ref_direction).magnitude"
     map(terminated(
-        pair(simple_id, parens(list0(',', expression))),
+        pair(verify(simple_id, |i| to_built_in_function(i.0).is_none()),
+             parens(list0(',', expression))),
         not(peek(alt((char('.'), char('\\')))))),
         |(a, b)| SimpleFactor::_AmbiguousFunctionCall(a, b))(s)
 }
@@ -2227,7 +2242,7 @@ fn subtype_constraint_head(s: &str) -> IResult<SubtypeConstraintHead> {
 }
 
 // 317
-alias!(SubtypeConstraintId<'a>, SimpleId, subtype_constraint_id);
+id_type!(SubtypeConstraintId, subtype_constraint_id);
 
 // 318 subtype_declaration = SUBTYPE OF ’(’ entity_ref { ’,’ entity_ref } ’)’ .
 #[derive(Debug)]
@@ -2348,7 +2363,7 @@ fn type_decl(s: &str) -> IResult<TypeDecl> {
 }
 
 // 328
-alias!(TypeId<'a>, SimpleId, type_id);
+id_type!(TypeId, type_id);
 
 // 329 type_label = type_label_id | type_label_ref .
 #[derive(Debug)]
@@ -2441,7 +2456,7 @@ fn use_clause(s: &str) -> IResult<UseClause> {
 }
 
 // 337 variable_id = simple_id .
-alias!(VariableId<'a>, SimpleId, variable_id);
+id_type!(VariableId, variable_id);
 
 // 338 where_clause = WHERE domain_rule ’;’ { domain_rule ’;’ } .
 #[derive(Debug)]
