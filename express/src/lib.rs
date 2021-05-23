@@ -170,8 +170,9 @@ impl<'a> SimpleId<'a> {
             "andor" | "array" | "as" | "asin" | "atan" | "bag" | "based_on" |
             "begin" | "binary" | "blength" | "boolean" | "by" | "case" |
             "const_e" | "constant" | "cos" | "derive" | "div" | "else" |
-            "end" | "end_case" | "end_constant" | "end_entity" | "end_if" |
-            "end_local" | "end_procedure" | "end_rule" | "end_schema" |
+            "end" | "end_case" | "end_constant" | "end_entity" |
+            "end_function" | "end_if" | "end_local" | "end_procedure" |
+            "end_repeat" | "end_rule" | "end_schema" |
             "end_subtype_constraint escape" | "end_type" | "entity" |
             "enumeration" | "exists" | "exp" | "extensible" | "false" |
             "fixed" | "for" | "format" | "from" | "function" | "generic" |
@@ -180,13 +181,12 @@ impl<'a> SimpleId<'a> {
             "log" | "log10" | "log2" | "logical" | "loindex" | "mod" | "not" |
             "number" | "nvl" | "odd" | "of" | "oneof" | "optional" | "or" |
             "otherwise" | "pi" | "procedure reference schema" | "query" |
-            "real" | "renamed" | "repeat" | "return" | "rolesof" |
-            "rule" | "select" | "self" | "set" | "sin" | "sizeof" | "skip" |
-            "sqrt" | "string" | "subtype" | "subtype_constraint" |
-            "supertype" | "tan" | "then" | "to" | "total_over" | "true" |
-            "type" | "unique" | "unknown" | "until" | "use" | "usedin" |
-            "value" | "value_in" | "value_unique" | "var" | "where"
-            | "while" | "with" | "xor"
+            "real" | "renamed" | "repeat" | "return" | "rolesof" | "rule" |
+            "select" | "self" | "set" | "sin" | "sizeof" | "skip" | "sqrt" |
+            "string" | "subtype" | "subtype_constraint" | "supertype" | "tan" |
+            "then" | "to" | "total_over" | "true" | "type" | "unique" |
+            "unknown" | "until" | "use" | "usedin" | "value" | "value_in" |
+            "value_unique" | "var" | "where" | "while" | "with" | "xor"
               => build_err(s, "keyword"),
             _ => Ok(r)
         }
@@ -1587,9 +1587,12 @@ alias!(ProcedureId<'a>, SimpleId, procedure_id);
 //                          general_ref | population .
 #[derive(Debug)]
 pub enum QualifiableFactor<'a> {
+    // Function calls should go first, since otherwise they get parsed as a
+    // bare ref and leave the `(arg1, arg2, ...)` sitting on the stack
+    FunctionCall(FunctionCall<'a>),
+
     AttributeRef(AttributeRef<'a>),
     ConstantFactor(ConstantFactor<'a>),
-    FunctionCall(FunctionCall<'a>),
     GeneralRef(GeneralRef<'a>),
     Population(Population<'a>),
 
@@ -2050,10 +2053,12 @@ fn simple_factor(s: &str) -> IResult<SimpleFactor> {
 
         // EntityConstructor has a special-case to avoid eating a primary
         // function call, e.g. "cross_product(axis, ref_direction).magnitude"
-        map(terminated(entity_constructor, not(peek(char('.')))),
+        //
+        map(terminated(entity_constructor, not(peek(alt((char('.'), char('\\')))))),
             EntityConstructor),
         map(interval, Interval),
         map(query_expression, QueryExpression),
+
         map(pair(
             opt(unary_op),
             alt((
@@ -2466,6 +2471,12 @@ mod tests {
     }
 
     #[test]
+    fn test_derived_attr() {
+        let e = derived_attr(r#"users : set of founded_item_select := using_items(self, []);"#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
     fn test_explicit_attr() {
         let e = explicit_attr(r#"operands :  list [2:2] of generic_expression;"#).unwrap();
         assert_eq!(e.0, "");
@@ -2667,6 +2678,15 @@ where
     typeof(sar.relating_shape_aspect)))) = 1))) = 1)) = 1))) = 1);
 end_entity;  "#).unwrap();
         assert_eq!(e.0, "");
+
+        let e = entity_decl(r#"entity founded_item;
+derive
+  users : set of founded_item_select := using_items(self, []);
+where
+  wr1 : sizeof(users) > 0;
+  wr2 : not (self in users);
+end_entity;  "#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
@@ -2802,6 +2822,12 @@ wr1 : self >= 0.0; "#).unwrap();
     }
 
     #[test]
+    fn test_aggregate_initializer() {
+        let e = aggregate_initializer(r#"[d2, normalise(cross_product(d1, d2))\vector.orientation, d1]"#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
     fn test_query_expression() {
         let e = query_expression(r#"query(fcs <* csh\
     connected_face_set.cfs_faces | not ('automotive_design.advanced_face' in
@@ -2858,6 +2884,86 @@ wr1 : self >= 0.0; "#).unwrap();
     ))) | (rh1 :<>: rh2) and (get_diameter_for_round_hole(rh1) = 
     get_diameter_for_round_hole(rh2)))) = 0)) = 0))) = 1"#).unwrap();
         assert_eq!(e.0, "");
+
+        let e = expression(r#"normalise(cross_product(d1, d2))\vector.orientation"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = expression(r#"[d2, normalise(cross_product(d1, d2))\vector.orientation, d1]"#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_function_decl() {
+        let e = function_decl(r#"function acyclic(arg1 : generic_expression; arg2 : set of generic_expression)
+   : boolean;
+local
+  result : boolean;
+end_local;
+  if 'automotive_design.simple_generic_expression' in typeof(arg1) then
+    return (true);
+  end_if;
+  if arg1 in arg2 then
+    return (false);
+  end_if;
+  if 'automotive_design.unary_generic_expression' in typeof(arg1) then
+    return (acyclic(arg1\unary_generic_expression.operand, arg2 + [arg1]));
+  end_if;
+  if 'automotive_design.binary_generic_expression' in typeof(arg1) then
+    return (acyclic(arg1\binary_generic_expression.operands[1], arg2 + [arg1]) 
+    and acyclic(arg1\binary_generic_expression.operands[2], arg2 + [arg1]));
+  end_if;
+  if 'automotive_design.multiple_arity_generic_expression' in typeof(arg1)
+   then
+    result := true;
+    repeat i := 1 to sizeof(arg1\multiple_arity_generic_expression.operands);
+      result := result and acyclic(arg1\multiple_arity_generic_expression.
+      operands[i], arg2 + [arg1]);
+    end_repeat;
+    return (result);
+  end_if;
+end_function; "#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = function_decl(r#"function build_axes(axis : direction; ref_direction : direction) :  list [3:3]
+   of direction;
+local
+  d1 : direction;
+  d2 : direction;
+end_local;
+  d1 := nvl(normalise(axis), dummy_gri||direction([0.0, 0.0, 1.0]));
+  d2 := first_proj_axis(d1, ref_direction);
+  return ([d2, normalise(cross_product(d1, d2))\vector.orientation, d1]);
+end_function;  "#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_return_stmt() {
+        let e = return_stmt(r#"return ([d2, normalise(cross_product(d1, d2))\vector.orientation, d1]);"#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_if_stmt() {
+        let e = if_stmt(r#"if 'automotive_design.multiple_arity_generic_expression' in typeof(arg1)
+   then
+    result := true;
+    repeat i := 1 to sizeof(arg1\multiple_arity_generic_expression.operands);
+      result := result and acyclic(arg1\multiple_arity_generic_expression.
+      operands[i], arg2 + [arg1]);
+    end_repeat;
+    return (result);
+  end_if;"#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_repeat_stmt() {
+        let e = repeat_stmt(r#"repeat i := 1 to sizeof(arg1\multiple_arity_generic_expression.operands);
+      result := result and acyclic(arg1\multiple_arity_generic_expression.
+      operands[i], arg2 + [arg1]);
+    end_repeat;"#).unwrap();
+        assert_eq!(e.0, "");
     }
 
     #[test]
@@ -2893,6 +2999,21 @@ wr1 : self >= 0.0; "#).unwrap();
     vertex_point.vertex_geometry)) and ('automotive_design.vertex_point' in 
     typeof(oe\edge.edge_end)) and ('automotive_design.cartesian_point' in 
     typeof(oe\edge.edge_end\vertex_point.vertex_geometry))))) = 0)))"#).unwrap();
+        assert_eq!(e.0, "");
+
+        let e = function_call(r#"using_items(self, [])"#).unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_actual_parameter_list() {
+        let e = actual_parameter_list("(self, [])").unwrap();
+        assert_eq!(e.0, "");
+    }
+
+    #[test]
+    fn test_parameter() {
+        let e = parameter("[]").unwrap();
         assert_eq!(e.0, "");
     }
 
