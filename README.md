@@ -2,9 +2,11 @@
 _A fast STEP file viewer_
 
 ## Subsystems
-- `step`: STEP file parsing and triangulation
-- `gui`: GUI for rendering step files
 - `cdt`: Constrained Delaunay triangulation (standalone)
+- `express`: Parser for EXPRESS schemas files and a matching code generation
+  system (unused as of yet)
+- `step`: STEP file parsing and triangulation
+- `gui`: GUI for rendering STEP files
 
 ## License
 © 2021 [Formlabs](https://formlabs.com)
