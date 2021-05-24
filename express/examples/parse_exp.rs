@@ -3,7 +3,7 @@ use std::io::Read;
 use std::time::SystemTime;
 
 use clap::{Arg, App};
-use express::{strip_comments_and_lower, parse};
+use express::parse::{strip_comments_and_lower, parse};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("parse_exp")
