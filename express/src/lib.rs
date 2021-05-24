@@ -146,6 +146,7 @@ pub fn parse(s: &str) -> IResult<Syntax> {
 
     let mut ids = IdTypes::default();
     s.1.record_id_types(&mut ids);
+    s.1.patch_id_types(&ids);
 
     Ok(s)
 }
@@ -693,6 +694,11 @@ impl<'a> ConstantBody<'a> {
     fn record_id_types(&self, t: &mut IdTypes<'a>) {
         t.constant.insert(self.constant_id);
     }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        assert!(t.constant.contains(&self.constant_id));
+        self.instantiable_type.patch_id_types(t);
+        self.expression.patch_id_types(t);
+    }
 }
 fn constant_body(s: &str) -> IResult<ConstantBody> {
     map(tuple((
@@ -709,13 +715,18 @@ fn constant_body(s: &str) -> IResult<ConstantBody> {
     })(s)
 }
 
-// 195
+// 195 constant_decl = CONSTANT constant_body { constant_body } END_CONSTANT ’;’ .
 #[derive(Debug)]
 pub struct ConstantDecl<'a>(Vec<ConstantBody<'a>>);
 impl<'a> ConstantDecl<'a> {
     fn record_id_types(&self, t: &mut IdTypes<'a>) {
         for b in &self.0 {
             b.record_id_types(t);
+        }
+    }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        for b in &self.0 {
+            b.patch_id_types(t);
         }
     }
 }
@@ -778,6 +789,16 @@ impl<'a> Declaration<'a> {
             Procedure(d) => d.record_id_types(t),
             SubtypeConstraint(d) => d.record_id_types(t),
             Type(d) => d.record_id_types(t),
+        }
+    }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        use Declaration::*;
+        match self {
+            Entity(d) => d.patch_id_types(t),
+            Function(d) => d.patch_id_types(t),
+            Procedure(d) => d.patch_id_types(t),
+            SubtypeConstraint(d) => d.patch_id_types(t),
+            Type(d) => d.patch_id_types(t),
         }
     }
 }
@@ -868,6 +889,10 @@ impl<'a> EntityDecl<'a> {
     fn record_id_types(&self, t: &mut IdTypes<'a>) {
         self.0.record_id_types(t)
     }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        self.0.patch_id_types(t);
+        self.1.patch_id_types(t);
+    }
 }
 fn entity_decl(s: &str) -> IResult<EntityDecl> {
     let (s, a) = entity_head(s)?;
@@ -883,6 +908,10 @@ pub struct EntityHead<'a>(EntityId<'a>, Subsuper<'a>);
 impl<'a> EntityHead<'a> {
     fn record_id_types(&self, t: &mut IdTypes<'a>) {
         t.entity.insert(self.0);
+    }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        assert!(t.entity.contains(self.0));
+        self.1.patch_id_types(t);
     }
 }
 fn entity_head(s: &str) -> IResult<EntityHead> {
@@ -992,11 +1021,27 @@ impl<'a> Expression<'a> {
         Ok((s, Self(a, b)))
     }
 }
+impl<'a> Expression<'a> {
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        self.0.patch_id_types(t);
+        if let Some(v) = self.1 {
+            v.1.patch_id_types(t);
+        }
+    }
+}
 fn expression(s: &str) -> IResult<Expression> { Expression::parse(s) }
 
 // 217 factor = simple_factor [ ’**’ simple_factor ] .
 #[derive(Debug)]
 pub struct Factor<'a>(SimpleFactor<'a>, Option<SimpleFactor<'a>>);
+impl<'a> Factor<'a> {
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        self.0.patch_id_types(t);
+        if let Some(v) = self.1 {
+            v.patch_id_types(t);
+        }
+    }
+}
 fn factor(s: &str) -> IResult<Factor> {
     map(pair(simple_factor, opt(preceded(tag("**"), simple_factor))),
         |(a, b)| Factor(a, b))(s)
@@ -1040,6 +1085,17 @@ impl<'a> FunctionDecl<'a> {
         self.function_head.record_id_types(t);
         // TODO: do we need to record anything from algorithm_head?
     }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        let mut t = t.clone();
+        self.function_head.patch_id_types(&mut t);
+
+        // The algorithm head can define local types, so we clone our map
+        // here and let algorithm_head.patch_id_types insert things into it
+        let t = self.algorithm_head.patch_id_types(&mut t);
+        for v in &self.stmts {
+            v.patch_id_types(&t);
+        }
+    }
 }
 fn function_decl(s: &str) -> IResult<FunctionDecl> {
     map(tuple((
@@ -1066,6 +1122,13 @@ pub struct FunctionHead<'a> {
 impl<'a> FunctionHead<'a> {
     fn record_id_types(&self, t: &mut IdTypes<'a>) {
         t.function.insert(self.id);
+    }
+    fn patch_id_types(&mut self, t: &mut IdTypes<'a>) {
+        assert!(t.function.contains(self.id));
+        for p in &self.params {
+            p.patch_id_types(t); // Modifies the IdTypes struct
+        }
+        self.out.patch_id_types(t);
     }
 }
 fn function_head(s: &str) -> IResult<FunctionHead> {
@@ -1308,6 +1371,15 @@ fn index_qualifier(s: &str) -> IResult<IndexQualifier> {
 pub enum InstantiableType<'a> {
     Concrete(ConcreteTypes<'a>),
     EntityRef(EntityRef<'a>),
+}
+impl<'a> InstantiableType<'a> {
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        use InstantiableType::*;
+        match self {
+            Concrete(c) => c.patch_id_types(t),
+            EntityRef(r) => assert!(t.entity.contains(&EntityId(r.0))),
+        }
+    }
 }
 fn instantiable_type(s: &str) -> IResult<InstantiableType> {
     use InstantiableType::*;
@@ -1656,7 +1728,17 @@ pub struct ProcedureDecl<'a>(ProcedureHead<'a>, AlgorithmHead<'a>, Vec<Stmt<'a>>
 impl<'a> ProcedureDecl<'a> {
     fn record_id_types(&self, t: &mut IdTypes<'a>) {
         self.0.record_id_types(t);
-        // TODO: do anything for AlgorithmHead?
+    }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        let mut t = t.clone();
+        self.0.patch_id_types(&mut t);
+
+        // The algorithm head can define local types, so we clone our map
+        // here and let algorithm_head.patch_id_types insert things into it
+        let t = self.1.patch_id_types(&mut t);
+        for v in &self.2 {
+            v.patch_id_types(&t);
+        }
     }
 }
 fn procedure_decl(s: &str) -> IResult<ProcedureDecl> {
@@ -2049,6 +2131,10 @@ impl<'a> SchemaBody<'a> {
             d.record_id_types(t);
         }
     }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        self.constants.patch_id_types(t);
+        self.declarations.patch_id_types(t);
+    }
 }
 fn schema_body(s: &str) -> IResult<SchemaBody> {
     map(tuple((
@@ -2074,6 +2160,9 @@ pub struct SchemaDecl<'a> {
 impl<'a> SchemaDecl<'a> {
     fn record_id_types(&self, t: &mut IdTypes<'a>) {
         self.body.record_id_types(t);
+    }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        self.body.patch_id_types(t);
     }
 }
 fn schema_decl(s: &str) -> IResult<SchemaDecl> {
@@ -2180,6 +2269,12 @@ impl<'a> SimpleExpression<'a> {
         let (s, b) = many0(pair(add_like_op, term))(s)?;
         Ok((s, SimpleExpression(Box::new(a), b)))
     }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        self.0.patch_id_types(t);
+        for v in self.1 {
+            v.patch_id_types(t);
+        }
+    }
 }
 fn simple_expression(s: &str) -> IResult<SimpleExpression> {
     SimpleExpression::parse(s)
@@ -2207,13 +2302,41 @@ pub enum SimpleFactor<'a> {
     QueryExpression(QueryExpression<'a>),
     Unary(Option<UnaryOp>, ExpressionOrPrimary<'a>)
 }
+impl<'a> SimpleFactor<'a> {
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        match self {
+            SimpleFactor::_AmbiguousFunctionCall(id, v) =>
+                if t.entity.contains(&EntityId(id.0)) {
+                    *self = Factor::EntityConstructor(EntityConstructor {
+                        entity_ref: EntityRef(id.0),
+                        args: v,
+                    });
+                } else if t.function.contains(&FunctionId(id.0)) {
+                    *self = Factor::Unary(None, ExpressionOrPrimary::Primary(
+                            Primary::Qualifiable(
+                                QualifiableFactor::FunctionCall(
+                                    FunctionCall(
+                                        BuiltInOrFunctionRef::Ref(
+                                            FunctionRef(id.0)),
+                                        ActualParameterList(v),
+                                    )),
+                                vec![], // no qualifiers
+                            )));
+                } else {
+                    panic!("Could not match {:?}", id);
+                },
+            _ => unimplemented!(),
+        }
+    }
+}
 
 fn ambiguous_function_call(s: &str) -> IResult<SimpleFactor> {
-    // ambiguous_function_call has a special-case to avoid eating a primary
-    // function call, e.g. "cross_product(axis, ref_direction).magnitude"
     map(terminated(
-        pair(verify(simple_id, |i| to_built_in_function(i.0).is_none()),
-             parens(list0(',', expression))),
+        // simple_id already refuses to eat built-in functions
+        pair(simple_id, parens(list0(',', expression))),
+
+        // Special-case to avoid eating a function call with a qualifier, e.g.
+        // "cross_product(axis, ref_direction).magnitude"
         not(peek(alt((char('.'), char('\\')))))),
         |(a, b)| SimpleFactor::_AmbiguousFunctionCall(a, b))(s)
 }
@@ -2475,6 +2598,11 @@ impl<'a> Syntax<'a> {
             v.record_id_types(t);
         }
     }
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        for v in &self.0 {
+            v.patch_id_types(t);
+        }
+    }
 }
 fn syntax(s: &str) -> IResult<Syntax> {
     preceded(multispace0, map(many1(schema_decl), Syntax))(s)
@@ -2483,6 +2611,14 @@ fn syntax(s: &str) -> IResult<Syntax> {
 // 325 term = factor { multiplication_like_op factor } .
 #[derive(Debug)]
 pub struct Term<'a>(Factor<'a>, Vec<(MultiplicationLikeOp, Factor<'a>)>);
+impl<'a> Term<'a> {
+    fn patch_id_types(&mut self, t: &IdTypes<'a>) {
+        self.0.patch_id_types(t);
+        for v in self.1 {
+            v.patch_id_types(t);
+        }
+    }
+}
 fn term(s: &str) -> IResult<Term> {
     map(pair(factor, many0(pair(multiplication_like_op, factor))),
         |(a, b)| Term(a, b))(s)
