@@ -28,20 +28,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let start = SystemTime::now();
     let s = strip_comments_and_lower(&buffer);
-    let parsed = parse(&s);
-    if let Err(e) = &parsed {
-        eprintln!("Got err {:?}", e);
-    }
+    let mut parsed = parse(&s);
 
     let end = SystemTime::now();
     let since_the_epoch = end.duration_since(start).expect("Time went backwards");
     eprintln!("time {:?}", since_the_epoch);
 
-    match matches.value_of("output") {
-        Some(o) => std::fs::write(o, format!("{:#?}", parsed))?,
-        _ => if !matches.is_present("quiet") {
-            println!("{:#?}", parsed);
-        }
+    match parsed {
+        Err(e) => eprintln!("Got err {:?}", e),
+        Ok((_, ref mut p)) => {
+            println!("Types:\n{}", express::gen::gen(p));
+            match matches.value_of("output") {
+                Some(o) => std::fs::write(o, format!("Parse tree:\n{:#?}", p))?,
+                _ => if !matches.is_present("quiet") {
+                    println!("Parse tree:\n{:#?}", parsed);
+                }
+            }
+        },
     };
     Ok(())
 }
