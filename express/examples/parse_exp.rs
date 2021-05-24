@@ -3,7 +3,7 @@ use std::io::Read;
 use std::time::SystemTime;
 
 use clap::{Arg, App};
-use express::{strip_comments_and_lower, syntax};
+use express::{strip_comments_and_lower, parse};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("parse_exp")
@@ -12,6 +12,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .arg(Arg::with_name("input")
             .takes_value(true)
             .required(true))
+        .arg(Arg::with_name("quiet")
+            .short("q")
+            .long("quiet")
+            .help("disable output"))
         .arg(Arg::with_name("output")
             .takes_value(true))
         .get_matches();
@@ -24,7 +28,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let start = SystemTime::now();
     let s = strip_comments_and_lower(&buffer);
-    let parsed = syntax(&s);
+    let parsed = parse(&s);
     if let Err(e) = &parsed {
         eprintln!("Got err {:?}", e);
     }
@@ -35,7 +39,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match matches.value_of("output") {
         Some(o) => std::fs::write(o, format!("{:#?}", parsed))?,
-        _ => println!("{:#?}", parsed),
+        _ => if !matches.is_present("quiet") {
+            println!("{:#?}", parsed);
+        }
     };
     Ok(())
 }

@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use memchr::{memchr, memchr_iter};
 use nom::{
     branch::{alt},
@@ -88,7 +89,7 @@ macro_rules! alias {
 /// to the inner `&str`.
 macro_rules! id_type {
     ($a:ident, $parse_a:ident) => {
-        #[derive(Debug)]
+        #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
         pub struct $a<'a>(&'a str);
         fn $parse_a(s: &str) -> IResult<$a> {
             let (s, r) = SimpleId::parse(s)?;
@@ -101,6 +102,53 @@ macro_rules! id_type {
     }
 }
 
+
+/// Remove comments from an EXPRESS file and converts to lower-case.  This
+/// should be run before any parsers.
+pub fn strip_comments_and_lower(data: &[u8]) -> String {
+    let mut out = String::with_capacity(data.len());
+    let mut i = 0;
+    while i < data.len() {
+        match data[i] {
+            // Block comments
+            b'(' if i + 1 < data.len() && data[i + 1] == b'*' => {
+                for j in memchr_iter(b')', &data[i + 2..]) {
+                    if data[i + j + 1] == b'*' {
+                        i += j + 2;
+                        break;
+                    }
+                }
+            },
+            // Single-line comments
+            b'-' if i + 1 < data.len() && data[i + 1] == b'-' => {
+                let newline = memchr(b'\n', &data[i + 2..]);
+                i += newline.unwrap_or(0) + 2;
+            },
+            c => out.push(c.to_ascii_lowercase() as char)
+        }
+        i += 1;
+    }
+    out
+}
+
+#[derive(Debug, Default)]
+struct IdTypes<'a> {
+    constant: HashSet<ConstantId<'a>>,
+    entity: HashSet<EntityId<'a>>,
+    function: HashSet<FunctionId<'a>>,
+    procedure: HashSet<ProcedureId<'a>>,
+    type_: HashSet<TypeId<'a>>,
+    rule: HashSet<RuleId<'a>>,
+    subtype_constraint: HashSet<SubtypeConstraintId<'a>>,
+}
+pub fn parse(s: &str) -> IResult<Syntax> {
+    let s = syntax(s)?;
+
+    let mut ids = IdTypes::default();
+    s.1.record_id_types(&mut ids);
+
+    Ok(s)
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -641,6 +689,11 @@ pub struct ConstantBody<'a> {
     pub instantiable_type: InstantiableType<'a>,
     pub expression: Expression<'a>,
 }
+impl<'a> ConstantBody<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        t.constant.insert(self.constant_id);
+    }
+}
 fn constant_body(s: &str) -> IResult<ConstantBody> {
     map(tuple((
         constant_id,
@@ -659,6 +712,13 @@ fn constant_body(s: &str) -> IResult<ConstantBody> {
 // 195
 #[derive(Debug)]
 pub struct ConstantDecl<'a>(Vec<ConstantBody<'a>>);
+impl<'a> ConstantDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        for b in &self.0 {
+            b.record_id_types(t);
+        }
+    }
+}
 fn constant_decl(s: &str) -> IResult<ConstantDecl> {
     map(tuple((
         kw("constant"),
@@ -708,6 +768,18 @@ pub enum Declaration<'a> {
     Procedure(ProcedureDecl<'a>),
     SubtypeConstraint(SubtypeConstraintDecl<'a>),
     Type(TypeDecl<'a>),
+}
+impl<'a> Declaration<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        use Declaration::*;
+        match self {
+            Entity(d) => d.record_id_types(t),
+            Function(d) => d.record_id_types(t),
+            Procedure(d) => d.record_id_types(t),
+            SubtypeConstraint(d) => d.record_id_types(t),
+            Type(d) => d.record_id_types(t),
+        }
+    }
 }
 fn declaration(s: &str) -> IResult<Declaration> {
     use Declaration::*;
@@ -792,6 +864,11 @@ pub struct EntityConstructor<'a> {
 // 206 entity_decl = entity_head entity_body END_ENTITY ’;’ .
 #[derive(Debug)]
 pub struct EntityDecl<'a>(EntityHead<'a>, EntityBody<'a>);
+impl<'a> EntityDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        self.0.record_id_types(t)
+    }
+}
 fn entity_decl(s: &str) -> IResult<EntityDecl> {
     let (s, a) = entity_head(s)?;
     let (s, b) = entity_body(s)?;
@@ -803,6 +880,11 @@ fn entity_decl(s: &str) -> IResult<EntityDecl> {
 // 207 entity_head = ENTITY entity_id subsuper ’;’ .
 #[derive(Debug)]
 pub struct EntityHead<'a>(EntityId<'a>, Subsuper<'a>);
+impl<'a> EntityHead<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        t.entity.insert(self.0);
+    }
+}
 fn entity_head(s: &str) -> IResult<EntityHead> {
     map(tuple((
         kw("entity"),
@@ -953,6 +1035,12 @@ pub struct FunctionDecl<'a> {
     pub algorithm_head: AlgorithmHead<'a>,
     pub stmts: Vec<Stmt<'a>>,
 }
+impl<'a> FunctionDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        self.function_head.record_id_types(t);
+        // TODO: do we need to record anything from algorithm_head?
+    }
+}
 fn function_decl(s: &str) -> IResult<FunctionDecl> {
     map(tuple((
         function_head,
@@ -974,6 +1062,11 @@ pub struct FunctionHead<'a> {
     pub id: FunctionId<'a>,
     pub params: Option<Vec<FormalParameter<'a>>>,
     pub out: ParameterType<'a>,
+}
+impl<'a> FunctionHead<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        t.function.insert(self.id);
+    }
 }
 fn function_head(s: &str) -> IResult<FunctionHead> {
     map(tuple((
@@ -1229,7 +1322,7 @@ fn integer_type(s: &str) -> IResult<()> {
     map(kw("integer"), |_| ())(s)
 }
 
-// 242
+// 242 interface_specification = reference_clause | use_clause .
 #[derive(Debug)]
 pub enum InterfaceSpecification<'a> {
     ReferenceClause(ReferenceClause<'a>),
@@ -1560,6 +1653,12 @@ fn procedure_call_stmt(s: &str) -> IResult<ProcedureCallStmt> {
 // 271 procedure_decl = procedure_head algorithm_head { stmt } END_PROCEDURE ’;’ .
 #[derive(Debug)]
 pub struct ProcedureDecl<'a>(ProcedureHead<'a>, AlgorithmHead<'a>, Vec<Stmt<'a>>);
+impl<'a> ProcedureDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        self.0.record_id_types(t);
+        // TODO: do anything for AlgorithmHead?
+    }
+}
 fn procedure_decl(s: &str) -> IResult<ProcedureDecl> {
     map(tuple((
         procedure_head,
@@ -1576,6 +1675,11 @@ fn procedure_decl(s: &str) -> IResult<ProcedureDecl> {
 pub struct ProcedureHead<'a> {
     pub procedure_id: ProcedureId<'a>,
     pub args: Option<Vec<(bool, FormalParameter<'a>)>>,
+}
+impl<'a> ProcedureHead<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        t.procedure.insert(self.procedure_id);
+    }
 }
 fn procedure_head(s: &str) -> IResult<ProcedureHead> {
     map(tuple((
@@ -1858,6 +1962,11 @@ pub struct RuleDecl<'a> {
     pub stmt: Vec<Stmt<'a>>,
     pub where_clause: WhereClause<'a>,
 }
+impl<'a> RuleDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        self.rule_head.record_id_types(t);
+    }
+}
 fn rule_decl(s: &str) -> IResult<RuleDecl> {
     map(tuple((
         rule_head,
@@ -1879,6 +1988,11 @@ fn rule_decl(s: &str) -> IResult<RuleDecl> {
 pub struct RuleHead<'a> {
     pub rule_id: RuleId<'a>,
     pub entities: Vec<EntityRef<'a>>,
+}
+impl<'a> RuleHead<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        t.rule.insert(self.rule_id);
+    }
 }
 fn rule_head(s: &str) -> IResult<RuleHead> {
     map(tuple((
@@ -1905,11 +2019,36 @@ pub enum DeclarationOrRuleDecl<'a> {
     Declaration(Declaration<'a>),
     RuleDecl(RuleDecl<'a>),
 }
+impl<'a> DeclarationOrRuleDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        use DeclarationOrRuleDecl::*;
+        match self {
+            Declaration(d) => d.record_id_types(t),
+            RuleDecl(d) => d.record_id_types(t),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct SchemaBody<'a> {
     pub interfaces: Vec<InterfaceSpecification<'a>>,
     pub constants: Option<ConstantDecl<'a>>,
     pub declarations: Vec<DeclarationOrRuleDecl<'a>>,
+}
+impl<'a> SchemaBody<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        // Nothing to do for interfaces, since we don't support them
+        if !self.interfaces.is_empty() {
+            panic!("Interfaces are not supported");
+        }
+
+        if let Some(c) = &self.constants {
+            c.record_id_types(t);
+        }
+        for d in &self.declarations {
+            d.record_id_types(t);
+        }
+    }
 }
 fn schema_body(s: &str) -> IResult<SchemaBody> {
     map(tuple((
@@ -1931,6 +2070,11 @@ pub struct SchemaDecl<'a> {
     pub id: SchemaId<'a>,
     pub version: Option<SchemaVersionId>,
     pub body: SchemaBody<'a>,
+}
+impl<'a> SchemaDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        self.body.record_id_types(t);
+    }
 }
 fn schema_decl(s: &str) -> IResult<SchemaDecl> {
     map(tuple((
@@ -2217,7 +2361,12 @@ fn subtype_constraint_body(s: &str) -> IResult<SubtypeConstraintBody> {
 //                               END_SUBTYPE_CONSTRAINT ’;’ .
 #[derive(Debug)]
 pub struct SubtypeConstraintDecl<'a>(SubtypeConstraintHead<'a>,
-                                 SubtypeConstraintBody<'a>);
+                                     SubtypeConstraintBody<'a>);
+impl<'a> SubtypeConstraintDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        self.0.record_id_types(t);
+    }
+}
 fn subtype_constraint_decl(s: &str) -> IResult<SubtypeConstraintDecl> {
     map(tuple((
         subtype_constraint_head,
@@ -2231,6 +2380,11 @@ fn subtype_constraint_decl(s: &str) -> IResult<SubtypeConstraintDecl> {
 //                               entity_ref ’;’ .
 #[derive(Debug)]
 pub struct SubtypeConstraintHead<'a>(SubtypeConstraintId<'a>, EntityRef<'a>);
+impl<'a> SubtypeConstraintHead<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        t.subtype_constraint.insert(self.0);
+    }
+}
 fn subtype_constraint_head(s: &str) -> IResult<SubtypeConstraintHead> {
     map(tuple((
         kw("subtype_constraint"),
@@ -2315,7 +2469,14 @@ fn supertype_term(s: &str) -> IResult<SupertypeTerm> {
 // 324 syntax = schema_decl { schema_decl } .
 #[derive(Debug)]
 pub struct Syntax<'a>(Vec<SchemaDecl<'a>>);
-pub fn syntax(s: &str) -> IResult<Syntax> {
+impl<'a> Syntax<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        for v in &self.0 {
+            v.record_id_types(t);
+        }
+    }
+}
+fn syntax(s: &str) -> IResult<Syntax> {
     preceded(multispace0, map(many1(schema_decl), Syntax))(s)
 }
 
@@ -2344,6 +2505,11 @@ pub struct TypeDecl<'a> {
     pub type_id: TypeId<'a>,
     pub underlying_type: UnderlyingType<'a>,
     pub where_clause: Option<WhereClause<'a>>,
+}
+impl<'a> TypeDecl<'a> {
+    fn record_id_types(&self, t: &mut IdTypes<'a>) {
+        t.type_.insert(self.type_id);
+    }
 }
 fn type_decl(s: &str) -> IResult<TypeDecl> {
     map(tuple((
@@ -3152,33 +3318,3 @@ end_function;  "#).unwrap();
     }
 
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-/// Remove comments from an EXPRESS file and converts to lower-case
-pub fn strip_comments_and_lower(data: &[u8]) -> String {
-    let mut out = String::with_capacity(data.len());
-    let mut i = 0;
-    while i < data.len() {
-        match data[i] {
-            // Block comments
-            b'(' if i + 1 < data.len() && data[i + 1] == b'*' => {
-                for j in memchr_iter(b')', &data[i + 2..]) {
-                    if data[i + j + 1] == b'*' {
-                        i += j + 2;
-                        break;
-                    }
-                }
-            },
-            // Single-line comments
-            b'-' if i + 1 < data.len() && data[i + 1] == b'-' => {
-                let newline = memchr(b'\n', &data[i + 2..]);
-                i += newline.unwrap_or(0) + 2;
-            },
-            c => out.push(c.to_ascii_lowercase() as char)
-        }
-        i += 1;
-    }
-    out
-}
-
