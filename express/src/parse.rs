@@ -826,7 +826,7 @@ pub struct EntityConstructor<'a> {
 
 // 206 entity_decl = entity_head entity_body END_ENTITY ’;’ .
 #[derive(Debug)]
-pub struct EntityDecl<'a>(pub EntityHead<'a>, EntityBody<'a>);
+pub struct EntityDecl<'a>(pub EntityHead<'a>, pub EntityBody<'a>);
 fn entity_decl(s: &str) -> IResult<EntityDecl> {
     let (s, a) = entity_head(s)?;
     let (s, b) = entity_body(s)?;

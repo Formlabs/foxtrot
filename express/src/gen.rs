@@ -2,12 +2,48 @@ use std::collections::HashSet;
 use codegen::{Enum, Scope, Struct};
 use crate::parse::*;
 
+struct EntityData<'a> {
+    name: &'a str,
+    inherited_attrs: Vec<AttributeData<'a>>,
+    attrs: Vec<AttributeData<'a>>,
+}
+struct AttributeData<'a> {
+    name: &'a str,
+    type_: String,
+    optional: bool,
+}
+
+impl<'a> EntityData<'a> {
+    /// Builds an initial `EntityData` object, with name and `attrs` populated
+    fn from_entity_decl(d: &'a EntityDecl, entity_names: &HashSet<&str>) -> Self {
+        let name = d.0.0.0;
+        let attrs = d.1.explicit_attr.iter()
+            .flat_map(ExplicitAttr::to_attrs)
+            .collect();
+        assert!(entity_names.contains(name));
+        Self {
+            name, attrs, inherited_attrs: vec![],
+        }
+    }
+}
+impl<'a> ExplicitAttr<'a> {
+    fn to_attrs(&self) -> impl Iterator<Item=AttributeData> + '_ {
+        self.attributes.iter().map(move |a|
+            AttributeData {
+                name: "", // TODO,
+                type_: "".to_owned(), // TODO
+                optional: self.optional,
+            })
+    }
+}
+
 pub fn gen(s: &mut Syntax) -> String {
     assert!(s.0.len() == 1, "Multiple schemas are unsupported");
 
     let mut entity_names = HashSet::new();
     s.collect_entity_names(&mut entity_names);
 
+    // Convert ambiguous ids to entity names
     s.disambiguate(&entity_names);
 
     let mut scope = Scope::new();
