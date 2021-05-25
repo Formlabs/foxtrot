@@ -1,50 +1,54 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 use codegen::{Enum, Scope, Struct};
 use crate::parse::*;
 
-struct EntityData<'a> {
+////////////////////////////////////////////////////////////////////////////////
+// Helper types to use when doing code-gen
+struct TypeHead<'a> {
     name: &'a str,
-    inherited_attrs: Vec<AttributeData<'a>>,
-    attrs: Vec<AttributeData<'a>>,
+    name_camel: String,
+    has_lifetime: bool,
+}
+enum TypeBody<'a> {
+    Entity {
+        // In order, with parent attributes first
+        attrs: Vec<AttributeData<'a>>,
+    },
+    // These are all TYPE in EXPRESS, but we unpack them here
+    Redeclared(&'a str),
+    Enum(Vec<&'a str>),
+    Select(Vec<&'a str>),
 }
 struct AttributeData<'a> {
-    name: &'a str,
+    name: &'a str, // already camel-case
     type_: String,
     optional: bool,
 }
 
-impl<'a> EntityData<'a> {
-    /// Builds an initial `EntityData` object, with name and `attrs` populated
-    fn from_entity_decl(d: &'a EntityDecl, entity_names: &HashSet<&str>) -> Self {
-        let name = d.0.0.0;
-        let attrs = d.1.explicit_attr.iter()
-            .flat_map(ExplicitAttr::to_attrs)
-            .collect();
-        assert!(entity_names.contains(name));
-        Self {
-            name, attrs, inherited_attrs: vec![],
-        }
-    }
+// A reference into an existing `Syntax` tree, for convenient random access
+enum Ref<'a> {
+    Entity(&'a EntityDecl<'a>),
+    Type(&'a TypeDecl<'a>),
 }
-impl<'a> ExplicitAttr<'a> {
-    fn to_attrs(&self) -> impl Iterator<Item=AttributeData> + '_ {
-        self.attributes.iter().map(move |a|
-            AttributeData {
-                name: "", // TODO,
-                type_: "".to_owned(), // TODO
-                optional: self.optional,
-            })
-    }
-}
+
+////////////////////////////////////////////////////////////////////////////////
 
 pub fn gen(s: &mut Syntax) -> String {
     assert!(s.0.len() == 1, "Multiple schemas are unsupported");
 
+    // First pass: collect entity names, then convert ambiguous IDs in SELECT
+    // data types into Entity or Type refs
     let mut entity_names = HashSet::new();
     s.collect_entity_names(&mut entity_names);
-
-    // Convert ambiguous ids to entity names
     s.disambiguate(&entity_names);
+
+    // From this point on, `s` is becomes immutable.  We build a map from type
+    // names (in camel_case) to references into `s`, for ease of access.
+    let mut ref_map = HashMap::new();
+    s.build_ref_map(&mut ref_map);
+
+    // Finally, we can build out the type map
+    // TODO
 
     let mut scope = Scope::new();
     s.gen(&mut scope);
@@ -75,6 +79,11 @@ impl<'a> Syntax<'a> {
             v.collect_entity_names(entity_names);
         }
     }
+    fn build_ref_map(&'a self, ref_map: &mut HashMap<&'a str, Ref<'a>>) {
+        for v in &self.0 {
+            v.build_ref_map(ref_map);
+        }
+    }
     fn disambiguate(&mut self, entity_names: &HashSet<&str>) {
         for v in &mut self.0 {
             v.disambiguate(entity_names);
@@ -89,6 +98,9 @@ impl<'a> Syntax<'a> {
 impl<'a> SchemaDecl<'a> {
     fn collect_entity_names(&self, entity_names: &mut HashSet<&'a str>) {
         self.body.collect_entity_names(entity_names);
+    }
+    fn build_ref_map(&'a self, ref_map: &mut HashMap<&'a str, Ref<'a>>) {
+        self.body.build_ref_map(ref_map);
     }
     fn disambiguate(&mut self, entity_names: &HashSet<&str>) {
         self.body.disambiguate(entity_names)
@@ -111,6 +123,15 @@ impl<'a> SchemaBody<'a> {
             match d {
                 DeclarationOrRuleDecl::Declaration(d) =>
                     d.collect_entity_names(entity_names),
+                DeclarationOrRuleDecl::RuleDecl(_) => (),
+            }
+        }
+    }
+    fn build_ref_map(&'a self, ref_map: &mut HashMap<&'a str, Ref<'a>>) {
+        for d in &self.declarations {
+            match d {
+                DeclarationOrRuleDecl::Declaration(d) =>
+                    d.build_ref_map(ref_map),
                 DeclarationOrRuleDecl::RuleDecl(_) => (),
             }
         }
@@ -142,6 +163,17 @@ impl<'a> Declaration<'a> {
         match self {
             Declaration::Type(d) => d.disambiguate(entity_names),
             _ => (), // only code-gen for types right now
+        }
+    }
+    fn build_ref_map(&'a self, ref_map: &mut HashMap<&'a str, Ref<'a>>) {
+        match self {
+            Declaration::Entity(d) => {
+                ref_map.insert(d.0.0.0, Ref::Entity(d));
+            },
+            Declaration::Type(d) => {
+                ref_map.insert(d.type_id.0, Ref::Type(d));
+            },
+            _ => (),
         }
     }
 }
@@ -185,7 +217,7 @@ impl <'a> SimpleTypes<'a> {
             SimpleTypes::Logical => "Option<bool>",
             SimpleTypes::Number => "f64",
             SimpleTypes::Real(_) => "f64",
-            SimpleTypes::String(_) => "String",
+            SimpleTypes::String(_) => "&'a str",
         });
     }
 }
@@ -250,7 +282,7 @@ impl<'a> SelectType<'a> {
         }
     }
 }
-impl <'a> NamedTypes<'a> {
+impl<'a> NamedTypes<'a> {
     fn disambiguate(&mut self, entity_names: &HashSet<&str>) {
         if let NamedTypes::_Ambiguous(r) = self {
             *self = if entity_names.contains(r.0) {
