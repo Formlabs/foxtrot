@@ -31,7 +31,7 @@ impl<'a> Type<'a> {
         }
     }
 }
-struct TypeMap<'a>(HashMap<&'a str, Type<'a>>);
+struct TypeMap<'a>(HashMap<&'a str, Type<'a>>, &'a HashMap<&'a str, Ref<'a>>);
 impl <'a> TypeMap<'a> {
     fn to_rtype(&self, s: &str) -> String {
         if self.0.get(s).map(Type::is_entity).unwrap_or(false) {
@@ -73,10 +73,12 @@ struct AttributeData<'a> {
     optional: bool,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 // A reference into an existing `Syntax` tree, for convenient random access
 enum Ref<'a> {
     Entity(&'a EntityDecl<'a>),
-    Type(&'a TypeDecl<'a>),
+    Type(&'a UnderlyingType<'a>),
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,11 +98,11 @@ pub fn gen(s: &mut Syntax) -> String {
     s.build_ref_map(&mut ref_map);
 
     // Finally, we can build out the type map
-    let mut type_map = TypeMap(HashMap::new());
+    let mut type_map = TypeMap(HashMap::new(), &ref_map);
     for (k,v) in ref_map.iter() {
         let m = match v {
-            Ref::Entity(e) => e.build_type_map(&mut type_map),
-            Ref::Type(t) => t.build_type_map(&mut type_map),
+            Ref::Entity(e) => e.to_type(&mut type_map),
+            Ref::Type(t) => t.to_type(&mut type_map),
         };
         type_map.0.insert(k, m);
     }
@@ -207,7 +209,7 @@ impl<'a> Declaration<'a> {
                 ref_map.insert(d.0.0.0, Ref::Entity(d));
             },
             Declaration::Type(d) => {
-                ref_map.insert(d.type_id.0, Ref::Type(d));
+                ref_map.insert(d.type_id.0, Ref::Type(&d.underlying_type));
             },
             _ => (),
         }
@@ -222,13 +224,31 @@ impl<'a> TypeDecl<'a> {
             _ => (),
         }
     }
-    fn build_type_map(&self, type_map: &mut TypeMap) -> Type {
-        // TODO
+}
+impl<'a> UnderlyingType<'a> {
+    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+        match self {
+            UnderlyingType::Concrete(c) => c.to_type(type_map),
+            UnderlyingType::Constructed(c) => c.to_type(type_map),
+        }
+    }
+}
+impl<'a> ConcreteTypes<'a> {
+    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+        match self {
+            ConcreteTypes::Aggregation(_) => unimplemented!(),
+            ConcreteTypes::Simple(s) => unimplemented!(),
+            ConcreteTypes::TypeRef(t) => unimplemented!(),
+        }
+    }
+}
+impl<'a> ConstructedTypes<'a> {
+    fn to_type(&self, type_map: &mut TypeMap) -> Type {
         unimplemented!()
     }
 }
 impl<'a> EntityDecl<'a> {
-    fn build_type_map(&self, type_map: &mut TypeMap) -> Type {
+    fn to_type(&self, type_map: &mut TypeMap) -> Type {
         // TODO
         unimplemented!()
     }
@@ -274,20 +294,6 @@ impl<'a> NamedTypes<'a> {
             } else {
                  NamedTypes::Type(TypeRef(r.0))
             };
-        }
-    }
-    fn is_entity(&self) -> bool {
-        match self {
-            NamedTypes::Entity(_) => true,
-            NamedTypes::Type(_) => false,
-            NamedTypes::_Ambiguous(_) => panic!("Ambiguous named type"),
-        }
-    }
-    fn to_camel(&self) -> String {
-        match self {
-            NamedTypes::Entity(r) => to_camel(r.0),
-            NamedTypes::Type(r) => to_camel(r.0),
-            NamedTypes::_Ambiguous(_) => panic!("Ambiguous named type"),
         }
     }
 }
