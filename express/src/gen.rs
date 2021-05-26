@@ -1,12 +1,12 @@
 use std::collections::{HashSet, HashMap};
-use codegen::{Enum, Scope, Struct};
+use codegen::{Scope, Struct};
 use crate::parse::*;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper types to use when doing code-gen
 struct TypeHead<'a> {
     name: &'a str,
-    name_camel: String,
+    native: bool,
     has_lifetime: bool,
 }
 enum TypeBody<'a> {
@@ -19,6 +19,54 @@ enum TypeBody<'a> {
     Enum(Vec<&'a str>),
     Select(Vec<&'a str>),
 }
+struct Type<'a> {
+    head: TypeHead<'a>,
+    body: TypeBody<'a>,
+}
+impl<'a> Type<'a> {
+    fn is_entity(&self) -> bool {
+        match self.body {
+            TypeBody::Entity { .. } => true,
+            _ => false,
+        }
+    }
+}
+struct TypeMap<'a>(HashMap<&'a str, Type<'a>>);
+impl <'a> TypeMap<'a> {
+    fn to_rtype(&self, s: &str) -> String {
+        if self.0.get(s).map(Type::is_entity).unwrap_or(false) {
+            format!("Id<{}>", s)
+        } else {
+            s.to_owned()
+        }
+    }
+}
+
+impl<'a> Type<'a> {
+    fn gen(&self, scope: &mut Scope, type_map: &TypeMap) {
+        match &self.body {
+            TypeBody::Redeclared(c) => {
+                scope.new_struct(&to_camel(self.head.name))
+                    .tuple_field(type_map.to_rtype(c));
+            },
+            TypeBody::Enum(c) => {
+                let mut t = scope.new_enum(&to_camel(self.head.name));
+                for v in c {
+                    t.new_variant(&to_camel(v));
+                }
+            },
+            TypeBody::Select(c) => {
+                let mut t = scope.new_enum(&to_camel(self.head.name));
+                for v in c {
+                    t.new_variant(&to_camel(v))
+                        .tuple(&type_map.to_rtype(v));
+                }
+            }
+            _ => unimplemented!(),
+        };
+    }
+}
+
 struct AttributeData<'a> {
     name: &'a str, // already camel-case
     type_: String,
@@ -48,10 +96,20 @@ pub fn gen(s: &mut Syntax) -> String {
     s.build_ref_map(&mut ref_map);
 
     // Finally, we can build out the type map
-    // TODO
+    let mut type_map = TypeMap(HashMap::new());
+    for (k,v) in ref_map.iter() {
+        let m = match v {
+            Ref::Entity(e) => e.build_type_map(&mut type_map),
+            Ref::Type(t) => t.build_type_map(&mut type_map),
+        };
+        type_map.0.insert(k, m);
+    }
 
+    // Step four: do codegen on the completed type map
     let mut scope = Scope::new();
-    s.gen(&mut scope);
+    for (k,v) in type_map.0.iter() {
+        v.gen(&mut scope, &type_map);
+    }
     scope.to_string()
 }
 
@@ -89,11 +147,6 @@ impl<'a> Syntax<'a> {
             v.disambiguate(entity_names);
         }
     }
-    fn gen(&self, scope: &mut Scope) {
-        for v in &self.0 {
-            v.gen(scope);
-        }
-    }
 }
 impl<'a> SchemaDecl<'a> {
     fn collect_entity_names(&self, entity_names: &mut HashSet<&'a str>) {
@@ -105,19 +158,8 @@ impl<'a> SchemaDecl<'a> {
     fn disambiguate(&mut self, entity_names: &HashSet<&str>) {
         self.body.disambiguate(entity_names)
     }
-    fn gen(&self, scope: &mut Scope) {
-        self.body.gen(scope);
-    }
 }
 impl<'a> SchemaBody<'a> {
-    fn gen(&self, scope: &mut Scope) {
-        for d in &self.declarations {
-            match d {
-                DeclarationOrRuleDecl::Declaration(d) => d.gen(scope),
-                DeclarationOrRuleDecl::RuleDecl(_) => (), // no code-gen for rules
-            }
-        }
-    }
     fn collect_entity_names(&self, entity_names: &mut HashSet<&'a str>) {
         for d in &self.declarations {
             match d {
@@ -147,12 +189,6 @@ impl<'a> SchemaBody<'a> {
     }
 }
 impl<'a> Declaration<'a> {
-    fn gen(&self, scope: &mut Scope) {
-        match self {
-            Declaration::Type(d) => d.gen(scope),
-            _ => (), // only code-gen for types right now
-        }
-    }
     fn collect_entity_names(&self, entity_names: &mut HashSet<&'a str>) {
         match self {
             Declaration::Entity(d) => { entity_names.insert(d.0.0.0); },
@@ -162,7 +198,7 @@ impl<'a> Declaration<'a> {
     fn disambiguate(&mut self, entity_names: &HashSet<&str>) {
         match self {
             Declaration::Type(d) => d.disambiguate(entity_names),
-            _ => (), // only code-gen for types right now
+            _ => (),
         }
     }
     fn build_ref_map(&'a self, ref_map: &mut HashMap<&'a str, Ref<'a>>) {
@@ -178,18 +214,6 @@ impl<'a> Declaration<'a> {
     }
 }
 impl<'a> TypeDecl<'a> {
-    fn gen(&self, scope: &mut Scope) {
-        match &self.underlying_type {
-            UnderlyingType::Concrete(c) => {
-                let mut t = scope.new_struct(&to_camel(self.type_id.0));
-                c.gen(&mut t);
-            },
-            UnderlyingType::Constructed(c) => {
-                let mut t = scope.new_enum(&to_camel(self.type_id.0));
-                c.gen(&mut t);
-            },
-        };
-    }
     fn disambiguate(&mut self, entity_names: &HashSet<&str>) {
         match &mut self.underlying_type {
             UnderlyingType::Constructed(c) => {
@@ -198,14 +222,15 @@ impl<'a> TypeDecl<'a> {
             _ => (),
         }
     }
+    fn build_type_map(&self, type_map: &mut TypeMap) -> Type {
+        // TODO
+        unimplemented!()
+    }
 }
-impl<'a> ConcreteTypes<'a> {
-    fn gen(&self, s: &mut Struct) {
-        match self {
-            ConcreteTypes::Aggregation(_) => (), // TODO
-            ConcreteTypes::Simple(a) => a.gen(s),
-            ConcreteTypes::TypeRef(a) => a.gen(s),
-        }
+impl<'a> EntityDecl<'a> {
+    fn build_type_map(&self, type_map: &mut TypeMap) -> Type {
+        // TODO
+        unimplemented!()
     }
 }
 impl <'a> SimpleTypes<'a> {
@@ -221,18 +246,7 @@ impl <'a> SimpleTypes<'a> {
         });
     }
 }
-impl <'a> TypeRef<'a> {
-    fn gen(&self, s: &mut Struct) {
-        s.tuple_field(&to_camel(self.0));
-    }
-}
 impl<'a> ConstructedTypes<'a> {
-    fn gen(&self, s: &mut Enum) {
-        match self {
-            ConstructedTypes::Enumeration(e) => e.gen(s),
-            ConstructedTypes::Select(e) => e.gen(s),
-        }
-    }
     fn disambiguate(&mut self, entity_names: &HashSet<&str>) {
         match self {
             ConstructedTypes::Select(e) => e.disambiguate(entity_names),
@@ -240,37 +254,7 @@ impl<'a> ConstructedTypes<'a> {
         }
     }
 }
-impl<'a> EnumerationType<'a> {
-    fn gen(&self, s: &mut Enum) {
-        if let Some(ioe) = &self.items_or_extension {
-            match ioe {
-                EnumerationItemsOrExtension::Items(items) => {
-                    for i in &items.0 {
-                        s.new_variant(&to_camel(i.0));
-                    }
-                }
-                _ => panic!("Codegen for extensions not implemented"),
-            }
-        }
-    }
-}
 impl<'a> SelectType<'a> {
-    fn gen(&self, s: &mut Enum) {
-        match &self.list_or_extension {
-            SelectListOrExtension::List(items) => {
-                for t in &items.0 {
-                    let name = t.to_camel();
-                    let inner = if t.is_entity() {
-                        format!("Id<{}>", name)
-                    } else {
-                        name.clone()
-                    };
-                    s.new_variant(&name).tuple(&inner);
-                }
-            }
-            _ => panic!("Codegen for extensions not implemented"),
-        }
-    }
     fn disambiguate(&mut self, entity_names: &HashSet<&str>) {
         match &mut self.list_or_extension {
             SelectListOrExtension::List(items) => {
