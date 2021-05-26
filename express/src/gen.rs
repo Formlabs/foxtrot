@@ -1,12 +1,10 @@
 use std::collections::{HashSet, HashMap};
-use codegen::{Scope, Struct};
+use codegen::{Scope};
 use crate::parse::*;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper types to use when doing code-gen
-struct TypeHead<'a> {
-    name: &'a str,
-    native: bool,
+struct TypeHead {
     has_lifetime: bool,
 }
 enum TypeBody<'a> {
@@ -20,7 +18,7 @@ enum TypeBody<'a> {
     Select(Vec<&'a str>),
 }
 struct Type<'a> {
-    head: TypeHead<'a>,
+    head: TypeHead,
     body: TypeBody<'a>,
 }
 impl<'a> Type<'a> {
@@ -34,42 +32,70 @@ impl<'a> Type<'a> {
 struct TypeMap<'a>(HashMap<&'a str, Type<'a>>, &'a HashMap<&'a str, Ref<'a>>);
 impl <'a> TypeMap<'a> {
     fn to_rtype(&self, s: &str) -> String {
-        if self.0.get(s).map(Type::is_entity).unwrap_or(false) {
-            format!("Id<{}>", s)
+        let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
+        let lifetime = if t.head.has_lifetime {
+            "'a"
         } else {
-            s.to_owned()
+            ""
+        };
+        if t.is_entity() {
+            format!("Id<{}{}>", s, lifetime)
+        } else {
+            format!("{}{}", s, lifetime)
         }
     }
 }
 
 impl<'a> Type<'a> {
-    fn gen(&self, scope: &mut Scope, type_map: &TypeMap) {
+    fn gen(&self, name: &str, scope: &mut Scope, type_map: &TypeMap) {
+        let name = to_camel(name);
         match &self.body {
             TypeBody::Redeclared(c) => {
-                scope.new_struct(&to_camel(self.head.name))
-                    .tuple_field(type_map.to_rtype(c));
+                let mut t = scope.new_struct(&name);
+                if self.head.has_lifetime {
+                    t.generic("'a");
+                }
+                t.tuple_field(type_map.to_rtype(c));
             },
             TypeBody::Enum(c) => {
-                let mut t = scope.new_enum(&to_camel(self.head.name));
+                let mut t = scope.new_enum(&name);
+                if self.head.has_lifetime {
+                    t.generic("'a");
+                }
                 for v in c {
                     t.new_variant(&to_camel(v));
                 }
             },
             TypeBody::Select(c) => {
-                let mut t = scope.new_enum(&to_camel(self.head.name));
+                let mut t = scope.new_enum(&name);
+                if self.head.has_lifetime {
+                    t.generic("'a");
+                }
                 for v in c {
                     t.new_variant(&to_camel(v))
                         .tuple(&type_map.to_rtype(v));
                 }
-            }
-            _ => unimplemented!(),
+            },
+            TypeBody::Entity { attrs } => {
+                let mut t = scope.new_struct(&name);
+                if self.head.has_lifetime {
+                    t.generic("'a");
+                }
+                for a in attrs {
+                    let attr_type = type_map.to_rtype(a.name);
+                    if a.optional {
+                        t.field(a.name, &format!("Option<{}>", attr_type));
+                    } else {
+                        t.field(a.name, &attr_type);
+                    }
+                }
+            },
         };
     }
 }
 
 struct AttributeData<'a> {
     name: &'a str, // already camel-case
-    type_: String,
     optional: bool,
 }
 
@@ -110,7 +136,7 @@ pub fn gen(s: &mut Syntax) -> String {
     // Step four: do codegen on the completed type map
     let mut scope = Scope::new();
     for (k,v) in type_map.0.iter() {
-        v.gen(&mut scope, &type_map);
+        v.gen(k, &mut scope, &type_map);
     }
     scope.to_string()
 }
@@ -237,7 +263,7 @@ impl<'a> ConcreteTypes<'a> {
     fn to_type(&self, type_map: &mut TypeMap) -> Type {
         match self {
             ConcreteTypes::Aggregation(_) => unimplemented!(),
-            ConcreteTypes::Simple(s) => unimplemented!(),
+            ConcreteTypes::Simple(s) => s.to_type(),
             ConcreteTypes::TypeRef(t) => unimplemented!(),
         }
     }
@@ -254,8 +280,8 @@ impl<'a> EntityDecl<'a> {
     }
 }
 impl <'a> SimpleTypes<'a> {
-    fn gen(&self, s: &mut Struct) {
-        s.tuple_field(match self {
+    fn to_type(&self) -> Type {
+        let t = match self {
             SimpleTypes::Binary(_) => "usize",
             SimpleTypes::Boolean => "bool",
             SimpleTypes::Integer => "i64",
@@ -263,7 +289,18 @@ impl <'a> SimpleTypes<'a> {
             SimpleTypes::Number => "f64",
             SimpleTypes::Real(_) => "f64",
             SimpleTypes::String(_) => "&'a str",
-        });
+        };
+        let has_lifetime = if let SimpleTypes::String(_) = &self {
+            true
+        } else {
+            false
+        };
+        Type {
+            head: TypeHead {
+                has_lifetime,
+            },
+            body: TypeBody::Redeclared(t),
+        }
     }
 }
 impl<'a> ConstructedTypes<'a> {
