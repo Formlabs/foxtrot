@@ -486,7 +486,7 @@ fn attribute_qualifier(s: &str) -> IResult<AttributeQualifier> {
 
 // 180
 #[derive(Debug)]
-pub struct BagType<'a>(Option<BoundSpec<'a>>, Box<InstantiableType<'a>>);
+pub struct BagType<'a>(Option<BoundSpec<'a>>, pub Box<InstantiableType<'a>>);
 fn bag_type(s: &str) -> IResult<BagType> {
     map(tuple((
             kw("bag"),
@@ -837,7 +837,7 @@ fn entity_decl(s: &str) -> IResult<EntityDecl> {
 
 // 207 entity_head = ENTITY entity_id subsuper ’;’ .
 #[derive(Debug)]
-pub struct EntityHead<'a>(pub EntityId<'a>, Subsuper<'a>);
+pub struct EntityHead<'a>(pub EntityId<'a>, pub Subsuper<'a>);
 fn entity_head(s: &str) -> IResult<EntityHead> {
     map(tuple((
         kw("entity"),
@@ -2214,8 +2214,8 @@ fn string_type(s: &str) -> IResult<StringType> {
 
 // 312 subsuper = [ supertype_constraint ] [ subtype_declaration ] .
 #[derive(Debug)]
-pub struct Subsuper<'a>(Option<SupertypeConstraint<'a>>,
-                        Option<SubtypeDeclaration<'a>>);
+pub struct Subsuper<'a>(pub Option<SupertypeConstraint<'a>>,
+                        pub Option<SubtypeDeclaration<'a>>);
 fn subsuper(s: &str) -> IResult<Subsuper> {
     map(pair(opt(supertype_constraint), opt(subtype_declaration)),
         |(a, b)| Subsuper(a, b))(s)
@@ -2282,7 +2282,7 @@ id_type!(SubtypeConstraintId, subtype_constraint_id);
 
 // 318 subtype_declaration = SUBTYPE OF ’(’ entity_ref { ’,’ entity_ref } ’)’ .
 #[derive(Debug)]
-pub struct SubtypeDeclaration<'a>(Vec<EntityRef<'a>>);
+pub struct SubtypeDeclaration<'a>(pub Vec<EntityRef<'a>>);
 fn subtype_declaration(s: &str) -> IResult<SubtypeDeclaration> {
     map(preceded(tuple((kw("subtype"), kw("of"))),
                  parens(list1(',', entity_ref))),

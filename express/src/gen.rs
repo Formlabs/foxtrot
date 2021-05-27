@@ -16,53 +16,104 @@ enum TypeBody<'a> {
     Redeclared(&'a str),
     Enum(Vec<&'a str>),
     Select(Vec<&'a str>),
+    Aggregation {
+        optional: bool,
+        type_: Box<Type<'a>>,
+    },
 }
 struct Type<'a> {
     head: TypeHead,
     body: TypeBody<'a>,
 }
-impl<'a> Type<'a> {
-    fn is_entity(&self) -> bool {
-        match self.body {
-            TypeBody::Entity { .. } => true,
-            _ => false,
-        }
-    }
-}
 struct TypeMap<'a>(HashMap<&'a str, Type<'a>>, &'a HashMap<&'a str, Ref<'a>>);
 impl <'a> TypeMap<'a> {
     fn to_rtype(&self, s: &str) -> String {
         let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
-        let lifetime = if t.head.has_lifetime {
-            "'a"
-        } else {
-            ""
-        };
-        if t.is_entity() {
-            format!("Id<{}{}>", s, lifetime)
-        } else {
-            format!("{}{}", s, lifetime)
-        }
+        t.to_rtype(s)
     }
-    fn has_lifetime(&self, s: &str) -> bool {
+    fn build(&mut self, s: &'a str) {
+        let v = self.1.get(s).unwrap();
+        let m = match v {
+            Ref::Entity(e) => e.to_type(self),
+            Ref::Type(t) => t.to_type(self),
+        };
+        self.0.insert(s, m);
+    }
+    fn has_lifetime(&mut self, s: &'a str) -> bool {
+        if !self.0.contains_key(s) {
+            self.build(s);
+        }
         let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
         t.head.has_lifetime
+    }
+    fn attributes(&mut self, s: &'a str) -> Vec<AttributeData<'a>> {
+        if !self.0.contains_key(s) {
+            self.build(s);
+        }
+        let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
+        if let TypeBody::Entity { attrs } = &t.body {
+            attrs.clone()
+        } else {
+            panic!("Cannot get attributes of a non-entity");
+        }
     }
 }
 
 impl<'a> Type<'a> {
+    fn to_rtype(&self, s: &str) -> String {
+        let lifetime = if self.head.has_lifetime {
+            "'a"
+        } else {
+            ""
+        };
+        match &self.body {
+            TypeBody::Entity { .. } => format!("Id<{}{}>", s, lifetime),
+            TypeBody::Redeclared(_) |
+            TypeBody::Enum(_) |
+            TypeBody::Select(_) => format!("{}{}", s, lifetime),
+            TypeBody::Aggregation { optional, type_ } => if *optional {
+                format!("Vec<Option<{}>>", type_.to_inner_rtype())
+            } else {
+                format!("Vec<{}>", type_.to_inner_rtype())
+            },
+        }
+    }
+    fn to_inner_rtype(&self) -> String {
+        let lifetime = if self.head.has_lifetime {
+            "'a"
+        } else {
+            ""
+        };
+        match &self.body {
+            TypeBody::Aggregation { optional, type_ } => if *optional {
+                format!("Vec<Option<{}>>", type_.to_inner_rtype())
+            } else {
+                format!("Vec<{}>", type_.to_inner_rtype())
+            },
+            TypeBody::Redeclared(r) => format!("{}{}", r, lifetime),
+
+            TypeBody::Entity { .. } | TypeBody::Enum(_) | TypeBody::Select(_) =>
+                panic!("Invalid inner type"),
+        }
+    }
     fn gen(&self, name: &str, scope: &mut Scope, type_map: &TypeMap) {
         let name = to_camel(name);
         match &self.body {
             TypeBody::Redeclared(c) => {
-                let mut t = scope.new_struct(&name);
+                let t = scope.new_struct(&name);
                 if self.head.has_lifetime {
                     t.generic("'a");
                 }
-                t.tuple_field(type_map.to_rtype(c));
+                // Avoid looking up primitive types
+                // TODO this is awkward
+                if type_map.1.contains_key(c) {
+                    t.tuple_field(type_map.to_rtype(c));
+                } else {
+                    t.tuple_field(*c);
+                }
             },
             TypeBody::Enum(c) => {
-                let mut t = scope.new_enum(&name);
+                let t = scope.new_enum(&name);
                 if self.head.has_lifetime {
                     t.generic("'a");
                 }
@@ -71,7 +122,7 @@ impl<'a> Type<'a> {
                 }
             },
             TypeBody::Select(c) => {
-                let mut t = scope.new_enum(&name);
+                let t = scope.new_enum(&name);
                 if self.head.has_lifetime {
                     t.generic("'a");
                 }
@@ -80,11 +131,19 @@ impl<'a> Type<'a> {
                         .tuple(&type_map.to_rtype(v));
                 }
             },
-            TypeBody::Entity { attrs } => {
-                let mut t = scope.new_struct(&name);
+            TypeBody::Aggregation { optional, .. } => {
+                let t = scope.new_struct(&name);
                 if self.head.has_lifetime {
                     t.generic("'a");
                 }
+                t.tuple_field(self.to_inner_rtype());
+            }
+            TypeBody::Entity { attrs } => {
+                let t = scope.new_struct(&name);
+                if self.head.has_lifetime {
+                    t.generic("'a");
+                }
+                println!("Got attrs {:?} for {}", attrs, name);
                 for a in attrs {
                     let attr_type = type_map.to_rtype(a.name);
                     if a.optional {
@@ -98,8 +157,10 @@ impl<'a> Type<'a> {
     }
 }
 
+#[derive(Clone, Debug)]
 struct AttributeData<'a> {
     name: &'a str, // already camel-case
+    type_: String,
     optional: bool,
 }
 
@@ -129,12 +190,8 @@ pub fn gen(s: &mut Syntax) -> String {
 
     // Finally, we can build out the type map
     let mut type_map = TypeMap(HashMap::new(), &ref_map);
-    for (k,v) in ref_map.iter() {
-        let m = match v {
-            Ref::Entity(e) => e.to_type(&mut type_map),
-            Ref::Type(t) => t.to_type(&mut type_map),
-        };
-        type_map.0.insert(k, m);
+    for k in ref_map.keys() {
+        type_map.build(k);
     }
 
     // Step four: do codegen on the completed type map
@@ -256,7 +313,7 @@ impl<'a> TypeDecl<'a> {
     }
 }
 impl<'a> UnderlyingType<'a> {
-    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+    fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
         match self {
             UnderlyingType::Concrete(c) => c.to_type(type_map),
             UnderlyingType::Constructed(c) => c.to_type(type_map),
@@ -264,9 +321,9 @@ impl<'a> UnderlyingType<'a> {
     }
 }
 impl<'a> ConcreteTypes<'a> {
-    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+    fn to_type(&self, type_map: &mut TypeMap<'a>) -> Type {
         match self {
-            ConcreteTypes::Aggregation(_) => unimplemented!(),
+            ConcreteTypes::Aggregation(a) => a.to_type(type_map),
             ConcreteTypes::Simple(s) => s.to_type(),
             ConcreteTypes::TypeRef(t) => {
                 let has_lifetime = type_map.has_lifetime(t.0);
@@ -280,8 +337,36 @@ impl<'a> ConcreteTypes<'a> {
         }
     }
 }
+impl<'a> AggregationTypes<'a> {
+    fn to_type(&self, type_map: &mut TypeMap<'a>) -> Type {
+        let (optional, instantiable) = match self {
+            AggregationTypes::Array(a) => (a.optional, &a.instantiable_type),
+            AggregationTypes::Bag(a) => (false,  &a.1),
+            AggregationTypes::List(a) => (false, &a.instantiable_type),
+            AggregationTypes::Set(a) => (false, &a.instantiable_type),
+        };
+        match &**instantiable {
+            InstantiableType::Concrete(c) => {
+                let type_ = c.to_type(type_map);
+                Type {
+                    head: TypeHead { has_lifetime: type_.head.has_lifetime },
+                    body: TypeBody::Aggregation { optional,
+                        type_: Box::new(type_),
+                    }
+                }
+            },
+            InstantiableType::EntityRef(e) => {
+                let has_lifetime = type_map.has_lifetime(e.0);
+                Type {
+                    head: TypeHead { has_lifetime },
+                    body: TypeBody::Redeclared(e.0),
+                }
+            }
+        }
+    }
+}
 impl<'a> ConstructedTypes<'a> {
-    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+    fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
         match self {
             ConstructedTypes::Enumeration(e) => e.to_type(type_map),
             ConstructedTypes::Select(s) => s.to_type(type_map),
@@ -289,7 +374,7 @@ impl<'a> ConstructedTypes<'a> {
     }
 }
 impl<'a> EnumerationType<'a> {
-    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+    fn to_type(&self, type_map: &mut TypeMap<'a>) -> Type {
         assert!(!self.extensible, "Extensible enumerations are not supported");
         match self.items_or_extension.as_ref().unwrap() {
             EnumerationItemsOrExtension::Items(e) => e.to_type(type_map),
@@ -298,28 +383,59 @@ impl<'a> EnumerationType<'a> {
     }
 }
 impl<'a> EnumerationItems<'a> {
-    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+    fn to_type(&self, type_map: &mut TypeMap<'a>) -> Type {
         let mut out = Vec::new();
-        let mut has_lifetime = false;
         for e in &self.0 {
-            has_lifetime |= type_map.has_lifetime(e.0);
             out.push(e.0);
         }
         Type {
-            head: TypeHead { has_lifetime },
+            head: TypeHead { has_lifetime: false },
             body: TypeBody::Enum(out)
         }
     }
 }
 impl<'a> SelectType<'a> {
-    fn to_type(&self, type_map: &mut TypeMap) -> Type {
-        unimplemented!()
+    fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
+        assert!(!self.extensible, "Cannot handle extensible lists");
+        assert!(!self.generic_entity, "Cannot handle generic entity lists");
+        match &self.list_or_extension {
+            SelectListOrExtension::List(e) => e.to_type(type_map),
+            _ => panic!("Extensions not supported"),
+        }
+    }
+}
+impl<'a> SelectList<'a> {
+    fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
+        let mut out = Vec::new();
+        let mut has_lifetime = false;
+        for e in &self.0 {
+            has_lifetime |= type_map.has_lifetime(e.name());
+            out.push(e.name());
+        }
+        Type {
+            head: TypeHead { has_lifetime },
+            body: TypeBody::Select(out)
+        }
     }
 }
 impl<'a> EntityDecl<'a> {
-    fn to_type(&self, type_map: &mut TypeMap) -> Type {
-        // TODO
-        unimplemented!()
+    fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type<'a> {
+        let subsuper = &self.0.1;
+        let mut attrs = Vec::new();
+        let mut has_lifetime = false;
+        if let Some(subs) = &subsuper.1 {
+            for sub in subs.0.iter() {
+                attrs.extend(type_map.attributes(sub.0).into_iter());
+                has_lifetime |= type_map.has_lifetime(sub.0);
+            }
+        }
+        for attr in &self.1.explicit_attr {
+            // TODO
+        }
+        Type {
+            head: TypeHead { has_lifetime },
+            body: TypeBody::Entity { attrs },
+        }
     }
 }
 impl <'a> SimpleTypes<'a> {
@@ -374,6 +490,13 @@ impl<'a> NamedTypes<'a> {
             } else {
                  NamedTypes::Type(TypeRef(r.0))
             };
+        }
+    }
+    fn name(&self) -> &str {
+        match self {
+            NamedTypes::Entity(e) => e.0,
+            NamedTypes::Type(e) => e.0,
+            NamedTypes::_Ambiguous(e) => e.0,
         }
     }
 }
