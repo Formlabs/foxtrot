@@ -44,6 +44,10 @@ impl <'a> TypeMap<'a> {
             format!("{}{}", s, lifetime)
         }
     }
+    fn has_lifetime(&self, s: &str) -> bool {
+        let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
+        t.head.has_lifetime
+    }
 }
 
 impl<'a> Type<'a> {
@@ -264,11 +268,50 @@ impl<'a> ConcreteTypes<'a> {
         match self {
             ConcreteTypes::Aggregation(_) => unimplemented!(),
             ConcreteTypes::Simple(s) => s.to_type(),
-            ConcreteTypes::TypeRef(t) => unimplemented!(),
+            ConcreteTypes::TypeRef(t) => {
+                let has_lifetime = type_map.has_lifetime(t.0);
+                Type {
+                    head: TypeHead {
+                        has_lifetime,
+                    },
+                    body: TypeBody::Redeclared(t.0),
+                }
+            },
         }
     }
 }
 impl<'a> ConstructedTypes<'a> {
+    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+        match self {
+            ConstructedTypes::Enumeration(e) => e.to_type(type_map),
+            ConstructedTypes::Select(s) => s.to_type(type_map),
+        }
+    }
+}
+impl<'a> EnumerationType<'a> {
+    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+        assert!(!self.extensible, "Extensible enumerations are not supported");
+        match self.items_or_extension.as_ref().unwrap() {
+            EnumerationItemsOrExtension::Items(e) => e.to_type(type_map),
+            _ => panic!("Extensions not supported")
+        }
+    }
+}
+impl<'a> EnumerationItems<'a> {
+    fn to_type(&self, type_map: &mut TypeMap) -> Type {
+        let mut out = Vec::new();
+        let mut has_lifetime = false;
+        for e in &self.0 {
+            has_lifetime |= type_map.has_lifetime(e.0);
+            out.push(e.0);
+        }
+        Type {
+            head: TypeHead { has_lifetime },
+            body: TypeBody::Enum(out)
+        }
+    }
+}
+impl<'a> SelectType<'a> {
     fn to_type(&self, type_map: &mut TypeMap) -> Type {
         unimplemented!()
     }
