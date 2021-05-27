@@ -32,7 +32,49 @@ struct TypeMap<'a>(HashMap<&'a str, Type<'a>>, &'a HashMap<&'a str, Ref<'a>>);
 impl <'a> TypeMap<'a> {
     fn to_rtype(&self, s: &str) -> String {
         let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
-        t.to_rtype(s)
+        let lifetime = if t.head.has_lifetime {
+            "'a"
+        } else {
+            ""
+        };
+        match &t.body {
+            TypeBody::Entity { .. } => format!("Id<{}{}>", to_camel(s), lifetime),
+            TypeBody::Redeclared(_)
+            | TypeBody::Enum(_)
+            | TypeBody::Select(_)
+            | TypeBody::Primitive(_) => format!("{}{}", to_camel(s), lifetime),
+            TypeBody::Aggregation { optional, type_ } => if *optional {
+                format!("Vec<Option<{}>>", self.to_inner_rtype(type_))
+            } else {
+                format!("Vec<{}>", self.to_inner_rtype(type_))
+            },
+        }
+    }
+    fn to_inner_rtype(&self, t: &Type<'a>) -> String {
+        let lifetime = if t.head.has_lifetime {
+            "'a"
+        } else {
+            ""
+        };
+        match &t.body {
+            TypeBody::Aggregation { optional, type_ } => if *optional {
+                format!("Vec<Option<{}>>", self.to_inner_rtype(type_))
+            } else {
+                format!("Vec<{}>", self.to_inner_rtype(type_))
+            },
+            TypeBody::Redeclared(r) => {
+                if self.is_entity(r) {
+                    assert!(!t.head.has_lifetime);
+                    format!("Id<{}>{}", to_camel(r), lifetime)
+                } else {
+                    format!("{}{}", to_camel(r), lifetime)
+                }
+            },
+            TypeBody::Primitive(r) => format!("{}", r),
+
+            TypeBody::Entity { .. } | TypeBody::Enum(_) | TypeBody::Select(_) =>
+                panic!("Invalid inner type"),
+        }
     }
     fn build(&mut self, s: &'a str) {
         let v = self.1.get(s).unwrap();
@@ -41,6 +83,14 @@ impl <'a> TypeMap<'a> {
             Ref::Type(t) => t.to_type(self),
         };
         self.0.insert(s, m);
+    }
+    fn is_entity(&self, s: &'a str) -> bool {
+        let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
+        if let TypeBody::Entity{..} = t.body {
+            true
+        } else {
+            false
+        }
     }
     fn has_lifetime(&mut self, s: &'a str) -> bool {
         if !self.0.contains_key(s) {
@@ -63,44 +113,6 @@ impl <'a> TypeMap<'a> {
 }
 
 impl<'a> Type<'a> {
-    fn to_rtype(&self, s: &str) -> String {
-        let lifetime = if self.head.has_lifetime {
-            "'a"
-        } else {
-            ""
-        };
-        match &self.body {
-            TypeBody::Entity { .. } => format!("Id<{}{}>", to_camel(s), lifetime),
-            TypeBody::Redeclared(_)
-            | TypeBody::Enum(_)
-            | TypeBody::Select(_)
-            | TypeBody::Primitive(_) => format!("{}{}", to_camel(s), lifetime),
-            TypeBody::Aggregation { optional, type_ } => if *optional {
-                format!("Vec<Option<{}>>", type_.to_inner_rtype())
-            } else {
-                format!("Vec<{}>", type_.to_inner_rtype())
-            },
-        }
-    }
-    fn to_inner_rtype(&self) -> String {
-        let lifetime = if self.head.has_lifetime {
-            "'a"
-        } else {
-            ""
-        };
-        match &self.body {
-            TypeBody::Aggregation { optional, type_ } => if *optional {
-                format!("Vec<Option<{}>>", type_.to_inner_rtype())
-            } else {
-                format!("Vec<{}>", type_.to_inner_rtype())
-            },
-            TypeBody::Redeclared(r) => format!("{}{}", to_camel(r), lifetime),
-            TypeBody::Primitive(r) => format!("{}", r),
-
-            TypeBody::Entity { .. } | TypeBody::Enum(_) | TypeBody::Select(_) =>
-                panic!("Invalid inner type"),
-        }
-    }
     fn gen(&self, name: &str, scope: &mut Scope, type_map: &TypeMap) {
         let name = to_camel(name);
         match &self.body {
@@ -135,7 +147,7 @@ impl<'a> Type<'a> {
                 if self.head.has_lifetime {
                     t.generic("'a");
                 }
-                t.tuple_field(self.to_inner_rtype());
+                t.tuple_field(type_map.to_inner_rtype(self));
             }
             TypeBody::Entity { attrs } => {
                 let t = scope.new_struct(&name);
