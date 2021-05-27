@@ -20,6 +20,9 @@ enum TypeBody<'a> {
         optional: bool,
         type_: Box<Type<'a>>,
     },
+
+    // Direct Rust type
+    Primitive(&'a str),
 }
 struct Type<'a> {
     head: TypeHead,
@@ -67,10 +70,11 @@ impl<'a> Type<'a> {
             ""
         };
         match &self.body {
-            TypeBody::Entity { .. } => format!("Id<{}{}>", s, lifetime),
-            TypeBody::Redeclared(_) |
-            TypeBody::Enum(_) |
-            TypeBody::Select(_) => format!("{}{}", s, lifetime),
+            TypeBody::Entity { .. } => format!("Id<{}{}>", to_camel(s), lifetime),
+            TypeBody::Redeclared(_)
+            | TypeBody::Enum(_)
+            | TypeBody::Select(_)
+            | TypeBody::Primitive(_) => format!("{}{}", to_camel(s), lifetime),
             TypeBody::Aggregation { optional, type_ } => if *optional {
                 format!("Vec<Option<{}>>", type_.to_inner_rtype())
             } else {
@@ -90,7 +94,8 @@ impl<'a> Type<'a> {
             } else {
                 format!("Vec<{}>", type_.to_inner_rtype())
             },
-            TypeBody::Redeclared(r) => format!("{}{}", r, lifetime),
+            TypeBody::Redeclared(r) => format!("{}{}", to_camel(r), lifetime),
+            TypeBody::Primitive(r) => format!("{}", r),
 
             TypeBody::Entity { .. } | TypeBody::Enum(_) | TypeBody::Select(_) =>
                 panic!("Invalid inner type"),
@@ -106,11 +111,7 @@ impl<'a> Type<'a> {
                 }
                 // Avoid looking up primitive types
                 // TODO this is awkward
-                if type_map.1.contains_key(c) {
-                    t.tuple_field(type_map.to_rtype(c));
-                } else {
-                    t.tuple_field(*c);
-                }
+                t.tuple_field(type_map.to_rtype(c));
             },
             TypeBody::Enum(c) => {
                 let t = scope.new_enum(&name);
@@ -131,7 +132,7 @@ impl<'a> Type<'a> {
                         .tuple(&type_map.to_rtype(v));
                 }
             },
-            TypeBody::Aggregation { optional, .. } => {
+            TypeBody::Aggregation { .. } => {
                 let t = scope.new_struct(&name);
                 if self.head.has_lifetime {
                     t.generic("'a");
@@ -143,7 +144,6 @@ impl<'a> Type<'a> {
                 if self.head.has_lifetime {
                     t.generic("'a");
                 }
-                println!("Got attrs {:?} for {}", attrs, name);
                 for a in attrs {
                     let attr_type = type_map.to_rtype(a.name);
                     if a.optional {
@@ -153,6 +153,7 @@ impl<'a> Type<'a> {
                     }
                 }
             },
+            TypeBody::Primitive(_) => {},
         };
     }
 }
@@ -190,6 +191,27 @@ pub fn gen(s: &mut Syntax) -> String {
 
     // Finally, we can build out the type map
     let mut type_map = TypeMap(HashMap::new(), &ref_map);
+    type_map.0.insert("usize", Type {
+        head: TypeHead { has_lifetime: false },
+        body: TypeBody::Primitive("usize"),
+    });
+    type_map.0.insert("bool", Type {
+        head: TypeHead { has_lifetime: false },
+        body: TypeBody::Primitive("bool"),
+    });
+    type_map.0.insert("i64", Type {
+        head: TypeHead { has_lifetime: false },
+        body: TypeBody::Primitive("i64"),
+    });
+    type_map.0.insert("f64", Type {
+        head: TypeHead { has_lifetime: false },
+        body: TypeBody::Primitive("f64"),
+    });
+    type_map.0.insert("&'a str", Type {
+        head: TypeHead { has_lifetime: true },
+        body: TypeBody::Primitive("&'a str"),
+    });
+
     for k in ref_map.keys() {
         type_map.build(k);
     }
@@ -368,22 +390,22 @@ impl<'a> AggregationTypes<'a> {
 impl<'a> ConstructedTypes<'a> {
     fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
         match self {
-            ConstructedTypes::Enumeration(e) => e.to_type(type_map),
+            ConstructedTypes::Enumeration(e) => e.to_type(),
             ConstructedTypes::Select(s) => s.to_type(type_map),
         }
     }
 }
 impl<'a> EnumerationType<'a> {
-    fn to_type(&self, type_map: &mut TypeMap<'a>) -> Type {
+    fn to_type(&self) -> Type {
         assert!(!self.extensible, "Extensible enumerations are not supported");
         match self.items_or_extension.as_ref().unwrap() {
-            EnumerationItemsOrExtension::Items(e) => e.to_type(type_map),
+            EnumerationItemsOrExtension::Items(e) => e.to_type(),
             _ => panic!("Extensions not supported")
         }
     }
 }
 impl<'a> EnumerationItems<'a> {
-    fn to_type(&self, type_map: &mut TypeMap<'a>) -> Type {
+    fn to_type(&self) -> Type {
         let mut out = Vec::new();
         for e in &self.0 {
             out.push(e.0);
@@ -458,7 +480,7 @@ impl <'a> SimpleTypes<'a> {
             head: TypeHead {
                 has_lifetime,
             },
-            body: TypeBody::Redeclared(t),
+            body: TypeBody::Primitive(t),
         }
     }
 }
