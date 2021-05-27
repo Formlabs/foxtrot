@@ -109,8 +109,6 @@ impl<'a> Type<'a> {
                 if self.head.has_lifetime {
                     t.generic("'a");
                 }
-                // Avoid looking up primitive types
-                // TODO this is awkward
                 t.tuple_field(type_map.to_rtype(c));
             },
             TypeBody::Enum(c) => {
