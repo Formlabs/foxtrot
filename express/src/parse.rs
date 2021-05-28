@@ -1094,7 +1094,8 @@ fn general_array_type(s: &str) -> IResult<GeneralArrayType> {
 
 // 226 general_bag_type = BAG [ bound_spec ] OF parameter_type .
 #[derive(Debug)]
-pub struct GeneralBagType<'a>(Option<BoundSpec<'a>>, Box<ParameterType<'a>>);
+pub struct GeneralBagType<'a>(pub Option<BoundSpec<'a>>,
+                              pub Box<ParameterType<'a>>);
 fn general_bag_type(s: &str) -> IResult<GeneralBagType> {
     map(tuple((
             kw("bag"),

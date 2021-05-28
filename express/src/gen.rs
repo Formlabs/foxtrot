@@ -4,10 +4,7 @@ use crate::parse::*;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper types to use when doing code-gen
-struct TypeHead {
-    has_lifetime: bool,
-}
-enum TypeBody<'a> {
+enum Type<'a> {
     Entity {
         // In order, with parent attributes first
         attrs: Vec<AttributeData<'a>>,
@@ -24,26 +21,23 @@ enum TypeBody<'a> {
     // Direct Rust type
     Primitive(&'a str),
 }
-struct Type<'a> {
-    head: TypeHead,
-    body: TypeBody<'a>,
-}
 struct TypeMap<'a>(HashMap<&'a str, Type<'a>>, &'a HashMap<&'a str, Ref<'a>>);
 impl <'a> TypeMap<'a> {
+    fn to_rtype_build(&mut self, s: &'a str) -> String {
+        if !self.0.contains_key(s) {
+            self.build(s);
+        }
+        self.to_rtype(s)
+    }
     fn to_rtype(&self, s: &str) -> String {
         let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
-        let lifetime = if t.head.has_lifetime {
-            "'a"
-        } else {
-            ""
-        };
-        match &t.body {
-            TypeBody::Entity { .. } => format!("Id<{}{}>", to_camel(s), lifetime),
-            TypeBody::Redeclared(_)
-            | TypeBody::Enum(_)
-            | TypeBody::Select(_)
-            | TypeBody::Primitive(_) => format!("{}{}", to_camel(s), lifetime),
-            TypeBody::Aggregation { optional, type_ } => if *optional {
+        match &t {
+            Type::Entity { .. }
+            | Type::Redeclared(_)
+            | Type::Enum(_)
+            | Type::Select(_)
+            | Type::Primitive(_) => format!("{}<'a>", to_camel(s)),
+            Type::Aggregation { optional, type_ } => if *optional {
                 format!("Vec<Option<{}>>", self.to_inner_rtype(type_))
             } else {
                 format!("Vec<{}>", self.to_inner_rtype(type_))
@@ -51,28 +45,18 @@ impl <'a> TypeMap<'a> {
         }
     }
     fn to_inner_rtype(&self, t: &Type<'a>) -> String {
-        let lifetime = if t.head.has_lifetime {
-            "'a"
-        } else {
-            ""
-        };
-        match &t.body {
-            TypeBody::Aggregation { optional, type_ } => if *optional {
+        match &t {
+            Type::Aggregation { optional, type_ } => if *optional {
                 format!("Vec<Option<{}>>", self.to_inner_rtype(type_))
             } else {
                 format!("Vec<{}>", self.to_inner_rtype(type_))
             },
-            TypeBody::Redeclared(r) => {
-                if self.is_entity(r) {
-                    assert!(!t.head.has_lifetime);
-                    format!("Id<{}>{}", to_camel(r), lifetime)
-                } else {
-                    format!("{}{}", to_camel(r), lifetime)
-                }
+            Type::Redeclared(r) => {
+                format!("{}<'a>", to_camel(r))
             },
-            TypeBody::Primitive(r) => format!("{}", r),
+            Type::Primitive(r) => format!("{}", r),
 
-            TypeBody::Entity { .. } | TypeBody::Enum(_) | TypeBody::Select(_) =>
+            Type::Entity { .. } | Type::Enum(_) | Type::Select(_) =>
                 panic!("Invalid inner type"),
         }
     }
@@ -84,27 +68,12 @@ impl <'a> TypeMap<'a> {
         };
         self.0.insert(s, m);
     }
-    fn is_entity(&self, s: &'a str) -> bool {
-        let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
-        if let TypeBody::Entity{..} = t.body {
-            true
-        } else {
-            false
-        }
-    }
-    fn has_lifetime(&mut self, s: &'a str) -> bool {
-        if !self.0.contains_key(s) {
-            self.build(s);
-        }
-        let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
-        t.head.has_lifetime
-    }
     fn attributes(&mut self, s: &'a str) -> Vec<AttributeData<'a>> {
         if !self.0.contains_key(s) {
             self.build(s);
         }
         let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
-        if let TypeBody::Entity { attrs } = &t.body {
+        if let Type::Entity { attrs } = &t {
             attrs.clone()
         } else {
             panic!("Cannot get attributes of a non-entity");
@@ -115,55 +84,50 @@ impl <'a> TypeMap<'a> {
 impl<'a> Type<'a> {
     fn gen(&self, name: &str, scope: &mut Scope, type_map: &TypeMap) {
         let name = to_camel(name);
-        match &self.body {
-            TypeBody::Redeclared(c) => {
+        match self {
+            Type::Redeclared(c) => {
                 let t = scope.new_struct(&name);
-                if self.head.has_lifetime {
-                    t.generic("'a");
-                }
+                t.generic("'a");
                 t.tuple_field(type_map.to_rtype(c));
+                t.tuple_field("std::marker::PhantomData<&'a ()>");
             },
-            TypeBody::Enum(c) => {
+            Type::Enum(c) => {
                 let t = scope.new_enum(&name);
-                if self.head.has_lifetime {
-                    t.generic("'a");
-                }
+                t.generic("'a");
                 for v in c {
                     t.new_variant(&to_camel(v));
                 }
+                t.new_variant("_Unused")
+                    .tuple("std::marker::PhantomData<&'a ()>");
             },
-            TypeBody::Select(c) => {
+            Type::Select(c) => {
                 let t = scope.new_enum(&name);
-                if self.head.has_lifetime {
-                    t.generic("'a");
-                }
+                t.generic("'a");
                 for v in c {
                     t.new_variant(&to_camel(v))
                         .tuple(&type_map.to_rtype(v));
                 }
             },
-            TypeBody::Aggregation { .. } => {
+            Type::Aggregation { .. } => {
                 let t = scope.new_struct(&name);
-                if self.head.has_lifetime {
-                    t.generic("'a");
-                }
+                t.generic("'a");
                 t.tuple_field(type_map.to_inner_rtype(self));
+                t.tuple_field("std::marker::PhantomData<&'a ()>");
             }
-            TypeBody::Entity { attrs } => {
-                let t = scope.new_struct(&name);
-                if self.head.has_lifetime {
-                    t.generic("'a");
-                }
+            Type::Entity { attrs } => {
+                let t = scope.new_struct(&format!("{}_", name));
+                t.generic("'a");
                 for a in attrs {
-                    let attr_type = type_map.to_rtype(a.name);
                     if a.optional {
-                        t.field(a.name, &format!("Option<{}>", attr_type));
+                        t.field(a.name, &format!("Option<{}>", a.type_));
                     } else {
-                        t.field(a.name, &attr_type);
+                        t.field(a.name, &a.type_);
                     }
                 }
+                t.field("_marker", "std::marker::PhantomData<&'a ()>");
+                scope.raw(&format!("type {0}<'a> = Id<{0}_<'a>>;", name));
             },
-            TypeBody::Primitive(_) => {},
+            Type::Primitive(_) => {},
         };
     }
 }
@@ -201,27 +165,13 @@ pub fn gen(s: &mut Syntax) -> String {
 
     // Finally, we can build out the type map
     let mut type_map = TypeMap(HashMap::new(), &ref_map);
-    type_map.0.insert("usize", Type {
-        head: TypeHead { has_lifetime: false },
-        body: TypeBody::Primitive("usize"),
-    });
-    type_map.0.insert("bool", Type {
-        head: TypeHead { has_lifetime: false },
-        body: TypeBody::Primitive("bool"),
-    });
-    type_map.0.insert("i64", Type {
-        head: TypeHead { has_lifetime: false },
-        body: TypeBody::Primitive("i64"),
-    });
-    type_map.0.insert("f64", Type {
-        head: TypeHead { has_lifetime: false },
-        body: TypeBody::Primitive("f64"),
-    });
-    type_map.0.insert("&'a str", Type {
-        head: TypeHead { has_lifetime: true },
-        body: TypeBody::Primitive("&'a str"),
-    });
+    type_map.0.insert("usize", Type::Primitive("usize"));
+    type_map.0.insert("bool", Type::Primitive("bool"));
+    type_map.0.insert("i64", Type::Primitive("i64"));
+    type_map.0.insert("f64", Type::Primitive("f64"));
+    type_map.0.insert("&'a str", Type::Primitive("&'a str"));
 
+    type_map.build("property_definition");
     for k in ref_map.keys() {
         type_map.build(k);
     }
@@ -357,15 +307,7 @@ impl<'a> ConcreteTypes<'a> {
         match self {
             ConcreteTypes::Aggregation(a) => a.to_type(type_map),
             ConcreteTypes::Simple(s) => s.to_type(),
-            ConcreteTypes::TypeRef(t) => {
-                let has_lifetime = type_map.has_lifetime(t.0);
-                Type {
-                    head: TypeHead {
-                        has_lifetime,
-                    },
-                    body: TypeBody::Redeclared(t.0),
-                }
-            },
+            ConcreteTypes::TypeRef(t) => Type::Redeclared(t.0),
         }
     }
 }
@@ -380,20 +322,9 @@ impl<'a> AggregationTypes<'a> {
         match &**instantiable {
             InstantiableType::Concrete(c) => {
                 let type_ = c.to_type(type_map);
-                Type {
-                    head: TypeHead { has_lifetime: type_.head.has_lifetime },
-                    body: TypeBody::Aggregation { optional,
-                        type_: Box::new(type_),
-                    }
-                }
+                Type::Aggregation { optional,  type_: Box::new(type_) }
             },
-            InstantiableType::EntityRef(e) => {
-                let has_lifetime = type_map.has_lifetime(e.0);
-                Type {
-                    head: TypeHead { has_lifetime },
-                    body: TypeBody::Redeclared(e.0),
-                }
-            }
+            InstantiableType::EntityRef(e) => Type::Redeclared(e.0),
         }
     }
 }
@@ -420,10 +351,7 @@ impl<'a> EnumerationItems<'a> {
         for e in &self.0 {
             out.push(e.0);
         }
-        Type {
-            head: TypeHead { has_lifetime: false },
-            body: TypeBody::Enum(out)
-        }
+        Type::Enum(out)
     }
 }
 impl<'a> SelectType<'a> {
@@ -439,40 +367,92 @@ impl<'a> SelectType<'a> {
 impl<'a> SelectList<'a> {
     fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
         let mut out = Vec::new();
-        let mut has_lifetime = false;
         for e in &self.0 {
-            has_lifetime |= type_map.has_lifetime(e.name());
             out.push(e.name());
         }
-        Type {
-            head: TypeHead { has_lifetime },
-            body: TypeBody::Select(out)
-        }
+        Type::Select(out)
     }
 }
 impl<'a> EntityDecl<'a> {
     fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type<'a> {
         let subsuper = &self.0.1;
         let mut attrs = Vec::new();
-        let mut has_lifetime = false;
         if let Some(subs) = &subsuper.1 {
             for sub in subs.0.iter() {
                 attrs.extend(type_map.attributes(sub.0).into_iter());
-                has_lifetime |= type_map.has_lifetime(sub.0);
             }
         }
+
         for attr in &self.1.explicit_attr {
-            // TODO
+            let attr_type = attr.parameter_type.to_attr_type_str(type_map);
+            for a in &attr.attributes {
+                if a.is_redeclared() {
+                    // TODO: tweak existing attr type
+                    continue;
+                }
+                attrs.push(AttributeData {
+                    name: a.name(),
+                    type_: attr_type.clone(),
+                    optional: attr.optional,
+                });
+            }
         }
-        Type {
-            head: TypeHead { has_lifetime },
-            body: TypeBody::Entity { attrs },
+        Type::Entity { attrs }
+    }
+}
+impl<'a> AttributeDecl<'a> {
+    fn name(&self) -> &str {
+        match self {
+            AttributeDecl::Id(i) => i.0,
+            AttributeDecl::Redeclared(r) => {
+                panic!("No support for renamed attributes");
+            }
+        }
+    }
+    fn is_redeclared(&self) -> bool {
+        match self {
+            AttributeDecl::Id(_) => false,
+            AttributeDecl::Redeclared(_) => true,
         }
     }
 }
+impl<'a> GeneralizedTypes<'a> {
+    fn to_attr_type_str(&'a self, type_map: &mut TypeMap<'a>) -> String {
+        match self {
+            GeneralizedTypes::Aggregate(a) =>
+                panic!("No support for aggregate type"),
+            GeneralizedTypes::GeneralAggregation(a) =>
+                a.to_attr_type_str(type_map),
+            GeneralizedTypes::GenericEntity(a) =>
+                panic!("No support for generic entity type"),
+            GeneralizedTypes::Generic(a) =>
+                panic!("No support for generic generalized type"),
+        }
+    }
+}
+impl<'a> ParameterType<'a> {
+    fn to_attr_type_str(&'a self, type_map: &mut TypeMap<'a>) -> String {
+        match self {
+            ParameterType::Generalized(g) => g.to_attr_type_str(type_map),
+            ParameterType::Named(e) => type_map.to_rtype_build(e.name()),
+            ParameterType::Simple(e) => e.to_attr_type_str().to_owned(),
+        }
+    }
+}
+impl<'a> GeneralAggregationTypes<'a> {
+    fn to_attr_type_str(&'a self, type_map: &mut TypeMap<'a>) -> String {
+        let (optional, param_type) = match self {
+            GeneralAggregationTypes::Array(a) => (a.optional, &a.parameter_type),
+            GeneralAggregationTypes::Bag(a) => (false,  &a.1),
+            GeneralAggregationTypes::List(a) => (false, &a.parameter_type),
+            GeneralAggregationTypes::Set(a) => (false, &a.parameter_type),
+        };
+        param_type.to_attr_type_str(type_map) // TODO: optional?
+    }
+}
 impl <'a> SimpleTypes<'a> {
-    fn to_type(&self) -> Type {
-        let t = match self {
+    fn to_attr_type_str(&self) -> &str {
+        match self {
             SimpleTypes::Binary(_) => "usize",
             SimpleTypes::Boolean => "bool",
             SimpleTypes::Integer => "i64",
@@ -480,18 +460,10 @@ impl <'a> SimpleTypes<'a> {
             SimpleTypes::Number => "f64",
             SimpleTypes::Real(_) => "f64",
             SimpleTypes::String(_) => "&'a str",
-        };
-        let has_lifetime = if let SimpleTypes::String(_) = &self {
-            true
-        } else {
-            false
-        };
-        Type {
-            head: TypeHead {
-                has_lifetime,
-            },
-            body: TypeBody::Primitive(t),
         }
+    }
+    fn to_type(&self) -> Type {
+        Type::Primitive(self.to_attr_type_str())
     }
 }
 impl<'a> ConstructedTypes<'a> {
