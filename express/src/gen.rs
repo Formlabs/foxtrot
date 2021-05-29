@@ -298,7 +298,7 @@ impl<'a> UnderlyingType<'a> {
     fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
         match self {
             UnderlyingType::Concrete(c) => c.to_type(type_map),
-            UnderlyingType::Constructed(c) => c.to_type(type_map),
+            UnderlyingType::Constructed(c) => c.to_type(),
         }
     }
 }
@@ -329,10 +329,10 @@ impl<'a> AggregationTypes<'a> {
     }
 }
 impl<'a> ConstructedTypes<'a> {
-    fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
+    fn to_type(&'a self) -> Type {
         match self {
             ConstructedTypes::Enumeration(e) => e.to_type(),
-            ConstructedTypes::Select(s) => s.to_type(type_map),
+            ConstructedTypes::Select(s) => s.to_type(),
         }
     }
 }
@@ -355,17 +355,17 @@ impl<'a> EnumerationItems<'a> {
     }
 }
 impl<'a> SelectType<'a> {
-    fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
+    fn to_type(&'a self) -> Type {
         assert!(!self.extensible, "Cannot handle extensible lists");
         assert!(!self.generic_entity, "Cannot handle generic entity lists");
         match &self.list_or_extension {
-            SelectListOrExtension::List(e) => e.to_type(type_map),
+            SelectListOrExtension::List(e) => e.to_type(),
             _ => panic!("Extensions not supported"),
         }
     }
 }
 impl<'a> SelectList<'a> {
-    fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type {
+    fn to_type(&'a self) -> Type {
         let mut out = Vec::new();
         for e in &self.0 {
             out.push(e.name());
@@ -404,9 +404,8 @@ impl<'a> AttributeDecl<'a> {
     fn name(&self) -> &str {
         match self {
             AttributeDecl::Id(i) => i.0,
-            AttributeDecl::Redeclared(r) => {
-                panic!("No support for renamed attributes");
-            }
+            AttributeDecl::Redeclared(_) =>
+                panic!("No support for renamed attributes"),
         }
     }
     fn is_redeclared(&self) -> bool {
@@ -419,13 +418,13 @@ impl<'a> AttributeDecl<'a> {
 impl<'a> GeneralizedTypes<'a> {
     fn to_attr_type_str(&'a self, type_map: &mut TypeMap<'a>) -> String {
         match self {
-            GeneralizedTypes::Aggregate(a) =>
+            GeneralizedTypes::Aggregate(_) =>
                 panic!("No support for aggregate type"),
             GeneralizedTypes::GeneralAggregation(a) =>
                 a.to_attr_type_str(type_map),
-            GeneralizedTypes::GenericEntity(a) =>
+            GeneralizedTypes::GenericEntity(_) =>
                 panic!("No support for generic entity type"),
-            GeneralizedTypes::Generic(a) =>
+            GeneralizedTypes::Generic(_) =>
                 panic!("No support for generic generalized type"),
         }
     }
@@ -447,7 +446,12 @@ impl<'a> GeneralAggregationTypes<'a> {
             GeneralAggregationTypes::List(a) => (false, &a.parameter_type),
             GeneralAggregationTypes::Set(a) => (false, &a.parameter_type),
         };
-        param_type.to_attr_type_str(type_map) // TODO: optional?
+        let t = param_type.to_attr_type_str(type_map);
+        if optional {
+            format!("Option<{}>", t)
+        } else {
+            t
+        }
     }
 }
 impl <'a> SimpleTypes<'a> {
