@@ -172,7 +172,6 @@ pub fn gen(s: &mut Syntax) -> String {
     type_map.0.insert("f64", Type::Primitive("f64"));
     type_map.0.insert("&'a str", Type::Primitive("&'a str"));
 
-    type_map.build("property_definition");
     for k in ref_map.keys() {
         type_map.build(k);
     }
