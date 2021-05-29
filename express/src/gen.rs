@@ -1,5 +1,4 @@
 use std::collections::{HashSet, HashMap};
-use codegen::{Scope};
 use crate::parse::*;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,58 +82,55 @@ impl <'a> TypeMap<'a> {
 }
 
 impl<'a> Type<'a> {
-    fn gen(&self, name: &str, scope: &mut Scope, type_map: &TypeMap) {
+    fn gen<W>(&self, name: &str, buf: &mut W, type_map: &TypeMap) -> std::fmt::Result
+        where W: std::fmt::Write
+    {
         let name = to_camel(name);
         match self {
             Type::Redeclared(c) => {
-                let t = scope.new_struct(&name);
-                t.generic("'a");
-                t.tuple_field(type_map.to_rtype(c));
-                t.tuple_field("std::marker::PhantomData<&'a ()>");
+                writeln!(buf,
+                    "struct {}<'a>({}, std::marker::PhantomData<&'a ()>);",
+                    name, type_map.to_rtype(c))?;
             },
             Type::Enum(c) => {
-                let t = scope.new_enum(&name);
-                t.generic("'a");
+                writeln!(buf, "enum {}<'a> {{", name)?;
                 for v in c {
-                    t.new_variant(&to_camel(v));
+                    writeln!(buf, "    {},", to_camel(v))?;
                 }
-                t.new_variant("_Unused")
-                    .tuple("std::marker::PhantomData<&'a ()>");
+                writeln!(buf,
+                    "    _Unused(std::marker::PhantomData<&'a ()>,\n}}")?;
             },
             Type::Select(c) => {
-                let t = scope.new_enum(&name);
-                t.generic("'a");
+                writeln!(buf, "enum {}<'a> {{", name)?;
                 for v in c {
-                    t.new_variant(&to_camel(v))
-                        .tuple(&type_map.to_rtype(v));
+                    writeln!(buf, "    {}({}),", to_camel(v),
+                             type_map.to_rtype(v))?;
                 }
+                writeln!(buf,
+                    "    _Unused(std::marker::PhantomData<&'a ()>\n}}")?;
             },
             Type::Aggregation { .. } => {
-                let t = scope.new_struct(&name);
-                t.generic("'a");
-                t.tuple_field(type_map.to_inner_rtype(self));
-                t.tuple_field("std::marker::PhantomData<&'a ()>");
+                writeln!(buf,
+                    "struct {}<'a>({}, std::marker::PhantomData<&'a ()>);",
+                    name, type_map.to_inner_rtype(self))?;
             }
             Type::Entity { attrs } => {
-                let t = scope.new_struct(&format!("{}_", name));
-                t.generic("'a");
+                writeln!(buf, "struct {}_<'a> {{", name)?;
                 for a in attrs {
+                    write!(buf, "    {}: ", a.name)?;
                     if a.optional {
-                        t.field(a.name, &format!("Option<{}>", a.type_));
+                        writeln!(buf, "Option<{}>", a.type_)?;
                     } else {
-                        t.field(a.name, &a.type_);
+                        writeln!(buf, "{}", a.type_)?;
                     }
                 }
-                t.field("_marker", "std::marker::PhantomData<&'a ()>");
-                scope.raw(&format!("type {0}<'a> = Id<{0}_<'a>>;", name));
+                writeln!(buf, r#"    _marker: std::marker::PhantomData<&'a ()>,
+}}
+type {0}<'a> = Id<{0}_<'a>>;"#, name)?;
             },
-            Type::Primitive(p) => {
-                let t = scope.new_struct(&name);
-                t.generic("'a");
-                t.tuple_field(*p);
-                t.tuple_field("std::marker::PhantomData<&'a ()>");
-            },
+            Type::Primitive(p) => (),
         };
+        Ok(())
     }
 }
 
@@ -156,7 +152,7 @@ enum Ref<'a> {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-pub fn gen(s: &mut Syntax) -> String {
+pub fn gen(s: &mut Syntax) -> Result<String, std::fmt::Error> {
     assert!(s.0.len() == 1, "Multiple schemas are unsupported");
 
     // First pass: collect entity names, then convert ambiguous IDs in SELECT
@@ -183,13 +179,13 @@ pub fn gen(s: &mut Syntax) -> String {
     }
 
     // Step four: do codegen on the completed type map (sorted for determinism)
-    let mut scope = Scope::new();
     let mut keys: Vec<&str> = type_map.0.keys().cloned().collect();
     keys.sort();
+    let mut buf = String::new();
     for k in &keys {
-        type_map.0[k].gen(k, &mut scope, &type_map);
+        type_map.0[k].gen(k, &mut buf, &type_map)?;
     }
-    scope.to_string()
+    Ok(buf)
 }
 
 fn to_camel(s: &str) -> String {
@@ -404,6 +400,8 @@ impl<'a> EntityDecl<'a> {
         let mut attrs = Vec::new();
         if let Some(subs) = &subsuper.1 {
             for sub in subs.0.iter() {
+                // Import attributes from parent classes, patching the
+                // `from` field to indicate that it's from a superclass
                 attrs.extend(type_map
                     .attributes(sub.0)
                     .into_iter()
@@ -506,7 +504,7 @@ impl <'a> SimpleTypes<'a> {
         }
     }
     fn to_type(&self) -> Type {
-        Type::Primitive(self.to_attr_type_str())
+        Type::Redeclared(self.to_attr_type_str())
     }
 }
 impl<'a> ConstructedTypes<'a> {

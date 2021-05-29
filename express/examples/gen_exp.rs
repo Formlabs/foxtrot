@@ -37,7 +37,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     eprintln!("parsed in {:?}", since_the_epoch);
 
     let start = SystemTime::now();
-    let gen = express::gen::gen(&mut parsed.1);
+    let gen = express::gen::gen(&mut parsed.1)?;
     let end = SystemTime::now();
     let since_the_epoch = end.duration_since(start).expect("Time went backwards");
     eprintln!("generated in {:?}", since_the_epoch);
