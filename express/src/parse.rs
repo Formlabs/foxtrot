@@ -479,7 +479,7 @@ id_type!(AttributeId, attribute_id);
 
 // 179
 #[derive(Debug)]
-pub struct AttributeQualifier<'a>(AttributeRef<'a>);
+pub struct AttributeQualifier<'a>(pub AttributeRef<'a>);
 fn attribute_qualifier(s: &str) -> IResult<AttributeQualifier> {
     map(preceded(char('.'), attribute_ref), AttributeQualifier)(s)
 }
@@ -757,7 +757,9 @@ fn declaration(s: &str) -> IResult<Declaration> {
 
 // 200 derived_attr = attribute_decl ’:’ parameter_type ’:=’ expression ’;’ .
 #[derive(Debug)]
-pub struct DerivedAttr<'a>(AttributeDecl<'a>, ParameterType<'a>, Expression<'a>);
+pub struct DerivedAttr<'a>(pub AttributeDecl<'a>,
+                           ParameterType<'a>,
+                           Expression<'a>);
 fn derived_attr(s: &str) -> IResult<DerivedAttr> {
     map(tuple((
         attribute_decl,
@@ -771,7 +773,7 @@ fn derived_attr(s: &str) -> IResult<DerivedAttr> {
 
 // 201 derive_clause = DERIVE derived_attr { derived_attr } .
 #[derive(Debug)]
-pub struct DeriveClause<'a>(Vec<DerivedAttr<'a>>);
+pub struct DeriveClause<'a>(pub Vec<DerivedAttr<'a>>);
 fn derive_clause(s: &str) -> IResult<DeriveClause> {
     map(preceded(kw("derive"), many1(derived_attr)), DeriveClause)(s)
 }
@@ -1178,7 +1180,7 @@ fn generic_type(s: &str) -> IResult<GenericType> {
 
 // 232 group_qualifier = ’\’ entity_ref .
 #[derive(Debug)]
-pub struct GroupQualifier<'a>(EntityRef<'a>);
+pub struct GroupQualifier<'a>(pub EntityRef<'a>);
 fn group_qualifier(s: &str) -> IResult<GroupQualifier> {
     map(preceded(char('\\'), entity_ref), GroupQualifier)(s)
 }
@@ -1676,7 +1678,8 @@ fn qualifiable_factor(s: &str) -> IResult<QualifiableFactor> {
 
 // 275 qualified_attribute = SELF group_qualifier attribute_qualifier .
 #[derive(Debug)]
-pub struct QualifiedAttribute<'a>(GroupQualifier<'a>, AttributeQualifier<'a>);
+pub struct QualifiedAttribute<'a>(pub GroupQualifier<'a>,
+                                  pub AttributeQualifier<'a>);
 fn qualified_attribute(s: &str) -> IResult<QualifiedAttribute> {
     map(tuple((
         kw("self"),
@@ -1737,7 +1740,8 @@ fn real_type(s: &str) -> IResult<RealType> {
 
 // 279 redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
 #[derive(Debug)]
-pub struct RedeclaredAttribute<'a>(QualifiedAttribute<'a>, Option<AttributeId<'a>>);
+pub struct RedeclaredAttribute<'a>(pub QualifiedAttribute<'a>,
+                                   pub Option<AttributeId<'a>>);
 fn redeclared_attribute(s: &str) -> IResult<RedeclaredAttribute> {
     map(pair(qualified_attribute,
              opt(preceded(kw("renamed"), attribute_id))),

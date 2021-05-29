@@ -375,11 +375,31 @@ impl<'a> SelectList<'a> {
 }
 impl<'a> EntityDecl<'a> {
     fn to_type(&'a self, type_map: &mut TypeMap<'a>) -> Type<'a> {
+        // Derived values from parents shouldn't be stored in the struct, so
+        // we build a map of them here and skip them when collecting attributes
+        // from superclasses.
+        let mut derived: HashSet<(EntityRef, &str)> = HashSet::new();
+        if let Some(derive) = &self.1.derive {
+            for d in &derive.0 {
+                match &d.0 {
+                    AttributeDecl::Redeclared(r) => {
+                        // There can't be a RENAMED clause here
+                        assert!(r.1.is_none());
+                        derived.insert((r.0.0.0, r.0.1.0.0));
+                    }
+                    AttributeDecl::Id(_) => continue,
+                }
+            }
+        }
+
         let subsuper = &self.0.1;
         let mut attrs = Vec::new();
         if let Some(subs) = &subsuper.1 {
             for sub in subs.0.iter() {
-                attrs.extend(type_map.attributes(sub.0).into_iter());
+                attrs.extend(type_map
+                    .attributes(sub.0)
+                    .into_iter()
+                    .filter(|a| !derived.contains(&(*sub, a.name))));
             }
         }
 
