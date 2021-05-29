@@ -177,10 +177,12 @@ pub fn gen(s: &mut Syntax) -> String {
         type_map.build(k);
     }
 
-    // Step four: do codegen on the completed type map
+    // Step four: do codegen on the completed type map (sorted for determinism)
     let mut scope = Scope::new();
-    for (k,v) in type_map.0.iter() {
-        v.gen(k, &mut scope, &type_map);
+    let mut keys: Vec<&str> = type_map.0.keys().cloned().collect();
+    keys.sort();
+    for k in &keys {
+        type_map.0[k].gen(k, &mut scope, &type_map);
     }
     scope.to_string()
 }
