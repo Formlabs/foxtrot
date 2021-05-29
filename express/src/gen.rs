@@ -135,6 +135,7 @@ impl<'a> Type<'a> {
 #[derive(Clone, Debug)]
 struct AttributeData<'a> {
     name: &'a str, // already camel-case
+    from: Option<&'a str>, // original class, or None
     type_: String,
     optional: bool,
 }
@@ -378,14 +379,14 @@ impl<'a> EntityDecl<'a> {
         // Derived values from parents shouldn't be stored in the struct, so
         // we build a map of them here and skip them when collecting attributes
         // from superclasses.
-        let mut derived: HashSet<(EntityRef, &str)> = HashSet::new();
+        let mut derived: HashSet<(&str, &str)> = HashSet::new();
         if let Some(derive) = &self.1.derive {
             for d in &derive.0 {
                 match &d.0 {
                     AttributeDecl::Redeclared(r) => {
                         // There can't be a RENAMED clause here
                         assert!(r.1.is_none());
-                        derived.insert((r.0.0.0, r.0.1.0.0));
+                        derived.insert((r.0.0.0.0, r.0.1.0.0));
                     }
                     AttributeDecl::Id(_) => continue,
                 }
@@ -399,7 +400,17 @@ impl<'a> EntityDecl<'a> {
                 attrs.extend(type_map
                     .attributes(sub.0)
                     .into_iter()
-                    .filter(|a| !derived.contains(&(*sub, a.name))));
+                    .map(|a|
+                        if a.from.is_none() {
+                            AttributeData {
+                                from: Some(sub.0),
+                                ..a
+                            }
+                        } else {
+                            a
+                        }
+                    )
+                    .filter(|a| !derived.contains(&(a.from.unwrap(), a.name))));
             }
         }
 
@@ -412,6 +423,7 @@ impl<'a> EntityDecl<'a> {
                 }
                 attrs.push(AttributeData {
                     name: a.name(),
+                    from: None,
                     type_: attr_type.clone(),
                     optional: attr.optional,
                 });
