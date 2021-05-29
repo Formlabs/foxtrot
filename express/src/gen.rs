@@ -4,6 +4,7 @@ use crate::parse::*;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper types to use when doing code-gen
+#[derive(Debug)]
 enum Type<'a> {
     Entity {
         // In order, with parent attributes first
@@ -127,7 +128,12 @@ impl<'a> Type<'a> {
                 t.field("_marker", "std::marker::PhantomData<&'a ()>");
                 scope.raw(&format!("type {0}<'a> = Id<{0}_<'a>>;", name));
             },
-            Type::Primitive(_) => {},
+            Type::Primitive(p) => {
+                let t = scope.new_struct(&name);
+                t.generic("'a");
+                t.tuple_field(*p);
+                t.tuple_field("std::marker::PhantomData<&'a ()>");
+            },
         };
     }
 }
