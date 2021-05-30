@@ -1,3 +1,4 @@
+use std::fmt::Write;
 use std::collections::{HashSet, HashMap};
 use crate::parse::*;
 
@@ -11,6 +12,7 @@ enum Type<'a> {
     },
     // These are all TYPE in EXPRESS, but we unpack them here
     Redeclared(&'a str),
+    RedeclaredPrimitive(&'a str),
     Enum(Vec<&'a str>),
     Select(Vec<&'a str>),
     Aggregation {
@@ -35,8 +37,11 @@ impl <'a> TypeMap<'a> {
             Type::Entity { .. }
             | Type::Redeclared(_)
             | Type::Enum(_)
-            | Type::Select(_)
-            | Type::Primitive(_) => format!("{}<'a>", to_camel(s)),
+            | Type::Select(_) => format!("{}<'a>", to_camel(s)),
+
+            Type::Primitive(s)
+            | Type::RedeclaredPrimitive(s) => s.to_string(),
+
             Type::Aggregation { optional, type_ } => if *optional {
                 format!("Vec<Option<{}>>", self.to_inner_rtype(type_))
             } else {
@@ -54,7 +59,8 @@ impl <'a> TypeMap<'a> {
             Type::Redeclared(r) => {
                 format!("{}<'a>", to_camel(r))
             },
-            Type::Primitive(r) => format!("{}", r),
+            Type::RedeclaredPrimitive(r) => r.to_string(),
+            Type::Primitive(r) => r.to_string(),
 
             Type::Entity { .. } | Type::Enum(_) | Type::Select(_) =>
                 panic!("Invalid inner type"),
@@ -92,6 +98,11 @@ impl<'a> Type<'a> {
                     "struct {}<'a>({}, std::marker::PhantomData<&'a ()>);",
                     name, type_map.to_rtype(c))?;
             },
+            Type::RedeclaredPrimitive(c) => {
+                writeln!(buf,
+                    "struct {}<'a>({}, std::marker::PhantomData<&'a ()>);",
+                    name, c)?;
+            },
             Type::Enum(c) => {
                 writeln!(buf, "enum {}<'a> {{", name)?;
                 for v in c {
@@ -117,7 +128,11 @@ impl<'a> Type<'a> {
             Type::Entity { attrs } => {
                 writeln!(buf, "struct {}_<'a> {{", name)?;
                 for a in attrs {
-                    write!(buf, "    {}: ", a.name)?;
+                    if a.dupe {
+                        write!(buf, "    {}__{}: ", a.from.unwrap(), a.name)?;
+                    } else {
+                        write!(buf, "    {}: ", a.name)?;
+                    }
                     if a.optional {
                         writeln!(buf, "Option<{}>,", a.type_)?;
                     } else {
@@ -140,6 +155,8 @@ struct AttributeData<'a> {
     from: Option<&'a str>, // original class, or None
     type_: String,
     optional: bool,
+    // inherited from different parents with the same name
+    dupe: bool,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -182,6 +199,8 @@ pub fn gen(s: &mut Syntax) -> Result<String, std::fmt::Error> {
     let mut keys: Vec<&str> = type_map.0.keys().cloned().collect();
     keys.sort();
     let mut buf = String::new();
+    writeln!(&mut buf,
+        "struct Id<T>(pub usize, std::marker::PhantomData<*const T>);")?;
     for k in &keys {
         type_map.0[k].gen(k, &mut buf, &type_map)?;
     }
@@ -396,7 +415,26 @@ impl<'a> EntityDecl<'a> {
             }
         }
 
+        // Skip attributes when we have multiple inheritance with a common
+        // base class.
+        let mut seen: HashSet<(&str, &str)> = HashSet::new();
+
+        // Tag any inherited attribute names with > 1 occurence so we can
+        // special-case them in the struct
         let subsuper = &self.0.1;
+        let mut inherited_name_count: HashMap<&str, usize> = HashMap::new();
+        if let Some(subs) = &subsuper.1 {
+            for sub in &subs.0 {
+                for a in type_map.attributes(sub.0) {
+                    *inherited_name_count.entry(a.name).or_insert(0) += 1;
+                }
+            }
+        }
+        let inherited_names: HashSet<&str> = inherited_name_count.into_iter()
+            .filter(|a| a.1 > 1)
+            .map(|a| a.0)
+            .collect();
+
         let mut attrs = Vec::new();
         if let Some(subs) = &subsuper.1 {
             for sub in subs.0.iter() {
@@ -409,13 +447,18 @@ impl<'a> EntityDecl<'a> {
                         if a.from.is_none() {
                             AttributeData {
                                 from: Some(sub.0),
+                                dupe: inherited_names.contains(a.name),
                                 ..a
                             }
                         } else {
                             a
                         }
                     )
-                    .filter(|a| !derived.contains(&(a.from.unwrap(), a.name))));
+                    // Skip derived values in the struct
+                    .filter(|a| !derived.contains(&(a.from.unwrap(), a.name)))
+                    // Skip values that have already been seen (if we have
+                    // multiple inheritance from a common base class)
+                    .filter(|a| seen.insert((a.from.unwrap(), a.name))));
             }
         }
 
@@ -429,6 +472,7 @@ impl<'a> EntityDecl<'a> {
                 attrs.push(AttributeData {
                     name: a.name(),
                     from: None,
+                    dupe: false,
                     type_: attr_type.clone(),
                     optional: attr.optional,
                 });
@@ -504,7 +548,7 @@ impl <'a> SimpleTypes<'a> {
         }
     }
     fn to_type(&self) -> Type {
-        Type::Redeclared(self.to_attr_type_str())
+        Type::RedeclaredPrimitive(self.to_attr_type_str())
     }
 }
 impl<'a> ConstructedTypes<'a> {
