@@ -98,7 +98,7 @@ impl<'a> Type<'a> {
                     writeln!(buf, "    {},", to_camel(v))?;
                 }
                 writeln!(buf,
-                    "    _Unused(std::marker::PhantomData<&'a ()>,\n}}")?;
+                    "    _Unused(std::marker::PhantomData<&'a ()>),\n}}")?;
             },
             Type::Select(c) => {
                 writeln!(buf, "enum {}<'a> {{", name)?;
@@ -107,7 +107,7 @@ impl<'a> Type<'a> {
                              type_map.to_rtype(v))?;
                 }
                 writeln!(buf,
-                    "    _Unused(std::marker::PhantomData<&'a ()>\n}}")?;
+                    "    _Unused(std::marker::PhantomData<&'a ()>)\n}}")?;
             },
             Type::Aggregation { .. } => {
                 writeln!(buf,
@@ -119,9 +119,9 @@ impl<'a> Type<'a> {
                 for a in attrs {
                     write!(buf, "    {}: ", a.name)?;
                     if a.optional {
-                        writeln!(buf, "Option<{}>", a.type_)?;
+                        writeln!(buf, "Option<{}>,", a.type_)?;
                     } else {
-                        writeln!(buf, "{}", a.type_)?;
+                        writeln!(buf, "{},", a.type_)?;
                     }
                 }
                 writeln!(buf, r#"    _marker: std::marker::PhantomData<&'a ()>,
