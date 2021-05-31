@@ -29,10 +29,10 @@ pub struct ActionAssignment_<'a> {
 }
 pub type ActionAssignment<'a> = Id<ActionAssignment_<'a>>;
 pub struct ActionDirective_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
-    pub analysis: &'a str,
-    pub comment: &'a str,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
+    pub analysis: Text<'a>,
+    pub comment: Text<'a>,
     pub requests: VersionedActionRequest<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -91,39 +91,39 @@ pub enum ActionItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct ActionMethod_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
-    pub consequence: &'a str,
-    pub purpose: &'a str,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
+    pub consequence: Text<'a>,
+    pub purpose: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionMethod<'a> = Id<ActionMethod_<'a>>;
 pub struct ActionMethodRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_method: ActionMethod<'a>,
     pub related_method: ActionMethod<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionMethodRelationship<'a> = Id<ActionMethodRelationship_<'a>>;
 pub struct ActionProperty_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub definition: CharacterizedActionDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionProperty<'a> = Id<ActionProperty_<'a>>;
 pub struct ActionPropertyRepresentation_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub property: ActionProperty<'a>,
     pub representation: Representation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionPropertyRepresentation<'a> = Id<ActionPropertyRepresentation_<'a>>;
 pub struct ActionRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_action: Action<'a>,
     pub related_action: Action<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -176,63 +176,63 @@ pub struct ActionRequestSolution_<'a> {
 }
 pub type ActionRequestSolution<'a> = Id<ActionRequestSolution_<'a>>;
 pub struct ActionRequestStatus_<'a> {
-    pub status: &'a str,
+    pub status: Label<'a>,
     pub assigned_request: VersionedActionRequest<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionRequestStatus<'a> = Id<ActionRequestStatus_<'a>>;
 pub struct ActionResource_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub usage: SupportedItem<'a>,
     pub kind: ActionResourceType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionResource<'a> = Id<ActionResource_<'a>>;
 pub struct ActionResourceRequirement_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub kind: ResourceRequirementType<'a>,
     pub operations: CharacterizedActionDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionResourceRequirement<'a> = Id<ActionResourceRequirement_<'a>>;
 pub struct ActionResourceType_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionResourceType<'a> = Id<ActionResourceType_<'a>>;
 pub struct ActionStatus_<'a> {
-    pub status: &'a str,
+    pub status: Label<'a>,
     pub assigned_action: ExecutedAction<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionStatus<'a> = Id<ActionStatus_<'a>>;
 pub struct Address_<'a> {
-    pub internal_location: Option<&'a str>,
-    pub street_number: Option<&'a str>,
-    pub street: Option<&'a str>,
-    pub postal_box: Option<&'a str>,
-    pub town: Option<&'a str>,
-    pub region: Option<&'a str>,
-    pub postal_code: Option<&'a str>,
-    pub country: Option<&'a str>,
-    pub facsimile_number: Option<&'a str>,
-    pub telephone_number: Option<&'a str>,
-    pub electronic_mail_address: Option<&'a str>,
-    pub telex_number: Option<&'a str>,
+    pub internal_location: Option<Label<'a>>,
+    pub street_number: Option<Label<'a>>,
+    pub street: Option<Label<'a>>,
+    pub postal_box: Option<Label<'a>>,
+    pub town: Option<Label<'a>>,
+    pub region: Option<Label<'a>>,
+    pub postal_code: Option<Label<'a>>,
+    pub country: Option<Label<'a>>,
+    pub facsimile_number: Option<Label<'a>>,
+    pub telephone_number: Option<Label<'a>>,
+    pub electronic_mail_address: Option<Label<'a>>,
+    pub telex_number: Option<Label<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Address<'a> = Id<Address_<'a>>;
 pub struct AdvancedBrepShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AdvancedBrepShapeRepresentation<'a> = Id<AdvancedBrepShapeRepresentation_<'a>>;
 pub struct AdvancedFace_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub bounds: FaceBound<'a>,
     pub face_geometry: Surface<'a>,
     pub same_sense: bool,
@@ -246,15 +246,20 @@ pub enum AheadOrBehind<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct AlternateProductRelationship_<'a> {
-    pub name: &'a str,
-    pub definition: Option<&'a str>,
+    pub name: Label<'a>,
+    pub definition: Option<Text<'a>>,
     pub alternate: Product<'a>,
     pub base: Product<'a>,
-    pub basis: &'a str,
+    pub basis: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AlternateProductRelationship<'a> = Id<AlternateProductRelationship_<'a>>;
 pub struct AmountOfSubstanceMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> AmountOfSubstanceMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct AmountOfSubstanceMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -278,14 +283,14 @@ pub enum AngleRelator<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct AngularDimension_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AngularDimension<'a> = Id<AngularDimension_<'a>>;
 pub struct AngularLocation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     pub angle_selection: AngleRelator<'a>,
@@ -294,14 +299,14 @@ pub struct AngularLocation_<'a> {
 pub type AngularLocation<'a> = Id<AngularLocation_<'a>>;
 pub struct AngularSize_<'a> {
     pub applies_to: ShapeAspect<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub angle_selection: AngleRelator<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AngularSize<'a> = Id<AngularSize_<'a>>;
 pub struct AngularityTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -309,20 +314,20 @@ pub struct AngularityTolerance_<'a> {
 }
 pub type AngularityTolerance<'a> = Id<AngularityTolerance_<'a>>;
 pub struct AnnotationCurveOccurrence_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationCurveOccurrence<'a> = Id<AnnotationCurveOccurrence_<'a>>;
 pub struct AnnotationFillArea_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub boundaries: Curve<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationFillArea<'a> = Id<AnnotationFillArea_<'a>>;
 pub struct AnnotationFillAreaOccurrence_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     pub fill_style_target: Point<'a>,
@@ -330,30 +335,30 @@ pub struct AnnotationFillAreaOccurrence_<'a> {
 }
 pub type AnnotationFillAreaOccurrence<'a> = Id<AnnotationFillAreaOccurrence_<'a>>;
 pub struct AnnotationOccurrence_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationOccurrence<'a> = Id<AnnotationOccurrence_<'a>>;
 pub struct AnnotationOccurrenceAssociativity_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub relating_annotation_occurrence: AnnotationOccurrence<'a>,
     pub related_annotation_occurrence: AnnotationOccurrence<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationOccurrenceAssociativity<'a> = Id<AnnotationOccurrenceAssociativity_<'a>>;
 pub struct AnnotationOccurrenceRelationship_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub relating_annotation_occurrence: AnnotationOccurrence<'a>,
     pub related_annotation_occurrence: AnnotationOccurrence<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationOccurrenceRelationship<'a> = Id<AnnotationOccurrenceRelationship_<'a>>;
 pub struct AnnotationPlane_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     pub elements: Option<AnnotationPlaneElement<'a>>,
@@ -366,21 +371,21 @@ pub enum AnnotationPlaneElement<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct AnnotationSubfigureOccurrence_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationSubfigureOccurrence<'a> = Id<AnnotationSubfigureOccurrence_<'a>>;
 pub struct AnnotationSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
     pub mapping_target: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationSymbol<'a> = Id<AnnotationSymbol_<'a>>;
 pub struct AnnotationSymbolOccurrence_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -392,14 +397,14 @@ pub enum AnnotationSymbolOccurrenceItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct AnnotationText_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
     pub mapping_target: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationText<'a> = Id<AnnotationText_<'a>>;
 pub struct AnnotationTextCharacter_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
     pub mapping_target: RepresentationItem<'a>,
     pub alignment: TextAlignment<'a>,
@@ -407,7 +412,7 @@ pub struct AnnotationTextCharacter_<'a> {
 }
 pub type AnnotationTextCharacter<'a> = Id<AnnotationTextCharacter_<'a>>;
 pub struct AnnotationTextOccurrence_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -422,36 +427,36 @@ pub enum AnnotationTextOccurrenceItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct Apex_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Apex<'a> = Id<Apex_<'a>>;
 pub struct ApplicationContext_<'a> {
-    pub application: &'a str,
+    pub application: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApplicationContext<'a> = Id<ApplicationContext_<'a>>;
 pub struct ApplicationContextElement_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub frame_of_reference: ApplicationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApplicationContextElement<'a> = Id<ApplicationContextElement_<'a>>;
 pub struct ApplicationContextRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_context: ApplicationContext<'a>,
     pub related_context: ApplicationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApplicationContextRelationship<'a> = Id<ApplicationContextRelationship_<'a>>;
 pub struct ApplicationProtocolDefinition_<'a> {
-    pub status: &'a str,
-    pub application_interpreted_model_schema_name: &'a str,
-    pub application_protocol_year: i64,
+    pub status: Label<'a>,
+    pub application_interpreted_model_schema_name: Label<'a>,
+    pub application_protocol_year: YearNumber<'a>,
     pub application: ApplicationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -475,8 +480,8 @@ pub struct AppliedApprovalAssignment_<'a> {
 }
 pub type AppliedApprovalAssignment<'a> = Id<AppliedApprovalAssignment_<'a>>;
 pub struct AppliedArea_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -517,7 +522,7 @@ pub struct AppliedDateAssignment_<'a> {
 pub type AppliedDateAssignment<'a> = Id<AppliedDateAssignment_<'a>>;
 pub struct AppliedDocumentReference_<'a> {
     pub assigned_document: Document<'a>,
-    pub source: &'a str,
+    pub source: Label<'a>,
     pub items: DocumentReferenceItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -543,7 +548,7 @@ pub struct AppliedEventOccurrenceAssignment_<'a> {
 }
 pub type AppliedEventOccurrenceAssignment<'a> = Id<AppliedEventOccurrenceAssignment_<'a>>;
 pub struct AppliedExternalIdentificationAssignment_<'a> {
-    pub assigned_id: &'a str,
+    pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
     pub source: ExternalSource<'a>,
     pub items: ExternalIdentificationItem<'a>,
@@ -557,7 +562,7 @@ pub struct AppliedGroupAssignment_<'a> {
 }
 pub type AppliedGroupAssignment<'a> = Id<AppliedGroupAssignment_<'a>>;
 pub struct AppliedIdentificationAssignment_<'a> {
-    pub assigned_id: &'a str,
+    pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
     pub items: IdentificationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -570,7 +575,7 @@ pub struct AppliedIneffectivityAssignment_<'a> {
 }
 pub type AppliedIneffectivityAssignment<'a> = Id<AppliedIneffectivityAssignment_<'a>>;
 pub struct AppliedNameAssignment_<'a> {
-    pub assigned_name: &'a str,
+    pub assigned_name: Label<'a>,
     pub items: NameItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -616,7 +621,7 @@ pub struct AppliedTimeIntervalAssignment_<'a> {
 pub type AppliedTimeIntervalAssignment<'a> = Id<AppliedTimeIntervalAssignment_<'a>>;
 pub struct Approval_<'a> {
     pub status: ApprovalStatus<'a>,
-    pub level: &'a str,
+    pub level: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Approval<'a> = Id<Approval_<'a>>;
@@ -680,20 +685,20 @@ pub struct ApprovalPersonOrganization_<'a> {
 }
 pub type ApprovalPersonOrganization<'a> = Id<ApprovalPersonOrganization_<'a>>;
 pub struct ApprovalRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_approval: Approval<'a>,
     pub related_approval: Approval<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApprovalRelationship<'a> = Id<ApprovalRelationship_<'a>>;
 pub struct ApprovalRole_<'a> {
-    pub role: &'a str,
+    pub role: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApprovalRole<'a> = Id<ApprovalRole_<'a>>;
 pub struct ApprovalStatus_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApprovalStatus<'a> = Id<ApprovalStatus_<'a>>;
@@ -726,6 +731,11 @@ pub struct AreaInSet_<'a> {
 }
 pub type AreaInSet<'a> = Id<AreaInSet_<'a>>;
 pub struct AreaMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> AreaMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct AreaMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -748,18 +758,18 @@ pub struct AsinFunction_<'a> {
 }
 pub type AsinFunction<'a> = Id<AsinFunction_<'a>>;
 pub struct AssemblyComponentUsage_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition: ProductDefinition<'a>,
     pub related_product_definition: ProductDefinition<'a>,
-    pub reference_designator: Option<&'a str>,
+    pub reference_designator: Option<Identifier<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AssemblyComponentUsage<'a> = Id<AssemblyComponentUsage_<'a>>;
 pub struct AssemblyComponentUsageSubstitute_<'a> {
-    pub name: &'a str,
-    pub definition: Option<&'a str>,
+    pub name: Label<'a>,
+    pub definition: Option<Text<'a>>,
     pub base: AssemblyComponentUsage<'a>,
     pub substitute: AssemblyComponentUsage<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -772,14 +782,14 @@ pub struct AtanFunction_<'a> {
 pub type AtanFunction<'a> = Id<AtanFunction_<'a>>;
 pub struct AttributeClassificationAssignment_<'a> {
     pub assigned_class: Group<'a>,
-    pub attribute_name: &'a str,
+    pub attribute_name: Label<'a>,
     pub role: ClassificationRole<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AttributeClassificationAssignment<'a> = Id<AttributeClassificationAssignment_<'a>>;
 pub struct AttributeLanguageAssignment_<'a> {
     pub assigned_class: Group<'a>,
-    pub attribute_name: &'a str,
+    pub attribute_name: Label<'a>,
     pub role: ClassificationRole<'a>,
     pub items: AttributeLanguageItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -859,25 +869,25 @@ pub enum AttributeLanguageItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub enum AttributeType<'a> {
-    Label(&'a str),
-    Text(&'a str),
+    Label(Label<'a>),
+    Text(Text<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct AttributeValueAssignment_<'a> {
-    pub attribute_name: &'a str,
+    pub attribute_name: Label<'a>,
     pub attribute_value: AttributeType<'a>,
     pub role: AttributeValueRole<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AttributeValueAssignment<'a> = Id<AttributeValueAssignment_<'a>>;
 pub struct AttributeValueRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AttributeValueRole<'a> = Id<AttributeValueRole_<'a>>;
 pub struct Axis1Placement_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub location: CartesianPoint<'a>,
     pub axis: Option<Direction<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -889,14 +899,14 @@ pub enum Axis2Placement<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct Axis2Placement2d_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub location: CartesianPoint<'a>,
     pub ref_direction: Option<Direction<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Axis2Placement2d<'a> = Id<Axis2Placement2d_<'a>>;
 pub struct Axis2Placement3d_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub location: CartesianPoint<'a>,
     pub axis: Option<Direction<'a>>,
     pub ref_direction: Option<Direction<'a>>,
@@ -904,7 +914,7 @@ pub struct Axis2Placement3d_<'a> {
 }
 pub type Axis2Placement3d<'a> = Id<Axis2Placement3d_<'a>>;
 pub struct BSplineCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub degree: i64,
     pub control_points_list: CartesianPoint<'a>,
     pub curve_form: BSplineCurveForm<'a>,
@@ -923,20 +933,20 @@ pub enum BSplineCurveForm<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct BSplineCurveWithKnots_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub degree: i64,
     pub control_points_list: CartesianPoint<'a>,
     pub curve_form: BSplineCurveForm<'a>,
     pub closed_curve: Option<bool>,
     pub self_intersect: Option<bool>,
     pub knot_multiplicities: i64,
-    pub knots: f64,
+    pub knots: ParameterValue<'a>,
     pub knot_spec: KnotType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BSplineCurveWithKnots<'a> = Id<BSplineCurveWithKnots_<'a>>;
 pub struct BSplineSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
     pub control_points_list: CartesianPoint<'a>,
@@ -962,7 +972,7 @@ pub enum BSplineSurfaceForm<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct BSplineSurfaceWithKnots_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
     pub control_points_list: CartesianPoint<'a>,
@@ -972,8 +982,8 @@ pub struct BSplineSurfaceWithKnots_<'a> {
     pub self_intersect: Option<bool>,
     pub u_multiplicities: i64,
     pub v_multiplicities: i64,
-    pub u_knots: f64,
-    pub v_knots: f64,
+    pub u_knots: ParameterValue<'a>,
+    pub v_knots: ParameterValue<'a>,
     pub knot_spec: KnotType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -984,27 +994,27 @@ pub struct BackgroundColour_<'a> {
 }
 pub type BackgroundColour<'a> = Id<BackgroundColour_<'a>>;
 pub struct BarringHole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BarringHole<'a> = Id<BarringHole_<'a>>;
 pub struct Bead_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Bead<'a> = Id<Bead_<'a>>;
 pub struct BeadEnd_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BeadEnd<'a> = Id<BeadEnd_<'a>>;
 pub struct BezierCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub degree: i64,
     pub control_points_list: CartesianPoint<'a>,
     pub curve_form: BSplineCurveForm<'a>,
@@ -1014,7 +1024,7 @@ pub struct BezierCurve_<'a> {
 }
 pub type BezierCurve<'a> = Id<BezierCurve_<'a>>;
 pub struct BezierSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
     pub control_points_list: CartesianPoint<'a>,
@@ -1046,7 +1056,7 @@ pub struct BinaryNumericExpression_<'a> {
 }
 pub type BinaryNumericExpression<'a> = Id<BinaryNumericExpression_<'a>>;
 pub struct Block_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
     pub x: PositiveLengthMeasure<'a>,
     pub y: PositiveLengthMeasure<'a>,
@@ -1081,7 +1091,7 @@ pub enum BooleanOperator<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct BooleanResult_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub operator: BooleanOperator<'a>,
     pub first_operand: BooleanOperand<'a>,
     pub second_operand: BooleanOperand<'a>,
@@ -1093,45 +1103,45 @@ pub struct BooleanVariable_<'a> {
 }
 pub type BooleanVariable<'a> = Id<BooleanVariable_<'a>>;
 pub struct Boss_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Boss<'a> = Id<Boss_<'a>>;
 pub struct BossTop_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BossTop<'a> = Id<BossTop_<'a>>;
 pub struct BoundaryCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub segments: CompositeCurveSegment<'a>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BoundaryCurve<'a> = Id<BoundaryCurve_<'a>>;
 pub struct BoundedCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BoundedCurve<'a> = Id<BoundedCurve_<'a>>;
 pub struct BoundedPcurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
     pub reference_to_curve: DefinitionalRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BoundedPcurve<'a> = Id<BoundedPcurve_<'a>>;
 pub struct BoundedSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BoundedSurface<'a> = Id<BoundedSurface_<'a>>;
 pub struct BoundedSurfaceCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
     pub associated_geometry: PcurveOrSurface<'a>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
@@ -1153,12 +1163,48 @@ pub struct BoxDomain_<'a> {
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BoxDomain<'a> = Id<BoxDomain_<'a>>;
+
 pub struct BoxHeight<'a>(pub PositiveRatioMeasure<'a>, std::marker::PhantomData<&'a ()>);
-pub struct BoxRotateAngle<'a>(pub f64, std::marker::PhantomData<&'a ()>);
-pub struct BoxSlantAngle<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> BoxHeight<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("BOX_HEIGHT("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(PositiveRatioMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
+
+pub struct BoxRotateAngle<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> BoxRotateAngle<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("BOX_ROTATE_ANGLE("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(PlaneAngleMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
+
+pub struct BoxSlantAngle<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> BoxSlantAngle<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("BOX_SLANT_ANGLE("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(PlaneAngleMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
+
 pub struct BoxWidth<'a>(pub PositiveRatioMeasure<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> BoxWidth<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("BOX_WIDTH("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(PositiveRatioMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct BoxedHalfSpace_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub base_surface: Surface<'a>,
     pub agreement_flag: bool,
     pub enclosure: BoxDomain<'a>,
@@ -1166,61 +1212,61 @@ pub struct BoxedHalfSpace_<'a> {
 }
 pub type BoxedHalfSpace<'a> = Id<BoxedHalfSpace_<'a>>;
 pub struct BrepWithVoids_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub outer: ClosedShell<'a>,
     pub voids: OrientedClosedShell<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BrepWithVoids<'a> = Id<BrepWithVoids_<'a>>;
 pub struct CalendarDate_<'a> {
-    pub year_component: i64,
-    pub day_component: i64,
-    pub month_component: i64,
+    pub year_component: YearNumber<'a>,
+    pub day_component: DayInMonthNumber<'a>,
+    pub month_component: MonthInYearNumber<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CalendarDate<'a> = Id<CalendarDate_<'a>>;
 pub struct CameraImage_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
     pub mapping_target: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CameraImage<'a> = Id<CameraImage_<'a>>;
 pub struct CameraImage2dWithScale_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
     pub mapping_target: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CameraImage2dWithScale<'a> = Id<CameraImage2dWithScale_<'a>>;
 pub struct CameraImage3dWithScale_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
     pub mapping_target: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CameraImage3dWithScale<'a> = Id<CameraImage3dWithScale_<'a>>;
 pub struct CameraModel_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CameraModel<'a> = Id<CameraModel_<'a>>;
 pub struct CameraModelD2_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub view_window: PlanarBox<'a>,
     pub view_window_clipping: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CameraModelD2<'a> = Id<CameraModelD2_<'a>>;
 pub struct CameraModelD3_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub view_reference_system: Axis2Placement3d<'a>,
     pub perspective_of_volume: ViewVolume<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CameraModelD3<'a> = Id<CameraModelD3_<'a>>;
 pub struct CameraModelD3WithHlhsr_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub view_reference_system: Axis2Placement3d<'a>,
     pub perspective_of_volume: ViewVolume<'a>,
     pub hidden_line_surface_removal: bool,
@@ -1234,16 +1280,16 @@ pub struct CameraUsage_<'a> {
 }
 pub type CameraUsage<'a> = Id<CameraUsage_<'a>>;
 pub struct CartesianPoint_<'a> {
-    pub name: &'a str,
-    pub coordinates: f64,
+    pub name: Label<'a>,
+    pub coordinates: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CartesianPoint<'a> = Id<CartesianPoint_<'a>>;
 #[allow(non_snake_case)]
 pub struct CartesianTransformationOperator_<'a> {
-    pub name: &'a str,
-    pub functionally_defined_transformation__name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub functionally_defined_transformation__name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub axis1: Option<Direction<'a>>,
     pub axis2: Option<Direction<'a>>,
     pub local_origin: CartesianPoint<'a>,
@@ -1253,9 +1299,9 @@ pub struct CartesianTransformationOperator_<'a> {
 pub type CartesianTransformationOperator<'a> = Id<CartesianTransformationOperator_<'a>>;
 #[allow(non_snake_case)]
 pub struct CartesianTransformationOperator2d_<'a> {
-    pub name: &'a str,
-    pub functionally_defined_transformation__name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub functionally_defined_transformation__name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub axis1: Option<Direction<'a>>,
     pub axis2: Option<Direction<'a>>,
     pub local_origin: CartesianPoint<'a>,
@@ -1265,9 +1311,9 @@ pub struct CartesianTransformationOperator2d_<'a> {
 pub type CartesianTransformationOperator2d<'a> = Id<CartesianTransformationOperator2d_<'a>>;
 #[allow(non_snake_case)]
 pub struct CartesianTransformationOperator3d_<'a> {
-    pub name: &'a str,
-    pub functionally_defined_transformation__name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub functionally_defined_transformation__name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub axis1: Option<Direction<'a>>,
     pub axis2: Option<Direction<'a>>,
     pub local_origin: CartesianPoint<'a>,
@@ -1281,6 +1327,11 @@ pub enum CategoryUsageItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct CelsiusTemperatureMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> CelsiusTemperatureMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct CelsiusTemperatureMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -1293,16 +1344,16 @@ pub enum CentralOrParallel<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct CentreOfSymmetry_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CentreOfSymmetry<'a> = Id<CentreOfSymmetry_<'a>>;
 pub struct Certification_<'a> {
-    pub name: &'a str,
-    pub purpose: &'a str,
+    pub name: Label<'a>,
+    pub purpose: Text<'a>,
     pub kind: CertificationType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1320,40 +1371,40 @@ pub enum CertificationItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct CertificationType_<'a> {
-    pub description: &'a str,
+    pub description: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CertificationType<'a> = Id<CertificationType_<'a>>;
 pub struct Chamfer_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Chamfer<'a> = Id<Chamfer_<'a>>;
 pub struct ChamferOffset_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ChamferOffset<'a> = Id<ChamferOffset_<'a>>;
 pub struct CharacterGlyphSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     pub character_box: PlanarExtent<'a>,
-    pub baseline_ratio: f64,
+    pub baseline_ratio: RatioMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CharacterGlyphSymbol<'a> = Id<CharacterGlyphSymbol_<'a>>;
 pub enum CharacterSpacingSelect<'a> {
-    LengthMeasure(f64),
-    RatioMeasure(f64),
+    LengthMeasure(LengthMeasure<'a>),
+    RatioMeasure(RatioMeasure<'a>),
     MeasureWithUnit(MeasureWithUnit<'a>),
-    DescriptiveMeasure(&'a str),
+    DescriptiveMeasure(DescriptiveMeasure<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub enum CharacterStyleSelect<'a> {
@@ -1369,10 +1420,10 @@ pub enum CharacterizedActionDefinition<'a> {
 }
 #[allow(non_snake_case)]
 pub struct CharacterizedClass_<'a> {
-    pub characterized_object__name: &'a str,
-    pub characterized_object__description: Option<&'a str>,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub characterized_object__name: Label<'a>,
+    pub characterized_object__description: Option<Text<'a>>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CharacterizedClass<'a> = Id<CharacterizedClass_<'a>>;
@@ -1387,8 +1438,8 @@ pub enum CharacterizedMaterialProperty<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct CharacterizedObject_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CharacterizedObject<'a> = Id<CharacterizedObject_<'a>>;
@@ -1403,29 +1454,29 @@ pub enum CharacterizedResourceDefinition<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct Circle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
     pub radius: PositiveLengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Circle<'a> = Id<Circle_<'a>>;
 pub struct CircularClosedProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CircularClosedProfile<'a> = Id<CircularClosedProfile_<'a>>;
 pub struct CircularPattern_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CircularPattern<'a> = Id<CircularPattern_<'a>>;
 pub struct CircularRunoutTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -1433,14 +1484,14 @@ pub struct CircularRunoutTolerance_<'a> {
 }
 pub type CircularRunoutTolerance<'a> = Id<CircularRunoutTolerance_<'a>>;
 pub struct Class_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Class<'a> = Id<Class_<'a>>;
 pub struct ClassSystem_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ClassSystem<'a> = Id<ClassSystem_<'a>>;
@@ -1498,28 +1549,28 @@ pub enum ClassificationItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct ClassificationRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ClassificationRole<'a> = Id<ClassificationRole_<'a>>;
 pub struct ClosedPathProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ClosedPathProfile<'a> = Id<ClosedPathProfile_<'a>>;
 pub struct ClosedShell_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub cfs_faces: Face<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ClosedShell<'a> = Id<ClosedShell_<'a>>;
 pub struct CoaxialityTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -1531,7 +1582,7 @@ pub struct Colour_<'a> {
 }
 pub type Colour<'a> = Id<Colour_<'a>>;
 pub struct ColourRgb_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub red: f64,
     pub green: f64,
     pub blue: f64,
@@ -1539,16 +1590,16 @@ pub struct ColourRgb_<'a> {
 }
 pub type ColourRgb<'a> = Id<ColourRgb_<'a>>;
 pub struct ColourSpecification_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ColourSpecification<'a> = Id<ColourSpecification_<'a>>;
 pub struct CommonDatum_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
-    pub identification: &'a str,
+    pub identification: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CommonDatum<'a> = Id<CommonDatum_<'a>>;
@@ -1588,14 +1639,14 @@ pub struct ComparisonNotEqual_<'a> {
 }
 pub type ComparisonNotEqual<'a> = Id<ComparisonNotEqual_<'a>>;
 pub struct CompositeCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub segments: CompositeCurveSegment<'a>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeCurve<'a> = Id<CompositeCurve_<'a>>;
 pub struct CompositeCurveOnSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub segments: CompositeCurveSegment<'a>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1609,49 +1660,49 @@ pub struct CompositeCurveSegment_<'a> {
 }
 pub type CompositeCurveSegment<'a> = Id<CompositeCurveSegment_<'a>>;
 pub struct CompositeHole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeHole<'a> = Id<CompositeHole_<'a>>;
 pub struct CompositeShapeAspect_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeShapeAspect<'a> = Id<CompositeShapeAspect_<'a>>;
 pub struct CompositeText_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub collected_text: TextOrCharacter<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeText<'a> = Id<CompositeText_<'a>>;
 pub struct CompositeTextWithAssociatedCurves_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub collected_text: TextOrCharacter<'a>,
     pub associated_curves: Curve<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeTextWithAssociatedCurves<'a> = Id<CompositeTextWithAssociatedCurves_<'a>>;
 pub struct CompositeTextWithBlankingBox_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub collected_text: TextOrCharacter<'a>,
     pub blanking: PlanarBox<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeTextWithBlankingBox<'a> = Id<CompositeTextWithBlankingBox_<'a>>;
 pub struct CompositeTextWithExtent_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub collected_text: TextOrCharacter<'a>,
     pub extent: PlanarExtent<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeTextWithExtent<'a> = Id<CompositeTextWithExtent_<'a>>;
 pub struct CompoundFeature_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompoundFeature<'a> = Id<CompoundFeature_<'a>>;
@@ -1661,13 +1712,13 @@ pub enum CompoundItemDefinition<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct CompoundRepresentationItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub item_element: CompoundItemDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompoundRepresentationItem<'a> = Id<CompoundRepresentationItem_<'a>>;
 pub struct CompoundShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1679,8 +1730,8 @@ pub struct ConcatExpression_<'a> {
 }
 pub type ConcatExpression<'a> = Id<ConcatExpression_<'a>>;
 pub struct ConcentricityTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -1688,22 +1739,22 @@ pub struct ConcentricityTolerance_<'a> {
 }
 pub type ConcentricityTolerance<'a> = Id<ConcentricityTolerance_<'a>>;
 pub struct ConceptFeatureOperator_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConceptFeatureOperator<'a> = Id<ConceptFeatureOperator_<'a>>;
 pub struct ConceptFeatureRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_concept_feature: ProductConceptFeature<'a>,
     pub related_product_concept_feature: ProductConceptFeature<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConceptFeatureRelationship<'a> = Id<ConceptFeatureRelationship_<'a>>;
 pub struct ConceptFeatureRelationshipWithCondition_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_concept_feature: ProductConceptFeature<'a>,
     pub related_product_concept_feature: ProductConceptFeature<'a>,
     pub conditional_operator: ConceptFeatureOperator<'a>,
@@ -1711,19 +1762,19 @@ pub struct ConceptFeatureRelationshipWithCondition_<'a> {
 }
 pub type ConceptFeatureRelationshipWithCondition<'a> = Id<ConceptFeatureRelationshipWithCondition_<'a>>;
 pub struct ConditionalConceptFeature_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub condition: ConceptFeatureRelationshipWithCondition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConditionalConceptFeature<'a> = Id<ConditionalConceptFeature_<'a>>;
 pub struct ConfigurableItem_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub item_concept: ProductConcept<'a>,
-    pub purpose: Option<&'a str>,
+    pub purpose: Option<Label<'a>>,
     pub item_concept_feature: ProductConceptFeatureAssociation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1746,7 +1797,7 @@ pub enum ConfigurationDesignItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct ConfigurationEffectivity_<'a> {
-    pub id: &'a str,
+    pub id: Identifier<'a>,
     pub usage: ProductDefinitionRelationship<'a>,
     pub configuration: ConfigurationDesign<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1760,11 +1811,11 @@ pub struct ConfigurationInterpolation_<'a> {
 }
 pub type ConfigurationInterpolation<'a> = Id<ConfigurationInterpolation_<'a>>;
 pub struct ConfigurationItem_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub item_concept: ProductConcept<'a>,
-    pub purpose: Option<&'a str>,
+    pub purpose: Option<Label<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConfigurationItem<'a> = Id<ConfigurationItem_<'a>>;
@@ -1793,55 +1844,55 @@ pub enum ConfiguredEffectivityItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct Conic_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Conic<'a> = Id<Conic_<'a>>;
 pub struct ConicalSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
-    pub radius: f64,
-    pub semi_angle: f64,
+    pub radius: LengthMeasure<'a>,
+    pub semi_angle: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConicalSurface<'a> = Id<ConicalSurface_<'a>>;
 pub struct ConnectedEdgeSet_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub ces_edges: Edge<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConnectedEdgeSet<'a> = Id<ConnectedEdgeSet_<'a>>;
 pub struct ConnectedFaceSet_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub cfs_faces: Face<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConnectedFaceSet<'a> = Id<ConnectedFaceSet_<'a>>;
 pub struct ConnectedFaceSubSet_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub cfs_faces: Face<'a>,
     pub parent_face_set: ConnectedFaceSet<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConnectedFaceSubSet<'a> = Id<ConnectedFaceSubSet_<'a>>;
 pub struct ConstructiveGeometryRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConstructiveGeometryRepresentation<'a> = Id<ConstructiveGeometryRepresentation_<'a>>;
 pub struct ConstructiveGeometryRepresentationRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConstructiveGeometryRepresentationRelationship<'a> = Id<ConstructiveGeometryRepresentationRelationship_<'a>>;
 pub struct ContactRatioRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1854,8 +1905,13 @@ pub struct ContextDependentInvisibility_<'a> {
 }
 pub type ContextDependentInvisibility<'a> = Id<ContextDependentInvisibility_<'a>>;
 pub struct ContextDependentMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> ContextDependentMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct ContextDependentOverRidingStyledItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     pub over_ridden_style: StyledItem<'a>,
@@ -1871,13 +1927,13 @@ pub struct ContextDependentShapeRepresentation_<'a> {
 pub type ContextDependentShapeRepresentation<'a> = Id<ContextDependentShapeRepresentation_<'a>>;
 pub struct ContextDependentUnit_<'a> {
     pub dimensions: DimensionalExponents<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ContextDependentUnit<'a> = Id<ContextDependentUnit_<'a>>;
 pub struct Contract_<'a> {
-    pub name: &'a str,
-    pub purpose: &'a str,
+    pub name: Label<'a>,
+    pub purpose: Text<'a>,
     pub kind: ContractType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1894,12 +1950,12 @@ pub enum ContractItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct ContractType_<'a> {
-    pub description: &'a str,
+    pub description: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ContractType<'a> = Id<ContractType_<'a>>;
 pub struct ConversionBasedUnit_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub conversion_factor: MeasureWithUnit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1917,6 +1973,11 @@ pub struct CosFunction_<'a> {
 }
 pub type CosFunction<'a> = Id<CosFunction_<'a>>;
 pub struct CountMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> CountMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub enum CsgPrimitive<'a> {
     Sphere(Sphere<'a>),
     Block(Block<'a>),
@@ -1932,25 +1993,25 @@ pub enum CsgSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct CsgShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CsgShapeRepresentation<'a> = Id<CsgShapeRepresentation_<'a>>;
 pub struct CsgSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub tree_root_expression: CsgSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CsgSolid<'a> = Id<CsgSolid_<'a>>;
 pub struct Curve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Curve<'a> = Id<Curve_<'a>>;
 pub struct CurveBoundedSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
     pub boundaries: BoundaryCurve<'a>,
     pub implicit_outer: bool,
@@ -1958,7 +2019,7 @@ pub struct CurveBoundedSurface_<'a> {
 }
 pub type CurveBoundedSurface<'a> = Id<CurveBoundedSurface_<'a>>;
 pub struct CurveDimension_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1979,14 +2040,14 @@ pub enum CurveOrRender<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct CurveReplica_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub parent_curve: Curve<'a>,
     pub transformation: CartesianTransformationOperator<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CurveReplica<'a> = Id<CurveReplica_<'a>>;
 pub struct CurveStyle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub curve_font: CurveFontOrScaledCurveFontSelect<'a>,
     pub curve_width: SizeSelect<'a>,
     pub curve_colour: Colour<'a>,
@@ -1994,7 +2055,7 @@ pub struct CurveStyle_<'a> {
 }
 pub type CurveStyle<'a> = Id<CurveStyle_<'a>>;
 pub struct CurveStyleFont_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub pattern_list: CurveStyleFontPattern<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2018,17 +2079,31 @@ pub struct CurveStyleRendering_<'a> {
 }
 pub type CurveStyleRendering<'a> = Id<CurveStyleRendering_<'a>>;
 pub struct CurveSweptSolidShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CurveSweptSolidShapeRepresentation<'a> = Id<CurveSweptSolidShapeRepresentation_<'a>>;
+
 pub struct CurveToleranceDeviation<'a>(pub PositiveLengthMeasure<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> CurveToleranceDeviation<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("CURVE_TOLERANCE_DEVIATION("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(PositiveLengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct CurveToleranceParameter<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> CurveToleranceParameter<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct CylindricalPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -2046,35 +2121,35 @@ pub struct CylindricalPairRange_<'a> {
 pub type CylindricalPairRange<'a> = Id<CylindricalPairRange_<'a>>;
 pub struct CylindricalPairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
-    pub actual_translation: f64,
-    pub actual_rotation: f64,
+    pub actual_translation: LengthMeasure<'a>,
+    pub actual_rotation: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CylindricalPairValue<'a> = Id<CylindricalPairValue_<'a>>;
 pub struct CylindricalSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
     pub radius: PositiveLengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CylindricalSurface<'a> = Id<CylindricalSurface_<'a>>;
 pub struct CylindricityTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CylindricityTolerance<'a> = Id<CylindricityTolerance_<'a>>;
 pub struct DataEnvironment_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub elements: PropertyDefinitionRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DataEnvironment<'a> = Id<DataEnvironment_<'a>>;
 pub struct Date_<'a> {
-    pub year_component: i64,
+    pub year_component: YearNumber<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Date<'a> = Id<Date_<'a>>;
@@ -2207,7 +2282,7 @@ pub enum DateItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DateRole_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DateRole<'a> = Id<DateRole_<'a>>;
@@ -2217,7 +2292,7 @@ pub enum DateTimeOrEventOccurrence<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DateTimeRole_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DateTimeRole<'a> = Id<DateTimeRole_<'a>>;
@@ -2228,31 +2303,31 @@ pub enum DateTimeSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DatedEffectivity_<'a> {
-    pub id: &'a str,
+    pub id: Identifier<'a>,
     pub effectivity_end_date: Option<DateTimeOrEventOccurrence<'a>>,
     pub effectivity_start_date: DateTimeOrEventOccurrence<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DatedEffectivity<'a> = Id<DatedEffectivity_<'a>>;
 pub struct Datum_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
-    pub identification: &'a str,
+    pub identification: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Datum<'a> = Id<Datum_<'a>>;
 pub struct DatumFeature_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DatumFeature<'a> = Id<DatumFeature_<'a>>;
 pub struct DatumFeatureCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2264,36 +2339,41 @@ pub struct DatumReference_<'a> {
 }
 pub type DatumReference<'a> = Id<DatumReference_<'a>>;
 pub struct DatumTarget_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
-    pub target_id: &'a str,
+    pub target_id: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DatumTarget<'a> = Id<DatumTarget_<'a>>;
 pub struct DatumTargetCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DatumTargetCallout<'a> = Id<DatumTargetCallout_<'a>>;
 pub struct DayInMonthNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>);
+impl<'a> DayInMonthNumber<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<i64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct DefaultToleranceTable_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DefaultToleranceTable<'a> = Id<DefaultToleranceTable_<'a>>;
 pub struct DefaultToleranceTableCell_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub item_element: CompoundItemDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DefaultToleranceTableCell<'a> = Id<DefaultToleranceTableCell_<'a>>;
 pub struct DefinedCharacterGlyph_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub definition: DefinedGlyphSelect<'a>,
     pub placement: Axis2Placement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2308,7 +2388,7 @@ pub enum DefinedGlyphSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DefinedSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub definition: DefinedSymbolSelect<'a>,
     pub target: SymbolTarget<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2320,21 +2400,21 @@ pub enum DefinedSymbolSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DefinitionalRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DefinitionalRepresentation<'a> = Id<DefinitionalRepresentation_<'a>>;
 pub struct DegeneratePcurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
     pub reference_to_curve: DefinitionalRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DegeneratePcurve<'a> = Id<DegeneratePcurve_<'a>>;
 pub struct DegenerateToroidalSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
     pub major_radius: PositiveLengthMeasure<'a>,
     pub minor_radius: PositiveLengthMeasure<'a>,
@@ -2349,8 +2429,8 @@ pub enum DerivedPropertySelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DerivedShapeAspect_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2373,7 +2453,7 @@ pub struct DerivedUnitVariable_<'a> {
 }
 pub type DerivedUnitVariable<'a> = Id<DerivedUnitVariable_<'a>>;
 pub struct DescriptionAttribute_<'a> {
-    pub attribute_value: &'a str,
+    pub attribute_value: Text<'a>,
     pub described_item: DescriptionAttributeSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2396,56 +2476,66 @@ pub enum DescriptionAttributeSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DescriptiveMeasure<'a>(pub &'a str, std::marker::PhantomData<&'a ()>);
+impl<'a> DescriptiveMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<&str>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct DescriptiveRepresentationItem_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DescriptiveRepresentationItem<'a> = Id<DescriptiveRepresentationItem_<'a>>;
 pub struct DiameterDimension_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DiameterDimension<'a> = Id<DiameterDimension_<'a>>;
 pub struct DimensionCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionCallout<'a> = Id<DimensionCallout_<'a>>;
 pub struct DimensionCalloutComponentRelationship_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub relating_draughting_callout: DraughtingCallout<'a>,
     pub related_draughting_callout: DraughtingCallout<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionCalloutComponentRelationship<'a> = Id<DimensionCalloutComponentRelationship_<'a>>;
 pub struct DimensionCalloutRelationship_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub relating_draughting_callout: DraughtingCallout<'a>,
     pub related_draughting_callout: DraughtingCallout<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionCalloutRelationship<'a> = Id<DimensionCalloutRelationship_<'a>>;
 pub struct DimensionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>);
+impl<'a> DimensionCount<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<i64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct DimensionCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionCurve<'a> = Id<DimensionCurve_<'a>>;
 pub struct DimensionCurveDirectedCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionCurveDirectedCallout<'a> = Id<DimensionCurveDirectedCallout_<'a>>;
 pub struct DimensionCurveTerminator_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     pub annotated_curve: AnnotationCurveOccurrence<'a>,
@@ -2459,8 +2549,8 @@ pub enum DimensionExtentUsage<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct DimensionPair_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub relating_draughting_callout: DraughtingCallout<'a>,
     pub related_draughting_callout: DraughtingCallout<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2473,8 +2563,8 @@ pub struct DimensionRelatedToleranceZoneElement_<'a> {
 }
 pub type DimensionRelatedToleranceZoneElement<'a> = Id<DimensionRelatedToleranceZoneElement_<'a>>;
 pub struct DimensionTextAssociativity_<'a> {
-    pub name: &'a str,
-    pub literal: &'a str,
+    pub name: Label<'a>,
+    pub literal: PresentableText<'a>,
     pub placement: Axis2Placement<'a>,
     pub alignment: TextAlignment<'a>,
     pub path: TextPath<'a>,
@@ -2507,16 +2597,16 @@ pub struct DimensionalExponents_<'a> {
 }
 pub type DimensionalExponents<'a> = Id<DimensionalExponents_<'a>>;
 pub struct DimensionalLocation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionalLocation<'a> = Id<DimensionalLocation_<'a>>;
 pub struct DimensionalLocationWithPath_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     pub path: ShapeAspect<'a>,
@@ -2525,54 +2615,54 @@ pub struct DimensionalLocationWithPath_<'a> {
 pub type DimensionalLocationWithPath<'a> = Id<DimensionalLocationWithPath_<'a>>;
 pub struct DimensionalSize_<'a> {
     pub applies_to: ShapeAspect<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionalSize<'a> = Id<DimensionalSize_<'a>>;
 pub struct DimensionalSizeWithPath_<'a> {
     pub applies_to: ShapeAspect<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub path: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionalSizeWithPath<'a> = Id<DimensionalSizeWithPath_<'a>>;
 pub struct DirectedAction_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub chosen_method: ActionMethod<'a>,
     pub directive: ActionDirective<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DirectedAction<'a> = Id<DirectedAction_<'a>>;
 pub struct DirectedAngle_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DirectedAngle<'a> = Id<DirectedAngle_<'a>>;
 pub struct DirectedDimensionalLocation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DirectedDimensionalLocation<'a> = Id<DirectedDimensionalLocation_<'a>>;
 pub struct Direction_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub direction_ratios: f64,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Direction<'a> = Id<Direction_<'a>>;
 pub enum DirectionCountSelect<'a> {
-    UDirectionCount(i64),
-    VDirectionCount(i64),
+    UDirectionCount(UDirectionCount<'a>),
+    VDirectionCount(VDirectionCount<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DirectionShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2584,35 +2674,35 @@ pub struct DivExpression_<'a> {
 }
 pub type DivExpression<'a> = Id<DivExpression_<'a>>;
 pub struct Document_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub kind: DocumentType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Document<'a> = Id<Document_<'a>>;
 #[allow(non_snake_case)]
 pub struct DocumentFile_<'a> {
-    pub id: &'a str,
-    pub document__name: &'a str,
-    pub document__description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub document__name: Label<'a>,
+    pub document__description: Option<Text<'a>>,
     pub kind: DocumentType<'a>,
-    pub characterized_object__name: &'a str,
-    pub characterized_object__description: Option<&'a str>,
+    pub characterized_object__name: Label<'a>,
+    pub characterized_object__description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DocumentFile<'a> = Id<DocumentFile_<'a>>;
 pub struct DocumentProductAssociation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_document: Document<'a>,
     pub related_product: ProductOrFormationOrDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DocumentProductAssociation<'a> = Id<DocumentProductAssociation_<'a>>;
 pub struct DocumentProductEquivalence_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_document: Document<'a>,
     pub related_product: ProductOrFormationOrDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2620,7 +2710,7 @@ pub struct DocumentProductEquivalence_<'a> {
 pub type DocumentProductEquivalence<'a> = Id<DocumentProductEquivalence_<'a>>;
 pub struct DocumentReference_<'a> {
     pub assigned_document: Document<'a>,
-    pub source: &'a str,
+    pub source: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DocumentReference<'a> = Id<DocumentReference_<'a>>;
@@ -2669,28 +2759,28 @@ pub enum DocumentReferenceItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DocumentRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_document: Document<'a>,
     pub related_document: Document<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DocumentRelationship<'a> = Id<DocumentRelationship_<'a>>;
 pub struct DocumentRepresentationType_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub represented_document: Document<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DocumentRepresentationType<'a> = Id<DocumentRepresentationType_<'a>>;
 pub struct DocumentType_<'a> {
-    pub product_data_type: &'a str,
+    pub product_data_type: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DocumentType<'a> = Id<DocumentType_<'a>>;
 pub struct DocumentUsageConstraint_<'a> {
     pub source: Document<'a>,
-    pub subject_element: &'a str,
-    pub subject_element_value: &'a str,
+    pub subject_element: Label<'a>,
+    pub subject_element_value: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DocumentUsageConstraint<'a> = Id<DocumentUsageConstraint_<'a>>;
@@ -2701,20 +2791,20 @@ pub struct DocumentUsageConstraintAssignment_<'a> {
 }
 pub type DocumentUsageConstraintAssignment<'a> = Id<DocumentUsageConstraintAssignment_<'a>>;
 pub struct DocumentUsageRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DocumentUsageRole<'a> = Id<DocumentUsageRole_<'a>>;
 pub struct DraughtingAnnotationOccurrence_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingAnnotationOccurrence<'a> = Id<DraughtingAnnotationOccurrence_<'a>>;
 pub struct DraughtingCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2726,29 +2816,29 @@ pub enum DraughtingCalloutElement<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DraughtingCalloutRelationship_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub relating_draughting_callout: DraughtingCallout<'a>,
     pub related_draughting_callout: DraughtingCallout<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingCalloutRelationship<'a> = Id<DraughtingCalloutRelationship_<'a>>;
 pub struct DraughtingElements_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingElements<'a> = Id<DraughtingElements_<'a>>;
 pub struct DraughtingModel_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingModel<'a> = Id<DraughtingModel_<'a>>;
 pub struct DraughtingModelItemAssociation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub definition: RepresentedDefinition<'a>,
     pub used_representation: Representation<'a>,
     pub identified_item: RepresentationItem<'a>,
@@ -2761,44 +2851,44 @@ pub enum DraughtingModelItemAssociationSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DraughtingPreDefinedColour_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingPreDefinedColour<'a> = Id<DraughtingPreDefinedColour_<'a>>;
 pub struct DraughtingPreDefinedCurveFont_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingPreDefinedCurveFont<'a> = Id<DraughtingPreDefinedCurveFont_<'a>>;
 pub struct DraughtingPreDefinedTextFont_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingPreDefinedTextFont<'a> = Id<DraughtingPreDefinedTextFont_<'a>>;
 pub struct DraughtingSpecificationReference_<'a> {
     pub assigned_document: Document<'a>,
-    pub source: &'a str,
+    pub source: Label<'a>,
     pub specified_items: SpecifiedItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingSpecificationReference<'a> = Id<DraughtingSpecificationReference_<'a>>;
 pub struct DraughtingSubfigureRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingSubfigureRepresentation<'a> = Id<DraughtingSubfigureRepresentation_<'a>>;
 pub struct DraughtingSymbolRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingSymbolRepresentation<'a> = Id<DraughtingSymbolRepresentation_<'a>>;
 pub struct DraughtingTextLiteralWithDelineation_<'a> {
-    pub name: &'a str,
-    pub literal: &'a str,
+    pub name: Label<'a>,
+    pub literal: PresentableText<'a>,
     pub placement: Axis2Placement<'a>,
     pub alignment: TextAlignment<'a>,
     pub path: TextPath<'a>,
@@ -2809,8 +2899,8 @@ pub struct DraughtingTextLiteralWithDelineation_<'a> {
 pub type DraughtingTextLiteralWithDelineation<'a> = Id<DraughtingTextLiteralWithDelineation_<'a>>;
 pub struct DraughtingTitle_<'a> {
     pub items: DraughtingTitledItem<'a>,
-    pub language: &'a str,
-    pub contents: &'a str,
+    pub language: Label<'a>,
+    pub contents: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingTitle<'a> = Id<DraughtingTitle_<'a>>;
@@ -2820,15 +2910,15 @@ pub enum DraughtingTitledItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct DrawingDefinition_<'a> {
-    pub drawing_number: &'a str,
-    pub drawing_type: Option<&'a str>,
+    pub drawing_number: Identifier<'a>,
+    pub drawing_type: Option<Label<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DrawingDefinition<'a> = Id<DrawingDefinition_<'a>>;
 pub struct DrawingRevision_<'a> {
-    pub revision_identifier: &'a str,
+    pub revision_identifier: Identifier<'a>,
     pub drawing_identifier: DrawingDefinition<'a>,
-    pub intended_scale: Option<&'a str>,
+    pub intended_scale: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DrawingRevision<'a> = Id<DrawingRevision_<'a>>;
@@ -2839,49 +2929,49 @@ pub struct DrawingRevisionSequence_<'a> {
 }
 pub type DrawingRevisionSequence<'a> = Id<DrawingRevisionSequence_<'a>>;
 pub struct DrawingSheetLayout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DrawingSheetLayout<'a> = Id<DrawingSheetLayout_<'a>>;
 pub struct DrawingSheetRevision_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
-    pub revision_identifier: &'a str,
+    pub revision_identifier: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DrawingSheetRevision<'a> = Id<DrawingSheetRevision_<'a>>;
 pub struct DrawingSheetRevisionUsage_<'a> {
     pub area: PresentationArea<'a>,
     pub in_set: PresentationSet<'a>,
-    pub sheet_number: &'a str,
+    pub sheet_number: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DrawingSheetRevisionUsage<'a> = Id<DrawingSheetRevisionUsage_<'a>>;
 pub struct Edge_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub edge_start: Vertex<'a>,
     pub edge_end: Vertex<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Edge<'a> = Id<Edge_<'a>>;
 pub struct EdgeBasedWireframeModel_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub ebwm_boundary: ConnectedEdgeSet<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EdgeBasedWireframeModel<'a> = Id<EdgeBasedWireframeModel_<'a>>;
 pub struct EdgeBasedWireframeShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EdgeBasedWireframeShapeRepresentation<'a> = Id<EdgeBasedWireframeShapeRepresentation_<'a>>;
 pub struct EdgeCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub edge_start: Vertex<'a>,
     pub edge_end: Vertex<'a>,
     pub edge_geometry: Curve<'a>,
@@ -2890,21 +2980,21 @@ pub struct EdgeCurve_<'a> {
 }
 pub type EdgeCurve<'a> = Id<EdgeCurve_<'a>>;
 pub struct EdgeLoop_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub edge_list: OrientedEdge<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EdgeLoop<'a> = Id<EdgeLoop_<'a>>;
 pub struct EdgeRound_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EdgeRound<'a> = Id<EdgeRound_<'a>>;
 pub struct Effectivity_<'a> {
-    pub id: &'a str,
+    pub id: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Effectivity<'a> = Id<Effectivity_<'a>>;
@@ -2920,8 +3010,8 @@ pub struct EffectivityContextAssignment_<'a> {
 }
 pub type EffectivityContextAssignment<'a> = Id<EffectivityContextAssignment_<'a>>;
 pub struct EffectivityContextRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EffectivityContextRole<'a> = Id<EffectivityContextRole_<'a>>;
@@ -2964,14 +3054,19 @@ pub enum EffectivityItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct EffectivityRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub related_effectivity: Effectivity<'a>,
     pub relating_effectivity: Effectivity<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EffectivityRelationship<'a> = Id<EffectivityRelationship_<'a>>;
 pub struct ElectricCurrentMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> ElectricCurrentMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct ElectricCurrentMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -2984,20 +3079,20 @@ pub struct ElectricCurrentUnit_<'a> {
 }
 pub type ElectricCurrentUnit<'a> = Id<ElectricCurrentUnit_<'a>>;
 pub struct ElementDelivery_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub chosen_method: ActionMethod<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ElementDelivery<'a> = Id<ElementDelivery_<'a>>;
 pub struct ElementarySurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ElementarySurface<'a> = Id<ElementarySurface_<'a>>;
 pub struct Ellipse_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
     pub semi_axis_1: PositiveLengthMeasure<'a>,
     pub semi_axis_2: PositiveLengthMeasure<'a>,
@@ -3016,7 +3111,7 @@ pub struct EqualsExpression_<'a> {
 }
 pub type EqualsExpression<'a> = Id<EqualsExpression_<'a>>;
 pub struct EvaluatedDegeneratePcurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
     pub reference_to_curve: DefinitionalRepresentation<'a>,
     pub equivalent_point: CartesianPoint<'a>,
@@ -3024,9 +3119,9 @@ pub struct EvaluatedDegeneratePcurve_<'a> {
 }
 pub type EvaluatedDegeneratePcurve<'a> = Id<EvaluatedDegeneratePcurve_<'a>>;
 pub struct EventOccurrence_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EventOccurrence<'a> = Id<EventOccurrence_<'a>>;
@@ -3043,8 +3138,8 @@ pub struct EventOccurrenceContextAssignment_<'a> {
 }
 pub type EventOccurrenceContextAssignment<'a> = Id<EventOccurrenceContextAssignment_<'a>>;
 pub struct EventOccurrenceContextRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EventOccurrenceContextRole<'a> = Id<EventOccurrenceContextRole_<'a>>;
@@ -3101,20 +3196,20 @@ pub enum EventOccurrenceItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct EventOccurrenceRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EventOccurrenceRole<'a> = Id<EventOccurrenceRole_<'a>>;
 pub struct ExclusiveProductConceptFeatureCategory_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ExclusiveProductConceptFeatureCategory<'a> = Id<ExclusiveProductConceptFeatureCategory_<'a>>;
 pub struct ExecutedAction_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub chosen_method: ActionMethod<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3130,20 +3225,20 @@ pub struct Expression_<'a> {
 pub type Expression<'a> = Id<Expression_<'a>>;
 pub struct ExpressionConversionBasedUnit_<'a> {
     pub dimensions: DimensionalExponents<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ExpressionConversionBasedUnit<'a> = Id<ExpressionConversionBasedUnit_<'a>>;
 pub struct Extension_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Extension<'a> = Id<Extension_<'a>>;
 pub struct ExternalIdentificationAssignment_<'a> {
-    pub assigned_id: &'a str,
+    pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
     pub source: ExternalSource<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3168,8 +3263,8 @@ pub struct ExternallyDefinedCharacterGlyph_<'a> {
 }
 pub type ExternallyDefinedCharacterGlyph<'a> = Id<ExternallyDefinedCharacterGlyph_<'a>>;
 pub struct ExternallyDefinedClass_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3183,24 +3278,24 @@ pub struct ExternallyDefinedCurveFont_<'a> {
 pub type ExternallyDefinedCurveFont<'a> = Id<ExternallyDefinedCurveFont_<'a>>;
 pub struct ExternallyDefinedDimensionDefinition_<'a> {
     pub applies_to: ShapeAspect<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ExternallyDefinedDimensionDefinition<'a> = Id<ExternallyDefinedDimensionDefinition_<'a>>;
 pub struct ExternallyDefinedFeatureDefinition_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ExternallyDefinedFeatureDefinition<'a> = Id<ExternallyDefinedFeatureDefinition_<'a>>;
 pub struct ExternallyDefinedGeneralProperty_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3209,7 +3304,7 @@ pub type ExternallyDefinedGeneralProperty<'a> = Id<ExternallyDefinedGeneralPrope
 pub struct ExternallyDefinedHatchStyle_<'a> {
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ExternallyDefinedHatchStyle<'a> = Id<ExternallyDefinedHatchStyle_<'a>>;
@@ -3220,8 +3315,8 @@ pub struct ExternallyDefinedItem_<'a> {
 }
 pub type ExternallyDefinedItem<'a> = Id<ExternallyDefinedItem_<'a>>;
 pub struct ExternallyDefinedItemRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_item: ExternallyDefinedItem<'a>,
     pub related_item: ExternallyDefinedItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3248,12 +3343,12 @@ pub type ExternallyDefinedTextFont<'a> = Id<ExternallyDefinedTextFont_<'a>>;
 pub struct ExternallyDefinedTileStyle_<'a> {
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ExternallyDefinedTileStyle<'a> = Id<ExternallyDefinedTileStyle_<'a>>;
 pub struct ExtrudedAreaSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
     pub extruded_direction: Direction<'a>,
     pub depth: PositiveLengthMeasure<'a>,
@@ -3261,7 +3356,7 @@ pub struct ExtrudedAreaSolid_<'a> {
 }
 pub type ExtrudedAreaSolid<'a> = Id<ExtrudedAreaSolid_<'a>>;
 pub struct ExtrudedFaceSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_face: FaceSurface<'a>,
     pub extruded_direction: Direction<'a>,
     pub depth: PositiveLengthMeasure<'a>,
@@ -3269,40 +3364,40 @@ pub struct ExtrudedFaceSolid_<'a> {
 }
 pub type ExtrudedFaceSolid<'a> = Id<ExtrudedFaceSolid_<'a>>;
 pub struct Face_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub bounds: FaceBound<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Face<'a> = Id<Face_<'a>>;
 pub struct FaceBasedSurfaceModel_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub fbsm_faces: ConnectedFaceSet<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FaceBasedSurfaceModel<'a> = Id<FaceBasedSurfaceModel_<'a>>;
 pub struct FaceBound_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub bound: Loop<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FaceBound<'a> = Id<FaceBound_<'a>>;
 pub struct FaceOuterBound_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub bound: Loop<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FaceOuterBound<'a> = Id<FaceOuterBound_<'a>>;
 pub struct FaceShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FaceShapeRepresentation<'a> = Id<FaceShapeRepresentation_<'a>>;
 pub struct FaceSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub bounds: FaceBound<'a>,
     pub face_geometry: Surface<'a>,
     pub same_sense: bool,
@@ -3310,76 +3405,76 @@ pub struct FaceSurface_<'a> {
 }
 pub type FaceSurface<'a> = Id<FaceSurface_<'a>>;
 pub struct FacetedBrep_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub outer: ClosedShell<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FacetedBrep<'a> = Id<FacetedBrep_<'a>>;
 pub struct FacetedBrepShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FacetedBrepShapeRepresentation<'a> = Id<FacetedBrepShapeRepresentation_<'a>>;
 pub struct FeatureComponentDefinition_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FeatureComponentDefinition<'a> = Id<FeatureComponentDefinition_<'a>>;
 pub struct FeatureComponentRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FeatureComponentRelationship<'a> = Id<FeatureComponentRelationship_<'a>>;
 pub struct FeatureDefinition_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FeatureDefinition<'a> = Id<FeatureDefinition_<'a>>;
 pub struct FeatureInPanel_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FeatureInPanel<'a> = Id<FeatureInPanel_<'a>>;
 pub struct FeaturePattern_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FeaturePattern<'a> = Id<FeaturePattern_<'a>>;
 pub struct FeaturedShape_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub definition: CharacterizedDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FeaturedShape<'a> = Id<FeaturedShape_<'a>>;
 pub struct FillAreaStyle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub fill_styles: FillStyleSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FillAreaStyle<'a> = Id<FillAreaStyle_<'a>>;
 pub struct FillAreaStyleColour_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub fill_colour: Colour<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FillAreaStyleColour<'a> = Id<FillAreaStyleColour_<'a>>;
 pub struct FillAreaStyleHatching_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub hatch_line_appearance: CurveStyle<'a>,
     pub start_of_next_hatch_line: OneDirectionRepeatFactor<'a>,
     pub point_of_reference_hatch_line: CartesianPoint<'a>,
     pub pattern_start: CartesianPoint<'a>,
-    pub hatch_line_angle: f64,
+    pub hatch_line_angle: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FillAreaStyleHatching<'a> = Id<FillAreaStyleHatching_<'a>>;
@@ -3388,13 +3483,13 @@ pub enum FillAreaStyleTileShapeSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct FillAreaStyleTileSymbolWithStyle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub symbol: AnnotationSymbolOccurrence<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FillAreaStyleTileSymbolWithStyle<'a> = Id<FillAreaStyleTileSymbolWithStyle_<'a>>;
 pub struct FillAreaStyleTiles_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub tiling_pattern: TwoDirectionRepeatFactor<'a>,
     pub tiles: FillAreaStyleTileShapeSelect<'a>,
     pub tiling_scale: PositiveRatioMeasure<'a>,
@@ -3410,16 +3505,16 @@ pub enum FillStyleSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct Fillet_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Fillet<'a> = Id<Fillet_<'a>>;
 pub struct FlatnessTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3445,15 +3540,15 @@ pub enum FoundedItemSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct FoundedKinematicPath_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FoundedKinematicPath<'a> = Id<FoundedKinematicPath_<'a>>;
 pub struct FullyConstrainedPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -3461,21 +3556,21 @@ pub struct FullyConstrainedPair_<'a> {
 }
 pub type FullyConstrainedPair<'a> = Id<FullyConstrainedPair_<'a>>;
 pub struct FunctionallyDefinedTransformation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FunctionallyDefinedTransformation<'a> = Id<FunctionallyDefinedTransformation_<'a>>;
 pub struct GearPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
-    pub radius_first_link: f64,
-    pub radius_second_link: f64,
-    pub bevel: f64,
-    pub helical_angle: f64,
+    pub radius_first_link: LengthMeasure<'a>,
+    pub radius_second_link: LengthMeasure<'a>,
+    pub bevel: PlaneAngleMeasure<'a>,
+    pub helical_angle: PlaneAngleMeasure<'a>,
     pub gear_ratio: f64,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3489,48 +3584,48 @@ pub struct GearPairRange_<'a> {
 pub type GearPairRange<'a> = Id<GearPairRange_<'a>>;
 pub struct GearPairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
-    pub actual_rotation_1: f64,
+    pub actual_rotation_1: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GearPairValue<'a> = Id<GearPairValue_<'a>>;
 pub struct GeneralFeature_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeneralFeature<'a> = Id<GeneralFeature_<'a>>;
 pub struct GeneralMaterialProperty_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeneralMaterialProperty<'a> = Id<GeneralMaterialProperty_<'a>>;
 pub struct GeneralProperty_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeneralProperty<'a> = Id<GeneralProperty_<'a>>;
 pub struct GeneralPropertyAssociation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub base_definition: GeneralProperty<'a>,
     pub derived_definition: DerivedPropertySelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeneralPropertyAssociation<'a> = Id<GeneralPropertyAssociation_<'a>>;
 pub struct GeneralPropertyRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_property: GeneralProperty<'a>,
     pub related_property: GeneralProperty<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeneralPropertyRelationship<'a> = Id<GeneralPropertyRelationship_<'a>>;
 pub struct GenericCharacterGlyphSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3549,30 +3644,30 @@ pub struct GenericVariable_<'a> {
 }
 pub type GenericVariable<'a> = Id<GenericVariable_<'a>>;
 pub struct GeometricAlignment_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricAlignment<'a> = Id<GeometricAlignment_<'a>>;
 pub struct GeometricCurveSet_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub elements: GeometricSetSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricCurveSet<'a> = Id<GeometricCurveSet_<'a>>;
 pub struct GeometricIntersection_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricIntersection<'a> = Id<GeometricIntersection_<'a>>;
 pub struct GeometricItemSpecificUsage_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub definition: RepresentedDefinition<'a>,
     pub used_representation: Representation<'a>,
     pub identified_item: RepresentationItem<'a>,
@@ -3580,19 +3675,19 @@ pub struct GeometricItemSpecificUsage_<'a> {
 }
 pub type GeometricItemSpecificUsage<'a> = Id<GeometricItemSpecificUsage_<'a>>;
 pub struct GeometricRepresentationContext_<'a> {
-    pub context_identifier: &'a str,
-    pub context_type: &'a str,
-    pub coordinate_space_dimension: i64,
+    pub context_identifier: Identifier<'a>,
+    pub context_type: Text<'a>,
+    pub coordinate_space_dimension: DimensionCount<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricRepresentationContext<'a> = Id<GeometricRepresentationContext_<'a>>;
 pub struct GeometricRepresentationItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricRepresentationItem<'a> = Id<GeometricRepresentationItem_<'a>>;
 pub struct GeometricSet_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub elements: GeometricSetSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3604,24 +3699,24 @@ pub enum GeometricSetSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct GeometricTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricTolerance<'a> = Id<GeometricTolerance_<'a>>;
 pub struct GeometricToleranceRelationship_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub relating_geometric_tolerance: GeometricTolerance<'a>,
     pub related_geometric_tolerance: GeometricTolerance<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricToleranceRelationship<'a> = Id<GeometricToleranceRelationship_<'a>>;
 pub struct GeometricToleranceWithDatumReference_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -3629,8 +3724,8 @@ pub struct GeometricToleranceWithDatumReference_<'a> {
 }
 pub type GeometricToleranceWithDatumReference<'a> = Id<GeometricToleranceWithDatumReference_<'a>>;
 pub struct GeometricToleranceWithDefinedUnit_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub unit_size: MeasureWithUnit<'a>,
@@ -3638,49 +3733,49 @@ pub struct GeometricToleranceWithDefinedUnit_<'a> {
 }
 pub type GeometricToleranceWithDefinedUnit<'a> = Id<GeometricToleranceWithDefinedUnit_<'a>>;
 pub struct GeometricalToleranceCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricalToleranceCallout<'a> = Id<GeometricalToleranceCallout_<'a>>;
 pub struct GeometricallyBounded2dWireframeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricallyBounded2dWireframeRepresentation<'a> = Id<GeometricallyBounded2dWireframeRepresentation_<'a>>;
 pub struct GeometricallyBoundedSurfaceShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricallyBoundedSurfaceShapeRepresentation<'a> = Id<GeometricallyBoundedSurfaceShapeRepresentation_<'a>>;
 pub struct GeometricallyBoundedWireframeShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricallyBoundedWireframeShapeRepresentation<'a> = Id<GeometricallyBoundedWireframeShapeRepresentation_<'a>>;
 pub struct GlobalUncertaintyAssignedContext_<'a> {
-    pub context_identifier: &'a str,
-    pub context_type: &'a str,
+    pub context_identifier: Identifier<'a>,
+    pub context_type: Text<'a>,
     pub uncertainty: UncertaintyMeasureWithUnit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GlobalUncertaintyAssignedContext<'a> = Id<GlobalUncertaintyAssignedContext_<'a>>;
 pub struct GlobalUnitAssignedContext_<'a> {
-    pub context_identifier: &'a str,
-    pub context_type: &'a str,
+    pub context_identifier: Identifier<'a>,
+    pub context_type: Text<'a>,
     pub units: Unit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GlobalUnitAssignedContext<'a> = Id<GlobalUnitAssignedContext_<'a>>;
 pub struct Group_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Group<'a> = Id<Group_<'a>>;
@@ -3699,29 +3794,29 @@ pub enum GroupItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct GroupRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_group: Group<'a>,
     pub related_group: Group<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GroupRelationship<'a> = Id<GroupRelationship_<'a>>;
 pub struct HalfSpaceSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub base_surface: Surface<'a>,
     pub agreement_flag: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type HalfSpaceSolid<'a> = Id<HalfSpaceSolid_<'a>>;
 pub struct HardnessRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type HardnessRepresentation<'a> = Id<HardnessRepresentation_<'a>>;
 pub struct HiddenElementOverRidingStyledItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     pub over_ridden_style: StyledItem<'a>,
@@ -3730,32 +3825,37 @@ pub struct HiddenElementOverRidingStyledItem_<'a> {
 }
 pub type HiddenElementOverRidingStyledItem<'a> = Id<HiddenElementOverRidingStyledItem_<'a>>;
 pub struct HoleBottom_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type HoleBottom<'a> = Id<HoleBottom_<'a>>;
 pub struct HoleInPanel_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type HoleInPanel<'a> = Id<HoleInPanel_<'a>>;
 pub struct HomokineticPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
-    pub input_skew_angle: Option<f64>,
+    pub input_skew_angle: Option<PlaneAngleMeasure<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type HomokineticPair<'a> = Id<HomokineticPair_<'a>>;
 pub struct HourInDay<'a>(pub i64, std::marker::PhantomData<&'a ()>);
+impl<'a> HourInDay<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<i64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct Hyperbola_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
     pub semi_axis: PositiveLengthMeasure<'a>,
     pub semi_imag_axis: PositiveLengthMeasure<'a>,
@@ -3763,7 +3863,7 @@ pub struct Hyperbola_<'a> {
 }
 pub type Hyperbola<'a> = Id<Hyperbola_<'a>>;
 pub struct IdAttribute_<'a> {
-    pub attribute_value: &'a str,
+    pub attribute_value: Identifier<'a>,
     pub identified_item: IdAttributeSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3782,7 +3882,7 @@ pub enum IdAttributeSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct IdentificationAssignment_<'a> {
-    pub assigned_id: &'a str,
+    pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3825,16 +3925,21 @@ pub enum IdentificationItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct IdentificationRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type IdentificationRole<'a> = Id<IdentificationRole_<'a>>;
 pub struct Identifier<'a>(pub &'a str, std::marker::PhantomData<&'a ()>);
+impl<'a> Identifier<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<&str>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct InclusionProductConceptFeature_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub condition: ConceptFeatureRelationshipWithCondition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3852,12 +3957,12 @@ pub struct InitialState_<'a> {
 pub type InitialState<'a> = Id<InitialState_<'a>>;
 #[allow(non_snake_case)]
 pub struct InstancedFeature_<'a> {
-    pub shape_aspect__name: &'a str,
-    pub shape_aspect__description: Option<&'a str>,
+    pub shape_aspect__name: Label<'a>,
+    pub shape_aspect__description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type InstancedFeature<'a> = Id<InstancedFeature_<'a>>;
@@ -3891,7 +3996,7 @@ pub enum InterpolationType<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct IntersectionCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
     pub associated_geometry: PcurveOrSurface<'a>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
@@ -3921,16 +4026,16 @@ pub enum InvisibleItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct ItemDefinedTransformation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ItemDefinedTransformation<'a> = Id<ItemDefinedTransformation_<'a>>;
 pub struct ItemIdentifiedRepresentationUsage_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub definition: RepresentedDefinition<'a>,
     pub used_representation: Representation<'a>,
     pub identified_item: RepresentationItem<'a>,
@@ -3938,14 +4043,14 @@ pub struct ItemIdentifiedRepresentationUsage_<'a> {
 }
 pub type ItemIdentifiedRepresentationUsage<'a> = Id<ItemIdentifiedRepresentationUsage_<'a>>;
 pub struct Joggle_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Joggle<'a> = Id<Joggle_<'a>>;
 pub struct JoggleTermination_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3980,15 +4085,15 @@ pub enum KinematicFrameBackground<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct KinematicFrameBackgroundRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type KinematicFrameBackgroundRepresentation<'a> = Id<KinematicFrameBackgroundRepresentation_<'a>>;
 pub struct KinematicFrameBackgroundRepresentationAssociation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     pub transformation_operator: Transformation<'a>,
@@ -3997,15 +4102,15 @@ pub struct KinematicFrameBackgroundRepresentationAssociation_<'a> {
 pub type KinematicFrameBackgroundRepresentationAssociation<'a> = Id<KinematicFrameBackgroundRepresentationAssociation_<'a>>;
 #[allow(non_snake_case)]
 pub struct KinematicFrameBasedTransformation_<'a> {
-    pub name: &'a str,
-    pub functionally_defined_transformation__name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub functionally_defined_transformation__name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transformator: RigidPlacement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type KinematicFrameBasedTransformation<'a> = Id<KinematicFrameBasedTransformation_<'a>>;
 pub struct KinematicGroundRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4022,15 +4127,15 @@ pub struct KinematicLink_<'a> {
 }
 pub type KinematicLink<'a> = Id<KinematicLink_<'a>>;
 pub struct KinematicLinkRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type KinematicLinkRepresentation<'a> = Id<KinematicLinkRepresentation_<'a>>;
 pub struct KinematicLinkRepresentationAssociation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4043,8 +4148,8 @@ pub struct KinematicLinkRepresentationRelation_<'a> {
 }
 pub type KinematicLinkRepresentationRelation<'a> = Id<KinematicLinkRepresentationRelation_<'a>>;
 pub struct KinematicPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -4052,13 +4157,13 @@ pub struct KinematicPair_<'a> {
 }
 pub type KinematicPair<'a> = Id<KinematicPair_<'a>>;
 pub struct KinematicPath_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type KinematicPath<'a> = Id<KinematicPath_<'a>>;
 pub struct KinematicPropertyDefinition_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub definition: CharacterizedDefinition<'a>,
     pub ground_definition: CharacterizedDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4089,14 +4194,19 @@ pub enum KnotType<'a> {
 }
 pub struct KnownSource_<'a> {
     pub source_id: SourceItem<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type KnownSource<'a> = Id<KnownSource_<'a>>;
 pub struct Label<'a>(pub &'a str, std::marker::PhantomData<&'a ()>);
+impl<'a> Label<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<&str>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct Language_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Language<'a> = Id<Language_<'a>>;
@@ -4117,26 +4227,26 @@ pub enum LayeredItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct LeaderCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LeaderCurve<'a> = Id<LeaderCurve_<'a>>;
 pub struct LeaderDirectedCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LeaderDirectedCallout<'a> = Id<LeaderDirectedCallout_<'a>>;
 pub struct LeaderDirectedDimension_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LeaderDirectedDimension<'a> = Id<LeaderDirectedDimension_<'a>>;
 pub struct LeaderTerminator_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     pub annotated_curve: AnnotationCurveOccurrence<'a>,
@@ -4149,6 +4259,11 @@ pub struct LengthFunction_<'a> {
 }
 pub type LengthFunction<'a> = Id<LengthFunction_<'a>>;
 pub struct LengthMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> LengthMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct LengthMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -4161,26 +4276,26 @@ pub struct LengthUnit_<'a> {
 }
 pub type LengthUnit<'a> = Id<LengthUnit_<'a>>;
 pub struct LightSource_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub light_colour: Colour<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LightSource<'a> = Id<LightSource_<'a>>;
 pub struct LightSourceAmbient_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub light_colour: Colour<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LightSourceAmbient<'a> = Id<LightSourceAmbient_<'a>>;
 pub struct LightSourceDirectional_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub light_colour: Colour<'a>,
     pub orientation: Direction<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LightSourceDirectional<'a> = Id<LightSourceDirectional_<'a>>;
 pub struct LightSourcePositional_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub light_colour: Colour<'a>,
     pub position: CartesianPoint<'a>,
     pub constant_attenuation: f64,
@@ -4189,7 +4304,7 @@ pub struct LightSourcePositional_<'a> {
 }
 pub type LightSourcePositional<'a> = Id<LightSourcePositional_<'a>>;
 pub struct LightSourceSpot_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub light_colour: Colour<'a>,
     pub position: CartesianPoint<'a>,
     pub orientation: Direction<'a>,
@@ -4212,30 +4327,30 @@ pub enum LimitCondition<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct LimitsAndFits_<'a> {
-    pub form_variance: &'a str,
-    pub zone_variance: &'a str,
-    pub grade: &'a str,
-    pub source: &'a str,
+    pub form_variance: Label<'a>,
+    pub zone_variance: Label<'a>,
+    pub grade: Label<'a>,
+    pub source: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LimitsAndFits<'a> = Id<LimitsAndFits_<'a>>;
 pub struct Line_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub pnt: CartesianPoint<'a>,
     pub dir: Vector<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Line<'a> = Id<Line_<'a>>;
 pub struct LineProfileTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LineProfileTolerance<'a> = Id<LineProfileTolerance_<'a>>;
 pub struct LinearDimension_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4248,23 +4363,23 @@ pub struct LiteralNumber_<'a> {
 }
 pub type LiteralNumber<'a> = Id<LiteralNumber_<'a>>;
 pub struct LocalTime_<'a> {
-    pub hour_component: i64,
-    pub minute_component: Option<i64>,
-    pub second_component: Option<f64>,
+    pub hour_component: HourInDay<'a>,
+    pub minute_component: Option<MinuteInHour<'a>>,
+    pub second_component: Option<SecondInMinute<'a>>,
     pub zone: CoordinatedUniversalTimeOffset<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LocalTime<'a> = Id<LocalTime_<'a>>;
 pub struct LocationShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LocationShapeRepresentation<'a> = Id<LocationShapeRepresentation_<'a>>;
 pub struct Locator_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Locator<'a> = Id<Locator_<'a>>;
@@ -4284,18 +4399,23 @@ pub struct LogFunction_<'a> {
 }
 pub type LogFunction<'a> = Id<LogFunction_<'a>>;
 pub struct Loop_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Loop<'a> = Id<Loop_<'a>>;
 pub struct LotEffectivity_<'a> {
-    pub id: &'a str,
-    pub effectivity_lot_id: &'a str,
+    pub id: Identifier<'a>,
+    pub effectivity_lot_id: Identifier<'a>,
     pub effectivity_lot_size: MeasureWithUnit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LotEffectivity<'a> = Id<LotEffectivity_<'a>>;
 pub struct LuminousIntensityMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> LuminousIntensityMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct LuminousIntensityMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -4308,39 +4428,39 @@ pub struct LuminousIntensityUnit_<'a> {
 }
 pub type LuminousIntensityUnit<'a> = Id<LuminousIntensityUnit_<'a>>;
 pub struct MakeFromUsageOption_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition: ProductDefinition<'a>,
     pub related_product_definition: ProductDefinition<'a>,
     pub ranking: i64,
-    pub ranking_rationale: &'a str,
+    pub ranking_rationale: Text<'a>,
     pub quantity: MeasureWithUnit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MakeFromUsageOption<'a> = Id<MakeFromUsageOption_<'a>>;
 pub struct ManifoldSolidBrep_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub outer: ClosedShell<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ManifoldSolidBrep<'a> = Id<ManifoldSolidBrep_<'a>>;
 pub struct ManifoldSubsurfaceShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ManifoldSubsurfaceShapeRepresentation<'a> = Id<ManifoldSubsurfaceShapeRepresentation_<'a>>;
 pub struct ManifoldSurfaceShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ManifoldSurfaceShapeRepresentation<'a> = Id<ManifoldSurfaceShapeRepresentation_<'a>>;
 pub struct MappedItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
     pub mapping_target: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4362,6 +4482,11 @@ pub enum MarkerType<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct MassMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> MassMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct MassMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -4374,22 +4499,22 @@ pub struct MassUnit_<'a> {
 }
 pub type MassUnit<'a> = Id<MassUnit_<'a>>;
 pub struct MaterialDesignation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub definitions: CharacterizedDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MaterialDesignation<'a> = Id<MaterialDesignation_<'a>>;
 pub struct MaterialDesignationCharacterization_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub designation: MaterialDesignation<'a>,
     pub property: CharacterizedMaterialProperty<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MaterialDesignationCharacterization<'a> = Id<MaterialDesignationCharacterization_<'a>>;
 pub struct MaterialProperty_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub definition: CharacterizedDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4407,43 +4532,43 @@ pub struct MaximumFunction_<'a> {
 }
 pub type MaximumFunction<'a> = Id<MaximumFunction_<'a>>;
 pub struct MeasureQualification_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub qualified_measure: MeasureWithUnit<'a>,
     pub qualifiers: ValueQualifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MeasureQualification<'a> = Id<MeasureQualification_<'a>>;
 pub struct MeasureRepresentationItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MeasureRepresentationItem<'a> = Id<MeasureRepresentationItem_<'a>>;
 pub enum MeasureValue<'a> {
-    AmountOfSubstanceMeasure(f64),
-    AreaMeasure(f64),
-    CelsiusTemperatureMeasure(f64),
-    ContextDependentMeasure(f64),
-    CountMeasure(f64),
-    DescriptiveMeasure(&'a str),
-    ElectricCurrentMeasure(f64),
-    LengthMeasure(f64),
-    LuminousIntensityMeasure(f64),
-    MassMeasure(f64),
-    NumericMeasure(f64),
+    AmountOfSubstanceMeasure(AmountOfSubstanceMeasure<'a>),
+    AreaMeasure(AreaMeasure<'a>),
+    CelsiusTemperatureMeasure(CelsiusTemperatureMeasure<'a>),
+    ContextDependentMeasure(ContextDependentMeasure<'a>),
+    CountMeasure(CountMeasure<'a>),
+    DescriptiveMeasure(DescriptiveMeasure<'a>),
+    ElectricCurrentMeasure(ElectricCurrentMeasure<'a>),
+    LengthMeasure(LengthMeasure<'a>),
+    LuminousIntensityMeasure(LuminousIntensityMeasure<'a>),
+    MassMeasure(MassMeasure<'a>),
+    NumericMeasure(NumericMeasure<'a>),
     NonNegativeLengthMeasure(NonNegativeLengthMeasure<'a>),
-    ParameterValue(f64),
-    PlaneAngleMeasure(f64),
+    ParameterValue(ParameterValue<'a>),
+    PlaneAngleMeasure(PlaneAngleMeasure<'a>),
     PositiveLengthMeasure(PositiveLengthMeasure<'a>),
     PositivePlaneAngleMeasure(PositivePlaneAngleMeasure<'a>),
     PositiveRatioMeasure(PositiveRatioMeasure<'a>),
-    RatioMeasure(f64),
-    SolidAngleMeasure(f64),
-    ThermodynamicTemperatureMeasure(f64),
-    TimeMeasure(f64),
-    VolumeMeasure(f64),
+    RatioMeasure(RatioMeasure<'a>),
+    SolidAngleMeasure(SolidAngleMeasure<'a>),
+    ThermodynamicTemperatureMeasure(ThermodynamicTemperatureMeasure<'a>),
+    TimeMeasure(TimeMeasure<'a>),
+    VolumeMeasure(VolumeMeasure<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct MeasureWithUnit_<'a> {
@@ -4453,14 +4578,14 @@ pub struct MeasureWithUnit_<'a> {
 }
 pub type MeasureWithUnit<'a> = Id<MeasureWithUnit_<'a>>;
 pub struct MechanicalDesignGeometricPresentationArea_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MechanicalDesignGeometricPresentationArea<'a> = Id<MechanicalDesignGeometricPresentationArea_<'a>>;
 pub struct MechanicalDesignGeometricPresentationRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4474,8 +4599,8 @@ pub struct Mechanism_<'a> {
 }
 pub type Mechanism<'a> = Id<Mechanism_<'a>>;
 pub struct MechanismBasePlacement_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub transformation_operator: Transformation<'a>,
     pub base_of_mechanism: Mechanism<'a>,
@@ -4498,14 +4623,19 @@ pub struct MinusFunction_<'a> {
 }
 pub type MinusFunction<'a> = Id<MinusFunction_<'a>>;
 pub struct MinuteInHour<'a>(pub i64, std::marker::PhantomData<&'a ()>);
+impl<'a> MinuteInHour<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<i64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct ModExpression_<'a> {
     pub operands: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ModExpression<'a> = Id<ModExpression_<'a>>;
 pub struct ModifiedGeometricTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub modifier: LimitCondition<'a>,
@@ -4513,22 +4643,27 @@ pub struct ModifiedGeometricTolerance_<'a> {
 }
 pub type ModifiedGeometricTolerance<'a> = Id<ModifiedGeometricTolerance_<'a>>;
 pub struct ModifiedPattern_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ModifiedPattern<'a> = Id<ModifiedPattern_<'a>>;
 pub struct MomentsOfInertiaRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MomentsOfInertiaRepresentation<'a> = Id<MomentsOfInertiaRepresentation_<'a>>;
 pub struct MonthInYearNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>);
+impl<'a> MonthInYearNumber<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<i64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct MotionLinkRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     pub related_frame: RigidPlacement<'a>,
@@ -4536,7 +4671,7 @@ pub struct MotionLinkRelationship_<'a> {
 }
 pub type MotionLinkRelationship<'a> = Id<MotionLinkRelationship_<'a>>;
 pub enum MotionParameterMeasure<'a> {
-    ParameterValue(f64),
+    ParameterValue(ParameterValue<'a>),
     MeasureWithUnit(MeasureWithUnit<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
@@ -4546,7 +4681,7 @@ pub struct MultExpression_<'a> {
 }
 pub type MultExpression<'a> = Id<MultExpression_<'a>>;
 pub struct MultiLanguageAttributeAssignment_<'a> {
-    pub attribute_name: &'a str,
+    pub attribute_name: Label<'a>,
     pub attribute_value: AttributeType<'a>,
     pub role: AttributeValueRole<'a>,
     pub items: MultiLanguageAttributeItem<'a>,
@@ -4646,12 +4781,12 @@ pub struct MultipleArityNumericExpression_<'a> {
 }
 pub type MultipleArityNumericExpression<'a> = Id<MultipleArityNumericExpression_<'a>>;
 pub struct NameAssignment_<'a> {
-    pub assigned_name: &'a str,
+    pub assigned_name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type NameAssignment<'a> = Id<NameAssignment_<'a>>;
 pub struct NameAttribute_<'a> {
-    pub attribute_value: &'a str,
+    pub attribute_value: Label<'a>,
     pub named_item: NameAttributeSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4686,31 +4821,40 @@ pub struct NamedUnitVariable_<'a> {
 }
 pub type NamedUnitVariable<'a> = Id<NamedUnitVariable_<'a>>;
 pub struct NextAssemblyUsageOccurrence_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition: ProductDefinition<'a>,
     pub related_product_definition: ProductDefinition<'a>,
-    pub reference_designator: Option<&'a str>,
+    pub reference_designator: Option<Identifier<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type NextAssemblyUsageOccurrence<'a> = Id<NextAssemblyUsageOccurrence_<'a>>;
 pub struct NgonClosedProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type NgonClosedProfile<'a> = Id<NgonClosedProfile_<'a>>;
 pub struct NonManifoldSurfaceShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type NonManifoldSurfaceShapeRepresentation<'a> = Id<NonManifoldSurfaceShapeRepresentation_<'a>>;
-pub struct NonNegativeLengthMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+
+pub struct NonNegativeLengthMeasure<'a>(pub LengthMeasure<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> NonNegativeLengthMeasure<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("NON_NEGATIVE_LENGTH_MEASURE("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(LengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct NotExpression_<'a> {
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4729,13 +4873,18 @@ pub struct NumericExpression_<'a> {
 }
 pub type NumericExpression<'a> = Id<NumericExpression_<'a>>;
 pub struct NumericMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> NumericMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct NumericVariable_<'a> {
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type NumericVariable<'a> = Id<NumericVariable_<'a>>;
 pub struct ObjectRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ObjectRole<'a> = Id<ObjectRole_<'a>>;
@@ -4745,46 +4894,46 @@ pub struct OddFunction_<'a> {
 }
 pub type OddFunction<'a> = Id<OddFunction_<'a>>;
 pub struct OffsetCurve2d_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
-    pub distance: f64,
+    pub distance: LengthMeasure<'a>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OffsetCurve2d<'a> = Id<OffsetCurve2d_<'a>>;
 pub struct OffsetCurve3d_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
-    pub distance: f64,
+    pub distance: LengthMeasure<'a>,
     pub self_intersect: Option<bool>,
     pub ref_direction: Direction<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OffsetCurve3d<'a> = Id<OffsetCurve3d_<'a>>;
 pub struct OffsetSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
-    pub distance: f64,
+    pub distance: LengthMeasure<'a>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OffsetSurface<'a> = Id<OffsetSurface_<'a>>;
 pub struct OneDirectionRepeatFactor_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub repeat_factor: Vector<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OneDirectionRepeatFactor<'a> = Id<OneDirectionRepeatFactor_<'a>>;
 pub struct OpenPathProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OpenPathProfile<'a> = Id<OpenPathProfile_<'a>>;
 pub struct OpenShell_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub cfs_faces: Face<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4795,15 +4944,15 @@ pub struct OrExpression_<'a> {
 }
 pub type OrExpression<'a> = Id<OrExpression_<'a>>;
 pub struct OrdinateDimension_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrdinateDimension<'a> = Id<OrdinateDimension_<'a>>;
 pub struct Organization_<'a> {
-    pub id: Option<&'a str>,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Option<Identifier<'a>>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Organization<'a> = Id<Organization_<'a>>;
@@ -4873,39 +5022,39 @@ pub enum OrganizationItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct OrganizationRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_organization: Organization<'a>,
     pub related_organization: Organization<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrganizationRelationship<'a> = Id<OrganizationRelationship_<'a>>;
 pub struct OrganizationRole_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrganizationRole<'a> = Id<OrganizationRole_<'a>>;
 pub struct OrganizationalAddress_<'a> {
-    pub internal_location: Option<&'a str>,
-    pub street_number: Option<&'a str>,
-    pub street: Option<&'a str>,
-    pub postal_box: Option<&'a str>,
-    pub town: Option<&'a str>,
-    pub region: Option<&'a str>,
-    pub postal_code: Option<&'a str>,
-    pub country: Option<&'a str>,
-    pub facsimile_number: Option<&'a str>,
-    pub telephone_number: Option<&'a str>,
-    pub electronic_mail_address: Option<&'a str>,
-    pub telex_number: Option<&'a str>,
+    pub internal_location: Option<Label<'a>>,
+    pub street_number: Option<Label<'a>>,
+    pub street: Option<Label<'a>>,
+    pub postal_box: Option<Label<'a>>,
+    pub town: Option<Label<'a>>,
+    pub region: Option<Label<'a>>,
+    pub postal_code: Option<Label<'a>>,
+    pub country: Option<Label<'a>>,
+    pub facsimile_number: Option<Label<'a>>,
+    pub telephone_number: Option<Label<'a>>,
+    pub electronic_mail_address: Option<Label<'a>>,
+    pub telex_number: Option<Label<'a>>,
     pub organizations: Organization<'a>,
-    pub description: Option<&'a str>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrganizationalAddress<'a> = Id<OrganizationalAddress_<'a>>;
 pub struct OrganizationalProject_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub responsible_organizations: Organization<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4927,69 +5076,69 @@ pub enum OrganizationalProjectItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct OrganizationalProjectRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_organizational_project: OrganizationalProject<'a>,
     pub related_organizational_project: OrganizationalProject<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrganizationalProjectRelationship<'a> = Id<OrganizationalProjectRelationship_<'a>>;
 pub struct OrganizationalProjectRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrganizationalProjectRole<'a> = Id<OrganizationalProjectRole_<'a>>;
 pub struct OrientedClosedShell_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub closed_shell_element: ClosedShell<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrientedClosedShell<'a> = Id<OrientedClosedShell_<'a>>;
 pub struct OrientedEdge_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub edge_element: Edge<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrientedEdge<'a> = Id<OrientedEdge_<'a>>;
 pub struct OrientedFace_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub face_element: Face<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrientedFace<'a> = Id<OrientedFace_<'a>>;
 pub struct OrientedOpenShell_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub open_shell_element: OpenShell<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrientedOpenShell<'a> = Id<OrientedOpenShell_<'a>>;
 pub struct OrientedPath_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub path_element: Path<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrientedPath<'a> = Id<OrientedPath_<'a>>;
 pub struct OrientedSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrientedSurface<'a> = Id<OrientedSurface_<'a>>;
 pub struct OuterBoundaryCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub segments: CompositeCurveSegment<'a>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OuterBoundaryCurve<'a> = Id<OuterBoundaryCurve_<'a>>;
 pub struct OverRidingStyledItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     pub over_ridden_style: StyledItem<'a>,
@@ -4997,15 +5146,15 @@ pub struct OverRidingStyledItem_<'a> {
 }
 pub type OverRidingStyledItem<'a> = Id<OverRidingStyledItem_<'a>>;
 pub struct PackageProductConceptFeature_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PackageProductConceptFeature<'a> = Id<PackageProductConceptFeature_<'a>>;
 pub struct PairActuator_<'a> {
     pub actuated_pair: KinematicPair<'a>,
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PairActuator<'a> = Id<PairActuator_<'a>>;
@@ -5015,15 +5164,15 @@ pub struct PairValue_<'a> {
 }
 pub type PairValue<'a> = Id<PairValue_<'a>>;
 pub struct Parabola_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
-    pub focal_dist: f64,
+    pub focal_dist: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Parabola<'a> = Id<Parabola_<'a>>;
 pub struct ParallelOffset_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     pub offset: MeasureWithUnit<'a>,
@@ -5031,8 +5180,8 @@ pub struct ParallelOffset_<'a> {
 }
 pub type ParallelOffset<'a> = Id<ParallelOffset_<'a>>;
 pub struct ParallelismTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -5040,59 +5189,64 @@ pub struct ParallelismTolerance_<'a> {
 }
 pub type ParallelismTolerance<'a> = Id<ParallelismTolerance_<'a>>;
 pub struct ParameterValue<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> ParameterValue<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct ParametricRepresentationContext_<'a> {
-    pub context_identifier: &'a str,
-    pub context_type: &'a str,
+    pub context_identifier: Identifier<'a>,
+    pub context_type: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ParametricRepresentationContext<'a> = Id<ParametricRepresentationContext_<'a>>;
 pub struct PartialCircularProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PartialCircularProfile<'a> = Id<PartialCircularProfile_<'a>>;
 pub struct Path_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub edge_list: OrientedEdge<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Path<'a> = Id<Path_<'a>>;
 pub struct PathFeatureComponent_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PathFeatureComponent<'a> = Id<PathFeatureComponent_<'a>>;
 pub struct PathShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PathShapeRepresentation<'a> = Id<PathShapeRepresentation_<'a>>;
 pub struct PatternOffsetMembership_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PatternOffsetMembership<'a> = Id<PatternOffsetMembership_<'a>>;
 pub struct PatternOmitMembership_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PatternOmitMembership<'a> = Id<PatternOmitMembership_<'a>>;
 pub struct Pcurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
     pub reference_to_curve: DefinitionalRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5104,16 +5258,16 @@ pub enum PcurveOrSurface<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct PerpendicularTo_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PerpendicularTo<'a> = Id<PerpendicularTo_<'a>>;
 pub struct PerpendicularityTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -5121,12 +5275,12 @@ pub struct PerpendicularityTolerance_<'a> {
 }
 pub type PerpendicularityTolerance<'a> = Id<PerpendicularityTolerance_<'a>>;
 pub struct Person_<'a> {
-    pub id: &'a str,
-    pub last_name: Option<&'a str>,
-    pub first_name: Option<&'a str>,
-    pub middle_names: Option<&'a str>,
-    pub prefix_titles: Option<&'a str>,
-    pub suffix_titles: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub last_name: Option<Label<'a>>,
+    pub first_name: Option<Label<'a>>,
+    pub middle_names: Option<Label<'a>>,
+    pub prefix_titles: Option<Label<'a>>,
+    pub suffix_titles: Option<Label<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Person<'a> = Id<Person_<'a>>;
@@ -5138,22 +5292,22 @@ pub struct PersonAndOrganization_<'a> {
 pub type PersonAndOrganization<'a> = Id<PersonAndOrganization_<'a>>;
 #[allow(non_snake_case)]
 pub struct PersonAndOrganizationAddress_<'a> {
-    pub internal_location: Option<&'a str>,
-    pub street_number: Option<&'a str>,
-    pub street: Option<&'a str>,
-    pub postal_box: Option<&'a str>,
-    pub town: Option<&'a str>,
-    pub region: Option<&'a str>,
-    pub postal_code: Option<&'a str>,
-    pub country: Option<&'a str>,
-    pub facsimile_number: Option<&'a str>,
-    pub telephone_number: Option<&'a str>,
-    pub electronic_mail_address: Option<&'a str>,
-    pub telex_number: Option<&'a str>,
+    pub internal_location: Option<Label<'a>>,
+    pub street_number: Option<Label<'a>>,
+    pub street: Option<Label<'a>>,
+    pub postal_box: Option<Label<'a>>,
+    pub town: Option<Label<'a>>,
+    pub region: Option<Label<'a>>,
+    pub postal_code: Option<Label<'a>>,
+    pub country: Option<Label<'a>>,
+    pub facsimile_number: Option<Label<'a>>,
+    pub telephone_number: Option<Label<'a>>,
+    pub electronic_mail_address: Option<Label<'a>>,
+    pub telex_number: Option<Label<'a>>,
     pub organizations: Organization<'a>,
-    pub organizational_address__description: Option<&'a str>,
+    pub organizational_address__description: Option<Text<'a>>,
     pub people: Person<'a>,
-    pub personal_address__description: Option<&'a str>,
+    pub personal_address__description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PersonAndOrganizationAddress<'a> = Id<PersonAndOrganizationAddress_<'a>>;
@@ -5220,7 +5374,7 @@ pub enum PersonAndOrganizationItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct PersonAndOrganizationRole_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PersonAndOrganizationRole<'a> = Id<PersonAndOrganizationRole_<'a>>;
@@ -5231,26 +5385,26 @@ pub enum PersonOrganizationSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct PersonalAddress_<'a> {
-    pub internal_location: Option<&'a str>,
-    pub street_number: Option<&'a str>,
-    pub street: Option<&'a str>,
-    pub postal_box: Option<&'a str>,
-    pub town: Option<&'a str>,
-    pub region: Option<&'a str>,
-    pub postal_code: Option<&'a str>,
-    pub country: Option<&'a str>,
-    pub facsimile_number: Option<&'a str>,
-    pub telephone_number: Option<&'a str>,
-    pub electronic_mail_address: Option<&'a str>,
-    pub telex_number: Option<&'a str>,
+    pub internal_location: Option<Label<'a>>,
+    pub street_number: Option<Label<'a>>,
+    pub street: Option<Label<'a>>,
+    pub postal_box: Option<Label<'a>>,
+    pub town: Option<Label<'a>>,
+    pub region: Option<Label<'a>>,
+    pub postal_code: Option<Label<'a>>,
+    pub country: Option<Label<'a>>,
+    pub facsimile_number: Option<Label<'a>>,
+    pub telephone_number: Option<Label<'a>>,
+    pub electronic_mail_address: Option<Label<'a>>,
+    pub telex_number: Option<Label<'a>>,
     pub people: Person<'a>,
-    pub description: Option<&'a str>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PersonalAddress<'a> = Id<PersonalAddress_<'a>>;
 pub struct PhysicallyModelledProductDefinition_<'a> {
-    pub id: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub description: Option<Text<'a>>,
     pub formation: ProductDefinitionFormation<'a>,
     pub frame_of_reference: ProductDefinitionContext<'a>,
     pub documentation_ids: Document<'a>,
@@ -5258,39 +5412,39 @@ pub struct PhysicallyModelledProductDefinition_<'a> {
 }
 pub type PhysicallyModelledProductDefinition<'a> = Id<PhysicallyModelledProductDefinition_<'a>>;
 pub struct PlacedDatumTargetFeature_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
-    pub target_id: &'a str,
+    pub target_id: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PlacedDatumTargetFeature<'a> = Id<PlacedDatumTargetFeature_<'a>>;
 pub struct PlacedFeature_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PlacedFeature<'a> = Id<PlacedFeature_<'a>>;
 pub struct Placement_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub location: CartesianPoint<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Placement<'a> = Id<Placement_<'a>>;
 pub struct PlanarBox_<'a> {
-    pub name: &'a str,
-    pub size_in_x: f64,
-    pub size_in_y: f64,
+    pub name: Label<'a>,
+    pub size_in_x: LengthMeasure<'a>,
+    pub size_in_y: LengthMeasure<'a>,
     pub placement: Axis2Placement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PlanarBox<'a> = Id<PlanarBox_<'a>>;
 pub struct PlanarCurvePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -5308,15 +5462,15 @@ pub struct PlanarCurvePairRange_<'a> {
 }
 pub type PlanarCurvePairRange<'a> = Id<PlanarCurvePairRange_<'a>>;
 pub struct PlanarExtent_<'a> {
-    pub name: &'a str,
-    pub size_in_x: f64,
-    pub size_in_y: f64,
+    pub name: Label<'a>,
+    pub size_in_x: LengthMeasure<'a>,
+    pub size_in_y: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PlanarExtent<'a> = Id<PlanarExtent_<'a>>;
 pub struct PlanarPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -5336,26 +5490,31 @@ pub struct PlanarPairRange_<'a> {
 pub type PlanarPairRange<'a> = Id<PlanarPairRange_<'a>>;
 pub struct PlanarPairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
-    pub actual_rotation: f64,
-    pub actual_translation_x: f64,
-    pub actual_translation_y: f64,
+    pub actual_rotation: PlaneAngleMeasure<'a>,
+    pub actual_translation_x: LengthMeasure<'a>,
+    pub actual_translation_y: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PlanarPairValue<'a> = Id<PlanarPairValue_<'a>>;
 pub struct PlanarShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PlanarShapeRepresentation<'a> = Id<PlanarShapeRepresentation_<'a>>;
 pub struct Plane_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Plane<'a> = Id<Plane_<'a>>;
 pub struct PlaneAngleMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> PlaneAngleMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct PlaneAngleMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -5384,34 +5543,34 @@ pub struct PlusMinusTolerance_<'a> {
 }
 pub type PlusMinusTolerance<'a> = Id<PlusMinusTolerance_<'a>>;
 pub struct Pocket_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Pocket<'a> = Id<Pocket_<'a>>;
 pub struct PocketBottom_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PocketBottom<'a> = Id<PocketBottom_<'a>>;
 pub struct Point_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Point<'a> = Id<Point_<'a>>;
 pub struct PointOnCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
-    pub point_parameter: f64,
+    pub point_parameter: ParameterValue<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PointOnCurve<'a> = Id<PointOnCurve_<'a>>;
 pub struct PointOnPlanarCurvePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -5440,16 +5599,16 @@ pub struct PointOnPlanarCurvePairValue_<'a> {
 }
 pub type PointOnPlanarCurvePairValue<'a> = Id<PointOnPlanarCurvePairValue_<'a>>;
 pub struct PointOnSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
-    pub point_parameter_u: f64,
-    pub point_parameter_v: f64,
+    pub point_parameter_u: ParameterValue<'a>,
+    pub point_parameter_v: ParameterValue<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PointOnSurface<'a> = Id<PointOnSurface_<'a>>;
 pub struct PointOnSurfacePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -5477,21 +5636,21 @@ pub struct PointOnSurfacePairValue_<'a> {
 }
 pub type PointOnSurfacePairValue<'a> = Id<PointOnSurfacePairValue_<'a>>;
 pub struct PointPlacementShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PointPlacementShapeRepresentation<'a> = Id<PointPlacementShapeRepresentation_<'a>>;
 pub struct PointReplica_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub parent_pt: Point<'a>,
     pub transformation: CartesianTransformationOperator<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PointReplica<'a> = Id<PointReplica_<'a>>;
 pub struct PointStyle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub marker: MarkerSelect<'a>,
     pub marker_size: SizeSelect<'a>,
     pub marker_colour: Colour<'a>,
@@ -5499,90 +5658,117 @@ pub struct PointStyle_<'a> {
 }
 pub type PointStyle<'a> = Id<PointStyle_<'a>>;
 pub struct PolyLoop_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub polygon: CartesianPoint<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PolyLoop<'a> = Id<PolyLoop_<'a>>;
 pub struct Polyline_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub points: CartesianPoint<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Polyline<'a> = Id<Polyline_<'a>>;
 pub struct PositionTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PositionTolerance<'a> = Id<PositionTolerance_<'a>>;
+
 pub struct PositiveLengthMeasure<'a>(pub NonNegativeLengthMeasure<'a>, std::marker::PhantomData<&'a ()>);
-pub struct PositivePlaneAngleMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
-pub struct PositiveRatioMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> PositiveLengthMeasure<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("POSITIVE_LENGTH_MEASURE("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(NonNegativeLengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
+
+pub struct PositivePlaneAngleMeasure<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> PositivePlaneAngleMeasure<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("POSITIVE_PLANE_ANGLE_MEASURE("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(PlaneAngleMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
+
+pub struct PositiveRatioMeasure<'a>(pub RatioMeasure<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> PositiveRatioMeasure<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("POSITIVE_RATIO_MEASURE("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(RatioMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct PowerExpression_<'a> {
     pub operands: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PowerExpression<'a> = Id<PowerExpression_<'a>>;
 pub struct PreDefinedColour_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedColour<'a> = Id<PreDefinedColour_<'a>>;
 pub struct PreDefinedCurveFont_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedCurveFont<'a> = Id<PreDefinedCurveFont_<'a>>;
 pub struct PreDefinedDimensionSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedDimensionSymbol<'a> = Id<PreDefinedDimensionSymbol_<'a>>;
 pub struct PreDefinedGeometricalToleranceSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedGeometricalToleranceSymbol<'a> = Id<PreDefinedGeometricalToleranceSymbol_<'a>>;
 pub struct PreDefinedItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedItem<'a> = Id<PreDefinedItem_<'a>>;
 pub struct PreDefinedMarker_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedMarker<'a> = Id<PreDefinedMarker_<'a>>;
 pub struct PreDefinedPointMarkerSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedPointMarkerSymbol<'a> = Id<PreDefinedPointMarkerSymbol_<'a>>;
 pub struct PreDefinedPresentationStyle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedPresentationStyle<'a> = Id<PreDefinedPresentationStyle_<'a>>;
 pub struct PreDefinedSurfaceConditionSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedSurfaceConditionSymbol<'a> = Id<PreDefinedSurfaceConditionSymbol_<'a>>;
 pub struct PreDefinedSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedSymbol<'a> = Id<PreDefinedSymbol_<'a>>;
 pub struct PreDefinedTerminatorSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedTerminatorSymbol<'a> = Id<PreDefinedTerminatorSymbol_<'a>>;
 pub struct PreDefinedTextFont_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedTextFont<'a> = Id<PreDefinedTextFont_<'a>>;
@@ -5598,22 +5784,27 @@ pub enum PreferredSurfaceCurveRepresentation<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct PresentableText<'a>(pub &'a str, std::marker::PhantomData<&'a ()>);
+impl<'a> PresentableText<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<&str>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct PresentationArea_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PresentationArea<'a> = Id<PresentationArea_<'a>>;
 pub struct PresentationLayerAssignment_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub assigned_items: LayeredItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PresentationLayerAssignment<'a> = Id<PresentationLayerAssignment_<'a>>;
 pub struct PresentationRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5665,7 +5856,7 @@ pub enum PresentationStyleSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct PresentationView_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5694,8 +5885,8 @@ pub enum PresentedItemSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct PrismaticPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -5711,58 +5902,58 @@ pub struct PrismaticPairRange_<'a> {
 pub type PrismaticPairRange<'a> = Id<PrismaticPairRange_<'a>>;
 pub struct PrismaticPairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
-    pub actual_translation: f64,
+    pub actual_translation: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PrismaticPairValue<'a> = Id<PrismaticPairValue_<'a>>;
 pub struct ProcessOperation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
-    pub consequence: &'a str,
-    pub purpose: &'a str,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
+    pub consequence: Text<'a>,
+    pub purpose: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProcessOperation<'a> = Id<ProcessOperation_<'a>>;
 pub struct ProcessPlan_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub chosen_method: ActionMethod<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProcessPlan<'a> = Id<ProcessPlan_<'a>>;
 pub struct ProcessProductAssociation_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub defined_product: CharacterizedProductDefinition<'a>,
     pub process: ProductDefinitionProcess<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProcessProductAssociation<'a> = Id<ProcessProductAssociation_<'a>>;
 pub struct ProcessPropertyAssociation_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub process: PropertyProcess<'a>,
     pub property_or_shape: PropertyOrShapeSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProcessPropertyAssociation<'a> = Id<ProcessPropertyAssociation_<'a>>;
 pub struct Product_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub frame_of_reference: ProductContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Product<'a> = Id<Product_<'a>>;
 pub struct ProductCategory_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductCategory<'a> = Id<ProductCategory_<'a>>;
 pub struct ProductCategoryRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub category: ProductCategory<'a>,
     pub sub_category: ProductCategory<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5770,48 +5961,48 @@ pub struct ProductCategoryRelationship_<'a> {
 pub type ProductCategoryRelationship<'a> = Id<ProductCategoryRelationship_<'a>>;
 #[allow(non_snake_case)]
 pub struct ProductClass_<'a> {
-    pub id: &'a str,
-    pub product_concept__name: &'a str,
-    pub product_concept__description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub product_concept__name: Label<'a>,
+    pub product_concept__description: Option<Text<'a>>,
     pub market_context: ProductConceptContext<'a>,
-    pub characterized_object__name: &'a str,
-    pub characterized_object__description: Option<&'a str>,
+    pub characterized_object__name: Label<'a>,
+    pub characterized_object__description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductClass<'a> = Id<ProductClass_<'a>>;
 pub struct ProductConcept_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub market_context: ProductConceptContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductConcept<'a> = Id<ProductConcept_<'a>>;
 pub struct ProductConceptContext_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub frame_of_reference: ApplicationContext<'a>,
-    pub market_segment_type: &'a str,
+    pub market_segment_type: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductConceptContext<'a> = Id<ProductConceptContext_<'a>>;
 pub struct ProductConceptFeature_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductConceptFeature<'a> = Id<ProductConceptFeature_<'a>>;
 pub struct ProductConceptFeatureAssociation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub concept: ProductConcept<'a>,
     pub feature: ProductConceptFeature<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductConceptFeatureAssociation<'a> = Id<ProductConceptFeatureAssociation_<'a>>;
 pub struct ProductConceptFeatureCategory_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductConceptFeatureCategory<'a> = Id<ProductConceptFeatureCategory_<'a>>;
@@ -5822,32 +6013,32 @@ pub struct ProductConceptFeatureCategoryUsage_<'a> {
 }
 pub type ProductConceptFeatureCategoryUsage<'a> = Id<ProductConceptFeatureCategoryUsage_<'a>>;
 pub struct ProductConceptRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_concept: ProductConcept<'a>,
     pub related_product_concept: ProductConcept<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductConceptRelationship<'a> = Id<ProductConceptRelationship_<'a>>;
 pub struct ProductContext_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub frame_of_reference: ApplicationContext<'a>,
-    pub discipline_type: &'a str,
+    pub discipline_type: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductContext<'a> = Id<ProductContext_<'a>>;
 pub struct ProductDefinition_<'a> {
-    pub id: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub description: Option<Text<'a>>,
     pub formation: ProductDefinitionFormation<'a>,
     pub frame_of_reference: ProductDefinitionContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinition<'a> = Id<ProductDefinition_<'a>>;
 pub struct ProductDefinitionContext_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub frame_of_reference: ApplicationContext<'a>,
-    pub life_cycle_stage: &'a str,
+    pub life_cycle_stage: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionContext<'a> = Id<ProductDefinitionContext_<'a>>;
@@ -5859,61 +6050,61 @@ pub struct ProductDefinitionContextAssociation_<'a> {
 }
 pub type ProductDefinitionContextAssociation<'a> = Id<ProductDefinitionContextAssociation_<'a>>;
 pub struct ProductDefinitionContextRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionContextRole<'a> = Id<ProductDefinitionContextRole_<'a>>;
 pub struct ProductDefinitionEffectivity_<'a> {
-    pub id: &'a str,
+    pub id: Identifier<'a>,
     pub usage: ProductDefinitionRelationship<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionEffectivity<'a> = Id<ProductDefinitionEffectivity_<'a>>;
 pub struct ProductDefinitionFormation_<'a> {
-    pub id: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub description: Option<Text<'a>>,
     pub of_product: Product<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionFormation<'a> = Id<ProductDefinitionFormation_<'a>>;
 pub struct ProductDefinitionFormationRelationship_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition_formation: ProductDefinitionFormation<'a>,
     pub related_product_definition_formation: ProductDefinitionFormation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionFormationRelationship<'a> = Id<ProductDefinitionFormationRelationship_<'a>>;
 pub struct ProductDefinitionFormationWithSpecifiedSource_<'a> {
-    pub id: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub description: Option<Text<'a>>,
     pub of_product: Product<'a>,
     pub make_or_buy: Source<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionFormationWithSpecifiedSource<'a> = Id<ProductDefinitionFormationWithSpecifiedSource_<'a>>;
 pub struct ProductDefinitionOccurrenceRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub occurrence: ProductDefinition<'a>,
     pub occurrence_usage: AssemblyComponentUsage<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionOccurrenceRelationship<'a> = Id<ProductDefinitionOccurrenceRelationship_<'a>>;
 pub struct ProductDefinitionProcess_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub chosen_method: ActionMethod<'a>,
-    pub identification: &'a str,
+    pub identification: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionProcess<'a> = Id<ProductDefinitionProcess_<'a>>;
 pub struct ProductDefinitionRelationship_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition: ProductDefinition<'a>,
     pub related_product_definition: ProductDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5921,43 +6112,43 @@ pub struct ProductDefinitionRelationship_<'a> {
 pub type ProductDefinitionRelationship<'a> = Id<ProductDefinitionRelationship_<'a>>;
 #[allow(non_snake_case)]
 pub struct ProductDefinitionResource_<'a> {
-    pub name: &'a str,
-    pub action_resource__description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub action_resource__description: Option<Text<'a>>,
     pub usage: SupportedItem<'a>,
     pub kind: ActionResourceType<'a>,
-    pub id: &'a str,
-    pub product_definition__description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub product_definition__description: Option<Text<'a>>,
     pub formation: ProductDefinitionFormation<'a>,
     pub frame_of_reference: ProductDefinitionContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionResource<'a> = Id<ProductDefinitionResource_<'a>>;
 pub struct ProductDefinitionShape_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub definition: CharacterizedDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionShape<'a> = Id<ProductDefinitionShape_<'a>>;
 pub struct ProductDefinitionSubstitute_<'a> {
-    pub description: Option<&'a str>,
+    pub description: Option<Text<'a>>,
     pub context_relationship: ProductDefinitionRelationship<'a>,
     pub substitute_definition: ProductDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionSubstitute<'a> = Id<ProductDefinitionSubstitute_<'a>>;
 pub struct ProductDefinitionUsage_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition: ProductDefinition<'a>,
     pub related_product_definition: ProductDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionUsage<'a> = Id<ProductDefinitionUsage_<'a>>;
 pub struct ProductDefinitionWithAssociatedDocuments_<'a> {
-    pub id: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub description: Option<Text<'a>>,
     pub formation: ProductDefinitionFormation<'a>,
     pub frame_of_reference: ProductDefinitionContext<'a>,
     pub documentation_ids: Document<'a>,
@@ -5966,13 +6157,13 @@ pub struct ProductDefinitionWithAssociatedDocuments_<'a> {
 pub type ProductDefinitionWithAssociatedDocuments<'a> = Id<ProductDefinitionWithAssociatedDocuments_<'a>>;
 #[allow(non_snake_case)]
 pub struct ProductIdentification_<'a> {
-    pub id: &'a str,
-    pub configuration_item__name: &'a str,
-    pub configuration_item__description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub configuration_item__name: Label<'a>,
+    pub configuration_item__description: Option<Text<'a>>,
     pub item_concept: ProductConcept<'a>,
-    pub purpose: Option<&'a str>,
-    pub characterized_object__name: &'a str,
-    pub characterized_object__description: Option<&'a str>,
+    pub purpose: Option<Label<'a>>,
+    pub characterized_object__name: Label<'a>,
+    pub characterized_object__description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductIdentification<'a> = Id<ProductIdentification_<'a>>;
@@ -5988,29 +6179,29 @@ pub enum ProductOrPresentationSpace<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct ProductProcessPlan_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub chosen_method: ActionMethod<'a>,
-    pub identification: &'a str,
+    pub identification: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductProcessPlan<'a> = Id<ProductProcessPlan_<'a>>;
 pub struct ProductRelatedProductCategory_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub products: Product<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductRelatedProductCategory<'a> = Id<ProductRelatedProductCategory_<'a>>;
 #[allow(non_snake_case)]
 pub struct ProductSpecification_<'a> {
-    pub id: &'a str,
-    pub configuration_item__name: &'a str,
-    pub configuration_item__description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub configuration_item__name: Label<'a>,
+    pub configuration_item__description: Option<Text<'a>>,
     pub item_concept: ProductConcept<'a>,
-    pub purpose: Option<&'a str>,
-    pub characterized_object__name: &'a str,
-    pub characterized_object__description: Option<&'a str>,
+    pub purpose: Option<Label<'a>>,
+    pub characterized_object__name: Label<'a>,
+    pub characterized_object__description: Option<Text<'a>>,
     pub item_concept_feature: ProductConceptFeatureAssociation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6024,38 +6215,38 @@ pub struct ProjectedZoneDefinition_<'a> {
 }
 pub type ProjectedZoneDefinition<'a> = Id<ProjectedZoneDefinition_<'a>>;
 pub struct ProjectionCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProjectionCurve<'a> = Id<ProjectionCurve_<'a>>;
 pub struct ProjectionDirectedCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProjectionDirectedCallout<'a> = Id<ProjectionDirectedCallout_<'a>>;
 pub struct PromissoryUsageOccurrence_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition: ProductDefinition<'a>,
     pub related_product_definition: ProductDefinition<'a>,
-    pub reference_designator: Option<&'a str>,
+    pub reference_designator: Option<Identifier<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PromissoryUsageOccurrence<'a> = Id<PromissoryUsageOccurrence_<'a>>;
 pub struct PropertyDefinition_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub definition: CharacterizedDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PropertyDefinition<'a> = Id<PropertyDefinition_<'a>>;
 pub struct PropertyDefinitionRelationship_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub relating_property_definition: PropertyDefinition<'a>,
     pub related_property_definition: PropertyDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6073,39 +6264,39 @@ pub enum PropertyOrShapeSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct PropertyProcess_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub chosen_method: ActionMethod<'a>,
-    pub identification: &'a str,
+    pub identification: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PropertyProcess<'a> = Id<PropertyProcess_<'a>>;
 pub struct QualifiedRepresentationItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub qualifiers: ValueQualifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type QualifiedRepresentationItem<'a> = Id<QualifiedRepresentationItem_<'a>>;
 pub struct QualitativeUncertainty_<'a> {
-    pub measure_name: &'a str,
-    pub description: &'a str,
-    pub uncertainty_value: &'a str,
+    pub measure_name: Label<'a>,
+    pub description: Text<'a>,
+    pub uncertainty_value: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type QualitativeUncertainty<'a> = Id<QualitativeUncertainty_<'a>>;
 pub struct QuantifiedAssemblyComponentUsage_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition: ProductDefinition<'a>,
     pub related_product_definition: ProductDefinition<'a>,
-    pub reference_designator: Option<&'a str>,
+    pub reference_designator: Option<Identifier<'a>>,
     pub quantity: MeasureWithUnit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type QuantifiedAssemblyComponentUsage<'a> = Id<QuantifiedAssemblyComponentUsage_<'a>>;
 pub struct QuasiUniformCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub degree: i64,
     pub control_points_list: CartesianPoint<'a>,
     pub curve_form: BSplineCurveForm<'a>,
@@ -6115,7 +6306,7 @@ pub struct QuasiUniformCurve_<'a> {
 }
 pub type QuasiUniformCurve<'a> = Id<QuasiUniformCurve_<'a>>;
 pub struct QuasiUniformSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
     pub control_points_list: CartesianPoint<'a>,
@@ -6127,12 +6318,12 @@ pub struct QuasiUniformSurface_<'a> {
 }
 pub type QuasiUniformSurface<'a> = Id<QuasiUniformSurface_<'a>>;
 pub struct RackAndPinionPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
-    pub pinion_radius: f64,
+    pub pinion_radius: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RackAndPinionPair<'a> = Id<RackAndPinionPair_<'a>>;
@@ -6145,17 +6336,22 @@ pub struct RackAndPinionPairRange_<'a> {
 pub type RackAndPinionPairRange<'a> = Id<RackAndPinionPairRange_<'a>>;
 pub struct RackAndPinionPairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
-    pub actual_displacement: f64,
+    pub actual_displacement: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RackAndPinionPairValue<'a> = Id<RackAndPinionPairValue_<'a>>;
 pub struct RadiusDimension_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RadiusDimension<'a> = Id<RadiusDimension_<'a>>;
 pub struct RatioMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> RatioMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct RatioMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -6168,7 +6364,7 @@ pub struct RatioUnit_<'a> {
 }
 pub type RatioUnit<'a> = Id<RatioUnit_<'a>>;
 pub struct RationalBSplineCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub degree: i64,
     pub control_points_list: CartesianPoint<'a>,
     pub curve_form: BSplineCurveForm<'a>,
@@ -6179,7 +6375,7 @@ pub struct RationalBSplineCurve_<'a> {
 }
 pub type RationalBSplineCurve<'a> = Id<RationalBSplineCurve_<'a>>;
 pub struct RationalBSplineSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
     pub control_points_list: CartesianPoint<'a>,
@@ -6205,32 +6401,32 @@ pub struct RealNumericVariable_<'a> {
 }
 pub type RealNumericVariable<'a> = Id<RealNumericVariable_<'a>>;
 pub struct RectangularClosedProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RectangularClosedProfile<'a> = Id<RectangularClosedProfile_<'a>>;
 pub struct RectangularCompositeSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub segments: SurfacePatch<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RectangularCompositeSurface<'a> = Id<RectangularCompositeSurface_<'a>>;
 pub struct RectangularPattern_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RectangularPattern<'a> = Id<RectangularPattern_<'a>>;
 pub struct RectangularTrimmedSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
-    pub u1: f64,
-    pub u2: f64,
-    pub v1: f64,
-    pub v2: f64,
+    pub u1: ParameterValue<'a>,
+    pub u2: ParameterValue<'a>,
+    pub v1: ParameterValue<'a>,
+    pub v2: ParameterValue<'a>,
     pub usense: bool,
     pub vsense: bool,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6244,9 +6440,9 @@ pub struct ReferencedModifiedDatum_<'a> {
 }
 pub type ReferencedModifiedDatum<'a> = Id<ReferencedModifiedDatum_<'a>>;
 pub struct RelativeEventOccurrence_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub base_event: EventOccurrence<'a>,
     pub offset: TimeMeasureWithUnit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6259,9 +6455,9 @@ pub enum RenderingPropertiesSelect<'a> {
 }
 #[allow(non_snake_case)]
 pub struct RepItemGroup_<'a> {
-    pub group__name: &'a str,
-    pub description: Option<&'a str>,
-    pub representation_item__name: &'a str,
+    pub group__name: Label<'a>,
+    pub description: Option<Text<'a>>,
+    pub representation_item__name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RepItemGroup<'a> = Id<RepItemGroup_<'a>>;
@@ -6269,31 +6465,31 @@ pub struct ReparametrisedCompositeCurveSegment_<'a> {
     pub transition: TransitionCode<'a>,
     pub same_sense: bool,
     pub parent_curve: Curve<'a>,
-    pub param_length: f64,
+    pub param_length: ParameterValue<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ReparametrisedCompositeCurveSegment<'a> = Id<ReparametrisedCompositeCurveSegment_<'a>>;
 pub struct ReplicateFeature_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ReplicateFeature<'a> = Id<ReplicateFeature_<'a>>;
 pub struct Representation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Representation<'a> = Id<Representation_<'a>>;
 pub struct RepresentationContext_<'a> {
-    pub context_identifier: &'a str,
-    pub context_type: &'a str,
+    pub context_identifier: Identifier<'a>,
+    pub context_type: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RepresentationContext<'a> = Id<RepresentationContext_<'a>>;
 pub struct RepresentationItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RepresentationItem<'a> = Id<RepresentationItem_<'a>>;
@@ -6304,16 +6500,16 @@ pub struct RepresentationMap_<'a> {
 }
 pub type RepresentationMap<'a> = Id<RepresentationMap_<'a>>;
 pub struct RepresentationRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RepresentationRelationship<'a> = Id<RepresentationRelationship_<'a>>;
 pub struct RepresentationRelationshipWithTransformation_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     pub transformation_operator: Transformation<'a>,
@@ -6329,8 +6525,8 @@ pub enum RepresentedDefinition<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct RequirementForActionResource_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub kind: ResourceRequirementType<'a>,
     pub operations: CharacterizedActionDefinition<'a>,
     pub resources: ActionResource<'a>,
@@ -6338,29 +6534,29 @@ pub struct RequirementForActionResource_<'a> {
 }
 pub type RequirementForActionResource<'a> = Id<RequirementForActionResource_<'a>>;
 pub struct ResourceProperty_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub resource: CharacterizedResourceDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ResourceProperty<'a> = Id<ResourceProperty_<'a>>;
 pub struct ResourcePropertyRepresentation_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub property: ResourceProperty<'a>,
     pub representation: Representation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ResourcePropertyRepresentation<'a> = Id<ResourcePropertyRepresentation_<'a>>;
 pub struct ResourceRequirementType_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ResourceRequirementType<'a> = Id<ResourceRequirementType_<'a>>;
 pub struct ResultingPath_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     pub related_frame: RigidPlacement<'a>,
@@ -6369,8 +6565,8 @@ pub struct ResultingPath_<'a> {
 }
 pub type ResultingPath<'a> = Id<ResultingPath_<'a>>;
 pub struct Retention_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub chosen_method: ActionMethod<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6391,8 +6587,8 @@ pub enum ReversibleTopologyItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct RevolutePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -6408,53 +6604,53 @@ pub struct RevolutePairRange_<'a> {
 pub type RevolutePairRange<'a> = Id<RevolutePairRange_<'a>>;
 pub struct RevolutePairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
-    pub actual_rotation: f64,
+    pub actual_rotation: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RevolutePairValue<'a> = Id<RevolutePairValue_<'a>>;
 pub struct RevolvedAreaSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
     pub axis: Axis1Placement<'a>,
-    pub angle: f64,
+    pub angle: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RevolvedAreaSolid<'a> = Id<RevolvedAreaSolid_<'a>>;
 pub struct RevolvedFaceSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_face: FaceSurface<'a>,
     pub axis: Axis1Placement<'a>,
-    pub angle: f64,
+    pub angle: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RevolvedFaceSolid<'a> = Id<RevolvedFaceSolid_<'a>>;
 pub struct Rib_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Rib<'a> = Id<Rib_<'a>>;
 pub struct RightAngularWedge_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
     pub x: PositiveLengthMeasure<'a>,
     pub y: PositiveLengthMeasure<'a>,
     pub z: PositiveLengthMeasure<'a>,
-    pub ltx: f64,
+    pub ltx: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RightAngularWedge<'a> = Id<RightAngularWedge_<'a>>;
 pub struct RightCircularCone_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis1Placement<'a>,
     pub height: PositiveLengthMeasure<'a>,
-    pub radius: f64,
-    pub semi_angle: f64,
+    pub radius: LengthMeasure<'a>,
+    pub semi_angle: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RightCircularCone<'a> = Id<RightCircularCone_<'a>>;
 pub struct RightCircularCylinder_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis1Placement<'a>,
     pub height: PositiveLengthMeasure<'a>,
     pub radius: PositiveLengthMeasure<'a>,
@@ -6486,8 +6682,8 @@ pub enum RoleSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct RollingCurvePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -6504,8 +6700,8 @@ pub struct RollingCurvePairValue_<'a> {
 }
 pub type RollingCurvePairValue<'a> = Id<RollingCurvePairValue_<'a>>;
 pub struct RollingSurfacePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -6518,45 +6714,45 @@ pub type RollingSurfacePair<'a> = Id<RollingSurfacePair_<'a>>;
 pub struct RollingSurfacePairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_point_on_surface: PointOnSurface<'a>,
-    pub actual_rotation: f64,
+    pub actual_rotation: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RollingSurfacePairValue<'a> = Id<RollingSurfacePairValue_<'a>>;
 pub struct RotationAboutDirection_<'a> {
     pub direction_of_axis: Direction<'a>,
-    pub rotation_angle: f64,
+    pub rotation_angle: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RotationAboutDirection<'a> = Id<RotationAboutDirection_<'a>>;
 pub enum RotationalRangeMeasure<'a> {
-    PlaneAngleMeasure(f64),
+    PlaneAngleMeasure(PlaneAngleMeasure<'a>),
     UnlimitedRange(UnlimitedRange<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct RoundHole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RoundHole<'a> = Id<RoundHole_<'a>>;
 pub struct RoundedUProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RoundedUProfile<'a> = Id<RoundedUProfile_<'a>>;
 pub struct RoundnessTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RoundnessTolerance<'a> = Id<RoundnessTolerance_<'a>>;
 pub struct RuledSurfaceSweptAreaSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
     pub directrix: Curve<'a>,
     pub start_param: f64,
@@ -6584,12 +6780,12 @@ pub struct RunoutZoneOrientationReferenceDirection_<'a> {
 }
 pub type RunoutZoneOrientationReferenceDirection<'a> = Id<RunoutZoneOrientationReferenceDirection_<'a>>;
 pub struct ScrewPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
-    pub pitch: f64,
+    pub pitch: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ScrewPair<'a> = Id<ScrewPair_<'a>>;
@@ -6602,12 +6798,12 @@ pub struct ScrewPairRange_<'a> {
 pub type ScrewPairRange<'a> = Id<ScrewPairRange_<'a>>;
 pub struct ScrewPairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
-    pub actual_rotation: f64,
+    pub actual_rotation: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ScrewPairValue<'a> = Id<ScrewPairValue_<'a>>;
 pub struct SeamCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
     pub associated_geometry: PcurveOrSurface<'a>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
@@ -6615,7 +6811,7 @@ pub struct SeamCurve_<'a> {
 }
 pub type SeamCurve<'a> = Id<SeamCurve_<'a>>;
 pub struct SeamEdge_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub edge_element: Edge<'a>,
     pub orientation: bool,
     pub pcurve_reference: Pcurve<'a>,
@@ -6623,9 +6819,14 @@ pub struct SeamEdge_<'a> {
 }
 pub type SeamEdge<'a> = Id<SeamEdge_<'a>>;
 pub struct SecondInMinute<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> SecondInMinute<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct SecurityClassification_<'a> {
-    pub name: &'a str,
-    pub purpose: &'a str,
+    pub name: Label<'a>,
+    pub purpose: Text<'a>,
     pub security_level: SecurityClassificationLevel<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6668,14 +6869,14 @@ pub enum SecurityClassificationItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct SecurityClassificationLevel_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SecurityClassificationLevel<'a> = Id<SecurityClassificationLevel_<'a>>;
 pub struct SerialNumberedEffectivity_<'a> {
-    pub id: &'a str,
-    pub effectivity_start_id: &'a str,
-    pub effectivity_end_id: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub effectivity_start_id: Identifier<'a>,
+    pub effectivity_end_id: Option<Identifier<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SerialNumberedEffectivity<'a> = Id<SerialNumberedEffectivity_<'a>>;
@@ -6694,48 +6895,48 @@ pub enum ShadingSurfaceMethod<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct ShapeAspect_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeAspect<'a> = Id<ShapeAspect_<'a>>;
 pub struct ShapeAspectAssociativity_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeAspectAssociativity<'a> = Id<ShapeAspectAssociativity_<'a>>;
 pub struct ShapeAspectDerivingRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeAspectDerivingRelationship<'a> = Id<ShapeAspectDerivingRelationship_<'a>>;
 pub struct ShapeAspectRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeAspectRelationship<'a> = Id<ShapeAspectRelationship_<'a>>;
 pub struct ShapeAspectTransition_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeAspectTransition<'a> = Id<ShapeAspectTransition_<'a>>;
 pub struct ShapeDefiningRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_shape_aspect: ShapeAspect<'a>,
     pub related_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6754,29 +6955,29 @@ pub struct ShapeDefinitionRepresentation_<'a> {
 }
 pub type ShapeDefinitionRepresentation<'a> = Id<ShapeDefinitionRepresentation_<'a>>;
 pub struct ShapeDimensionRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeDimensionRepresentation<'a> = Id<ShapeDimensionRepresentation_<'a>>;
 pub struct ShapeRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeRepresentation<'a> = Id<ShapeRepresentation_<'a>>;
 pub struct ShapeRepresentationRelationship_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeRepresentationRelationship<'a> = Id<ShapeRepresentationRelationship_<'a>>;
 pub struct ShapeRepresentationWithParameters_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6788,7 +6989,7 @@ pub enum Shell<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct ShellBasedSurfaceModel_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub sbsm_boundary: Shell<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6878,7 +7079,7 @@ pub type SinFunction<'a> = Id<SinFunction_<'a>>;
 pub enum SizeSelect<'a> {
     PositiveLengthMeasure(PositiveLengthMeasure<'a>),
     MeasureWithUnit(MeasureWithUnit<'a>),
-    DescriptiveMeasure(&'a str),
+    DescriptiveMeasure(DescriptiveMeasure<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct SlashExpression_<'a> {
@@ -6887,8 +7088,8 @@ pub struct SlashExpression_<'a> {
 }
 pub type SlashExpression<'a> = Id<SlashExpression_<'a>>;
 pub struct SlidingCurvePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -6906,8 +7107,8 @@ pub struct SlidingCurvePairValue_<'a> {
 }
 pub type SlidingCurvePairValue<'a> = Id<SlidingCurvePairValue_<'a>>;
 pub struct SlidingSurfacePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -6921,25 +7122,30 @@ pub struct SlidingSurfacePairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_point_on_surface_1: PointOnSurface<'a>,
     pub actual_point_on_surface_2: PointOnSurface<'a>,
-    pub actual_rotation: f64,
+    pub actual_rotation: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SlidingSurfacePairValue<'a> = Id<SlidingSurfacePairValue_<'a>>;
 pub struct Slot_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Slot<'a> = Id<Slot_<'a>>;
 pub struct SlotEnd_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SlotEnd<'a> = Id<SlotEnd_<'a>>;
 pub struct SolidAngleMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> SolidAngleMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct SolidAngleMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -6952,12 +7158,12 @@ pub struct SolidAngleUnit_<'a> {
 }
 pub type SolidAngleUnit<'a> = Id<SolidAngleUnit_<'a>>;
 pub struct SolidModel_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SolidModel<'a> = Id<SolidModel_<'a>>;
 pub struct SolidReplica_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub parent_solid: SolidModel<'a>,
     pub transformation: CartesianTransformationOperator3d<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6970,7 +7176,7 @@ pub enum Source<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub enum SourceItem<'a> {
-    Identifier(&'a str),
+    Identifier(Identifier<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub enum SpatialRotation<'a> {
@@ -6979,12 +7185,12 @@ pub enum SpatialRotation<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct SpecifiedHigherUsageOccurrence_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_product_definition: ProductDefinition<'a>,
     pub related_product_definition: ProductDefinition<'a>,
-    pub reference_designator: Option<&'a str>,
+    pub reference_designator: Option<Identifier<'a>>,
     pub upper_usage: AssemblyComponentUsage<'a>,
     pub next_usage: NextAssemblyUsageOccurrence<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6995,15 +7201,15 @@ pub enum SpecifiedItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct Sphere_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub radius: PositiveLengthMeasure<'a>,
     pub centre: Point<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Sphere<'a> = Id<Sphere_<'a>>;
 pub struct SphericalPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -7028,7 +7234,7 @@ pub struct SphericalPairValue_<'a> {
 }
 pub type SphericalPairValue<'a> = Id<SphericalPairValue_<'a>>;
 pub struct SphericalSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
     pub radius: PositiveLengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7044,23 +7250,23 @@ pub struct SquareRootFunction_<'a> {
 }
 pub type SquareRootFunction<'a> = Id<SquareRootFunction_<'a>>;
 pub struct SquareUProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SquareUProfile<'a> = Id<SquareUProfile_<'a>>;
 pub struct StandardUncertainty_<'a> {
-    pub measure_name: &'a str,
-    pub description: &'a str,
+    pub measure_name: Label<'a>,
+    pub description: Text<'a>,
     pub uncertainty_value: f64,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type StandardUncertainty<'a> = Id<StandardUncertainty_<'a>>;
 pub struct StraightnessTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7084,7 +7290,7 @@ pub struct StringVariable_<'a> {
 }
 pub type StringVariable<'a> = Id<StringVariable_<'a>>;
 pub struct StructuredDimensionCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7099,14 +7305,14 @@ pub enum StyleContextSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct StyledItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type StyledItem<'a> = Id<StyledItem_<'a>>;
 pub struct Subedge_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub edge_start: Vertex<'a>,
     pub edge_end: Vertex<'a>,
     pub parent_edge: Edge<'a>,
@@ -7114,7 +7320,7 @@ pub struct Subedge_<'a> {
 }
 pub type Subedge<'a> = Id<Subedge_<'a>>;
 pub struct Subface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub bounds: FaceBound<'a>,
     pub parent_face: Face<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7132,18 +7338,18 @@ pub enum SupportedItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct Surface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Surface<'a> = Id<Surface_<'a>>;
 pub struct SurfaceConditionCallout_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub contents: DraughtingCalloutElement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceConditionCallout<'a> = Id<SurfaceConditionCallout_<'a>>;
 pub struct SurfaceCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
     pub associated_geometry: PcurveOrSurface<'a>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
@@ -7151,7 +7357,7 @@ pub struct SurfaceCurve_<'a> {
 }
 pub type SurfaceCurve<'a> = Id<SurfaceCurve_<'a>>;
 pub struct SurfaceCurveSweptAreaSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
     pub directrix: Curve<'a>,
     pub start_param: f64,
@@ -7161,22 +7367,22 @@ pub struct SurfaceCurveSweptAreaSolid_<'a> {
 }
 pub type SurfaceCurveSweptAreaSolid<'a> = Id<SurfaceCurveSweptAreaSolid_<'a>>;
 pub struct SurfaceOfLinearExtrusion_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_curve: Curve<'a>,
     pub extrusion_axis: Vector<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceOfLinearExtrusion<'a> = Id<SurfaceOfLinearExtrusion_<'a>>;
 pub struct SurfaceOfRevolution_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_curve: Curve<'a>,
     pub axis_position: Axis1Placement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceOfRevolution<'a> = Id<SurfaceOfRevolution_<'a>>;
 pub struct SurfacePair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -7205,8 +7411,8 @@ pub struct SurfacePatch_<'a> {
 }
 pub type SurfacePatch<'a> = Id<SurfacePatch_<'a>>;
 pub struct SurfaceProfileTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7218,7 +7424,7 @@ pub struct SurfaceRenderingProperties_<'a> {
 }
 pub type SurfaceRenderingProperties<'a> = Id<SurfaceRenderingProperties_<'a>>;
 pub struct SurfaceReplica_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub parent_surface: Surface<'a>,
     pub transformation: CartesianTransformationOperator3d<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7231,7 +7437,7 @@ pub enum SurfaceSide<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct SurfaceSideStyle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: SurfaceStyleElementSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7326,22 +7532,36 @@ pub struct SurfaceStyleUsage_<'a> {
 }
 pub type SurfaceStyleUsage<'a> = Id<SurfaceStyleUsage_<'a>>;
 pub struct SurfaceTextureRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceTextureRepresentation<'a> = Id<SurfaceTextureRepresentation_<'a>>;
+
 pub struct SurfaceToleranceDeviation<'a>(pub PositiveLengthMeasure<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> SurfaceToleranceDeviation<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("SURFACE_TOLERANCE_DEVIATION("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(PositiveLengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct SurfaceToleranceParameter<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> SurfaceToleranceParameter<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct SweptAreaSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SweptAreaSolid<'a> = Id<SweptAreaSolid_<'a>>;
 pub struct SweptDiskSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub directrix: Curve<'a>,
     pub radius: PositiveLengthMeasure<'a>,
     pub inner_radius: Option<PositiveLengthMeasure<'a>>,
@@ -7351,13 +7571,13 @@ pub struct SweptDiskSolid_<'a> {
 }
 pub type SweptDiskSolid<'a> = Id<SweptDiskSolid_<'a>>;
 pub struct SweptFaceSolid_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_face: FaceSurface<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SweptFaceSolid<'a> = Id<SweptFaceSolid_<'a>>;
 pub struct SweptSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub swept_curve: Curve<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7368,7 +7588,7 @@ pub struct SymbolColour_<'a> {
 }
 pub type SymbolColour<'a> = Id<SymbolColour_<'a>>;
 pub struct SymbolRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7381,7 +7601,7 @@ pub struct SymbolRepresentationMap_<'a> {
 }
 pub type SymbolRepresentationMap<'a> = Id<SymbolRepresentationMap_<'a>>;
 pub struct SymbolStyle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub style_of_symbol: SymbolStyleSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7391,7 +7611,7 @@ pub enum SymbolStyleSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct SymbolTarget_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub placement: Axis2Placement<'a>,
     pub x_scale: PositiveRatioMeasure<'a>,
     pub y_scale: PositiveRatioMeasure<'a>,
@@ -7399,16 +7619,16 @@ pub struct SymbolTarget_<'a> {
 }
 pub type SymbolTarget<'a> = Id<SymbolTarget_<'a>>;
 pub struct SymmetricShapeAspect_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SymmetricShapeAspect<'a> = Id<SymmetricShapeAspect_<'a>>;
 pub struct SymmetryTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -7416,7 +7636,7 @@ pub struct SymmetryTolerance_<'a> {
 }
 pub type SymmetryTolerance<'a> = Id<SymmetryTolerance_<'a>>;
 pub struct TactileAppearanceRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7428,31 +7648,31 @@ pub struct TanFunction_<'a> {
 }
 pub type TanFunction<'a> = Id<TanFunction_<'a>>;
 pub struct Tangent_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Tangent<'a> = Id<Tangent_<'a>>;
 pub struct Taper_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Taper<'a> = Id<Taper_<'a>>;
 pub struct TeeProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TeeProfile<'a> = Id<TeeProfile_<'a>>;
 pub struct TerminatorSymbol_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub styles: PresentationStyleAssignment<'a>,
     pub item: RepresentationItem<'a>,
     pub annotated_curve: AnnotationCurveOccurrence<'a>,
@@ -7460,11 +7680,34 @@ pub struct TerminatorSymbol_<'a> {
 }
 pub type TerminatorSymbol<'a> = Id<TerminatorSymbol_<'a>>;
 pub struct Text<'a>(pub &'a str, std::marker::PhantomData<&'a ()>);
-pub struct TextAlignment<'a>(pub &'a str, std::marker::PhantomData<&'a ()>);
-pub struct TextDelineation<'a>(pub &'a str, std::marker::PhantomData<&'a ()>);
+impl<'a> Text<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<&str>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
+
+pub struct TextAlignment<'a>(pub Label<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> TextAlignment<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("TEXT_ALIGNMENT("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(Label::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
+
+pub struct TextDelineation<'a>(pub Label<'a>, std::marker::PhantomData<&'a ()>);
+impl<'a> TextDelineation<'a> {
+    pub fn parse(s: &'a str) -> IResult<'a, Self> {
+        delimited(tag("TEXT_DELINEATION("), Self::parse_inner, char(')'))(s)
+    }
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(Label::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct TextLiteral_<'a> {
-    pub name: &'a str,
-    pub literal: &'a str,
+    pub name: Label<'a>,
+    pub literal: PresentableText<'a>,
     pub placement: Axis2Placement<'a>,
     pub alignment: TextAlignment<'a>,
     pub path: TextPath<'a>,
@@ -7473,8 +7716,8 @@ pub struct TextLiteral_<'a> {
 }
 pub type TextLiteral<'a> = Id<TextLiteral_<'a>>;
 pub struct TextLiteralWithAssociatedCurves_<'a> {
-    pub name: &'a str,
-    pub literal: &'a str,
+    pub name: Label<'a>,
+    pub literal: PresentableText<'a>,
     pub placement: Axis2Placement<'a>,
     pub alignment: TextAlignment<'a>,
     pub path: TextPath<'a>,
@@ -7484,8 +7727,8 @@ pub struct TextLiteralWithAssociatedCurves_<'a> {
 }
 pub type TextLiteralWithAssociatedCurves<'a> = Id<TextLiteralWithAssociatedCurves_<'a>>;
 pub struct TextLiteralWithBlankingBox_<'a> {
-    pub name: &'a str,
-    pub literal: &'a str,
+    pub name: Label<'a>,
+    pub literal: PresentableText<'a>,
     pub placement: Axis2Placement<'a>,
     pub alignment: TextAlignment<'a>,
     pub path: TextPath<'a>,
@@ -7495,8 +7738,8 @@ pub struct TextLiteralWithBlankingBox_<'a> {
 }
 pub type TextLiteralWithBlankingBox<'a> = Id<TextLiteralWithBlankingBox_<'a>>;
 pub struct TextLiteralWithDelineation_<'a> {
-    pub name: &'a str,
-    pub literal: &'a str,
+    pub name: Label<'a>,
+    pub literal: PresentableText<'a>,
     pub placement: Axis2Placement<'a>,
     pub alignment: TextAlignment<'a>,
     pub path: TextPath<'a>,
@@ -7506,8 +7749,8 @@ pub struct TextLiteralWithDelineation_<'a> {
 }
 pub type TextLiteralWithDelineation<'a> = Id<TextLiteralWithDelineation_<'a>>;
 pub struct TextLiteralWithExtent_<'a> {
-    pub name: &'a str,
-    pub literal: &'a str,
+    pub name: Label<'a>,
+    pub literal: PresentableText<'a>,
     pub placement: Axis2Placement<'a>,
     pub alignment: TextAlignment<'a>,
     pub path: TextPath<'a>,
@@ -7532,7 +7775,7 @@ pub enum TextPath<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct TextStringRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7548,7 +7791,7 @@ pub enum TextStringRepresentationItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct TextStyle_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7559,27 +7802,32 @@ pub struct TextStyleForDefinedFont_<'a> {
 }
 pub type TextStyleForDefinedFont<'a> = Id<TextStyleForDefinedFont_<'a>>;
 pub struct TextStyleWithBoxCharacteristics_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
     pub characteristics: BoxCharacteristicSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TextStyleWithBoxCharacteristics<'a> = Id<TextStyleWithBoxCharacteristics_<'a>>;
 pub struct TextStyleWithMirror_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
     pub mirror_placement: Axis2Placement<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TextStyleWithMirror<'a> = Id<TextStyleWithMirror_<'a>>;
 pub struct TextStyleWithSpacing_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
     pub character_spacing: CharacterSpacingSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TextStyleWithSpacing<'a> = Id<TextStyleWithSpacing_<'a>>;
 pub struct ThermodynamicTemperatureMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> ThermodynamicTemperatureMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct ThermodynamicTemperatureMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -7592,15 +7840,15 @@ pub struct ThermodynamicTemperatureUnit_<'a> {
 }
 pub type ThermodynamicTemperatureUnit<'a> = Id<ThermodynamicTemperatureUnit_<'a>>;
 pub struct Thread_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Thread<'a> = Id<Thread_<'a>>;
 pub struct TimeInterval_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TimeInterval<'a> = Id<TimeInterval_<'a>>;
@@ -7611,7 +7859,7 @@ pub struct TimeIntervalAssignment_<'a> {
 }
 pub type TimeIntervalAssignment<'a> = Id<TimeIntervalAssignment_<'a>>;
 pub struct TimeIntervalBasedEffectivity_<'a> {
-    pub id: &'a str,
+    pub id: Identifier<'a>,
     pub effectivity_period: TimeInterval<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7669,15 +7917,15 @@ pub enum TimeIntervalItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct TimeIntervalRole_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TimeIntervalRole<'a> = Id<TimeIntervalRole_<'a>>;
 pub struct TimeIntervalWithBounds_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub primary_bound: Option<DateTimeOrEventOccurrence<'a>>,
     pub secondary_bound: Option<DateTimeOrEventOccurrence<'a>>,
     pub duration: Option<TimeMeasureWithUnit<'a>>,
@@ -7685,6 +7933,11 @@ pub struct TimeIntervalWithBounds_<'a> {
 }
 pub type TimeIntervalWithBounds<'a> = Id<TimeIntervalWithBounds_<'a>>;
 pub struct TimeMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> TimeMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct TimeMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -7707,8 +7960,8 @@ pub enum ToleranceMethodDefinition<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub enum ToleranceParameterSelect<'a> {
-    CurveToleranceParameter(f64),
-    SurfaceToleranceParameter(f64),
+    CurveToleranceParameter(CurveToleranceParameter<'a>),
+    SurfaceToleranceParameter(SurfaceToleranceParameter<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub enum ToleranceSelect<'a> {
@@ -7723,8 +7976,8 @@ pub struct ToleranceValue_<'a> {
 }
 pub type ToleranceValue<'a> = Id<ToleranceValue_<'a>>;
 pub struct ToleranceZone_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     pub defining_tolerance: GeometricTolerance<'a>,
@@ -7739,17 +7992,17 @@ pub struct ToleranceZoneDefinition_<'a> {
 }
 pub type ToleranceZoneDefinition<'a> = Id<ToleranceZoneDefinition_<'a>>;
 pub struct ToleranceZoneForm_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ToleranceZoneForm<'a> = Id<ToleranceZoneForm_<'a>>;
 pub struct TopologicalRepresentationItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TopologicalRepresentationItem<'a> = Id<TopologicalRepresentationItem_<'a>>;
 pub struct ToroidalSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
     pub major_radius: PositiveLengthMeasure<'a>,
     pub minor_radius: PositiveLengthMeasure<'a>,
@@ -7757,7 +8010,7 @@ pub struct ToroidalSurface_<'a> {
 }
 pub type ToroidalSurface<'a> = Id<ToroidalSurface_<'a>>;
 pub struct Torus_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub position: Axis1Placement<'a>,
     pub major_radius: PositiveLengthMeasure<'a>,
     pub minor_radius: PositiveLengthMeasure<'a>,
@@ -7765,8 +8018,8 @@ pub struct Torus_<'a> {
 }
 pub type Torus<'a> = Id<Torus_<'a>>;
 pub struct TotalRunoutTolerance_<'a> {
-    pub name: &'a str,
-    pub description: &'a str,
+    pub name: Label<'a>,
+    pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
     pub datum_system: DatumReference<'a>,
@@ -7786,20 +8039,20 @@ pub enum TransitionCode<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct TransitionFeature_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TransitionFeature<'a> = Id<TransitionFeature_<'a>>;
 pub enum TranslationalRangeMeasure<'a> {
-    LengthMeasure(f64),
+    LengthMeasure(LengthMeasure<'a>),
     UnlimitedRange(UnlimitedRange<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct TrimmedCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
     pub trim_1: TrimmingSelect<'a>,
     pub trim_2: TrimmingSelect<'a>,
@@ -7816,22 +8069,27 @@ pub enum TrimmingPreference<'a> {
 }
 pub enum TrimmingSelect<'a> {
     CartesianPoint(CartesianPoint<'a>),
-    ParameterValue(f64),
+    ParameterValue(ParameterValue<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct TwoDirectionRepeatFactor_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub repeat_factor: Vector<'a>,
     pub second_repeat_factor: Vector<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TwoDirectionRepeatFactor<'a> = Id<TwoDirectionRepeatFactor_<'a>>;
 pub struct TypeQualifier_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TypeQualifier<'a> = Id<TypeQualifier_<'a>>;
 pub struct UDirectionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>);
+impl<'a> UDirectionCount<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<i64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct UnaryBooleanExpression_<'a> {
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7853,7 +8111,7 @@ pub struct UnaryNumericExpression_<'a> {
 }
 pub type UnaryNumericExpression<'a> = Id<UnaryNumericExpression_<'a>>;
 pub struct UncertaintyAssignedRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     pub uncertainty: UncertaintyMeasureWithUnit<'a>,
@@ -7863,20 +8121,20 @@ pub type UncertaintyAssignedRepresentation<'a> = Id<UncertaintyAssignedRepresent
 pub struct UncertaintyMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type UncertaintyMeasureWithUnit<'a> = Id<UncertaintyMeasureWithUnit_<'a>>;
 pub struct UncertaintyQualifier_<'a> {
-    pub measure_name: &'a str,
-    pub description: &'a str,
+    pub measure_name: Label<'a>,
+    pub description: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type UncertaintyQualifier<'a> = Id<UncertaintyQualifier_<'a>>;
 pub struct UnconstrainedPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
@@ -7890,7 +8148,7 @@ pub struct UnconstrainedPairValue_<'a> {
 }
 pub type UnconstrainedPairValue<'a> = Id<UnconstrainedPairValue_<'a>>;
 pub struct UniformCurve_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub degree: i64,
     pub control_points_list: CartesianPoint<'a>,
     pub curve_form: BSplineCurveForm<'a>,
@@ -7900,7 +8158,7 @@ pub struct UniformCurve_<'a> {
 }
 pub type UniformCurve<'a> = Id<UniformCurve_<'a>>;
 pub struct UniformSurface_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
     pub control_points_list: CartesianPoint<'a>,
@@ -7917,12 +8175,12 @@ pub enum Unit<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct UniversalPair_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub transform_item_1: RepresentationItem<'a>,
     pub transform_item_2: RepresentationItem<'a>,
     pub joint: KinematicJoint<'a>,
-    pub input_skew_angle: Option<f64>,
+    pub input_skew_angle: Option<PlaneAngleMeasure<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type UniversalPair<'a> = Id<UniversalPair_<'a>>;
@@ -7937,8 +8195,8 @@ pub struct UniversalPairRange_<'a> {
 pub type UniversalPairRange<'a> = Id<UniversalPairRange_<'a>>;
 pub struct UniversalPairValue_<'a> {
     pub applies_to_pair: KinematicPair<'a>,
-    pub first_rotation_angle: f64,
-    pub second_rotation_angle: f64,
+    pub first_rotation_angle: PlaneAngleMeasure<'a>,
+    pub second_rotation_angle: PlaneAngleMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type UniversalPairValue<'a> = Id<UniversalPairValue_<'a>>;
@@ -7947,6 +8205,11 @@ pub enum UnlimitedRange<'a> {
     _Unused(std::marker::PhantomData<&'a ()>),
 }
 pub struct VDirectionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>);
+impl<'a> VDirectionCount<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<i64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct ValueFunction_<'a> {
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7959,13 +8222,13 @@ pub enum ValueQualifier<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct ValueRange_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub item_element: CompoundItemDefinition<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ValueRange<'a> = Id<ValueRange_<'a>>;
 pub struct ValueRepresentationItem_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub value_component: MeasureValue<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7979,9 +8242,9 @@ pub struct VariableSemantics_<'a> {
 }
 pub type VariableSemantics<'a> = Id<VariableSemantics_<'a>>;
 pub struct Vector_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub orientation: Direction<'a>,
-    pub magnitude: f64,
+    pub magnitude: LengthMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Vector<'a> = Id<Vector_<'a>>;
@@ -7992,8 +8255,8 @@ pub enum VectorOrDirection<'a> {
 }
 #[allow(non_snake_case)]
 pub struct VectorStyle_<'a> {
-    pub name: &'a str,
-    pub curve_style__name: &'a str,
+    pub name: Label<'a>,
+    pub curve_style__name: Label<'a>,
     pub curve_font: CurveFontOrScaledCurveFontSelect<'a>,
     pub curve_width: SizeSelect<'a>,
     pub curve_colour: Colour<'a>,
@@ -8001,43 +8264,43 @@ pub struct VectorStyle_<'a> {
 }
 pub type VectorStyle<'a> = Id<VectorStyle_<'a>>;
 pub struct VeeProfile_<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type VeeProfile<'a> = Id<VeeProfile_<'a>>;
 pub struct VersionedActionRequest_<'a> {
-    pub id: &'a str,
-    pub version: &'a str,
-    pub purpose: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub version: Label<'a>,
+    pub purpose: Text<'a>,
+    pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type VersionedActionRequest<'a> = Id<VersionedActionRequest_<'a>>;
 pub struct VersionedActionRequestRelationship_<'a> {
-    pub id: &'a str,
-    pub name: &'a str,
-    pub description: Option<&'a str>,
+    pub id: Identifier<'a>,
+    pub name: Label<'a>,
+    pub description: Option<Text<'a>>,
     pub relating_versioned_action_request: VersionedActionRequest<'a>,
     pub related_versioned_action_request: VersionedActionRequest<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type VersionedActionRequestRelationship<'a> = Id<VersionedActionRequestRelationship_<'a>>;
 pub struct Vertex_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Vertex<'a> = Id<Vertex_<'a>>;
 pub struct VertexLoop_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub loop_vertex: Vertex<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type VertexLoop<'a> = Id<VertexLoop_<'a>>;
 pub struct VertexPoint_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub vertex_geometry: Point<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -8045,10 +8308,10 @@ pub type VertexPoint<'a> = Id<VertexPoint_<'a>>;
 pub struct ViewVolume_<'a> {
     pub projection_type: CentralOrParallel<'a>,
     pub projection_point: CartesianPoint<'a>,
-    pub view_plane_distance: f64,
-    pub front_plane_distance: f64,
+    pub view_plane_distance: LengthMeasure<'a>,
+    pub front_plane_distance: LengthMeasure<'a>,
     pub front_plane_clipping: bool,
-    pub back_plane_distance: f64,
+    pub back_plane_distance: LengthMeasure<'a>,
     pub back_plane_clipping: bool,
     pub view_volume_sides_clipping: bool,
     pub view_window: PlanarBox<'a>,
@@ -8056,13 +8319,18 @@ pub struct ViewVolume_<'a> {
 }
 pub type ViewVolume<'a> = Id<ViewVolume_<'a>>;
 pub struct VisualAppearanceRepresentation_<'a> {
-    pub name: &'a str,
+    pub name: Label<'a>,
     pub items: RepresentationItem<'a>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type VisualAppearanceRepresentation<'a> = Id<VisualAppearanceRepresentation_<'a>>;
 pub struct VolumeMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>);
+impl<'a> VolumeMeasure<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<f64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub struct VolumeMeasureWithUnit_<'a> {
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -8080,6 +8348,11 @@ pub struct XorExpression_<'a> {
 }
 pub type XorExpression<'a> = Id<XorExpression_<'a>>;
 pub struct YearNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>);
+impl<'a> YearNumber<'a> {
+    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
+        map(<i64>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+    }
+}
 pub enum YprEnumeration<'a> {
     Yaw,
     Pitch,
