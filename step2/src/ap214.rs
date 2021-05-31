@@ -34,7 +34,7 @@ pub struct ActionDirective_<'a> {
     pub description: Option<Text<'a>>,
     pub analysis: Text<'a>,
     pub comment: Text<'a>,
-    pub requests: VersionedActionRequest<'a>,
+    pub requests: Vec<VersionedActionRequest<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionDirective<'a> = Id<ActionDirective_<'a>>;
@@ -185,7 +185,7 @@ pub type ActionRequestStatus<'a> = Id<ActionRequestStatus_<'a>>;
 pub struct ActionResource_<'a> {
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
-    pub usage: SupportedItem<'a>,
+    pub usage: Vec<SupportedItem<'a>>,
     pub kind: ActionResourceType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -194,7 +194,7 @@ pub struct ActionResourceRequirement_<'a> {
     pub name: Label<'a>,
     pub description: Text<'a>,
     pub kind: ResourceRequirementType<'a>,
-    pub operations: CharacterizedActionDefinition<'a>,
+    pub operations: Vec<CharacterizedActionDefinition<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ActionResourceRequirement<'a> = Id<ActionResourceRequirement_<'a>>;
@@ -227,14 +227,14 @@ pub struct Address_<'a> {
 pub type Address<'a> = Id<Address_<'a>>;
 pub struct AdvancedBrepShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AdvancedBrepShapeRepresentation<'a> = Id<AdvancedBrepShapeRepresentation_<'a>>;
 pub struct AdvancedFace_<'a> {
     pub name: Label<'a>,
-    pub bounds: FaceBound<'a>,
+    pub bounds: Vec<FaceBound<'a>>,
     pub face_geometry: Surface<'a>,
     pub same_sense: bool,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -283,7 +283,7 @@ pub struct AmountOfSubstanceUnit_<'a> {
 }
 pub type AmountOfSubstanceUnit<'a> = Id<AmountOfSubstanceUnit_<'a>>;
 pub struct AndExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AndExpression<'a> = Id<AndExpression_<'a>>;
@@ -305,7 +305,7 @@ impl<'a> AngleRelator<'a> {
 }
 pub struct AngularDimension_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AngularDimension<'a> = Id<AngularDimension_<'a>>;
@@ -330,26 +330,26 @@ pub struct AngularityTolerance_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AngularityTolerance<'a> = Id<AngularityTolerance_<'a>>;
 pub struct AnnotationCurveOccurrence_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationCurveOccurrence<'a> = Id<AnnotationCurveOccurrence_<'a>>;
 pub struct AnnotationFillArea_<'a> {
     pub name: Label<'a>,
-    pub boundaries: Curve<'a>,
+    pub boundaries: Vec<Curve<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationFillArea<'a> = Id<AnnotationFillArea_<'a>>;
 pub struct AnnotationFillAreaOccurrence_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     pub fill_style_target: Point<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -357,7 +357,7 @@ pub struct AnnotationFillAreaOccurrence_<'a> {
 pub type AnnotationFillAreaOccurrence<'a> = Id<AnnotationFillAreaOccurrence_<'a>>;
 pub struct AnnotationOccurrence_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -380,9 +380,9 @@ pub struct AnnotationOccurrenceRelationship_<'a> {
 pub type AnnotationOccurrenceRelationship<'a> = Id<AnnotationOccurrenceRelationship_<'a>>;
 pub struct AnnotationPlane_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
-    pub elements: Option<AnnotationPlaneElement<'a>>,
+    pub elements: Option<Vec<AnnotationPlaneElement<'a>>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AnnotationPlane<'a> = Id<AnnotationPlane_<'a>>;
@@ -393,7 +393,7 @@ pub enum AnnotationPlaneElement<'a> {
 }
 pub struct AnnotationSubfigureOccurrence_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -407,7 +407,7 @@ pub struct AnnotationSymbol_<'a> {
 pub type AnnotationSymbol<'a> = Id<AnnotationSymbol_<'a>>;
 pub struct AnnotationSymbolOccurrence_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -434,7 +434,7 @@ pub struct AnnotationTextCharacter_<'a> {
 pub type AnnotationTextCharacter<'a> = Id<AnnotationTextCharacter_<'a>>;
 pub struct AnnotationTextOccurrence_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -484,19 +484,19 @@ pub struct ApplicationProtocolDefinition_<'a> {
 pub type ApplicationProtocolDefinition<'a> = Id<ApplicationProtocolDefinition_<'a>>;
 pub struct AppliedActionAssignment_<'a> {
     pub assigned_action: Action<'a>,
-    pub items: ActionItem<'a>,
+    pub items: Vec<ActionItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedActionAssignment<'a> = Id<AppliedActionAssignment_<'a>>;
 pub struct AppliedActionRequestAssignment_<'a> {
     pub assigned_action_request: VersionedActionRequest<'a>,
-    pub items: ActionRequestItem<'a>,
+    pub items: Vec<ActionRequestItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedActionRequestAssignment<'a> = Id<AppliedActionRequestAssignment_<'a>>;
 pub struct AppliedApprovalAssignment_<'a> {
     pub assigned_approval: Approval<'a>,
-    pub items: ApprovalItem<'a>,
+    pub items: Vec<ApprovalItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedApprovalAssignment<'a> = Id<AppliedApprovalAssignment_<'a>>;
@@ -510,61 +510,61 @@ pub struct AppliedArea_<'a> {
 pub type AppliedArea<'a> = Id<AppliedArea_<'a>>;
 pub struct AppliedCertificationAssignment_<'a> {
     pub assigned_certification: Certification<'a>,
-    pub items: CertificationItem<'a>,
+    pub items: Vec<CertificationItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedCertificationAssignment<'a> = Id<AppliedCertificationAssignment_<'a>>;
 pub struct AppliedClassificationAssignment_<'a> {
     pub assigned_class: Group<'a>,
     pub role: ClassificationRole<'a>,
-    pub items: ClassificationItem<'a>,
+    pub items: Vec<ClassificationItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedClassificationAssignment<'a> = Id<AppliedClassificationAssignment_<'a>>;
 pub struct AppliedContractAssignment_<'a> {
     pub assigned_contract: Contract<'a>,
-    pub items: ContractItem<'a>,
+    pub items: Vec<ContractItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedContractAssignment<'a> = Id<AppliedContractAssignment_<'a>>;
 pub struct AppliedDateAndTimeAssignment_<'a> {
     pub assigned_date_and_time: DateAndTime<'a>,
     pub role: DateTimeRole<'a>,
-    pub items: DateAndTimeItem<'a>,
+    pub items: Vec<DateAndTimeItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedDateAndTimeAssignment<'a> = Id<AppliedDateAndTimeAssignment_<'a>>;
 pub struct AppliedDateAssignment_<'a> {
     pub assigned_date: Date<'a>,
     pub role: DateRole<'a>,
-    pub items: DateItem<'a>,
+    pub items: Vec<DateItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedDateAssignment<'a> = Id<AppliedDateAssignment_<'a>>;
 pub struct AppliedDocumentReference_<'a> {
     pub assigned_document: Document<'a>,
     pub source: Label<'a>,
-    pub items: DocumentReferenceItem<'a>,
+    pub items: Vec<DocumentReferenceItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedDocumentReference<'a> = Id<AppliedDocumentReference_<'a>>;
 pub struct AppliedDocumentUsageConstraintAssignment_<'a> {
     pub assigned_document_usage: DocumentUsageConstraint<'a>,
     pub role: DocumentUsageRole<'a>,
-    pub items: DocumentReferenceItem<'a>,
+    pub items: Vec<DocumentReferenceItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedDocumentUsageConstraintAssignment<'a> = Id<AppliedDocumentUsageConstraintAssignment_<'a>>;
 pub struct AppliedEffectivityAssignment_<'a> {
     pub assigned_effectivity: Effectivity<'a>,
-    pub items: EffectivityItem<'a>,
+    pub items: Vec<EffectivityItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedEffectivityAssignment<'a> = Id<AppliedEffectivityAssignment_<'a>>;
 pub struct AppliedEventOccurrenceAssignment_<'a> {
     pub assigned_event_occurrence: EventOccurrence<'a>,
     pub role: EventOccurrenceRole<'a>,
-    pub items: EventOccurrenceItem<'a>,
+    pub items: Vec<EventOccurrenceItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedEventOccurrenceAssignment<'a> = Id<AppliedEventOccurrenceAssignment_<'a>>;
@@ -572,71 +572,71 @@ pub struct AppliedExternalIdentificationAssignment_<'a> {
     pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
     pub source: ExternalSource<'a>,
-    pub items: ExternalIdentificationItem<'a>,
+    pub items: Vec<ExternalIdentificationItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedExternalIdentificationAssignment<'a> = Id<AppliedExternalIdentificationAssignment_<'a>>;
 pub struct AppliedGroupAssignment_<'a> {
     pub assigned_group: Group<'a>,
-    pub items: GroupItem<'a>,
+    pub items: Vec<GroupItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedGroupAssignment<'a> = Id<AppliedGroupAssignment_<'a>>;
 pub struct AppliedIdentificationAssignment_<'a> {
     pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
-    pub items: IdentificationItem<'a>,
+    pub items: Vec<IdentificationItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedIdentificationAssignment<'a> = Id<AppliedIdentificationAssignment_<'a>>;
 pub struct AppliedIneffectivityAssignment_<'a> {
     pub assigned_effectivity: Effectivity<'a>,
-    pub items: EffectivityItem<'a>,
+    pub items: Vec<EffectivityItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedIneffectivityAssignment<'a> = Id<AppliedIneffectivityAssignment_<'a>>;
 pub struct AppliedNameAssignment_<'a> {
     pub assigned_name: Label<'a>,
-    pub items: NameItem<'a>,
+    pub items: Vec<NameItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedNameAssignment<'a> = Id<AppliedNameAssignment_<'a>>;
 pub struct AppliedOrganizationAssignment_<'a> {
     pub assigned_organization: Organization<'a>,
     pub role: OrganizationRole<'a>,
-    pub items: OrganizationItem<'a>,
+    pub items: Vec<OrganizationItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedOrganizationAssignment<'a> = Id<AppliedOrganizationAssignment_<'a>>;
 pub struct AppliedOrganizationalProjectAssignment_<'a> {
     pub assigned_organizational_project: OrganizationalProject<'a>,
     pub role: OrganizationalProjectRole<'a>,
-    pub items: OrganizationalProjectItem<'a>,
+    pub items: Vec<OrganizationalProjectItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedOrganizationalProjectAssignment<'a> = Id<AppliedOrganizationalProjectAssignment_<'a>>;
 pub struct AppliedPersonAndOrganizationAssignment_<'a> {
     pub assigned_person_and_organization: PersonAndOrganization<'a>,
     pub role: PersonAndOrganizationRole<'a>,
-    pub items: PersonAndOrganizationItem<'a>,
+    pub items: Vec<PersonAndOrganizationItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedPersonAndOrganizationAssignment<'a> = Id<AppliedPersonAndOrganizationAssignment_<'a>>;
 pub struct AppliedPresentedItem_<'a> {
-    pub items: PresentedItemSelect<'a>,
+    pub items: Vec<PresentedItemSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedPresentedItem<'a> = Id<AppliedPresentedItem_<'a>>;
 pub struct AppliedSecurityClassificationAssignment_<'a> {
     pub assigned_security_classification: SecurityClassification<'a>,
-    pub items: SecurityClassificationItem<'a>,
+    pub items: Vec<SecurityClassificationItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedSecurityClassificationAssignment<'a> = Id<AppliedSecurityClassificationAssignment_<'a>>;
 pub struct AppliedTimeIntervalAssignment_<'a> {
     pub assigned_time_interval: TimeInterval<'a>,
     pub role: TimeIntervalRole<'a>,
-    pub items: TimeIntervalItem<'a>,
+    pub items: Vec<TimeIntervalItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AppliedTimeIntervalAssignment<'a> = Id<AppliedTimeIntervalAssignment_<'a>>;
@@ -744,13 +744,13 @@ pub struct ApproximationTolerance_<'a> {
 pub type ApproximationTolerance<'a> = Id<ApproximationTolerance_<'a>>;
 pub struct ApproximationToleranceDeviation_<'a> {
     pub tessellation_type: ApproximationMethod<'a>,
-    pub tolerances: ToleranceDeviationSelect<'a>,
+    pub tolerances: Vec<ToleranceDeviationSelect<'a>>,
     pub definition_space: ProductOrPresentationSpace<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApproximationToleranceDeviation<'a> = Id<ApproximationToleranceDeviation_<'a>>;
 pub struct ApproximationToleranceParameter_<'a> {
-    pub tolerances: ToleranceParameterSelect<'a>,
+    pub tolerances: Vec<ToleranceParameterSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApproximationToleranceParameter<'a> = Id<ApproximationToleranceParameter_<'a>>;
@@ -778,7 +778,7 @@ pub enum AreaOrView<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct AreaUnit_<'a> {
-    pub elements: DerivedUnitElement<'a>,
+    pub elements: Vec<DerivedUnitElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AreaUnit<'a> = Id<AreaUnit_<'a>>;
@@ -806,7 +806,7 @@ pub struct AssemblyComponentUsageSubstitute_<'a> {
 }
 pub type AssemblyComponentUsageSubstitute<'a> = Id<AssemblyComponentUsageSubstitute_<'a>>;
 pub struct AtanFunction_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AtanFunction<'a> = Id<AtanFunction_<'a>>;
@@ -821,7 +821,7 @@ pub struct AttributeLanguageAssignment_<'a> {
     pub assigned_class: Group<'a>,
     pub attribute_name: Label<'a>,
     pub role: ClassificationRole<'a>,
-    pub items: AttributeLanguageItem<'a>,
+    pub items: Vec<AttributeLanguageItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AttributeLanguageAssignment<'a> = Id<AttributeLanguageAssignment_<'a>>;
@@ -946,7 +946,7 @@ pub type Axis2Placement3d<'a> = Id<Axis2Placement3d_<'a>>;
 pub struct BSplineCurve_<'a> {
     pub name: Label<'a>,
     pub degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<CartesianPoint<'a>>,
     pub curve_form: BSplineCurveForm<'a>,
     pub closed_curve: Option<bool>,
     pub self_intersect: Option<bool>,
@@ -978,12 +978,12 @@ impl<'a> BSplineCurveForm<'a> {
 pub struct BSplineCurveWithKnots_<'a> {
     pub name: Label<'a>,
     pub degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<CartesianPoint<'a>>,
     pub curve_form: BSplineCurveForm<'a>,
     pub closed_curve: Option<bool>,
     pub self_intersect: Option<bool>,
-    pub knot_multiplicities: i64,
-    pub knots: ParameterValue<'a>,
+    pub knot_multiplicities: Vec<i64>,
+    pub knots: Vec<ParameterValue<'a>>,
     pub knot_spec: KnotType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -992,7 +992,7 @@ pub struct BSplineSurface_<'a> {
     pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<Vec<CartesianPoint<'a>>>,
     pub surface_form: BSplineSurfaceForm<'a>,
     pub u_closed: Option<bool>,
     pub v_closed: Option<bool>,
@@ -1036,15 +1036,15 @@ pub struct BSplineSurfaceWithKnots_<'a> {
     pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<Vec<CartesianPoint<'a>>>,
     pub surface_form: BSplineSurfaceForm<'a>,
     pub u_closed: Option<bool>,
     pub v_closed: Option<bool>,
     pub self_intersect: Option<bool>,
-    pub u_multiplicities: i64,
-    pub v_multiplicities: i64,
-    pub u_knots: ParameterValue<'a>,
-    pub v_knots: ParameterValue<'a>,
+    pub u_multiplicities: Vec<i64>,
+    pub v_multiplicities: Vec<i64>,
+    pub u_knots: Vec<ParameterValue<'a>>,
+    pub v_knots: Vec<ParameterValue<'a>>,
     pub knot_spec: KnotType<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1077,7 +1077,7 @@ pub type BeadEnd<'a> = Id<BeadEnd_<'a>>;
 pub struct BezierCurve_<'a> {
     pub name: Label<'a>,
     pub degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<CartesianPoint<'a>>,
     pub curve_form: BSplineCurveForm<'a>,
     pub closed_curve: Option<bool>,
     pub self_intersect: Option<bool>,
@@ -1088,7 +1088,7 @@ pub struct BezierSurface_<'a> {
     pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<Vec<CartesianPoint<'a>>>,
     pub surface_form: BSplineSurfaceForm<'a>,
     pub u_closed: Option<bool>,
     pub v_closed: Option<bool>,
@@ -1097,22 +1097,22 @@ pub struct BezierSurface_<'a> {
 }
 pub type BezierSurface<'a> = Id<BezierSurface_<'a>>;
 pub struct BinaryBooleanExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BinaryBooleanExpression<'a> = Id<BinaryBooleanExpression_<'a>>;
 pub struct BinaryFunctionCall_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BinaryFunctionCall<'a> = Id<BinaryFunctionCall_<'a>>;
 pub struct BinaryGenericExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BinaryGenericExpression<'a> = Id<BinaryGenericExpression_<'a>>;
 pub struct BinaryNumericExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BinaryNumericExpression<'a> = Id<BinaryNumericExpression_<'a>>;
@@ -1189,7 +1189,7 @@ pub struct BossTop_<'a> {
 pub type BossTop<'a> = Id<BossTop_<'a>>;
 pub struct BoundaryCurve_<'a> {
     pub name: Label<'a>,
-    pub segments: CompositeCurveSegment<'a>,
+    pub segments: Vec<CompositeCurveSegment<'a>>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1214,7 +1214,7 @@ pub type BoundedSurface<'a> = Id<BoundedSurface_<'a>>;
 pub struct BoundedSurfaceCurve_<'a> {
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
-    pub associated_geometry: PcurveOrSurface<'a>,
+    pub associated_geometry: Vec<PcurveOrSurface<'a>>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1285,7 +1285,7 @@ pub type BoxedHalfSpace<'a> = Id<BoxedHalfSpace_<'a>>;
 pub struct BrepWithVoids_<'a> {
     pub name: Label<'a>,
     pub outer: ClosedShell<'a>,
-    pub voids: OrientedClosedShell<'a>,
+    pub voids: Vec<OrientedClosedShell<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BrepWithVoids<'a> = Id<BrepWithVoids_<'a>>;
@@ -1352,7 +1352,7 @@ pub struct CameraUsage_<'a> {
 pub type CameraUsage<'a> = Id<CameraUsage_<'a>>;
 pub struct CartesianPoint_<'a> {
     pub name: Label<'a>,
-    pub coordinates: LengthMeasure<'a>,
+    pub coordinates: Vec<LengthMeasure<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CartesianPoint<'a> = Id<CartesianPoint_<'a>>;
@@ -1473,7 +1473,7 @@ pub struct ChamferOffset_<'a> {
 pub type ChamferOffset<'a> = Id<ChamferOffset_<'a>>;
 pub struct CharacterGlyphSymbol_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     pub character_box: PlanarExtent<'a>,
     pub baseline_ratio: RatioMeasure<'a>,
@@ -1559,7 +1559,7 @@ pub struct CircularRunoutTolerance_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CircularRunoutTolerance<'a> = Id<CircularRunoutTolerance_<'a>>;
@@ -1578,7 +1578,7 @@ pub type ClassSystem<'a> = Id<ClassSystem_<'a>>;
 pub struct ClassUsageEffectivityContextAssignment_<'a> {
     pub assigned_effectivity_assignment: EffectivityAssignment<'a>,
     pub role: EffectivityContextRole<'a>,
-    pub items: ClassUsageEffectivityContextItem<'a>,
+    pub items: Vec<ClassUsageEffectivityContextItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ClassUsageEffectivityContextAssignment<'a> = Id<ClassUsageEffectivityContextAssignment_<'a>>;
@@ -1644,7 +1644,7 @@ pub struct ClosedPathProfile_<'a> {
 pub type ClosedPathProfile<'a> = Id<ClosedPathProfile_<'a>>;
 pub struct ClosedShell_<'a> {
     pub name: Label<'a>,
-    pub cfs_faces: Face<'a>,
+    pub cfs_faces: Vec<Face<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ClosedShell<'a> = Id<ClosedShell_<'a>>;
@@ -1653,7 +1653,7 @@ pub struct CoaxialityTolerance_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CoaxialityTolerance<'a> = Id<CoaxialityTolerance_<'a>>;
@@ -1684,50 +1684,50 @@ pub struct CommonDatum_<'a> {
 }
 pub type CommonDatum<'a> = Id<CommonDatum_<'a>>;
 pub struct ComparisonEqual_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonEqual<'a> = Id<ComparisonEqual_<'a>>;
 pub struct ComparisonExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonExpression<'a> = Id<ComparisonExpression_<'a>>;
 pub struct ComparisonGreater_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonGreater<'a> = Id<ComparisonGreater_<'a>>;
 pub struct ComparisonGreaterEqual_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonGreaterEqual<'a> = Id<ComparisonGreaterEqual_<'a>>;
 pub struct ComparisonLess_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonLess<'a> = Id<ComparisonLess_<'a>>;
 pub struct ComparisonLessEqual_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonLessEqual<'a> = Id<ComparisonLessEqual_<'a>>;
 pub struct ComparisonNotEqual_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonNotEqual<'a> = Id<ComparisonNotEqual_<'a>>;
 pub struct CompositeCurve_<'a> {
     pub name: Label<'a>,
-    pub segments: CompositeCurveSegment<'a>,
+    pub segments: Vec<CompositeCurveSegment<'a>>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeCurve<'a> = Id<CompositeCurve_<'a>>;
 pub struct CompositeCurveOnSurface_<'a> {
     pub name: Label<'a>,
-    pub segments: CompositeCurveSegment<'a>,
+    pub segments: Vec<CompositeCurveSegment<'a>>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1755,27 +1755,27 @@ pub struct CompositeShapeAspect_<'a> {
 pub type CompositeShapeAspect<'a> = Id<CompositeShapeAspect_<'a>>;
 pub struct CompositeText_<'a> {
     pub name: Label<'a>,
-    pub collected_text: TextOrCharacter<'a>,
+    pub collected_text: Vec<TextOrCharacter<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeText<'a> = Id<CompositeText_<'a>>;
 pub struct CompositeTextWithAssociatedCurves_<'a> {
     pub name: Label<'a>,
-    pub collected_text: TextOrCharacter<'a>,
-    pub associated_curves: Curve<'a>,
+    pub collected_text: Vec<TextOrCharacter<'a>>,
+    pub associated_curves: Vec<Curve<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeTextWithAssociatedCurves<'a> = Id<CompositeTextWithAssociatedCurves_<'a>>;
 pub struct CompositeTextWithBlankingBox_<'a> {
     pub name: Label<'a>,
-    pub collected_text: TextOrCharacter<'a>,
+    pub collected_text: Vec<TextOrCharacter<'a>>,
     pub blanking: PlanarBox<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompositeTextWithBlankingBox<'a> = Id<CompositeTextWithBlankingBox_<'a>>;
 pub struct CompositeTextWithExtent_<'a> {
     pub name: Label<'a>,
-    pub collected_text: TextOrCharacter<'a>,
+    pub collected_text: Vec<TextOrCharacter<'a>>,
     pub extent: PlanarExtent<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1799,13 +1799,13 @@ pub struct CompoundRepresentationItem_<'a> {
 pub type CompoundRepresentationItem<'a> = Id<CompoundRepresentationItem_<'a>>;
 pub struct CompoundShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CompoundShapeRepresentation<'a> = Id<CompoundShapeRepresentation_<'a>>;
 pub struct ConcatExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConcatExpression<'a> = Id<ConcatExpression_<'a>>;
@@ -1814,7 +1814,7 @@ pub struct ConcentricityTolerance_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConcentricityTolerance<'a> = Id<ConcentricityTolerance_<'a>>;
@@ -1855,12 +1855,12 @@ pub struct ConfigurableItem_<'a> {
     pub description: Option<Text<'a>>,
     pub item_concept: ProductConcept<'a>,
     pub purpose: Option<Label<'a>>,
-    pub item_concept_feature: ProductConceptFeatureAssociation<'a>,
+    pub item_concept_feature: Vec<ProductConceptFeatureAssociation<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConfigurableItem<'a> = Id<ConfigurableItem_<'a>>;
 pub struct ConfigurationDefinition_<'a> {
-    pub pair_values: PairValue<'a>,
+    pub pair_values: Vec<PairValue<'a>>,
     pub t_parameter: MotionParameterMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1901,14 +1901,14 @@ pub struct ConfigurationItem_<'a> {
 pub type ConfigurationItem<'a> = Id<ConfigurationItem_<'a>>;
 pub struct ConfiguredEffectivityAssignment_<'a> {
     pub assigned_effectivity: Effectivity<'a>,
-    pub items: ConfiguredEffectivityItem<'a>,
+    pub items: Vec<ConfiguredEffectivityItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConfiguredEffectivityAssignment<'a> = Id<ConfiguredEffectivityAssignment_<'a>>;
 pub struct ConfiguredEffectivityContextAssignment_<'a> {
     pub assigned_effectivity_assignment: EffectivityAssignment<'a>,
     pub role: EffectivityContextRole<'a>,
-    pub items: ConfiguredEffectivityContextItem<'a>,
+    pub items: Vec<ConfiguredEffectivityContextItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConfiguredEffectivityContextAssignment<'a> = Id<ConfiguredEffectivityContextAssignment_<'a>>;
@@ -1939,26 +1939,26 @@ pub struct ConicalSurface_<'a> {
 pub type ConicalSurface<'a> = Id<ConicalSurface_<'a>>;
 pub struct ConnectedEdgeSet_<'a> {
     pub name: Label<'a>,
-    pub ces_edges: Edge<'a>,
+    pub ces_edges: Vec<Edge<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConnectedEdgeSet<'a> = Id<ConnectedEdgeSet_<'a>>;
 pub struct ConnectedFaceSet_<'a> {
     pub name: Label<'a>,
-    pub cfs_faces: Face<'a>,
+    pub cfs_faces: Vec<Face<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConnectedFaceSet<'a> = Id<ConnectedFaceSet_<'a>>;
 pub struct ConnectedFaceSubSet_<'a> {
     pub name: Label<'a>,
-    pub cfs_faces: Face<'a>,
+    pub cfs_faces: Vec<Face<'a>>,
     pub parent_face_set: ConnectedFaceSet<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ConnectedFaceSubSet<'a> = Id<ConnectedFaceSubSet_<'a>>;
 pub struct ConstructiveGeometryRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1973,13 +1973,13 @@ pub struct ConstructiveGeometryRepresentationRelationship_<'a> {
 pub type ConstructiveGeometryRepresentationRelationship<'a> = Id<ConstructiveGeometryRepresentationRelationship_<'a>>;
 pub struct ContactRatioRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ContactRatioRepresentation<'a> = Id<ContactRatioRepresentation_<'a>>;
 pub struct ContextDependentInvisibility_<'a> {
-    pub invisible_items: InvisibleItem<'a>,
+    pub invisible_items: Vec<InvisibleItem<'a>>,
     pub presentation_context: InvisibilityContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -1992,10 +1992,10 @@ impl<'a> ContextDependentMeasure<'a> {
 }
 pub struct ContextDependentOverRidingStyledItem_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     pub over_ridden_style: StyledItem<'a>,
-    pub style_context: StyleContextSelect<'a>,
+    pub style_context: Vec<StyleContextSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ContextDependentOverRidingStyledItem<'a> = Id<ContextDependentOverRidingStyledItem_<'a>>;
@@ -2074,7 +2074,7 @@ pub enum CsgSelect<'a> {
 }
 pub struct CsgShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2093,14 +2093,14 @@ pub type Curve<'a> = Id<Curve_<'a>>;
 pub struct CurveBoundedSurface_<'a> {
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
-    pub boundaries: BoundaryCurve<'a>,
+    pub boundaries: Vec<BoundaryCurve<'a>>,
     pub implicit_outer: bool,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CurveBoundedSurface<'a> = Id<CurveBoundedSurface_<'a>>;
 pub struct CurveDimension_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CurveDimension<'a> = Id<CurveDimension_<'a>>;
@@ -2136,7 +2136,7 @@ pub struct CurveStyle_<'a> {
 pub type CurveStyle<'a> = Id<CurveStyle_<'a>>;
 pub struct CurveStyleFont_<'a> {
     pub name: Label<'a>,
-    pub pattern_list: CurveStyleFontPattern<'a>,
+    pub pattern_list: Vec<CurveStyleFontPattern<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CurveStyleFont<'a> = Id<CurveStyleFont_<'a>>;
@@ -2160,7 +2160,7 @@ pub struct CurveStyleRendering_<'a> {
 pub type CurveStyleRendering<'a> = Id<CurveStyleRendering_<'a>>;
 pub struct CurveSweptSolidShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2224,7 +2224,7 @@ pub type CylindricityTolerance<'a> = Id<CylindricityTolerance_<'a>>;
 pub struct DataEnvironment_<'a> {
     pub name: Label<'a>,
     pub description: Text<'a>,
-    pub elements: PropertyDefinitionRepresentation<'a>,
+    pub elements: Vec<PropertyDefinitionRepresentation<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DataEnvironment<'a> = Id<DataEnvironment_<'a>>;
@@ -2408,7 +2408,7 @@ pub struct DatumFeature_<'a> {
 pub type DatumFeature<'a> = Id<DatumFeature_<'a>>;
 pub struct DatumFeatureCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DatumFeatureCallout<'a> = Id<DatumFeatureCallout_<'a>>;
@@ -2429,7 +2429,7 @@ pub struct DatumTarget_<'a> {
 pub type DatumTarget<'a> = Id<DatumTarget_<'a>>;
 pub struct DatumTargetCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DatumTargetCallout<'a> = Id<DatumTargetCallout_<'a>>;
@@ -2441,7 +2441,7 @@ impl<'a> DayInMonthNumber<'a> {
 }
 pub struct DefaultToleranceTable_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2481,7 +2481,7 @@ pub enum DefinedSymbolSelect<'a> {
 }
 pub struct DefinitionalRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2517,7 +2517,7 @@ pub struct DerivedShapeAspect_<'a> {
 }
 pub type DerivedShapeAspect<'a> = Id<DerivedShapeAspect_<'a>>;
 pub struct DerivedUnit_<'a> {
-    pub elements: DerivedUnitElement<'a>,
+    pub elements: Vec<DerivedUnitElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DerivedUnit<'a> = Id<DerivedUnit_<'a>>;
@@ -2528,7 +2528,7 @@ pub struct DerivedUnitElement_<'a> {
 }
 pub type DerivedUnitElement<'a> = Id<DerivedUnitElement_<'a>>;
 pub struct DerivedUnitVariable_<'a> {
-    pub elements: DerivedUnitElement<'a>,
+    pub elements: Vec<DerivedUnitElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DerivedUnitVariable<'a> = Id<DerivedUnitVariable_<'a>>;
@@ -2569,13 +2569,13 @@ pub struct DescriptiveRepresentationItem_<'a> {
 pub type DescriptiveRepresentationItem<'a> = Id<DescriptiveRepresentationItem_<'a>>;
 pub struct DiameterDimension_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DiameterDimension<'a> = Id<DiameterDimension_<'a>>;
 pub struct DimensionCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionCallout<'a> = Id<DimensionCallout_<'a>>;
@@ -2603,20 +2603,20 @@ impl<'a> DimensionCount<'a> {
 }
 pub struct DimensionCurve_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionCurve<'a> = Id<DimensionCurve_<'a>>;
 pub struct DimensionCurveDirectedCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DimensionCurveDirectedCallout<'a> = Id<DimensionCurveDirectedCallout_<'a>>;
 pub struct DimensionCurveTerminator_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     pub annotated_curve: AnnotationCurveOccurrence<'a>,
     pub role: DimensionExtentUsage<'a>,
@@ -2741,7 +2741,7 @@ pub struct DirectedDimensionalLocation_<'a> {
 pub type DirectedDimensionalLocation<'a> = Id<DirectedDimensionalLocation_<'a>>;
 pub struct Direction_<'a> {
     pub name: Label<'a>,
-    pub direction_ratios: f64,
+    pub direction_ratios: Vec<f64>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Direction<'a> = Id<Direction_<'a>>;
@@ -2752,13 +2752,13 @@ pub enum DirectionCountSelect<'a> {
 }
 pub struct DirectionShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DirectionShapeRepresentation<'a> = Id<DirectionShapeRepresentation_<'a>>;
 pub struct DivExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DivExpression<'a> = Id<DivExpression_<'a>>;
@@ -2887,14 +2887,14 @@ pub struct DocumentUsageRole_<'a> {
 pub type DocumentUsageRole<'a> = Id<DocumentUsageRole_<'a>>;
 pub struct DraughtingAnnotationOccurrence_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingAnnotationOccurrence<'a> = Id<DraughtingAnnotationOccurrence_<'a>>;
 pub struct DraughtingCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingCallout<'a> = Id<DraughtingCallout_<'a>>;
@@ -2914,13 +2914,13 @@ pub struct DraughtingCalloutRelationship_<'a> {
 pub type DraughtingCalloutRelationship<'a> = Id<DraughtingCalloutRelationship_<'a>>;
 pub struct DraughtingElements_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingElements<'a> = Id<DraughtingElements_<'a>>;
 pub struct DraughtingModel_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2957,20 +2957,20 @@ pub type DraughtingPreDefinedTextFont<'a> = Id<DraughtingPreDefinedTextFont_<'a>
 pub struct DraughtingSpecificationReference_<'a> {
     pub assigned_document: Document<'a>,
     pub source: Label<'a>,
-    pub specified_items: SpecifiedItem<'a>,
+    pub specified_items: Vec<SpecifiedItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingSpecificationReference<'a> = Id<DraughtingSpecificationReference_<'a>>;
 pub struct DraughtingSubfigureRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DraughtingSubfigureRepresentation<'a> = Id<DraughtingSubfigureRepresentation_<'a>>;
 pub struct DraughtingSymbolRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2987,7 +2987,7 @@ pub struct DraughtingTextLiteralWithDelineation_<'a> {
 }
 pub type DraughtingTextLiteralWithDelineation<'a> = Id<DraughtingTextLiteralWithDelineation_<'a>>;
 pub struct DraughtingTitle_<'a> {
-    pub items: DraughtingTitledItem<'a>,
+    pub items: Vec<DraughtingTitledItem<'a>>,
     pub language: Label<'a>,
     pub contents: Text<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3019,14 +3019,14 @@ pub struct DrawingRevisionSequence_<'a> {
 pub type DrawingRevisionSequence<'a> = Id<DrawingRevisionSequence_<'a>>;
 pub struct DrawingSheetLayout_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DrawingSheetLayout<'a> = Id<DrawingSheetLayout_<'a>>;
 pub struct DrawingSheetRevision_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     pub revision_identifier: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3048,13 +3048,13 @@ pub struct Edge_<'a> {
 pub type Edge<'a> = Id<Edge_<'a>>;
 pub struct EdgeBasedWireframeModel_<'a> {
     pub name: Label<'a>,
-    pub ebwm_boundary: ConnectedEdgeSet<'a>,
+    pub ebwm_boundary: Vec<ConnectedEdgeSet<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EdgeBasedWireframeModel<'a> = Id<EdgeBasedWireframeModel_<'a>>;
 pub struct EdgeBasedWireframeShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3070,7 +3070,7 @@ pub struct EdgeCurve_<'a> {
 pub type EdgeCurve<'a> = Id<EdgeCurve_<'a>>;
 pub struct EdgeLoop_<'a> {
     pub name: Label<'a>,
-    pub edge_list: OrientedEdge<'a>,
+    pub edge_list: Vec<OrientedEdge<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EdgeLoop<'a> = Id<EdgeLoop_<'a>>;
@@ -3195,7 +3195,7 @@ pub struct Environment_<'a> {
 }
 pub type Environment<'a> = Id<Environment_<'a>>;
 pub struct EqualsExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EqualsExpression<'a> = Id<EqualsExpression_<'a>>;
@@ -3454,13 +3454,13 @@ pub struct ExtrudedFaceSolid_<'a> {
 pub type ExtrudedFaceSolid<'a> = Id<ExtrudedFaceSolid_<'a>>;
 pub struct Face_<'a> {
     pub name: Label<'a>,
-    pub bounds: FaceBound<'a>,
+    pub bounds: Vec<FaceBound<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Face<'a> = Id<Face_<'a>>;
 pub struct FaceBasedSurfaceModel_<'a> {
     pub name: Label<'a>,
-    pub fbsm_faces: ConnectedFaceSet<'a>,
+    pub fbsm_faces: Vec<ConnectedFaceSet<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FaceBasedSurfaceModel<'a> = Id<FaceBasedSurfaceModel_<'a>>;
@@ -3480,14 +3480,14 @@ pub struct FaceOuterBound_<'a> {
 pub type FaceOuterBound<'a> = Id<FaceOuterBound_<'a>>;
 pub struct FaceShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FaceShapeRepresentation<'a> = Id<FaceShapeRepresentation_<'a>>;
 pub struct FaceSurface_<'a> {
     pub name: Label<'a>,
-    pub bounds: FaceBound<'a>,
+    pub bounds: Vec<FaceBound<'a>>,
     pub face_geometry: Surface<'a>,
     pub same_sense: bool,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3501,7 +3501,7 @@ pub struct FacetedBrep_<'a> {
 pub type FacetedBrep<'a> = Id<FacetedBrep_<'a>>;
 pub struct FacetedBrepShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3547,7 +3547,7 @@ pub struct FeaturedShape_<'a> {
 pub type FeaturedShape<'a> = Id<FeaturedShape_<'a>>;
 pub struct FillAreaStyle_<'a> {
     pub name: Label<'a>,
-    pub fill_styles: FillStyleSelect<'a>,
+    pub fill_styles: Vec<FillStyleSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FillAreaStyle<'a> = Id<FillAreaStyle_<'a>>;
@@ -3580,7 +3580,7 @@ pub type FillAreaStyleTileSymbolWithStyle<'a> = Id<FillAreaStyleTileSymbolWithSt
 pub struct FillAreaStyleTiles_<'a> {
     pub name: Label<'a>,
     pub tiling_pattern: TwoDirectionRepeatFactor<'a>,
-    pub tiles: FillAreaStyleTileShapeSelect<'a>,
+    pub tiles: Vec<FillAreaStyleTileShapeSelect<'a>>,
     pub tiling_scale: PositiveRatioMeasure<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3615,7 +3615,7 @@ pub enum FontSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct FormatFunction_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FormatFunction<'a> = Id<FormatFunction_<'a>>;
@@ -3630,7 +3630,7 @@ pub enum FoundedItemSelect<'a> {
 }
 pub struct FoundedKinematicPath_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3715,7 +3715,7 @@ pub struct GeneralPropertyRelationship_<'a> {
 pub type GeneralPropertyRelationship<'a> = Id<GeneralPropertyRelationship_<'a>>;
 pub struct GenericCharacterGlyphSymbol_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3742,7 +3742,7 @@ pub struct GeometricAlignment_<'a> {
 pub type GeometricAlignment<'a> = Id<GeometricAlignment_<'a>>;
 pub struct GeometricCurveSet_<'a> {
     pub name: Label<'a>,
-    pub elements: GeometricSetSelect<'a>,
+    pub elements: Vec<GeometricSetSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricCurveSet<'a> = Id<GeometricCurveSet_<'a>>;
@@ -3777,7 +3777,7 @@ pub struct GeometricRepresentationItem_<'a> {
 pub type GeometricRepresentationItem<'a> = Id<GeometricRepresentationItem_<'a>>;
 pub struct GeometricSet_<'a> {
     pub name: Label<'a>,
-    pub elements: GeometricSetSelect<'a>,
+    pub elements: Vec<GeometricSetSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricSet<'a> = Id<GeometricSet_<'a>>;
@@ -3808,7 +3808,7 @@ pub struct GeometricToleranceWithDatumReference_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricToleranceWithDatumReference<'a> = Id<GeometricToleranceWithDatumReference_<'a>>;
@@ -3823,27 +3823,27 @@ pub struct GeometricToleranceWithDefinedUnit_<'a> {
 pub type GeometricToleranceWithDefinedUnit<'a> = Id<GeometricToleranceWithDefinedUnit_<'a>>;
 pub struct GeometricalToleranceCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricalToleranceCallout<'a> = Id<GeometricalToleranceCallout_<'a>>;
 pub struct GeometricallyBounded2dWireframeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricallyBounded2dWireframeRepresentation<'a> = Id<GeometricallyBounded2dWireframeRepresentation_<'a>>;
 pub struct GeometricallyBoundedSurfaceShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GeometricallyBoundedSurfaceShapeRepresentation<'a> = Id<GeometricallyBoundedSurfaceShapeRepresentation_<'a>>;
 pub struct GeometricallyBoundedWireframeShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -3851,14 +3851,14 @@ pub type GeometricallyBoundedWireframeShapeRepresentation<'a> = Id<Geometrically
 pub struct GlobalUncertaintyAssignedContext_<'a> {
     pub context_identifier: Identifier<'a>,
     pub context_type: Text<'a>,
-    pub uncertainty: UncertaintyMeasureWithUnit<'a>,
+    pub uncertainty: Vec<UncertaintyMeasureWithUnit<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GlobalUncertaintyAssignedContext<'a> = Id<GlobalUncertaintyAssignedContext_<'a>>;
 pub struct GlobalUnitAssignedContext_<'a> {
     pub context_identifier: Identifier<'a>,
     pub context_type: Text<'a>,
-    pub units: Unit<'a>,
+    pub units: Vec<Unit<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type GlobalUnitAssignedContext<'a> = Id<GlobalUnitAssignedContext_<'a>>;
@@ -3899,17 +3899,17 @@ pub struct HalfSpaceSolid_<'a> {
 pub type HalfSpaceSolid<'a> = Id<HalfSpaceSolid_<'a>>;
 pub struct HardnessRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type HardnessRepresentation<'a> = Id<HardnessRepresentation_<'a>>;
 pub struct HiddenElementOverRidingStyledItem_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     pub over_ridden_style: StyledItem<'a>,
-    pub style_context: StyleContextSelect<'a>,
+    pub style_context: Vec<StyleContextSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type HiddenElementOverRidingStyledItem<'a> = Id<HiddenElementOverRidingStyledItem_<'a>>;
@@ -4034,13 +4034,13 @@ pub struct InclusionProductConceptFeature_<'a> {
 }
 pub type InclusionProductConceptFeature<'a> = Id<InclusionProductConceptFeature_<'a>>;
 pub struct IndexExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type IndexExpression<'a> = Id<IndexExpression_<'a>>;
 pub struct InitialState_<'a> {
     pub applies_to_mechanism: Mechanism<'a>,
-    pub pair_values: PairValue<'a>,
+    pub pair_values: Vec<PairValue<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type InitialState<'a> = Id<InitialState_<'a>>;
@@ -4074,7 +4074,7 @@ pub struct IntegerDefinedFunction_<'a> {
 }
 pub type IntegerDefinedFunction<'a> = Id<IntegerDefinedFunction_<'a>>;
 pub struct InterpolatedConfigurationSequence_<'a> {
-    pub interpolation: ConfigurationInterpolation<'a>,
+    pub interpolation: Vec<ConfigurationInterpolation<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type InterpolatedConfigurationSequence<'a> = Id<InterpolatedConfigurationSequence_<'a>>;
@@ -4097,18 +4097,18 @@ impl<'a> InterpolationType<'a> {
 pub struct IntersectionCurve_<'a> {
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
-    pub associated_geometry: PcurveOrSurface<'a>,
+    pub associated_geometry: Vec<PcurveOrSurface<'a>>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type IntersectionCurve<'a> = Id<IntersectionCurve_<'a>>;
 pub struct IntervalExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type IntervalExpression<'a> = Id<IntervalExpression_<'a>>;
 pub struct Invisibility_<'a> {
-    pub invisible_items: InvisibleItem<'a>,
+    pub invisible_items: Vec<InvisibleItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Invisibility<'a> = Id<Invisibility_<'a>>;
@@ -4167,13 +4167,13 @@ pub enum KinematicAnalysisDefinition<'a> {
 }
 pub struct KinematicAnalysisResult_<'a> {
     pub analysed_mechanism: Mechanism<'a>,
-    pub contained_kinematic_results: KinematicResult<'a>,
+    pub contained_kinematic_results: Vec<KinematicResult<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type KinematicAnalysisResult<'a> = Id<KinematicAnalysisResult_<'a>>;
 pub struct KinematicControl_<'a> {
     pub controlled_mechanism: Mechanism<'a>,
-    pub contained_kinematic_programs: KinematicAnalysisDefinition<'a>,
+    pub contained_kinematic_programs: Vec<KinematicAnalysisDefinition<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type KinematicControl<'a> = Id<KinematicControl_<'a>>;
@@ -4185,7 +4185,7 @@ pub enum KinematicFrameBackground<'a> {
 }
 pub struct KinematicFrameBackgroundRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4210,7 +4210,7 @@ pub struct KinematicFrameBasedTransformation_<'a> {
 pub type KinematicFrameBasedTransformation<'a> = Id<KinematicFrameBasedTransformation_<'a>>;
 pub struct KinematicGroundRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4227,7 +4227,7 @@ pub struct KinematicLink_<'a> {
 pub type KinematicLink<'a> = Id<KinematicLink_<'a>>;
 pub struct KinematicLinkRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4280,7 +4280,7 @@ pub enum KinematicResult<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct KinematicStructure_<'a> {
-    pub joints: KinematicJoint<'a>,
+    pub joints: Vec<KinematicJoint<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type KinematicStructure<'a> = Id<KinematicStructure_<'a>>;
@@ -4323,7 +4323,7 @@ pub type Language<'a> = Id<Language_<'a>>;
 pub struct LanguageAssignment_<'a> {
     pub assigned_class: Group<'a>,
     pub role: ClassificationRole<'a>,
-    pub items: LanguageItem<'a>,
+    pub items: Vec<LanguageItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LanguageAssignment<'a> = Id<LanguageAssignment_<'a>>;
@@ -4338,26 +4338,26 @@ pub enum LayeredItem<'a> {
 }
 pub struct LeaderCurve_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LeaderCurve<'a> = Id<LeaderCurve_<'a>>;
 pub struct LeaderDirectedCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LeaderDirectedCallout<'a> = Id<LeaderDirectedCallout_<'a>>;
 pub struct LeaderDirectedDimension_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LeaderDirectedDimension<'a> = Id<LeaderDirectedDimension_<'a>>;
 pub struct LeaderTerminator_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     pub annotated_curve: AnnotationCurveOccurrence<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4426,7 +4426,7 @@ pub struct LightSourceSpot_<'a> {
 }
 pub type LightSourceSpot<'a> = Id<LightSourceSpot_<'a>>;
 pub struct LikeExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LikeExpression<'a> = Id<LikeExpression_<'a>>;
@@ -4471,7 +4471,7 @@ pub struct LineProfileTolerance_<'a> {
 pub type LineProfileTolerance<'a> = Id<LineProfileTolerance_<'a>>;
 pub struct LinearDimension_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LinearDimension<'a> = Id<LinearDimension_<'a>>;
@@ -4492,7 +4492,7 @@ pub struct LocalTime_<'a> {
 pub type LocalTime<'a> = Id<LocalTime_<'a>>;
 pub struct LocationShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4567,14 +4567,14 @@ pub struct ManifoldSolidBrep_<'a> {
 pub type ManifoldSolidBrep<'a> = Id<ManifoldSolidBrep_<'a>>;
 pub struct ManifoldSubsurfaceShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ManifoldSubsurfaceShapeRepresentation<'a> = Id<ManifoldSubsurfaceShapeRepresentation_<'a>>;
 pub struct ManifoldSurfaceShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4634,7 +4634,7 @@ pub struct MassUnit_<'a> {
 pub type MassUnit<'a> = Id<MassUnit_<'a>>;
 pub struct MaterialDesignation_<'a> {
     pub name: Label<'a>,
-    pub definitions: CharacterizedDefinition<'a>,
+    pub definitions: Vec<CharacterizedDefinition<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MaterialDesignation<'a> = Id<MaterialDesignation_<'a>>;
@@ -4661,7 +4661,7 @@ pub struct MaterialPropertyRepresentation_<'a> {
 }
 pub type MaterialPropertyRepresentation<'a> = Id<MaterialPropertyRepresentation_<'a>>;
 pub struct MaximumFunction_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MaximumFunction<'a> = Id<MaximumFunction_<'a>>;
@@ -4669,7 +4669,7 @@ pub struct MeasureQualification_<'a> {
     pub name: Label<'a>,
     pub description: Text<'a>,
     pub qualified_measure: MeasureWithUnit<'a>,
-    pub qualifiers: ValueQualifier<'a>,
+    pub qualifiers: Vec<ValueQualifier<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MeasureQualification<'a> = Id<MeasureQualification_<'a>>;
@@ -4713,14 +4713,14 @@ pub struct MeasureWithUnit_<'a> {
 pub type MeasureWithUnit<'a> = Id<MeasureWithUnit_<'a>>;
 pub struct MechanicalDesignGeometricPresentationArea_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MechanicalDesignGeometricPresentationArea<'a> = Id<MechanicalDesignGeometricPresentationArea_<'a>>;
 pub struct MechanicalDesignGeometricPresentationRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4742,12 +4742,12 @@ pub struct MechanismBasePlacement_<'a> {
 }
 pub type MechanismBasePlacement<'a> = Id<MechanismBasePlacement_<'a>>;
 pub struct MinimumFunction_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MinimumFunction<'a> = Id<MinimumFunction_<'a>>;
 pub struct MinusExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MinusExpression<'a> = Id<MinusExpression_<'a>>;
@@ -4763,7 +4763,7 @@ impl<'a> MinuteInHour<'a> {
     }
 }
 pub struct ModExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ModExpression<'a> = Id<ModExpression_<'a>>;
@@ -4784,7 +4784,7 @@ pub struct ModifiedPattern_<'a> {
 pub type ModifiedPattern<'a> = Id<ModifiedPattern_<'a>>;
 pub struct MomentsOfInertiaRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4810,7 +4810,7 @@ pub enum MotionParameterMeasure<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct MultExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MultExpression<'a> = Id<MultExpression_<'a>>;
@@ -4818,7 +4818,7 @@ pub struct MultiLanguageAttributeAssignment_<'a> {
     pub attribute_name: Label<'a>,
     pub attribute_value: AttributeType<'a>,
     pub role: AttributeValueRole<'a>,
-    pub items: MultiLanguageAttributeItem<'a>,
+    pub items: Vec<MultiLanguageAttributeItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MultiLanguageAttributeAssignment<'a> = Id<MultiLanguageAttributeAssignment_<'a>>;
@@ -4895,22 +4895,22 @@ pub enum MultiLanguageAttributeItem<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct MultipleArityBooleanExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MultipleArityBooleanExpression<'a> = Id<MultipleArityBooleanExpression_<'a>>;
 pub struct MultipleArityFunctionCall_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MultipleArityFunctionCall<'a> = Id<MultipleArityFunctionCall_<'a>>;
 pub struct MultipleArityGenericExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MultipleArityGenericExpression<'a> = Id<MultipleArityGenericExpression_<'a>>;
 pub struct MultipleArityNumericExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MultipleArityNumericExpression<'a> = Id<MultipleArityNumericExpression_<'a>>;
@@ -4974,7 +4974,7 @@ pub struct NgonClosedProfile_<'a> {
 pub type NgonClosedProfile<'a> = Id<NgonClosedProfile_<'a>>;
 pub struct NonManifoldSurfaceShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5074,18 +5074,18 @@ pub struct OpenPathProfile_<'a> {
 pub type OpenPathProfile<'a> = Id<OpenPathProfile_<'a>>;
 pub struct OpenShell_<'a> {
     pub name: Label<'a>,
-    pub cfs_faces: Face<'a>,
+    pub cfs_faces: Vec<Face<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OpenShell<'a> = Id<OpenShell_<'a>>;
 pub struct OrExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrExpression<'a> = Id<OrExpression_<'a>>;
 pub struct OrdinateDimension_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrdinateDimension<'a> = Id<OrdinateDimension_<'a>>;
@@ -5187,7 +5187,7 @@ pub struct OrganizationalAddress_<'a> {
     pub telephone_number: Option<Label<'a>>,
     pub electronic_mail_address: Option<Label<'a>>,
     pub telex_number: Option<Label<'a>>,
-    pub organizations: Organization<'a>,
+    pub organizations: Vec<Organization<'a>>,
     pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5195,7 +5195,7 @@ pub type OrganizationalAddress<'a> = Id<OrganizationalAddress_<'a>>;
 pub struct OrganizationalProject_<'a> {
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
-    pub responsible_organizations: Organization<'a>,
+    pub responsible_organizations: Vec<Organization<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OrganizationalProject<'a> = Id<OrganizationalProject_<'a>>;
@@ -5272,14 +5272,14 @@ pub struct OrientedSurface_<'a> {
 pub type OrientedSurface<'a> = Id<OrientedSurface_<'a>>;
 pub struct OuterBoundaryCurve_<'a> {
     pub name: Label<'a>,
-    pub segments: CompositeCurveSegment<'a>,
+    pub segments: Vec<CompositeCurveSegment<'a>>,
     pub self_intersect: Option<bool>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type OuterBoundaryCurve<'a> = Id<OuterBoundaryCurve_<'a>>;
 pub struct OverRidingStyledItem_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     pub over_ridden_style: StyledItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5324,7 +5324,7 @@ pub struct ParallelismTolerance_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ParallelismTolerance<'a> = Id<ParallelismTolerance_<'a>>;
@@ -5350,7 +5350,7 @@ pub struct PartialCircularProfile_<'a> {
 pub type PartialCircularProfile<'a> = Id<PartialCircularProfile_<'a>>;
 pub struct Path_<'a> {
     pub name: Label<'a>,
-    pub edge_list: OrientedEdge<'a>,
+    pub edge_list: Vec<OrientedEdge<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Path<'a> = Id<Path_<'a>>;
@@ -5364,7 +5364,7 @@ pub struct PathFeatureComponent_<'a> {
 pub type PathFeatureComponent<'a> = Id<PathFeatureComponent_<'a>>;
 pub struct PathShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5410,7 +5410,7 @@ pub struct PerpendicularityTolerance_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PerpendicularityTolerance<'a> = Id<PerpendicularityTolerance_<'a>>;
@@ -5418,9 +5418,9 @@ pub struct Person_<'a> {
     pub id: Identifier<'a>,
     pub last_name: Option<Label<'a>>,
     pub first_name: Option<Label<'a>>,
-    pub middle_names: Option<Label<'a>>,
-    pub prefix_titles: Option<Label<'a>>,
-    pub suffix_titles: Option<Label<'a>>,
+    pub middle_names: Option<Vec<Label<'a>>>,
+    pub prefix_titles: Option<Vec<Label<'a>>>,
+    pub suffix_titles: Option<Vec<Label<'a>>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Person<'a> = Id<Person_<'a>>;
@@ -5444,9 +5444,9 @@ pub struct PersonAndOrganizationAddress_<'a> {
     pub telephone_number: Option<Label<'a>>,
     pub electronic_mail_address: Option<Label<'a>>,
     pub telex_number: Option<Label<'a>>,
-    pub organizations: Organization<'a>,
+    pub organizations: Vec<Organization<'a>>,
     pub organizational_address__description: Option<Text<'a>>,
-    pub people: Person<'a>,
+    pub people: Vec<Person<'a>>,
     pub personal_address__description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5537,7 +5537,7 @@ pub struct PersonalAddress_<'a> {
     pub telephone_number: Option<Label<'a>>,
     pub electronic_mail_address: Option<Label<'a>>,
     pub telex_number: Option<Label<'a>>,
-    pub people: Person<'a>,
+    pub people: Vec<Person<'a>>,
     pub description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5547,7 +5547,7 @@ pub struct PhysicallyModelledProductDefinition_<'a> {
     pub description: Option<Text<'a>>,
     pub formation: ProductDefinitionFormation<'a>,
     pub frame_of_reference: ProductDefinitionContext<'a>,
-    pub documentation_ids: Document<'a>,
+    pub documentation_ids: Vec<Document<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PhysicallyModelledProductDefinition<'a> = Id<PhysicallyModelledProductDefinition_<'a>>;
@@ -5638,7 +5638,7 @@ pub struct PlanarPairValue_<'a> {
 pub type PlanarPairValue<'a> = Id<PlanarPairValue_<'a>>;
 pub struct PlanarShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5672,7 +5672,7 @@ pub enum PlaneOrPlanarBox<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct PlusExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PlusExpression<'a> = Id<PlusExpression_<'a>>;
@@ -5777,7 +5777,7 @@ pub struct PointOnSurfacePairValue_<'a> {
 pub type PointOnSurfacePairValue<'a> = Id<PointOnSurfacePairValue_<'a>>;
 pub struct PointPlacementShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5799,13 +5799,13 @@ pub struct PointStyle_<'a> {
 pub type PointStyle<'a> = Id<PointStyle_<'a>>;
 pub struct PolyLoop_<'a> {
     pub name: Label<'a>,
-    pub polygon: CartesianPoint<'a>,
+    pub polygon: Vec<CartesianPoint<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PolyLoop<'a> = Id<PolyLoop_<'a>>;
 pub struct Polyline_<'a> {
     pub name: Label<'a>,
-    pub points: CartesianPoint<'a>,
+    pub points: Vec<CartesianPoint<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Polyline<'a> = Id<Polyline_<'a>>;
@@ -5848,7 +5848,7 @@ impl<'a> PositiveRatioMeasure<'a> {
     }
 }
 pub struct PowerExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PowerExpression<'a> = Id<PowerExpression_<'a>>;
@@ -5941,7 +5941,7 @@ impl<'a> PresentableText<'a> {
 }
 pub struct PresentationArea_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5949,13 +5949,13 @@ pub type PresentationArea<'a> = Id<PresentationArea_<'a>>;
 pub struct PresentationLayerAssignment_<'a> {
     pub name: Label<'a>,
     pub description: Text<'a>,
-    pub assigned_items: LayeredItem<'a>,
+    pub assigned_items: Vec<LayeredItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PresentationLayerAssignment<'a> = Id<PresentationLayerAssignment_<'a>>;
 pub struct PresentationRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -5982,12 +5982,12 @@ pub enum PresentationSizeAssignmentSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct PresentationStyleAssignment_<'a> {
-    pub styles: PresentationStyleSelect<'a>,
+    pub styles: Vec<PresentationStyleSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PresentationStyleAssignment<'a> = Id<PresentationStyleAssignment_<'a>>;
 pub struct PresentationStyleByContext_<'a> {
-    pub styles: PresentationStyleSelect<'a>,
+    pub styles: Vec<PresentationStyleSelect<'a>>,
     pub style_context: StyleContextSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6007,7 +6007,7 @@ pub enum PresentationStyleSelect<'a> {
 }
 pub struct PresentationView_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6091,7 +6091,7 @@ pub struct Product_<'a> {
     pub id: Identifier<'a>,
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
-    pub frame_of_reference: ProductContext<'a>,
+    pub frame_of_reference: Vec<ProductContext<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Product<'a> = Id<Product_<'a>>;
@@ -6158,7 +6158,7 @@ pub struct ProductConceptFeatureCategory_<'a> {
 pub type ProductConceptFeatureCategory<'a> = Id<ProductConceptFeatureCategory_<'a>>;
 pub struct ProductConceptFeatureCategoryUsage_<'a> {
     pub assigned_group: Group<'a>,
-    pub items: CategoryUsageItem<'a>,
+    pub items: Vec<CategoryUsageItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductConceptFeatureCategoryUsage<'a> = Id<ProductConceptFeatureCategoryUsage_<'a>>;
@@ -6264,7 +6264,7 @@ pub type ProductDefinitionRelationship<'a> = Id<ProductDefinitionRelationship_<'
 pub struct ProductDefinitionResource_<'a> {
     pub name: Label<'a>,
     pub action_resource__description: Option<Text<'a>>,
-    pub usage: SupportedItem<'a>,
+    pub usage: Vec<SupportedItem<'a>>,
     pub kind: ActionResourceType<'a>,
     pub id: Identifier<'a>,
     pub product_definition__description: Option<Text<'a>>,
@@ -6301,7 +6301,7 @@ pub struct ProductDefinitionWithAssociatedDocuments_<'a> {
     pub description: Option<Text<'a>>,
     pub formation: ProductDefinitionFormation<'a>,
     pub frame_of_reference: ProductDefinitionContext<'a>,
-    pub documentation_ids: Document<'a>,
+    pub documentation_ids: Vec<Document<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductDefinitionWithAssociatedDocuments<'a> = Id<ProductDefinitionWithAssociatedDocuments_<'a>>;
@@ -6348,7 +6348,7 @@ pub type ProductProcessPlan<'a> = Id<ProductProcessPlan_<'a>>;
 pub struct ProductRelatedProductCategory_<'a> {
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
-    pub products: Product<'a>,
+    pub products: Vec<Product<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductRelatedProductCategory<'a> = Id<ProductRelatedProductCategory_<'a>>;
@@ -6361,13 +6361,13 @@ pub struct ProductSpecification_<'a> {
     pub purpose: Option<Label<'a>>,
     pub characterized_object__name: Label<'a>,
     pub characterized_object__description: Option<Text<'a>>,
-    pub item_concept_feature: ProductConceptFeatureAssociation<'a>,
+    pub item_concept_feature: Vec<ProductConceptFeatureAssociation<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProductSpecification<'a> = Id<ProductSpecification_<'a>>;
 pub struct ProjectedZoneDefinition_<'a> {
     pub zone: ToleranceZone<'a>,
-    pub boundaries: ShapeAspect<'a>,
+    pub boundaries: Vec<ShapeAspect<'a>>,
     pub projection_end: ShapeAspect<'a>,
     pub projected_length: MeasureWithUnit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6375,14 +6375,14 @@ pub struct ProjectedZoneDefinition_<'a> {
 pub type ProjectedZoneDefinition<'a> = Id<ProjectedZoneDefinition_<'a>>;
 pub struct ProjectionCurve_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProjectionCurve<'a> = Id<ProjectionCurve_<'a>>;
 pub struct ProjectionDirectedCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ProjectionDirectedCallout<'a> = Id<ProjectionDirectedCallout_<'a>>;
@@ -6432,7 +6432,7 @@ pub struct PropertyProcess_<'a> {
 pub type PropertyProcess<'a> = Id<PropertyProcess_<'a>>;
 pub struct QualifiedRepresentationItem_<'a> {
     pub name: Label<'a>,
-    pub qualifiers: ValueQualifier<'a>,
+    pub qualifiers: Vec<ValueQualifier<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type QualifiedRepresentationItem<'a> = Id<QualifiedRepresentationItem_<'a>>;
@@ -6457,7 +6457,7 @@ pub type QuantifiedAssemblyComponentUsage<'a> = Id<QuantifiedAssemblyComponentUs
 pub struct QuasiUniformCurve_<'a> {
     pub name: Label<'a>,
     pub degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<CartesianPoint<'a>>,
     pub curve_form: BSplineCurveForm<'a>,
     pub closed_curve: Option<bool>,
     pub self_intersect: Option<bool>,
@@ -6468,7 +6468,7 @@ pub struct QuasiUniformSurface_<'a> {
     pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<Vec<CartesianPoint<'a>>>,
     pub surface_form: BSplineSurfaceForm<'a>,
     pub u_closed: Option<bool>,
     pub v_closed: Option<bool>,
@@ -6501,7 +6501,7 @@ pub struct RackAndPinionPairValue_<'a> {
 pub type RackAndPinionPairValue<'a> = Id<RackAndPinionPairValue_<'a>>;
 pub struct RadiusDimension_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RadiusDimension<'a> = Id<RadiusDimension_<'a>>;
@@ -6525,11 +6525,11 @@ pub type RatioUnit<'a> = Id<RatioUnit_<'a>>;
 pub struct RationalBSplineCurve_<'a> {
     pub name: Label<'a>,
     pub degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<CartesianPoint<'a>>,
     pub curve_form: BSplineCurveForm<'a>,
     pub closed_curve: Option<bool>,
     pub self_intersect: Option<bool>,
-    pub weights_data: f64,
+    pub weights_data: Vec<f64>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RationalBSplineCurve<'a> = Id<RationalBSplineCurve_<'a>>;
@@ -6537,12 +6537,12 @@ pub struct RationalBSplineSurface_<'a> {
     pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<Vec<CartesianPoint<'a>>>,
     pub surface_form: BSplineSurfaceForm<'a>,
     pub u_closed: Option<bool>,
     pub v_closed: Option<bool>,
     pub self_intersect: Option<bool>,
-    pub weights_data: f64,
+    pub weights_data: Vec<Vec<f64>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RationalBSplineSurface<'a> = Id<RationalBSplineSurface_<'a>>;
@@ -6569,7 +6569,7 @@ pub struct RectangularClosedProfile_<'a> {
 pub type RectangularClosedProfile<'a> = Id<RectangularClosedProfile_<'a>>;
 pub struct RectangularCompositeSurface_<'a> {
     pub name: Label<'a>,
-    pub segments: SurfacePatch<'a>,
+    pub segments: Vec<Vec<SurfacePatch<'a>>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RectangularCompositeSurface<'a> = Id<RectangularCompositeSurface_<'a>>;
@@ -6636,7 +6636,7 @@ pub struct ReplicateFeature_<'a> {
 pub type ReplicateFeature<'a> = Id<ReplicateFeature_<'a>>;
 pub struct Representation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6687,8 +6687,8 @@ pub struct RequirementForActionResource_<'a> {
     pub name: Label<'a>,
     pub description: Text<'a>,
     pub kind: ResourceRequirementType<'a>,
-    pub operations: CharacterizedActionDefinition<'a>,
-    pub resources: ActionResource<'a>,
+    pub operations: Vec<CharacterizedActionDefinition<'a>>,
+    pub resources: Vec<ActionResource<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type RequirementForActionResource<'a> = Id<RequirementForActionResource_<'a>>;
@@ -6719,7 +6719,7 @@ pub struct ResultingPath_<'a> {
     pub rep_1: Representation<'a>,
     pub rep_2: Representation<'a>,
     pub related_frame: RigidPlacement<'a>,
-    pub controlling_joints: KinematicJoint<'a>,
+    pub controlling_joints: Vec<KinematicJoint<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ResultingPath<'a> = Id<ResultingPath_<'a>>;
@@ -6922,7 +6922,7 @@ pub struct RuledSurfaceSweptAreaSolid_<'a> {
 pub type RuledSurfaceSweptAreaSolid<'a> = Id<RuledSurfaceSweptAreaSolid_<'a>>;
 pub struct RunoutZoneDefinition_<'a> {
     pub zone: ToleranceZone<'a>,
-    pub boundaries: ShapeAspect<'a>,
+    pub boundaries: Vec<ShapeAspect<'a>>,
     pub orientation: RunoutZoneOrientation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6964,7 +6964,7 @@ pub type ScrewPairValue<'a> = Id<ScrewPairValue_<'a>>;
 pub struct SeamCurve_<'a> {
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
-    pub associated_geometry: PcurveOrSurface<'a>,
+    pub associated_geometry: Vec<PcurveOrSurface<'a>>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7135,14 +7135,14 @@ pub struct ShapeDefinitionRepresentation_<'a> {
 pub type ShapeDefinitionRepresentation<'a> = Id<ShapeDefinitionRepresentation_<'a>>;
 pub struct ShapeDimensionRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShapeDimensionRepresentation<'a> = Id<ShapeDimensionRepresentation_<'a>>;
 pub struct ShapeRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7157,7 +7157,7 @@ pub struct ShapeRepresentationRelationship_<'a> {
 pub type ShapeRepresentationRelationship<'a> = Id<ShapeRepresentationRelationship_<'a>>;
 pub struct ShapeRepresentationWithParameters_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7169,7 +7169,7 @@ pub enum Shell<'a> {
 }
 pub struct ShellBasedSurfaceModel_<'a> {
     pub name: Label<'a>,
-    pub sbsm_boundary: Shell<'a>,
+    pub sbsm_boundary: Vec<Shell<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ShellBasedSurfaceModel<'a> = Id<ShellBasedSurfaceModel_<'a>>;
@@ -7320,7 +7320,7 @@ pub enum SizeSelect<'a> {
     _Unused(std::marker::PhantomData<&'a ()>)
 }
 pub struct SlashExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SlashExpression<'a> = Id<SlashExpression_<'a>>;
@@ -7538,7 +7538,7 @@ pub struct StringVariable_<'a> {
 pub type StringVariable<'a> = Id<StringVariable_<'a>>;
 pub struct StructuredDimensionCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type StructuredDimensionCallout<'a> = Id<StructuredDimensionCallout_<'a>>;
@@ -7553,7 +7553,7 @@ pub enum StyleContextSelect<'a> {
 }
 pub struct StyledItem_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7568,13 +7568,13 @@ pub struct Subedge_<'a> {
 pub type Subedge<'a> = Id<Subedge_<'a>>;
 pub struct Subface_<'a> {
     pub name: Label<'a>,
-    pub bounds: FaceBound<'a>,
+    pub bounds: Vec<FaceBound<'a>>,
     pub parent_face: Face<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Subface<'a> = Id<Subface_<'a>>;
 pub struct SubstringExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SubstringExpression<'a> = Id<SubstringExpression_<'a>>;
@@ -7591,14 +7591,14 @@ pub struct Surface_<'a> {
 pub type Surface<'a> = Id<Surface_<'a>>;
 pub struct SurfaceConditionCallout_<'a> {
     pub name: Label<'a>,
-    pub contents: DraughtingCalloutElement<'a>,
+    pub contents: Vec<DraughtingCalloutElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceConditionCallout<'a> = Id<SurfaceConditionCallout_<'a>>;
 pub struct SurfaceCurve_<'a> {
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
-    pub associated_geometry: PcurveOrSurface<'a>,
+    pub associated_geometry: Vec<PcurveOrSurface<'a>>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7695,7 +7695,7 @@ impl<'a> SurfaceSide<'a> {
 }
 pub struct SurfaceSideStyle_<'a> {
     pub name: Label<'a>,
-    pub styles: SurfaceStyleElementSelect<'a>,
+    pub styles: Vec<SurfaceStyleElementSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceSideStyle<'a> = Id<SurfaceSideStyle_<'a>>;
@@ -7730,7 +7730,7 @@ pub struct SurfaceStyleFillArea_<'a> {
 pub type SurfaceStyleFillArea<'a> = Id<SurfaceStyleFillArea_<'a>>;
 pub struct SurfaceStyleParameterLine_<'a> {
     pub style_of_parameter_lines: CurveOrRender<'a>,
-    pub direction_counts: DirectionCountSelect<'a>,
+    pub direction_counts: Vec<DirectionCountSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceStyleParameterLine<'a> = Id<SurfaceStyleParameterLine_<'a>>;
@@ -7763,7 +7763,7 @@ pub type SurfaceStyleRendering<'a> = Id<SurfaceStyleRendering_<'a>>;
 pub struct SurfaceStyleRenderingWithProperties_<'a> {
     pub rendering_method: ShadingSurfaceMethod<'a>,
     pub surface_colour: Colour<'a>,
-    pub properties: RenderingPropertiesSelect<'a>,
+    pub properties: Vec<RenderingPropertiesSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceStyleRenderingWithProperties<'a> = Id<SurfaceStyleRenderingWithProperties_<'a>>;
@@ -7790,7 +7790,7 @@ pub struct SurfaceStyleUsage_<'a> {
 pub type SurfaceStyleUsage<'a> = Id<SurfaceStyleUsage_<'a>>;
 pub struct SurfaceTextureRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7846,7 +7846,7 @@ pub struct SymbolColour_<'a> {
 pub type SymbolColour<'a> = Id<SymbolColour_<'a>>;
 pub struct SymbolRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7888,13 +7888,13 @@ pub struct SymmetryTolerance_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SymmetryTolerance<'a> = Id<SymmetryTolerance_<'a>>;
 pub struct TactileAppearanceRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -7930,7 +7930,7 @@ pub struct TeeProfile_<'a> {
 pub type TeeProfile<'a> = Id<TeeProfile_<'a>>;
 pub struct TerminatorSymbol_<'a> {
     pub name: Label<'a>,
-    pub styles: PresentationStyleAssignment<'a>,
+    pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     pub annotated_curve: AnnotationCurveOccurrence<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7979,7 +7979,7 @@ pub struct TextLiteralWithAssociatedCurves_<'a> {
     pub alignment: TextAlignment<'a>,
     pub path: TextPath<'a>,
     pub font: FontSelect<'a>,
-    pub associated_curves: Curve<'a>,
+    pub associated_curves: Vec<Curve<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TextLiteralWithAssociatedCurves<'a> = Id<TextLiteralWithAssociatedCurves_<'a>>;
@@ -8044,7 +8044,7 @@ impl<'a> TextPath<'a> {
 }
 pub struct TextStringRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -8072,7 +8072,7 @@ pub type TextStyleForDefinedFont<'a> = Id<TextStyleForDefinedFont_<'a>>;
 pub struct TextStyleWithBoxCharacteristics_<'a> {
     pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
-    pub characteristics: BoxCharacteristicSelect<'a>,
+    pub characteristics: Vec<BoxCharacteristicSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TextStyleWithBoxCharacteristics<'a> = Id<TextStyleWithBoxCharacteristics_<'a>>;
@@ -8248,14 +8248,14 @@ pub struct ToleranceZone_<'a> {
     pub description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Option<bool>,
-    pub defining_tolerance: GeometricTolerance<'a>,
+    pub defining_tolerance: Vec<GeometricTolerance<'a>>,
     pub form: ToleranceZoneForm<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ToleranceZone<'a> = Id<ToleranceZone_<'a>>;
 pub struct ToleranceZoneDefinition_<'a> {
     pub zone: ToleranceZone<'a>,
-    pub boundaries: ShapeAspect<'a>,
+    pub boundaries: Vec<ShapeAspect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ToleranceZoneDefinition<'a> = Id<ToleranceZoneDefinition_<'a>>;
@@ -8290,7 +8290,7 @@ pub struct TotalRunoutTolerance_<'a> {
     pub description: Text<'a>,
     pub magnitude: MeasureWithUnit<'a>,
     pub toleranced_shape_aspect: ShapeAspect<'a>,
-    pub datum_system: DatumReference<'a>,
+    pub datum_system: Vec<DatumReference<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TotalRunoutTolerance<'a> = Id<TotalRunoutTolerance_<'a>>;
@@ -8333,8 +8333,8 @@ pub enum TranslationalRangeMeasure<'a> {
 pub struct TrimmedCurve_<'a> {
     pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
-    pub trim_1: TrimmingSelect<'a>,
-    pub trim_2: TrimmingSelect<'a>,
+    pub trim_1: Vec<TrimmingSelect<'a>>,
+    pub trim_2: Vec<TrimmingSelect<'a>>,
     pub sense_agreement: bool,
     pub master_representation: TrimmingPreference<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -8401,9 +8401,9 @@ pub struct UnaryNumericExpression_<'a> {
 pub type UnaryNumericExpression<'a> = Id<UnaryNumericExpression_<'a>>;
 pub struct UncertaintyAssignedRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
-    pub uncertainty: UncertaintyMeasureWithUnit<'a>,
+    pub uncertainty: Vec<UncertaintyMeasureWithUnit<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type UncertaintyAssignedRepresentation<'a> = Id<UncertaintyAssignedRepresentation_<'a>>;
@@ -8439,7 +8439,7 @@ pub type UnconstrainedPairValue<'a> = Id<UnconstrainedPairValue_<'a>>;
 pub struct UniformCurve_<'a> {
     pub name: Label<'a>,
     pub degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<CartesianPoint<'a>>,
     pub curve_form: BSplineCurveForm<'a>,
     pub closed_curve: Option<bool>,
     pub self_intersect: Option<bool>,
@@ -8450,7 +8450,7 @@ pub struct UniformSurface_<'a> {
     pub name: Label<'a>,
     pub u_degree: i64,
     pub v_degree: i64,
-    pub control_points_list: CartesianPoint<'a>,
+    pub control_points_list: Vec<Vec<CartesianPoint<'a>>>,
     pub surface_form: BSplineSurfaceForm<'a>,
     pub u_closed: Option<bool>,
     pub v_closed: Option<bool>,
@@ -8615,7 +8615,7 @@ pub struct ViewVolume_<'a> {
 pub type ViewVolume<'a> = Id<ViewVolume_<'a>>;
 pub struct VisualAppearanceRepresentation_<'a> {
     pub name: Label<'a>,
-    pub items: RepresentationItem<'a>,
+    pub items: Vec<RepresentationItem<'a>>,
     pub context_of_items: RepresentationContext<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -8633,12 +8633,12 @@ pub struct VolumeMeasureWithUnit_<'a> {
 }
 pub type VolumeMeasureWithUnit<'a> = Id<VolumeMeasureWithUnit_<'a>>;
 pub struct VolumeUnit_<'a> {
-    pub elements: DerivedUnitElement<'a>,
+    pub elements: Vec<DerivedUnitElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type VolumeUnit<'a> = Id<VolumeUnit_<'a>>;
 pub struct XorExpression_<'a> {
-    pub operands: GenericExpression<'a>,
+    pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type XorExpression<'a> = Id<XorExpression_<'a>>;

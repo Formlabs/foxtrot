@@ -420,7 +420,9 @@ impl<'a> AggregationTypes<'a> {
                 let type_ = c.to_type(type_map);
                 Type::Aggregation { optional,  type_: Box::new(type_) }
             },
-            InstantiableType::EntityRef(e) => Type::Redeclared(e.0),
+            InstantiableType::EntityRef(e) => Type::Aggregation {
+                optional, type_: Box::new(Type::Redeclared(e.0))
+            }
         }
     }
 }
@@ -602,9 +604,9 @@ impl<'a> GeneralAggregationTypes<'a> {
         };
         let t = param_type.to_attr_type_str(type_map);
         if optional {
-            format!("Option<{}>", t)
+            format!("Option<Vec<{}>>", t)
         } else {
-            t
+            format!("Vec<{}>", t)
         }
     }
 }
