@@ -95,11 +95,13 @@ impl<'a> Type<'a> {
         match self {
             Type::Redeclared(c) => {
                 writeln!(buf,r#"
-pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>);
-impl<'a> {0}<'a> {{
-    pub fn parse(s: &'a str) -> IResult<'a, Self> {{
+pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // redeclared
+impl<'a> Parse<'a> for {0}<'a> {{
+    fn parse(s: &'a str) -> IResult<'a, Self> {{
         delimited(tag("{2}("), Self::parse_inner, char(')'))(s)
     }}
+}}
+impl<'a> {0}<'a> {{
     pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {{
         map({3}::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
     }}
@@ -108,7 +110,12 @@ impl<'a> {0}<'a> {{
                 capitalize(&name), to_camel(c))?;
             },
             Type::RedeclaredPrimitive(c) => {
-                writeln!(buf, r#"pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>);
+                writeln!(buf, r#"pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // primitive
+impl<'a> Parse<'a> for {0}<'a> {{
+    fn parse(s: &'a str) -> IResult<'a, Self> {{
+        Self::parse_inner(s)
+    }}
+}}
 impl<'a> {0}<'a> {{
     pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {{
         map(<{2}>::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
@@ -116,16 +123,17 @@ impl<'a> {0}<'a> {{
 }}"#,
                     camel_name, c, strip_lifetime(c))?;
             },
+
             Type::Enum(c) => {
-                writeln!(buf, "pub enum {}<'a> {{", camel_name)?;
+                writeln!(buf, "pub enum {}<'a> {{ // enum", camel_name)?;
                 for v in c {
                     writeln!(buf, "    {},", to_camel(v))?;
                 }
                 writeln!(buf,
                     r#"    _Unused(std::marker::PhantomData<&'a ()>),
 }}
-impl<'a> {0}<'a> {{
-    pub fn parse(s: &'a str) -> IResult<'a, Self> {{
+impl<'a> Parse<'a> for {0}<'a> {{
+    fn parse(s: &'a str) -> IResult<'a, Self> {{
         use {0}::*;"#, camel_name)?;
 
                 // Extremely awkward code to account for the fact that nom's
@@ -141,17 +149,17 @@ impl<'a> {0}<'a> {{
                     while offset < c.len() {
                         writeln!(buf, "        alt((")?;
                         let mut i = 0;
-                        while i < NOM_MAX_ALT - 1 && i + offset < c.len() {
+                        while i < NOM_MAX_ALT - 2 && i + offset < c.len() {
                             let v = c[i + offset];
                             writeln!(buf,
                                 r#"            map(tag(".{}."), |_| {}),"#,
                                 capitalize(v), to_camel(v))?;
                             i += 1;
                         }
-                        offset += NOM_MAX_ALT;
+                        offset += NOM_MAX_ALT - 2;
                     }
-                    write!(buf, "    ")?;
-                    for _ in 0..(offset / NOM_MAX_ALT) {
+                    write!(buf, "        ")?;
+                    for _ in 0..(offset / (NOM_MAX_ALT - 2)) {
                         write!(buf, "))")?;
                     }
                 }
@@ -159,25 +167,66 @@ impl<'a> {0}<'a> {{
     }}
 }}")?;
             },
+
             Type::Select(c) => {
-                writeln!(buf, "pub enum {}<'a> {{", camel_name)?;
+                writeln!(buf, "pub enum {}<'a> {{ // select", camel_name)?;
                 for v in c {
                     writeln!(buf, "    {}({}),", to_camel(v),
                              type_map.to_rtype(v))?;
                 }
                 writeln!(buf,
-                    "    _Unused(std::marker::PhantomData<&'a ()>)\n}}")?;
+                    r#"    _Unused(std::marker::PhantomData<&'a ()>)
+}}
+impl<'a> Parse<'a> for {}<'a> {{
+    fn parse(s: &'a str) -> IResult<'a, Self> {{"#, camel_name)?;
+
+                // Same logic as above
+                if c.len() == 1 {
+                    write!(buf,
+                        r#"        map(<{}>::parse, |r| {}::{}(r))"#,
+                        type_map.to_rtype(c[0]), camel_name, to_camel(c[0]))?;
+                } else {
+                    const NOM_MAX_ALT: usize = 21;
+                    let mut offset = 0;
+                    while offset < c.len() {
+                        writeln!(buf, "        alt((")?;
+                        let mut i = 0;
+                        while i < NOM_MAX_ALT - 2 && i + offset < c.len() {
+                            let v = c[i + offset];
+                            writeln!(buf,
+                                "            map(<{}>::parse, |r| {}::{}(r)),",
+                                type_map.to_rtype(v), camel_name, to_camel(v))?;
+                            i += 1;
+                        }
+                        offset += NOM_MAX_ALT - 2;
+                    }
+                    write!(buf, "        ")?;
+                    for _ in 0..(offset / (NOM_MAX_ALT - 2)) {
+                        write!(buf, "))")?;
+                    }
+                }
+                writeln!(buf, "(s)
+    }}
+}}")?;
             },
-            Type::Aggregation { .. } => {
+
+            Type::Aggregation { type_, .. } => {
                 writeln!(buf,
-                    "pub struct {}<'a>(pub {}, std::marker::PhantomData<&'a ()>);",
-                    camel_name, type_map.to_inner_rtype(self))?;
+                    r#"pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // aggregation
+impl<'a> Parse<'a> for {0}<'a> {{
+    fn parse(s: &'a str) -> IResult<'a, Self> {{
+        map(many0(<{2}>::parse), |r| Self(r, std::marker::PhantomData))(s)
+    }}
+}}"#,
+                    camel_name, type_map.to_inner_rtype(self),
+                    type_map.to_inner_rtype(&*type_))?;
             }
+
             Type::Entity { attrs } => {
                 if attrs.iter().any(|a| a.dupe) {
                     writeln!(buf, "#[allow(non_snake_case)]")?;
                 }
-                writeln!(buf, "pub struct {}_<'a> {{", camel_name)?;
+                writeln!(buf, "pub struct {}_<'a> {{ // entity", camel_name)?;
                 for a in attrs {
                     if a.dupe {
                         write!(buf, "    pub {}__{}: ", a.from.unwrap(), a.name)?;
@@ -251,13 +300,14 @@ pub fn gen(s: &mut Syntax) -> Result<String, std::fmt::Error> {
     keys.sort();
     let mut buf = String::new();
     writeln!(&mut buf, "// Autogenerated file, do not hand-edit!
-use crate::parse::{{Id, IResult, ParseInner}};
+use crate::parse::{{Id, IResult, Parse, ParseInner}};
 use nom::{{
     branch::{{alt}},
     bytes::complete::{{tag}},
     character::complete::{{char}},
-    sequence::{{delimited}},
     combinator::{{map}},
+    multi::{{many0}},
+    sequence::{{delimited}},
 }};")?;
 
     for k in &keys {
