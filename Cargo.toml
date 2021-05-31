@@ -6,6 +6,7 @@ members = [
     "cdt",
     "express",
     "step",
+    "step2",
     "gui",
     "nurbs",
 ]

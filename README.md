@@ -6,7 +6,18 @@ _A fast STEP file viewer_
 - `express`: Parser for EXPRESS schemas files and a matching code generation
   system (unused as of yet)
 - `step`: STEP file parsing and triangulation
+- `step2`: Unfinished auto-generated STEP file parser
 - `gui`: GUI for rendering STEP files
+
+## Code generation
+`step2/src/ap214_.rs` is automatically generated from
+`10303-214e3-aim-long.exp`, which is available via [CVS](https://en.wikipedia.org/wiki/Concurrent_Versions_System) [here](http://www.steptools.com/stds/help/cvshowto.html)
+(check out the `APs` folder).
+
+To regenerate, run
+```
+cargo run --release --example gen_exp -- path/to/APs/10303-214e3-aim-long.exp step2/src/ap214.rs
+```
 
 ## License
 © 2021 [Formlabs](https://formlabs.com)
