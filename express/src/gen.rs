@@ -92,7 +92,7 @@ impl<'a> Type<'a> {
         where W: std::fmt::Write
     {
         match self {
-            Type::Entity{..} => writeln!(buf, "    {0}({0}<'a>),",
+            Type::Entity{..} => writeln!(buf, "    {0}({0}_<'a>),",
                                          to_camel(name)),
             _ => Ok(()),
         }
@@ -102,7 +102,7 @@ impl<'a> Type<'a> {
     {
         match self {
             Type::Entity{..} => writeln!(buf,
-                r#"            "{0}" => map({1}::parse, Entity::{1})(s),"#,
+                r#"            "{0}" => map({1}_::parse, Entity::{1})(s),"#,
                 capitalize(name), to_camel(name)),
             _ => Ok(()),
         }

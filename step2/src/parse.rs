@@ -164,7 +164,6 @@ mod tests {
     use super::*;
     #[test]
     fn test_parse_entity_decl() {
-        println!("{:?}", parse_entity_decl(b"#3=SHAPE_DEFINITION_REPRESENTATION(#4,#10);"));
         assert!(parse_entity_decl(b"#3=SHAPE_DEFINITION_REPRESENTATION(#4,#10);").is_ok());
     }
 }
