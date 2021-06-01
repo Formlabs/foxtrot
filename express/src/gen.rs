@@ -253,22 +253,21 @@ impl<'a> Parse<'a> for {0}_<'a> {{
                 for (i,a) in attrs.iter().enumerate() {
                     if a.derived {
                         writeln!(buf, "        let (s, _) = char('*')(s)?;")?;
-                        continue;
-                    }
-
-                    if a.dupe {
-                        writeln!(buf, "        #[allow(non_snake_case)]")?;
-                        write!(buf, "        let (s, {}__{}) = ",
-                               a.from.unwrap(), a.name)?;
                     } else {
-                        write!(buf, "        let (s, {}) = ", a.name)?;
-                    }
-                    if a.optional {
-                        writeln!(buf, "alt((
+                        if a.dupe {
+                            writeln!(buf, "        #[allow(non_snake_case)]")?;
+                            write!(buf, "        let (s, {}__{}) = ",
+                                   a.from.unwrap(), a.name)?;
+                        } else {
+                            write!(buf, "        let (s, {}) = ", a.name)?;
+                        }
+                        if a.optional {
+                            writeln!(buf, "alt((
             map(char('$'), |_| None),
             map(<{}>::parse, |v| Some(v))))(s)?;", a.type_)?;
-                    } else {
-                        writeln!(buf, "<{}>::parse(s)?;", a.type_)?;
+                        } else {
+                            writeln!(buf, "<{}>::parse(s)?;", a.type_)?;
+                        }
                     }
                     if i != attrs.len() - 1 {
                         writeln!(buf, "        let (s, _) = char(',')(s)?;")?;
@@ -278,7 +277,9 @@ impl<'a> Parse<'a> for {0}_<'a> {{
                 }
                 writeln!(buf, "        Ok((s, Self {{")?;
                 for a in attrs {
-                    if a.dupe {
+                    if a.derived {
+                        continue;
+                    } else if a.dupe {
                         // TODO make this a function on `a`
                         writeln!(buf, "            {}__{},",
                                  a.from.unwrap(), a.name)?;

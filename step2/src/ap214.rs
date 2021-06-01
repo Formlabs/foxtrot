@@ -6014,12 +6014,12 @@ impl<'a> Parse<'a> for ConversionBasedUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("CONVERSION_BASED_UNIT(")(s)?;
         let (s, _) = char('*')(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, conversion_factor) = <MeasureWithUnit<'a>>::parse(s)?;
         let (s, _) = char(')')(s)?;
         Ok((s, Self {
-            dimensions,
             name,
             conversion_factor,
             _marker: std::marker::PhantomData}))
@@ -15587,15 +15587,15 @@ impl<'a> Parse<'a> for OrientedEdge_<'a> {
         let (s, name) = <Label<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, _) = char('*')(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, _) = char('*')(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_element) = <Edge<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
         let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
-            edge_start,
-            edge_end,
             edge_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -15614,13 +15614,13 @@ impl<'a> Parse<'a> for OrientedFace_<'a> {
         let (s, name) = <Label<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, _) = char('*')(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, face_element) = <Face<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
         let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
-            bounds,
             face_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -15666,13 +15666,13 @@ impl<'a> Parse<'a> for OrientedPath_<'a> {
         let (s, name) = <Label<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, _) = char('*')(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path_element) = <Path<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
         let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
-            edge_list,
             path_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -21244,7 +21244,9 @@ impl<'a> Parse<'a> for SeamEdge_<'a> {
         let (s, name) = <Label<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, _) = char('*')(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, _) = char('*')(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_element) = <Edge<'a>>::parse(s)?;
         let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
@@ -21253,8 +21255,6 @@ impl<'a> Parse<'a> for SeamEdge_<'a> {
         let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
-            edge_start,
-            edge_end,
             edge_element,
             orientation,
             pcurve_reference,
@@ -21852,6 +21852,7 @@ impl<'a> Parse<'a> for SiUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("SI_UNIT(")(s)?;
         let (s, _) = char('*')(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, prefix) = alt((
             map(char('$'), |_| None),
             map(<SiPrefix<'a>>::parse, |v| Some(v))))(s)?;
@@ -21859,7 +21860,6 @@ impl<'a> Parse<'a> for SiUnit_<'a> {
         let (s, name) = <SiUnitName<'a>>::parse(s)?;
         let (s, _) = char(')')(s)?;
         Ok((s, Self {
-            dimensions,
             prefix,
             name,
             _marker: std::marker::PhantomData}))
