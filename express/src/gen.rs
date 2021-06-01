@@ -228,6 +228,10 @@ impl<'a> Parse<'a> for {0}<'a> {{
                 }
                 writeln!(buf, "pub struct {}_<'a> {{ // entity", camel_name)?;
                 for a in attrs {
+                    // Skip derived attributes in the struct
+                    if a.derived {
+                        continue;
+                    }
                     if a.dupe {
                         write!(buf, "    pub {}__{}: ", a.from.unwrap(), a.name)?;
                     } else {
@@ -243,8 +247,15 @@ impl<'a> Parse<'a> for {0}<'a> {{
 }}
 pub type {0}<'a> = Id<{0}_<'a>>;
 impl<'a> Parse<'a> for {0}_<'a> {{
-    fn parse(s: &'a str) -> IResult<'a, Self> {{"#, camel_name)?;
-                for a in attrs {
+    fn parse(s: &'a str) -> IResult<'a, Self> {{
+        let (s, _) = tag("{1}(")(s)?;"#, camel_name, capitalize(&name))?;
+                // Then, write a series of parsers which build the whole struct
+                for (i,a) in attrs.iter().enumerate() {
+                    if a.derived {
+                        writeln!(buf, "        let (s, _) = char('*')(s)?;")?;
+                        continue;
+                    }
+
                     if a.dupe {
                         writeln!(buf, "        #[allow(non_snake_case)]")?;
                         write!(buf, "        let (s, {}__{}) = ",
@@ -254,10 +265,15 @@ impl<'a> Parse<'a> for {0}_<'a> {{
                     }
                     if a.optional {
                         writeln!(buf, "alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<{}>::parse, |v| Some(v))))(s)?;", a.type_)?;
                     } else {
                         writeln!(buf, "<{}>::parse(s)?;", a.type_)?;
+                    }
+                    if i != attrs.len() - 1 {
+                        writeln!(buf, "        let (s, _) = char(',')(s)?;")?;
+                    } else {
+                        writeln!(buf, "        let (s, _) = char(')')(s)?;")?;
                     }
                 }
                 writeln!(buf, "        Ok((s, Self {{")?;
@@ -286,8 +302,8 @@ struct AttributeData<'a> {
     from: Option<&'a str>, // original class, or None
     type_: String,
     optional: bool,
-    // inherited from different parents with the same name
-    dupe: bool,
+    dupe: bool, // inherited from different parents with the same name
+    derived: bool, // marked whether this is a derived attribute
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -604,14 +620,13 @@ impl<'a> EntityDecl<'a> {
                             AttributeData {
                                 from: Some(sub.0),
                                 dupe: inherited_names.contains(a.name),
+                                derived: derived.contains(&(sub.0, a.name)),
                                 ..a
                             }
                         } else {
                             a
                         }
                     )
-                    // Skip derived values in the struct
-                    .filter(|a| !derived.contains(&(a.from.unwrap(), a.name)))
                     // Skip values that have already been seen (if we have
                     // multiple inheritance from a common base class)
                     .filter(|a| seen.insert((a.from.unwrap(), a.name))));
@@ -629,6 +644,7 @@ impl<'a> EntityDecl<'a> {
                     name: a.name(),
                     from: None,
                     dupe: false,
+                    derived: false,
                     type_: attr_type.clone(),
                     optional: attr.optional,
                 });

@@ -15,7 +15,9 @@ pub struct AbsFunction_<'a> { // entity
 pub type AbsFunction<'a> = Id<AbsFunction_<'a>>;
 impl<'a> Parse<'a> for AbsFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ABS_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -28,7 +30,9 @@ pub struct AcosFunction_<'a> { // entity
 pub type AcosFunction<'a> = Id<AcosFunction_<'a>>;
 impl<'a> Parse<'a> for AcosFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACOS_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -43,11 +47,15 @@ pub struct Action_<'a> { // entity
 pub type Action<'a> = Id<Action_<'a>>;
 impl<'a> Parse<'a> for Action_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -62,7 +70,9 @@ pub struct ActionAssignment_<'a> { // entity
 pub type ActionAssignment<'a> = Id<ActionAssignment_<'a>>;
 impl<'a> Parse<'a> for ActionAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_ASSIGNMENT(")(s)?;
         let (s, assigned_action) = <Action<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_action,
             _marker: std::marker::PhantomData}))
@@ -79,13 +89,19 @@ pub struct ActionDirective_<'a> { // entity
 pub type ActionDirective<'a> = Id<ActionDirective_<'a>>;
 impl<'a> Parse<'a> for ActionDirective_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_DIRECTIVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, analysis) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, comment) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, requests) = <Vec<VersionedActionRequest<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -216,12 +232,17 @@ pub struct ActionMethod_<'a> { // entity
 pub type ActionMethod<'a> = Id<ActionMethod_<'a>>;
 impl<'a> Parse<'a> for ActionMethod_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_METHOD(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, consequence) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -240,12 +261,17 @@ pub struct ActionMethodRelationship_<'a> { // entity
 pub type ActionMethodRelationship<'a> = Id<ActionMethodRelationship_<'a>>;
 impl<'a> Parse<'a> for ActionMethodRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_METHOD_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -263,9 +289,13 @@ pub struct ActionProperty_<'a> { // entity
 pub type ActionProperty<'a> = Id<ActionProperty_<'a>>;
 impl<'a> Parse<'a> for ActionProperty_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_PROPERTY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <CharacterizedActionDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -283,10 +313,15 @@ pub struct ActionPropertyRepresentation_<'a> { // entity
 pub type ActionPropertyRepresentation<'a> = Id<ActionPropertyRepresentation_<'a>>;
 impl<'a> Parse<'a> for ActionPropertyRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_PROPERTY_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, property) = <ActionProperty<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -305,12 +340,17 @@ pub struct ActionRelationship_<'a> { // entity
 pub type ActionRelationship<'a> = Id<ActionRelationship_<'a>>;
 impl<'a> Parse<'a> for ActionRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_action) = <Action<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_action) = <Action<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -326,7 +366,9 @@ pub struct ActionRequestAssignment_<'a> { // entity
 pub type ActionRequestAssignment<'a> = Id<ActionRequestAssignment_<'a>>;
 impl<'a> Parse<'a> for ActionRequestAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_REQUEST_ASSIGNMENT(")(s)?;
         let (s, assigned_action_request) = <VersionedActionRequest<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_action_request,
             _marker: std::marker::PhantomData}))
@@ -414,8 +456,11 @@ pub struct ActionRequestSolution_<'a> { // entity
 pub type ActionRequestSolution<'a> = Id<ActionRequestSolution_<'a>>;
 impl<'a> Parse<'a> for ActionRequestSolution_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_REQUEST_SOLUTION(")(s)?;
         let (s, method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, request) = <VersionedActionRequest<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             method,
             request,
@@ -430,8 +475,11 @@ pub struct ActionRequestStatus_<'a> { // entity
 pub type ActionRequestStatus<'a> = Id<ActionRequestStatus_<'a>>;
 impl<'a> Parse<'a> for ActionRequestStatus_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_REQUEST_STATUS(")(s)?;
         let (s, status) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, assigned_request) = <VersionedActionRequest<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             status,
             assigned_request,
@@ -448,12 +496,17 @@ pub struct ActionResource_<'a> { // entity
 pub type ActionResource<'a> = Id<ActionResource_<'a>>;
 impl<'a> Parse<'a> for ActionResource_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_RESOURCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, usage) = <Vec<SupportedItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, kind) = <ActionResourceType<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -472,10 +525,15 @@ pub struct ActionResourceRequirement_<'a> { // entity
 pub type ActionResourceRequirement<'a> = Id<ActionResourceRequirement_<'a>>;
 impl<'a> Parse<'a> for ActionResourceRequirement_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_RESOURCE_REQUIREMENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, kind) = <ResourceRequirementType<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, operations) = <Vec<CharacterizedActionDefinition<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -491,7 +549,9 @@ pub struct ActionResourceType_<'a> { // entity
 pub type ActionResourceType<'a> = Id<ActionResourceType_<'a>>;
 impl<'a> Parse<'a> for ActionResourceType_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_RESOURCE_TYPE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -505,8 +565,11 @@ pub struct ActionStatus_<'a> { // entity
 pub type ActionStatus<'a> = Id<ActionStatus_<'a>>;
 impl<'a> Parse<'a> for ActionStatus_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ACTION_STATUS(")(s)?;
         let (s, status) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, assigned_action) = <ExecutedAction<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             status,
             assigned_action,
@@ -531,42 +594,55 @@ pub struct Address_<'a> { // entity
 pub type Address<'a> = Id<Address_<'a>>;
 impl<'a> Parse<'a> for Address_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ADDRESS(")(s)?;
         let (s, internal_location) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, street_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, street) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, postal_box) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, town) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, region) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, postal_code) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, country) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, facsimile_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, telephone_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, electronic_mail_address) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, telex_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             internal_location,
             street_number,
@@ -592,9 +668,13 @@ pub struct AdvancedBrepShapeRepresentation_<'a> { // entity
 pub type AdvancedBrepShapeRepresentation<'a> = Id<AdvancedBrepShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for AdvancedBrepShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ADVANCED_BREP_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -612,10 +692,15 @@ pub struct AdvancedFace_<'a> { // entity
 pub type AdvancedFace<'a> = Id<AdvancedFace_<'a>>;
 impl<'a> Parse<'a> for AdvancedFace_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ADVANCED_FACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, bounds) = <Vec<FaceBound<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, face_geometry) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, same_sense) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             bounds,
@@ -651,13 +736,19 @@ pub struct AlternateProductRelationship_<'a> { // entity
 pub type AlternateProductRelationship<'a> = Id<AlternateProductRelationship_<'a>>;
 impl<'a> Parse<'a> for AlternateProductRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ALTERNATE_PRODUCT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alternate) = <Product<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, base) = <Product<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             definition,
@@ -686,8 +777,11 @@ pub struct AmountOfSubstanceMeasureWithUnit_<'a> { // entity
 pub type AmountOfSubstanceMeasureWithUnit<'a> = Id<AmountOfSubstanceMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for AmountOfSubstanceMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AMOUNT_OF_SUBSTANCE_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -701,7 +795,9 @@ pub struct AmountOfSubstanceUnit_<'a> { // entity
 pub type AmountOfSubstanceUnit<'a> = Id<AmountOfSubstanceUnit_<'a>>;
 impl<'a> Parse<'a> for AmountOfSubstanceUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AMOUNT_OF_SUBSTANCE_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -714,7 +810,9 @@ pub struct AndExpression_<'a> { // entity
 pub type AndExpression<'a> = Id<AndExpression_<'a>>;
 impl<'a> Parse<'a> for AndExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AND_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -744,8 +842,11 @@ pub struct AngularDimension_<'a> { // entity
 pub type AngularDimension<'a> = Id<AngularDimension_<'a>>;
 impl<'a> Parse<'a> for AngularDimension_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANGULAR_DIMENSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -763,13 +864,19 @@ pub struct AngularLocation_<'a> { // entity
 pub type AngularLocation<'a> = Id<AngularLocation_<'a>>;
 impl<'a> Parse<'a> for AngularLocation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANGULAR_LOCATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, angle_selection) = <AngleRelator<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -788,9 +895,13 @@ pub struct AngularSize_<'a> { // entity
 pub type AngularSize<'a> = Id<AngularSize_<'a>>;
 impl<'a> Parse<'a> for AngularSize_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANGULAR_SIZE(")(s)?;
         let (s, applies_to) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, angle_selection) = <AngleRelator<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to,
             name,
@@ -809,11 +920,17 @@ pub struct AngularityTolerance_<'a> { // entity
 pub type AngularityTolerance<'a> = Id<AngularityTolerance_<'a>>;
 impl<'a> Parse<'a> for AngularityTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANGULARITY_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -832,9 +949,13 @@ pub struct AnnotationCurveOccurrence_<'a> { // entity
 pub type AnnotationCurveOccurrence<'a> = Id<AnnotationCurveOccurrence_<'a>>;
 impl<'a> Parse<'a> for AnnotationCurveOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_CURVE_OCCURRENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -850,8 +971,11 @@ pub struct AnnotationFillArea_<'a> { // entity
 pub type AnnotationFillArea<'a> = Id<AnnotationFillArea_<'a>>;
 impl<'a> Parse<'a> for AnnotationFillArea_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_FILL_AREA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, boundaries) = <Vec<Curve<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             boundaries,
@@ -868,10 +992,15 @@ pub struct AnnotationFillAreaOccurrence_<'a> { // entity
 pub type AnnotationFillAreaOccurrence<'a> = Id<AnnotationFillAreaOccurrence_<'a>>;
 impl<'a> Parse<'a> for AnnotationFillAreaOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_FILL_AREA_OCCURRENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, fill_style_target) = <Point<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -889,9 +1018,13 @@ pub struct AnnotationOccurrence_<'a> { // entity
 pub type AnnotationOccurrence<'a> = Id<AnnotationOccurrence_<'a>>;
 impl<'a> Parse<'a> for AnnotationOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_OCCURRENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -909,10 +1042,15 @@ pub struct AnnotationOccurrenceAssociativity_<'a> { // entity
 pub type AnnotationOccurrenceAssociativity<'a> = Id<AnnotationOccurrenceAssociativity_<'a>>;
 impl<'a> Parse<'a> for AnnotationOccurrenceAssociativity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_OCCURRENCE_ASSOCIATIVITY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_annotation_occurrence) = <AnnotationOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_annotation_occurrence) = <AnnotationOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -931,10 +1069,15 @@ pub struct AnnotationOccurrenceRelationship_<'a> { // entity
 pub type AnnotationOccurrenceRelationship<'a> = Id<AnnotationOccurrenceRelationship_<'a>>;
 impl<'a> Parse<'a> for AnnotationOccurrenceRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_OCCURRENCE_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_annotation_occurrence) = <AnnotationOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_annotation_occurrence) = <AnnotationOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -953,12 +1096,17 @@ pub struct AnnotationPlane_<'a> { // entity
 pub type AnnotationPlane<'a> = Id<AnnotationPlane_<'a>>;
 impl<'a> Parse<'a> for AnnotationPlane_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_PLANE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, elements) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Vec<AnnotationPlaneElement<'a>>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -989,9 +1137,13 @@ pub struct AnnotationSubfigureOccurrence_<'a> { // entity
 pub type AnnotationSubfigureOccurrence<'a> = Id<AnnotationSubfigureOccurrence_<'a>>;
 impl<'a> Parse<'a> for AnnotationSubfigureOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_SUBFIGURE_OCCURRENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -1008,9 +1160,13 @@ pub struct AnnotationSymbol_<'a> { // entity
 pub type AnnotationSymbol<'a> = Id<AnnotationSymbol_<'a>>;
 impl<'a> Parse<'a> for AnnotationSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_source) = <RepresentationMap<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_target) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             mapping_source,
@@ -1027,9 +1183,13 @@ pub struct AnnotationSymbolOccurrence_<'a> { // entity
 pub type AnnotationSymbolOccurrence<'a> = Id<AnnotationSymbolOccurrence_<'a>>;
 impl<'a> Parse<'a> for AnnotationSymbolOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_SYMBOL_OCCURRENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -1059,9 +1219,13 @@ pub struct AnnotationText_<'a> { // entity
 pub type AnnotationText<'a> = Id<AnnotationText_<'a>>;
 impl<'a> Parse<'a> for AnnotationText_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_TEXT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_source) = <RepresentationMap<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_target) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             mapping_source,
@@ -1079,10 +1243,15 @@ pub struct AnnotationTextCharacter_<'a> { // entity
 pub type AnnotationTextCharacter<'a> = Id<AnnotationTextCharacter_<'a>>;
 impl<'a> Parse<'a> for AnnotationTextCharacter_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_TEXT_CHARACTER(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_source) = <RepresentationMap<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_target) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alignment) = <TextAlignment<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             mapping_source,
@@ -1100,9 +1269,13 @@ pub struct AnnotationTextOccurrence_<'a> { // entity
 pub type AnnotationTextOccurrence<'a> = Id<AnnotationTextOccurrence_<'a>>;
 impl<'a> Parse<'a> for AnnotationTextOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ANNOTATION_TEXT_OCCURRENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -1139,12 +1312,17 @@ pub struct Apex_<'a> { // entity
 pub type Apex<'a> = Id<Apex_<'a>>;
 impl<'a> Parse<'a> for Apex_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APEX(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -1160,7 +1338,9 @@ pub struct ApplicationContext_<'a> { // entity
 pub type ApplicationContext<'a> = Id<ApplicationContext_<'a>>;
 impl<'a> Parse<'a> for ApplicationContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLICATION_CONTEXT(")(s)?;
         let (s, application) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             application,
             _marker: std::marker::PhantomData}))
@@ -1174,8 +1354,11 @@ pub struct ApplicationContextElement_<'a> { // entity
 pub type ApplicationContextElement<'a> = Id<ApplicationContextElement_<'a>>;
 impl<'a> Parse<'a> for ApplicationContextElement_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLICATION_CONTEXT_ELEMENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ApplicationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             frame_of_reference,
@@ -1192,12 +1375,17 @@ pub struct ApplicationContextRelationship_<'a> { // entity
 pub type ApplicationContextRelationship<'a> = Id<ApplicationContextRelationship_<'a>>;
 impl<'a> Parse<'a> for ApplicationContextRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLICATION_CONTEXT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_context) = <ApplicationContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_context) = <ApplicationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -1216,10 +1404,15 @@ pub struct ApplicationProtocolDefinition_<'a> { // entity
 pub type ApplicationProtocolDefinition<'a> = Id<ApplicationProtocolDefinition_<'a>>;
 impl<'a> Parse<'a> for ApplicationProtocolDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLICATION_PROTOCOL_DEFINITION(")(s)?;
         let (s, status) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, application_interpreted_model_schema_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, application_protocol_year) = <YearNumber<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, application) = <ApplicationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             status,
             application_interpreted_model_schema_name,
@@ -1236,8 +1429,11 @@ pub struct AppliedActionAssignment_<'a> { // entity
 pub type AppliedActionAssignment<'a> = Id<AppliedActionAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedActionAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_ACTION_ASSIGNMENT(")(s)?;
         let (s, assigned_action) = <Action<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ActionItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_action,
             items,
@@ -1252,8 +1448,11 @@ pub struct AppliedActionRequestAssignment_<'a> { // entity
 pub type AppliedActionRequestAssignment<'a> = Id<AppliedActionRequestAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedActionRequestAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_ACTION_REQUEST_ASSIGNMENT(")(s)?;
         let (s, assigned_action_request) = <VersionedActionRequest<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ActionRequestItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_action_request,
             items,
@@ -1268,8 +1467,11 @@ pub struct AppliedApprovalAssignment_<'a> { // entity
 pub type AppliedApprovalAssignment<'a> = Id<AppliedApprovalAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedApprovalAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_APPROVAL_ASSIGNMENT(")(s)?;
         let (s, assigned_approval) = <Approval<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ApprovalItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_approval,
             items,
@@ -1286,12 +1488,17 @@ pub struct AppliedArea_<'a> { // entity
 pub type AppliedArea<'a> = Id<AppliedArea_<'a>>;
 impl<'a> Parse<'a> for AppliedArea_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_AREA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -1308,8 +1515,11 @@ pub struct AppliedCertificationAssignment_<'a> { // entity
 pub type AppliedCertificationAssignment<'a> = Id<AppliedCertificationAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedCertificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_CERTIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_certification) = <Certification<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<CertificationItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_certification,
             items,
@@ -1325,9 +1535,13 @@ pub struct AppliedClassificationAssignment_<'a> { // entity
 pub type AppliedClassificationAssignment<'a> = Id<AppliedClassificationAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedClassificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_CLASSIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_class) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <ClassificationRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ClassificationItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_class,
             role,
@@ -1343,8 +1557,11 @@ pub struct AppliedContractAssignment_<'a> { // entity
 pub type AppliedContractAssignment<'a> = Id<AppliedContractAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedContractAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_CONTRACT_ASSIGNMENT(")(s)?;
         let (s, assigned_contract) = <Contract<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ContractItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_contract,
             items,
@@ -1360,9 +1577,13 @@ pub struct AppliedDateAndTimeAssignment_<'a> { // entity
 pub type AppliedDateAndTimeAssignment<'a> = Id<AppliedDateAndTimeAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedDateAndTimeAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_DATE_AND_TIME_ASSIGNMENT(")(s)?;
         let (s, assigned_date_and_time) = <DateAndTime<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <DateTimeRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<DateAndTimeItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_date_and_time,
             role,
@@ -1379,9 +1600,13 @@ pub struct AppliedDateAssignment_<'a> { // entity
 pub type AppliedDateAssignment<'a> = Id<AppliedDateAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedDateAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_DATE_ASSIGNMENT(")(s)?;
         let (s, assigned_date) = <Date<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <DateRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<DateItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_date,
             role,
@@ -1398,9 +1623,13 @@ pub struct AppliedDocumentReference_<'a> { // entity
 pub type AppliedDocumentReference<'a> = Id<AppliedDocumentReference_<'a>>;
 impl<'a> Parse<'a> for AppliedDocumentReference_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_DOCUMENT_REFERENCE(")(s)?;
         let (s, assigned_document) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<DocumentReferenceItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_document,
             source,
@@ -1417,9 +1646,13 @@ pub struct AppliedDocumentUsageConstraintAssignment_<'a> { // entity
 pub type AppliedDocumentUsageConstraintAssignment<'a> = Id<AppliedDocumentUsageConstraintAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedDocumentUsageConstraintAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_DOCUMENT_USAGE_CONSTRAINT_ASSIGNMENT(")(s)?;
         let (s, assigned_document_usage) = <DocumentUsageConstraint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <DocumentUsageRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<DocumentReferenceItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_document_usage,
             role,
@@ -1435,8 +1668,11 @@ pub struct AppliedEffectivityAssignment_<'a> { // entity
 pub type AppliedEffectivityAssignment<'a> = Id<AppliedEffectivityAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedEffectivityAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_EFFECTIVITY_ASSIGNMENT(")(s)?;
         let (s, assigned_effectivity) = <Effectivity<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<EffectivityItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_effectivity,
             items,
@@ -1452,9 +1688,13 @@ pub struct AppliedEventOccurrenceAssignment_<'a> { // entity
 pub type AppliedEventOccurrenceAssignment<'a> = Id<AppliedEventOccurrenceAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedEventOccurrenceAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_EVENT_OCCURRENCE_ASSIGNMENT(")(s)?;
         let (s, assigned_event_occurrence) = <EventOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <EventOccurrenceRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<EventOccurrenceItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_event_occurrence,
             role,
@@ -1472,10 +1712,15 @@ pub struct AppliedExternalIdentificationAssignment_<'a> { // entity
 pub type AppliedExternalIdentificationAssignment<'a> = Id<AppliedExternalIdentificationAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedExternalIdentificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_EXTERNAL_IDENTIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <IdentificationRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ExternalIdentificationItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_id,
             role,
@@ -1492,8 +1737,11 @@ pub struct AppliedGroupAssignment_<'a> { // entity
 pub type AppliedGroupAssignment<'a> = Id<AppliedGroupAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedGroupAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_GROUP_ASSIGNMENT(")(s)?;
         let (s, assigned_group) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<GroupItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_group,
             items,
@@ -1509,9 +1757,13 @@ pub struct AppliedIdentificationAssignment_<'a> { // entity
 pub type AppliedIdentificationAssignment<'a> = Id<AppliedIdentificationAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedIdentificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_IDENTIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <IdentificationRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<IdentificationItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_id,
             role,
@@ -1527,8 +1779,11 @@ pub struct AppliedIneffectivityAssignment_<'a> { // entity
 pub type AppliedIneffectivityAssignment<'a> = Id<AppliedIneffectivityAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedIneffectivityAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_INEFFECTIVITY_ASSIGNMENT(")(s)?;
         let (s, assigned_effectivity) = <Effectivity<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<EffectivityItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_effectivity,
             items,
@@ -1543,8 +1798,11 @@ pub struct AppliedNameAssignment_<'a> { // entity
 pub type AppliedNameAssignment<'a> = Id<AppliedNameAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedNameAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_NAME_ASSIGNMENT(")(s)?;
         let (s, assigned_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<NameItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_name,
             items,
@@ -1560,9 +1818,13 @@ pub struct AppliedOrganizationAssignment_<'a> { // entity
 pub type AppliedOrganizationAssignment<'a> = Id<AppliedOrganizationAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedOrganizationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_ORGANIZATION_ASSIGNMENT(")(s)?;
         let (s, assigned_organization) = <Organization<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <OrganizationRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<OrganizationItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_organization,
             role,
@@ -1579,9 +1841,13 @@ pub struct AppliedOrganizationalProjectAssignment_<'a> { // entity
 pub type AppliedOrganizationalProjectAssignment<'a> = Id<AppliedOrganizationalProjectAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedOrganizationalProjectAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_ORGANIZATIONAL_PROJECT_ASSIGNMENT(")(s)?;
         let (s, assigned_organizational_project) = <OrganizationalProject<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <OrganizationalProjectRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<OrganizationalProjectItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_organizational_project,
             role,
@@ -1598,9 +1864,13 @@ pub struct AppliedPersonAndOrganizationAssignment_<'a> { // entity
 pub type AppliedPersonAndOrganizationAssignment<'a> = Id<AppliedPersonAndOrganizationAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedPersonAndOrganizationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_PERSON_AND_ORGANIZATION_ASSIGNMENT(")(s)?;
         let (s, assigned_person_and_organization) = <PersonAndOrganization<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <PersonAndOrganizationRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<PersonAndOrganizationItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_person_and_organization,
             role,
@@ -1615,7 +1885,9 @@ pub struct AppliedPresentedItem_<'a> { // entity
 pub type AppliedPresentedItem<'a> = Id<AppliedPresentedItem_<'a>>;
 impl<'a> Parse<'a> for AppliedPresentedItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_PRESENTED_ITEM(")(s)?;
         let (s, items) = <Vec<PresentedItemSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             items,
             _marker: std::marker::PhantomData}))
@@ -1629,8 +1901,11 @@ pub struct AppliedSecurityClassificationAssignment_<'a> { // entity
 pub type AppliedSecurityClassificationAssignment<'a> = Id<AppliedSecurityClassificationAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedSecurityClassificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_SECURITY_CLASSIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_security_classification) = <SecurityClassification<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<SecurityClassificationItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_security_classification,
             items,
@@ -1646,9 +1921,13 @@ pub struct AppliedTimeIntervalAssignment_<'a> { // entity
 pub type AppliedTimeIntervalAssignment<'a> = Id<AppliedTimeIntervalAssignment_<'a>>;
 impl<'a> Parse<'a> for AppliedTimeIntervalAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPLIED_TIME_INTERVAL_ASSIGNMENT(")(s)?;
         let (s, assigned_time_interval) = <TimeInterval<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <TimeIntervalRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<TimeIntervalItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_time_interval,
             role,
@@ -1664,8 +1943,11 @@ pub struct Approval_<'a> { // entity
 pub type Approval<'a> = Id<Approval_<'a>>;
 impl<'a> Parse<'a> for Approval_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROVAL(")(s)?;
         let (s, status) = <ApprovalStatus<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, level) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             status,
             level,
@@ -1679,7 +1961,9 @@ pub struct ApprovalAssignment_<'a> { // entity
 pub type ApprovalAssignment<'a> = Id<ApprovalAssignment_<'a>>;
 impl<'a> Parse<'a> for ApprovalAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROVAL_ASSIGNMENT(")(s)?;
         let (s, assigned_approval) = <Approval<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_approval,
             _marker: std::marker::PhantomData}))
@@ -1693,8 +1977,11 @@ pub struct ApprovalDateTime_<'a> { // entity
 pub type ApprovalDateTime<'a> = Id<ApprovalDateTime_<'a>>;
 impl<'a> Parse<'a> for ApprovalDateTime_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROVAL_DATE_TIME(")(s)?;
         let (s, date_time) = <DateTimeSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, dated_approval) = <Approval<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             date_time,
             dated_approval,
@@ -1796,9 +2083,13 @@ pub struct ApprovalPersonOrganization_<'a> { // entity
 pub type ApprovalPersonOrganization<'a> = Id<ApprovalPersonOrganization_<'a>>;
 impl<'a> Parse<'a> for ApprovalPersonOrganization_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROVAL_PERSON_ORGANIZATION(")(s)?;
         let (s, person_organization) = <PersonOrganizationSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, authorized_approval) = <Approval<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <ApprovalRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             person_organization,
             authorized_approval,
@@ -1816,12 +2107,17 @@ pub struct ApprovalRelationship_<'a> { // entity
 pub type ApprovalRelationship<'a> = Id<ApprovalRelationship_<'a>>;
 impl<'a> Parse<'a> for ApprovalRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROVAL_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_approval) = <Approval<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_approval) = <Approval<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -1837,7 +2133,9 @@ pub struct ApprovalRole_<'a> { // entity
 pub type ApprovalRole<'a> = Id<ApprovalRole_<'a>>;
 impl<'a> Parse<'a> for ApprovalRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROVAL_ROLE(")(s)?;
         let (s, role) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             role,
             _marker: std::marker::PhantomData}))
@@ -1850,7 +2148,9 @@ pub struct ApprovalStatus_<'a> { // entity
 pub type ApprovalStatus<'a> = Id<ApprovalStatus_<'a>>;
 impl<'a> Parse<'a> for ApprovalStatus_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROVAL_STATUS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -1877,7 +2177,9 @@ pub struct ApproximationTolerance_<'a> { // entity
 pub type ApproximationTolerance<'a> = Id<ApproximationTolerance_<'a>>;
 impl<'a> Parse<'a> for ApproximationTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROXIMATION_TOLERANCE(")(s)?;
         let (s, tolerance) = <ToleranceSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             tolerance,
             _marker: std::marker::PhantomData}))
@@ -1892,9 +2194,13 @@ pub struct ApproximationToleranceDeviation_<'a> { // entity
 pub type ApproximationToleranceDeviation<'a> = Id<ApproximationToleranceDeviation_<'a>>;
 impl<'a> Parse<'a> for ApproximationToleranceDeviation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROXIMATION_TOLERANCE_DEVIATION(")(s)?;
         let (s, tessellation_type) = <ApproximationMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, tolerances) = <Vec<ToleranceDeviationSelect<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition_space) = <ProductOrPresentationSpace<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             tessellation_type,
             tolerances,
@@ -1909,7 +2215,9 @@ pub struct ApproximationToleranceParameter_<'a> { // entity
 pub type ApproximationToleranceParameter<'a> = Id<ApproximationToleranceParameter_<'a>>;
 impl<'a> Parse<'a> for ApproximationToleranceParameter_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("APPROXIMATION_TOLERANCE_PARAMETER(")(s)?;
         let (s, tolerances) = <Vec<ToleranceParameterSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             tolerances,
             _marker: std::marker::PhantomData}))
@@ -1923,8 +2231,11 @@ pub struct AreaInSet_<'a> { // entity
 pub type AreaInSet<'a> = Id<AreaInSet_<'a>>;
 impl<'a> Parse<'a> for AreaInSet_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AREA_IN_SET(")(s)?;
         let (s, area) = <PresentationArea<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, in_set) = <PresentationSet<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             area,
             in_set,
@@ -1950,8 +2261,11 @@ pub struct AreaMeasureWithUnit_<'a> { // entity
 pub type AreaMeasureWithUnit<'a> = Id<AreaMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for AreaMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AREA_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -1978,7 +2292,9 @@ pub struct AreaUnit_<'a> { // entity
 pub type AreaUnit<'a> = Id<AreaUnit_<'a>>;
 impl<'a> Parse<'a> for AreaUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AREA_UNIT(")(s)?;
         let (s, elements) = <Vec<DerivedUnitElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             elements,
             _marker: std::marker::PhantomData}))
@@ -1991,7 +2307,9 @@ pub struct AsinFunction_<'a> { // entity
 pub type AsinFunction<'a> = Id<AsinFunction_<'a>>;
 impl<'a> Parse<'a> for AsinFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ASIN_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -2009,16 +2327,23 @@ pub struct AssemblyComponentUsage_<'a> { // entity
 pub type AssemblyComponentUsage<'a> = Id<AssemblyComponentUsage_<'a>>;
 impl<'a> Parse<'a> for AssemblyComponentUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ASSEMBLY_COMPONENT_USAGE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_designator) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Identifier<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -2039,12 +2364,17 @@ pub struct AssemblyComponentUsageSubstitute_<'a> { // entity
 pub type AssemblyComponentUsageSubstitute<'a> = Id<AssemblyComponentUsageSubstitute_<'a>>;
 impl<'a> Parse<'a> for AssemblyComponentUsageSubstitute_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ASSEMBLY_COMPONENT_USAGE_SUBSTITUTE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, base) = <AssemblyComponentUsage<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, substitute) = <AssemblyComponentUsage<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             definition,
@@ -2060,7 +2390,9 @@ pub struct AtanFunction_<'a> { // entity
 pub type AtanFunction<'a> = Id<AtanFunction_<'a>>;
 impl<'a> Parse<'a> for AtanFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ATAN_FUNCTION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -2075,9 +2407,13 @@ pub struct AttributeClassificationAssignment_<'a> { // entity
 pub type AttributeClassificationAssignment<'a> = Id<AttributeClassificationAssignment_<'a>>;
 impl<'a> Parse<'a> for AttributeClassificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ATTRIBUTE_CLASSIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_class) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, attribute_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <ClassificationRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_class,
             attribute_name,
@@ -2095,10 +2431,15 @@ pub struct AttributeLanguageAssignment_<'a> { // entity
 pub type AttributeLanguageAssignment<'a> = Id<AttributeLanguageAssignment_<'a>>;
 impl<'a> Parse<'a> for AttributeLanguageAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ATTRIBUTE_LANGUAGE_ASSIGNMENT(")(s)?;
         let (s, assigned_class) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, attribute_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <ClassificationRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<AttributeLanguageItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_class,
             attribute_name,
@@ -2281,9 +2622,13 @@ pub struct AttributeValueAssignment_<'a> { // entity
 pub type AttributeValueAssignment<'a> = Id<AttributeValueAssignment_<'a>>;
 impl<'a> Parse<'a> for AttributeValueAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ATTRIBUTE_VALUE_ASSIGNMENT(")(s)?;
         let (s, attribute_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, attribute_value) = <AttributeType<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <AttributeValueRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             attribute_name,
             attribute_value,
@@ -2299,10 +2644,13 @@ pub struct AttributeValueRole_<'a> { // entity
 pub type AttributeValueRole<'a> = Id<AttributeValueRole_<'a>>;
 impl<'a> Parse<'a> for AttributeValueRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ATTRIBUTE_VALUE_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -2318,11 +2666,15 @@ pub struct Axis1Placement_<'a> { // entity
 pub type Axis1Placement<'a> = Id<Axis1Placement_<'a>>;
 impl<'a> Parse<'a> for Axis1Placement_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AXIS1_PLACEMENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, location) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             location,
@@ -2352,11 +2704,15 @@ pub struct Axis2Placement2d_<'a> { // entity
 pub type Axis2Placement2d<'a> = Id<Axis2Placement2d_<'a>>;
 impl<'a> Parse<'a> for Axis2Placement2d_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AXIS2_PLACEMENT_2D(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, location) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ref_direction) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             location,
@@ -2374,14 +2730,19 @@ pub struct Axis2Placement3d_<'a> { // entity
 pub type Axis2Placement3d<'a> = Id<Axis2Placement3d_<'a>>;
 impl<'a> Parse<'a> for Axis2Placement3d_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("AXIS2_PLACEMENT_3D(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, location) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ref_direction) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             location,
@@ -2402,12 +2763,19 @@ pub struct BSplineCurve_<'a> { // entity
 pub type BSplineCurve<'a> = Id<BSplineCurve_<'a>>;
 impl<'a> Parse<'a> for BSplineCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("B_SPLINE_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<CartesianPoint<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_form) = <BSplineCurveForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, closed_curve) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             degree,
@@ -2455,15 +2823,25 @@ pub struct BSplineCurveWithKnots_<'a> { // entity
 pub type BSplineCurveWithKnots<'a> = Id<BSplineCurveWithKnots_<'a>>;
 impl<'a> Parse<'a> for BSplineCurveWithKnots_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("B_SPLINE_CURVE_WITH_KNOTS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<CartesianPoint<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_form) = <BSplineCurveForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, closed_curve) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, knot_multiplicities) = <Vec<i64>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, knots) = <Vec<ParameterValue<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, knot_spec) = <KnotType<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             degree,
@@ -2491,14 +2869,23 @@ pub struct BSplineSurface_<'a> { // entity
 pub type BSplineSurface<'a> = Id<BSplineSurface_<'a>>;
 impl<'a> Parse<'a> for BSplineSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("B_SPLINE_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<Vec<CartesianPoint<'a>>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_form) = <BSplineSurfaceForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             u_degree,
@@ -2562,19 +2949,33 @@ pub struct BSplineSurfaceWithKnots_<'a> { // entity
 pub type BSplineSurfaceWithKnots<'a> = Id<BSplineSurfaceWithKnots_<'a>>;
 impl<'a> Parse<'a> for BSplineSurfaceWithKnots_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("B_SPLINE_SURFACE_WITH_KNOTS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<Vec<CartesianPoint<'a>>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_form) = <BSplineSurfaceForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_multiplicities) = <Vec<i64>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_multiplicities) = <Vec<i64>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_knots) = <Vec<ParameterValue<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_knots) = <Vec<ParameterValue<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, knot_spec) = <KnotType<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             u_degree,
@@ -2599,7 +3000,9 @@ pub struct BackgroundColour_<'a> { // entity
 pub type BackgroundColour<'a> = Id<BackgroundColour_<'a>>;
 impl<'a> Parse<'a> for BackgroundColour_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BACKGROUND_COLOUR(")(s)?;
         let (s, presentation) = <AreaOrView<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             presentation,
             _marker: std::marker::PhantomData}))
@@ -2613,10 +3016,13 @@ pub struct BarringHole_<'a> { // entity
 pub type BarringHole<'a> = Id<BarringHole_<'a>>;
 impl<'a> Parse<'a> for BarringHole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BARRING_HOLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -2631,10 +3037,13 @@ pub struct Bead_<'a> { // entity
 pub type Bead<'a> = Id<Bead_<'a>>;
 impl<'a> Parse<'a> for Bead_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BEAD(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -2651,12 +3060,17 @@ pub struct BeadEnd_<'a> { // entity
 pub type BeadEnd<'a> = Id<BeadEnd_<'a>>;
 impl<'a> Parse<'a> for BeadEnd_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BEAD_END(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -2677,12 +3091,19 @@ pub struct BezierCurve_<'a> { // entity
 pub type BezierCurve<'a> = Id<BezierCurve_<'a>>;
 impl<'a> Parse<'a> for BezierCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BEZIER_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<CartesianPoint<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_form) = <BSplineCurveForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, closed_curve) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             degree,
@@ -2707,14 +3128,23 @@ pub struct BezierSurface_<'a> { // entity
 pub type BezierSurface<'a> = Id<BezierSurface_<'a>>;
 impl<'a> Parse<'a> for BezierSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BEZIER_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<Vec<CartesianPoint<'a>>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_form) = <BSplineSurfaceForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             u_degree,
@@ -2734,7 +3164,9 @@ pub struct BinaryBooleanExpression_<'a> { // entity
 pub type BinaryBooleanExpression<'a> = Id<BinaryBooleanExpression_<'a>>;
 impl<'a> Parse<'a> for BinaryBooleanExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BINARY_BOOLEAN_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -2747,7 +3179,9 @@ pub struct BinaryFunctionCall_<'a> { // entity
 pub type BinaryFunctionCall<'a> = Id<BinaryFunctionCall_<'a>>;
 impl<'a> Parse<'a> for BinaryFunctionCall_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BINARY_FUNCTION_CALL(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -2760,7 +3194,9 @@ pub struct BinaryGenericExpression_<'a> { // entity
 pub type BinaryGenericExpression<'a> = Id<BinaryGenericExpression_<'a>>;
 impl<'a> Parse<'a> for BinaryGenericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BINARY_GENERIC_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -2773,7 +3209,9 @@ pub struct BinaryNumericExpression_<'a> { // entity
 pub type BinaryNumericExpression<'a> = Id<BinaryNumericExpression_<'a>>;
 impl<'a> Parse<'a> for BinaryNumericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BINARY_NUMERIC_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -2790,11 +3228,17 @@ pub struct Block_<'a> { // entity
 pub type Block<'a> = Id<Block_<'a>>;
 impl<'a> Parse<'a> for Block_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BLOCK(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, x) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, y) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, z) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -2810,6 +3254,7 @@ pub struct BooleanDefinedFunction_<'a> { // entity
 pub type BooleanDefinedFunction<'a> = Id<BooleanDefinedFunction_<'a>>;
 impl<'a> Parse<'a> for BooleanDefinedFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOOLEAN_DEFINED_FUNCTION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -2820,6 +3265,7 @@ pub struct BooleanExpression_<'a> { // entity
 pub type BooleanExpression<'a> = Id<BooleanExpression_<'a>>;
 impl<'a> Parse<'a> for BooleanExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOOLEAN_EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -2831,7 +3277,9 @@ pub struct BooleanLiteral_<'a> { // entity
 pub type BooleanLiteral<'a> = Id<BooleanLiteral_<'a>>;
 impl<'a> Parse<'a> for BooleanLiteral_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOOLEAN_LITERAL(")(s)?;
         let (s, the_value) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             the_value,
             _marker: std::marker::PhantomData}))
@@ -2880,10 +3328,15 @@ pub struct BooleanResult_<'a> { // entity
 pub type BooleanResult<'a> = Id<BooleanResult_<'a>>;
 impl<'a> Parse<'a> for BooleanResult_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOOLEAN_RESULT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, operator) = <BooleanOperator<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, first_operand) = <BooleanOperand<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, second_operand) = <BooleanOperand<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             operator,
@@ -2898,6 +3351,7 @@ pub struct BooleanVariable_<'a> { // entity
 pub type BooleanVariable<'a> = Id<BooleanVariable_<'a>>;
 impl<'a> Parse<'a> for BooleanVariable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOOLEAN_VARIABLE(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -2910,10 +3364,13 @@ pub struct Boss_<'a> { // entity
 pub type Boss<'a> = Id<Boss_<'a>>;
 impl<'a> Parse<'a> for Boss_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOSS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -2930,12 +3387,17 @@ pub struct BossTop_<'a> { // entity
 pub type BossTop<'a> = Id<BossTop_<'a>>;
 impl<'a> Parse<'a> for BossTop_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOSS_TOP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -2953,9 +3415,13 @@ pub struct BoundaryCurve_<'a> { // entity
 pub type BoundaryCurve<'a> = Id<BoundaryCurve_<'a>>;
 impl<'a> Parse<'a> for BoundaryCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOUNDARY_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, segments) = <Vec<CompositeCurveSegment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             segments,
@@ -2970,7 +3436,9 @@ pub struct BoundedCurve_<'a> { // entity
 pub type BoundedCurve<'a> = Id<BoundedCurve_<'a>>;
 impl<'a> Parse<'a> for BoundedCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOUNDED_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -2985,9 +3453,13 @@ pub struct BoundedPcurve_<'a> { // entity
 pub type BoundedPcurve<'a> = Id<BoundedPcurve_<'a>>;
 impl<'a> Parse<'a> for BoundedPcurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOUNDED_PCURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_to_curve) = <DefinitionalRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_surface,
@@ -3002,7 +3474,9 @@ pub struct BoundedSurface_<'a> { // entity
 pub type BoundedSurface<'a> = Id<BoundedSurface_<'a>>;
 impl<'a> Parse<'a> for BoundedSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOUNDED_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -3018,10 +3492,15 @@ pub struct BoundedSurfaceCurve_<'a> { // entity
 pub type BoundedSurfaceCurve<'a> = Id<BoundedSurfaceCurve_<'a>>;
 impl<'a> Parse<'a> for BoundedSurfaceCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOUNDED_SURFACE_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_3d) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, associated_geometry) = <Vec<PcurveOrSurface<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, master_representation) = <PreferredSurfaceCurveRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             curve_3d,
@@ -3057,10 +3536,15 @@ pub struct BoxDomain_<'a> { // entity
 pub type BoxDomain<'a> = Id<BoxDomain_<'a>>;
 impl<'a> Parse<'a> for BoxDomain_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOX_DOMAIN(")(s)?;
         let (s, corner) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, xlength) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ylength) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, zlength) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             corner,
             xlength,
@@ -3127,10 +3611,15 @@ pub struct BoxedHalfSpace_<'a> { // entity
 pub type BoxedHalfSpace<'a> = Id<BoxedHalfSpace_<'a>>;
 impl<'a> Parse<'a> for BoxedHalfSpace_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BOXED_HALF_SPACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, base_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, agreement_flag) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, enclosure) = <BoxDomain<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             base_surface,
@@ -3148,9 +3637,13 @@ pub struct BrepWithVoids_<'a> { // entity
 pub type BrepWithVoids<'a> = Id<BrepWithVoids_<'a>>;
 impl<'a> Parse<'a> for BrepWithVoids_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("BREP_WITH_VOIDS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, outer) = <ClosedShell<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, voids) = <Vec<OrientedClosedShell<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             outer,
@@ -3167,9 +3660,13 @@ pub struct CalendarDate_<'a> { // entity
 pub type CalendarDate<'a> = Id<CalendarDate_<'a>>;
 impl<'a> Parse<'a> for CalendarDate_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CALENDAR_DATE(")(s)?;
         let (s, year_component) = <YearNumber<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, day_component) = <DayInMonthNumber<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, month_component) = <MonthInYearNumber<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             year_component,
             day_component,
@@ -3186,9 +3683,13 @@ pub struct CameraImage_<'a> { // entity
 pub type CameraImage<'a> = Id<CameraImage_<'a>>;
 impl<'a> Parse<'a> for CameraImage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CAMERA_IMAGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_source) = <RepresentationMap<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_target) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             mapping_source,
@@ -3205,9 +3706,13 @@ pub struct CameraImage2dWithScale_<'a> { // entity
 pub type CameraImage2dWithScale<'a> = Id<CameraImage2dWithScale_<'a>>;
 impl<'a> Parse<'a> for CameraImage2dWithScale_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CAMERA_IMAGE_2D_WITH_SCALE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_source) = <RepresentationMap<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_target) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             mapping_source,
@@ -3224,9 +3729,13 @@ pub struct CameraImage3dWithScale_<'a> { // entity
 pub type CameraImage3dWithScale<'a> = Id<CameraImage3dWithScale_<'a>>;
 impl<'a> Parse<'a> for CameraImage3dWithScale_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CAMERA_IMAGE_3D_WITH_SCALE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_source) = <RepresentationMap<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_target) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             mapping_source,
@@ -3241,7 +3750,9 @@ pub struct CameraModel_<'a> { // entity
 pub type CameraModel<'a> = Id<CameraModel_<'a>>;
 impl<'a> Parse<'a> for CameraModel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CAMERA_MODEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -3256,9 +3767,13 @@ pub struct CameraModelD2_<'a> { // entity
 pub type CameraModelD2<'a> = Id<CameraModelD2_<'a>>;
 impl<'a> Parse<'a> for CameraModelD2_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CAMERA_MODEL_D2(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, view_window) = <PlanarBox<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, view_window_clipping) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             view_window,
@@ -3275,9 +3790,13 @@ pub struct CameraModelD3_<'a> { // entity
 pub type CameraModelD3<'a> = Id<CameraModelD3_<'a>>;
 impl<'a> Parse<'a> for CameraModelD3_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CAMERA_MODEL_D3(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, view_reference_system) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, perspective_of_volume) = <ViewVolume<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             view_reference_system,
@@ -3295,10 +3814,15 @@ pub struct CameraModelD3WithHlhsr_<'a> { // entity
 pub type CameraModelD3WithHlhsr<'a> = Id<CameraModelD3WithHlhsr_<'a>>;
 impl<'a> Parse<'a> for CameraModelD3WithHlhsr_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CAMERA_MODEL_D3_WITH_HLHSR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, view_reference_system) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, perspective_of_volume) = <ViewVolume<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, hidden_line_surface_removal) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             view_reference_system,
@@ -3315,8 +3839,11 @@ pub struct CameraUsage_<'a> { // entity
 pub type CameraUsage<'a> = Id<CameraUsage_<'a>>;
 impl<'a> Parse<'a> for CameraUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CAMERA_USAGE(")(s)?;
         let (s, mapping_origin) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapped_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             mapping_origin,
             mapped_representation,
@@ -3331,8 +3858,11 @@ pub struct CartesianPoint_<'a> { // entity
 pub type CartesianPoint<'a> = Id<CartesianPoint_<'a>>;
 impl<'a> Parse<'a> for CartesianPoint_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CARTESIAN_POINT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, coordinates) = <Vec<LengthMeasure<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             coordinates,
@@ -3353,22 +3883,30 @@ pub struct CartesianTransformationOperator_<'a> { // entity
 pub type CartesianTransformationOperator<'a> = Id<CartesianTransformationOperator_<'a>>;
 impl<'a> Parse<'a> for CartesianTransformationOperator_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CARTESIAN_TRANSFORMATION_OPERATOR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, functionally_defined_transformation__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis1) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis2) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, local_origin) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, scale) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<f64>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             functionally_defined_transformation__name,
@@ -3394,22 +3932,30 @@ pub struct CartesianTransformationOperator2d_<'a> { // entity
 pub type CartesianTransformationOperator2d<'a> = Id<CartesianTransformationOperator2d_<'a>>;
 impl<'a> Parse<'a> for CartesianTransformationOperator2d_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CARTESIAN_TRANSFORMATION_OPERATOR_2D(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, functionally_defined_transformation__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis1) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis2) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, local_origin) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, scale) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<f64>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             functionally_defined_transformation__name,
@@ -3436,25 +3982,34 @@ pub struct CartesianTransformationOperator3d_<'a> { // entity
 pub type CartesianTransformationOperator3d<'a> = Id<CartesianTransformationOperator3d_<'a>>;
 impl<'a> Parse<'a> for CartesianTransformationOperator3d_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CARTESIAN_TRANSFORMATION_OPERATOR_3D(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, functionally_defined_transformation__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis1) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis2) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, local_origin) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, scale) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<f64>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis3) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Direction<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             functionally_defined_transformation__name,
@@ -3495,8 +4050,11 @@ pub struct CelsiusTemperatureMeasureWithUnit_<'a> { // entity
 pub type CelsiusTemperatureMeasureWithUnit<'a> = Id<CelsiusTemperatureMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for CelsiusTemperatureMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CELSIUS_TEMPERATURE_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -3527,12 +4085,17 @@ pub struct CentreOfSymmetry_<'a> { // entity
 pub type CentreOfSymmetry<'a> = Id<CentreOfSymmetry_<'a>>;
 impl<'a> Parse<'a> for CentreOfSymmetry_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CENTRE_OF_SYMMETRY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3550,9 +4113,13 @@ pub struct Certification_<'a> { // entity
 pub type Certification<'a> = Id<Certification_<'a>>;
 impl<'a> Parse<'a> for Certification_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CERTIFICATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, kind) = <CertificationType<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             purpose,
@@ -3567,7 +4134,9 @@ pub struct CertificationAssignment_<'a> { // entity
 pub type CertificationAssignment<'a> = Id<CertificationAssignment_<'a>>;
 impl<'a> Parse<'a> for CertificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CERTIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_certification) = <Certification<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_certification,
             _marker: std::marker::PhantomData}))
@@ -3597,7 +4166,9 @@ pub struct CertificationType_<'a> { // entity
 pub type CertificationType<'a> = Id<CertificationType_<'a>>;
 impl<'a> Parse<'a> for CertificationType_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CERTIFICATION_TYPE(")(s)?;
         let (s, description) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             description,
             _marker: std::marker::PhantomData}))
@@ -3613,12 +4184,17 @@ pub struct Chamfer_<'a> { // entity
 pub type Chamfer<'a> = Id<Chamfer_<'a>>;
 impl<'a> Parse<'a> for Chamfer_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CHAMFER(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3637,12 +4213,17 @@ pub struct ChamferOffset_<'a> { // entity
 pub type ChamferOffset<'a> = Id<ChamferOffset_<'a>>;
 impl<'a> Parse<'a> for ChamferOffset_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CHAMFER_OFFSET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3662,11 +4243,17 @@ pub struct CharacterGlyphSymbol_<'a> { // entity
 pub type CharacterGlyphSymbol<'a> = Id<CharacterGlyphSymbol_<'a>>;
 impl<'a> Parse<'a> for CharacterGlyphSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CHARACTER_GLYPH_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, character_box) = <PlanarExtent<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, baseline_ratio) = <RatioMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -3730,16 +4317,21 @@ pub struct CharacterizedClass_<'a> { // entity
 pub type CharacterizedClass<'a> = Id<CharacterizedClass_<'a>>;
 impl<'a> Parse<'a> for CharacterizedClass_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CHARACTERIZED_CLASS(")(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             characterized_object__name,
             characterized_object__description,
@@ -3780,10 +4372,13 @@ pub struct CharacterizedObject_<'a> { // entity
 pub type CharacterizedObject<'a> = Id<CharacterizedObject_<'a>>;
 impl<'a> Parse<'a> for CharacterizedObject_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CHARACTERIZED_OBJECT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3825,9 +4420,13 @@ pub struct Circle_<'a> { // entity
 pub type Circle<'a> = Id<Circle_<'a>>;
 impl<'a> Parse<'a> for Circle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CIRCLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -3845,12 +4444,17 @@ pub struct CircularClosedProfile_<'a> { // entity
 pub type CircularClosedProfile<'a> = Id<CircularClosedProfile_<'a>>;
 impl<'a> Parse<'a> for CircularClosedProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CIRCULAR_CLOSED_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3867,10 +4471,13 @@ pub struct CircularPattern_<'a> { // entity
 pub type CircularPattern<'a> = Id<CircularPattern_<'a>>;
 impl<'a> Parse<'a> for CircularPattern_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CIRCULAR_PATTERN(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3888,11 +4495,17 @@ pub struct CircularRunoutTolerance_<'a> { // entity
 pub type CircularRunoutTolerance<'a> = Id<CircularRunoutTolerance_<'a>>;
 impl<'a> Parse<'a> for CircularRunoutTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CIRCULAR_RUNOUT_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3910,10 +4523,13 @@ pub struct Class_<'a> { // entity
 pub type Class<'a> = Id<Class_<'a>>;
 impl<'a> Parse<'a> for Class_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CLASS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3928,10 +4544,13 @@ pub struct ClassSystem_<'a> { // entity
 pub type ClassSystem<'a> = Id<ClassSystem_<'a>>;
 impl<'a> Parse<'a> for ClassSystem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CLASS_SYSTEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -3947,9 +4566,13 @@ pub struct ClassUsageEffectivityContextAssignment_<'a> { // entity
 pub type ClassUsageEffectivityContextAssignment<'a> = Id<ClassUsageEffectivityContextAssignment_<'a>>;
 impl<'a> Parse<'a> for ClassUsageEffectivityContextAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CLASS_USAGE_EFFECTIVITY_CONTEXT_ASSIGNMENT(")(s)?;
         let (s, assigned_effectivity_assignment) = <EffectivityAssignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <EffectivityContextRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ClassUsageEffectivityContextItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_effectivity_assignment,
             role,
@@ -3974,8 +4597,11 @@ pub struct ClassificationAssignment_<'a> { // entity
 pub type ClassificationAssignment<'a> = Id<ClassificationAssignment_<'a>>;
 impl<'a> Parse<'a> for ClassificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CLASSIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_class) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <ClassificationRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_class,
             role,
@@ -4066,10 +4692,13 @@ pub struct ClassificationRole_<'a> { // entity
 pub type ClassificationRole<'a> = Id<ClassificationRole_<'a>>;
 impl<'a> Parse<'a> for ClassificationRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CLASSIFICATION_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4086,12 +4715,17 @@ pub struct ClosedPathProfile_<'a> { // entity
 pub type ClosedPathProfile<'a> = Id<ClosedPathProfile_<'a>>;
 impl<'a> Parse<'a> for ClosedPathProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CLOSED_PATH_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4108,8 +4742,11 @@ pub struct ClosedShell_<'a> { // entity
 pub type ClosedShell<'a> = Id<ClosedShell_<'a>>;
 impl<'a> Parse<'a> for ClosedShell_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CLOSED_SHELL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, cfs_faces) = <Vec<Face<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             cfs_faces,
@@ -4127,11 +4764,17 @@ pub struct CoaxialityTolerance_<'a> { // entity
 pub type CoaxialityTolerance<'a> = Id<CoaxialityTolerance_<'a>>;
 impl<'a> Parse<'a> for CoaxialityTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COAXIALITY_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4147,6 +4790,7 @@ pub struct Colour_<'a> { // entity
 pub type Colour<'a> = Id<Colour_<'a>>;
 impl<'a> Parse<'a> for Colour_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COLOUR(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -4161,10 +4805,15 @@ pub struct ColourRgb_<'a> { // entity
 pub type ColourRgb<'a> = Id<ColourRgb_<'a>>;
 impl<'a> Parse<'a> for ColourRgb_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COLOUR_RGB(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, red) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, green) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, blue) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             red,
@@ -4180,7 +4829,9 @@ pub struct ColourSpecification_<'a> { // entity
 pub type ColourSpecification<'a> = Id<ColourSpecification_<'a>>;
 impl<'a> Parse<'a> for ColourSpecification_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COLOUR_SPECIFICATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -4197,13 +4848,19 @@ pub struct CommonDatum_<'a> { // entity
 pub type CommonDatum<'a> = Id<CommonDatum_<'a>>;
 impl<'a> Parse<'a> for CommonDatum_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMMON_DATUM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identification) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4220,7 +4877,9 @@ pub struct ComparisonEqual_<'a> { // entity
 pub type ComparisonEqual<'a> = Id<ComparisonEqual_<'a>>;
 impl<'a> Parse<'a> for ComparisonEqual_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPARISON_EQUAL(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4233,7 +4892,9 @@ pub struct ComparisonExpression_<'a> { // entity
 pub type ComparisonExpression<'a> = Id<ComparisonExpression_<'a>>;
 impl<'a> Parse<'a> for ComparisonExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPARISON_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4246,7 +4907,9 @@ pub struct ComparisonGreater_<'a> { // entity
 pub type ComparisonGreater<'a> = Id<ComparisonGreater_<'a>>;
 impl<'a> Parse<'a> for ComparisonGreater_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPARISON_GREATER(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4259,7 +4922,9 @@ pub struct ComparisonGreaterEqual_<'a> { // entity
 pub type ComparisonGreaterEqual<'a> = Id<ComparisonGreaterEqual_<'a>>;
 impl<'a> Parse<'a> for ComparisonGreaterEqual_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPARISON_GREATER_EQUAL(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4272,7 +4937,9 @@ pub struct ComparisonLess_<'a> { // entity
 pub type ComparisonLess<'a> = Id<ComparisonLess_<'a>>;
 impl<'a> Parse<'a> for ComparisonLess_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPARISON_LESS(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4285,7 +4952,9 @@ pub struct ComparisonLessEqual_<'a> { // entity
 pub type ComparisonLessEqual<'a> = Id<ComparisonLessEqual_<'a>>;
 impl<'a> Parse<'a> for ComparisonLessEqual_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPARISON_LESS_EQUAL(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4298,7 +4967,9 @@ pub struct ComparisonNotEqual_<'a> { // entity
 pub type ComparisonNotEqual<'a> = Id<ComparisonNotEqual_<'a>>;
 impl<'a> Parse<'a> for ComparisonNotEqual_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPARISON_NOT_EQUAL(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4313,9 +4984,13 @@ pub struct CompositeCurve_<'a> { // entity
 pub type CompositeCurve<'a> = Id<CompositeCurve_<'a>>;
 impl<'a> Parse<'a> for CompositeCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, segments) = <Vec<CompositeCurveSegment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             segments,
@@ -4332,9 +5007,13 @@ pub struct CompositeCurveOnSurface_<'a> { // entity
 pub type CompositeCurveOnSurface<'a> = Id<CompositeCurveOnSurface_<'a>>;
 impl<'a> Parse<'a> for CompositeCurveOnSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_CURVE_ON_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, segments) = <Vec<CompositeCurveSegment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             segments,
@@ -4351,9 +5030,13 @@ pub struct CompositeCurveSegment_<'a> { // entity
 pub type CompositeCurveSegment<'a> = Id<CompositeCurveSegment_<'a>>;
 impl<'a> Parse<'a> for CompositeCurveSegment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_CURVE_SEGMENT(")(s)?;
         let (s, transition) = <TransitionCode<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, same_sense) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             transition,
             same_sense,
@@ -4369,10 +5052,13 @@ pub struct CompositeHole_<'a> { // entity
 pub type CompositeHole<'a> = Id<CompositeHole_<'a>>;
 impl<'a> Parse<'a> for CompositeHole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_HOLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4389,12 +5075,17 @@ pub struct CompositeShapeAspect_<'a> { // entity
 pub type CompositeShapeAspect<'a> = Id<CompositeShapeAspect_<'a>>;
 impl<'a> Parse<'a> for CompositeShapeAspect_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_SHAPE_ASPECT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4411,8 +5102,11 @@ pub struct CompositeText_<'a> { // entity
 pub type CompositeText<'a> = Id<CompositeText_<'a>>;
 impl<'a> Parse<'a> for CompositeText_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_TEXT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, collected_text) = <Vec<TextOrCharacter<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             collected_text,
@@ -4428,9 +5122,13 @@ pub struct CompositeTextWithAssociatedCurves_<'a> { // entity
 pub type CompositeTextWithAssociatedCurves<'a> = Id<CompositeTextWithAssociatedCurves_<'a>>;
 impl<'a> Parse<'a> for CompositeTextWithAssociatedCurves_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_TEXT_WITH_ASSOCIATED_CURVES(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, collected_text) = <Vec<TextOrCharacter<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, associated_curves) = <Vec<Curve<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             collected_text,
@@ -4447,9 +5145,13 @@ pub struct CompositeTextWithBlankingBox_<'a> { // entity
 pub type CompositeTextWithBlankingBox<'a> = Id<CompositeTextWithBlankingBox_<'a>>;
 impl<'a> Parse<'a> for CompositeTextWithBlankingBox_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_TEXT_WITH_BLANKING_BOX(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, collected_text) = <Vec<TextOrCharacter<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, blanking) = <PlanarBox<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             collected_text,
@@ -4466,9 +5168,13 @@ pub struct CompositeTextWithExtent_<'a> { // entity
 pub type CompositeTextWithExtent<'a> = Id<CompositeTextWithExtent_<'a>>;
 impl<'a> Parse<'a> for CompositeTextWithExtent_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOSITE_TEXT_WITH_EXTENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, collected_text) = <Vec<TextOrCharacter<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, extent) = <PlanarExtent<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             collected_text,
@@ -4484,10 +5190,13 @@ pub struct CompoundFeature_<'a> { // entity
 pub type CompoundFeature<'a> = Id<CompoundFeature_<'a>>;
 impl<'a> Parse<'a> for CompoundFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOUND_FEATURE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4515,8 +5224,11 @@ pub struct CompoundRepresentationItem_<'a> { // entity
 pub type CompoundRepresentationItem<'a> = Id<CompoundRepresentationItem_<'a>>;
 impl<'a> Parse<'a> for CompoundRepresentationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOUND_REPRESENTATION_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_element) = <CompoundItemDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             item_element,
@@ -4532,9 +5244,13 @@ pub struct CompoundShapeRepresentation_<'a> { // entity
 pub type CompoundShapeRepresentation<'a> = Id<CompoundShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for CompoundShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COMPOUND_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -4549,7 +5265,9 @@ pub struct ConcatExpression_<'a> { // entity
 pub type ConcatExpression<'a> = Id<ConcatExpression_<'a>>;
 impl<'a> Parse<'a> for ConcatExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONCAT_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4566,11 +5284,17 @@ pub struct ConcentricityTolerance_<'a> { // entity
 pub type ConcentricityTolerance<'a> = Id<ConcentricityTolerance_<'a>>;
 impl<'a> Parse<'a> for ConcentricityTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONCENTRICITY_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4588,10 +5312,13 @@ pub struct ConceptFeatureOperator_<'a> { // entity
 pub type ConceptFeatureOperator<'a> = Id<ConceptFeatureOperator_<'a>>;
 impl<'a> Parse<'a> for ConceptFeatureOperator_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONCEPT_FEATURE_OPERATOR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4608,12 +5335,17 @@ pub struct ConceptFeatureRelationship_<'a> { // entity
 pub type ConceptFeatureRelationship<'a> = Id<ConceptFeatureRelationship_<'a>>;
 impl<'a> Parse<'a> for ConceptFeatureRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONCEPT_FEATURE_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_concept_feature) = <ProductConceptFeature<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_concept_feature) = <ProductConceptFeature<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4633,13 +5365,19 @@ pub struct ConceptFeatureRelationshipWithCondition_<'a> { // entity
 pub type ConceptFeatureRelationshipWithCondition<'a> = Id<ConceptFeatureRelationshipWithCondition_<'a>>;
 impl<'a> Parse<'a> for ConceptFeatureRelationshipWithCondition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONCEPT_FEATURE_RELATIONSHIP_WITH_CONDITION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_concept_feature) = <ProductConceptFeature<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_concept_feature) = <ProductConceptFeature<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, conditional_operator) = <ConceptFeatureOperator<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -4659,12 +5397,17 @@ pub struct ConditionalConceptFeature_<'a> { // entity
 pub type ConditionalConceptFeature<'a> = Id<ConditionalConceptFeature_<'a>>;
 impl<'a> Parse<'a> for ConditionalConceptFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONDITIONAL_CONCEPT_FEATURE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, condition) = <ConceptFeatureRelationshipWithCondition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -4685,16 +5428,23 @@ pub struct ConfigurableItem_<'a> { // entity
 pub type ConfigurableItem<'a> = Id<ConfigurableItem_<'a>>;
 impl<'a> Parse<'a> for ConfigurableItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONFIGURABLE_ITEM(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_concept) = <ProductConcept<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_concept_feature) = <Vec<ProductConceptFeatureAssociation<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -4713,8 +5463,11 @@ pub struct ConfigurationDefinition_<'a> { // entity
 pub type ConfigurationDefinition<'a> = Id<ConfigurationDefinition_<'a>>;
 impl<'a> Parse<'a> for ConfigurationDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONFIGURATION_DEFINITION(")(s)?;
         let (s, pair_values) = <Vec<PairValue<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, t_parameter) = <MotionParameterMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             pair_values,
             t_parameter,
@@ -4729,8 +5482,11 @@ pub struct ConfigurationDesign_<'a> { // entity
 pub type ConfigurationDesign<'a> = Id<ConfigurationDesign_<'a>>;
 impl<'a> Parse<'a> for ConfigurationDesign_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONFIGURATION_DESIGN(")(s)?;
         let (s, configuration) = <ConfigurationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, design) = <ConfigurationDesignItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             configuration,
             design,
@@ -4759,9 +5515,13 @@ pub struct ConfigurationEffectivity_<'a> { // entity
 pub type ConfigurationEffectivity<'a> = Id<ConfigurationEffectivity_<'a>>;
 impl<'a> Parse<'a> for ConfigurationEffectivity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONFIGURATION_EFFECTIVITY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, usage) = <ProductDefinitionRelationship<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, configuration) = <ConfigurationDesign<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             usage,
@@ -4778,9 +5538,13 @@ pub struct ConfigurationInterpolation_<'a> { // entity
 pub type ConfigurationInterpolation<'a> = Id<ConfigurationInterpolation_<'a>>;
 impl<'a> Parse<'a> for ConfigurationInterpolation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONFIGURATION_INTERPOLATION(")(s)?;
         let (s, previous_configuration_definition) = <ConfigurationDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, next_configuration_definition) = <ConfigurationDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, interpolation) = <InterpolationType<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             previous_configuration_definition,
             next_configuration_definition,
@@ -4799,15 +5563,21 @@ pub struct ConfigurationItem_<'a> { // entity
 pub type ConfigurationItem<'a> = Id<ConfigurationItem_<'a>>;
 impl<'a> Parse<'a> for ConfigurationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONFIGURATION_ITEM(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_concept) = <ProductConcept<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -4825,8 +5595,11 @@ pub struct ConfiguredEffectivityAssignment_<'a> { // entity
 pub type ConfiguredEffectivityAssignment<'a> = Id<ConfiguredEffectivityAssignment_<'a>>;
 impl<'a> Parse<'a> for ConfiguredEffectivityAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONFIGURED_EFFECTIVITY_ASSIGNMENT(")(s)?;
         let (s, assigned_effectivity) = <Effectivity<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ConfiguredEffectivityItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_effectivity,
             items,
@@ -4842,9 +5615,13 @@ pub struct ConfiguredEffectivityContextAssignment_<'a> { // entity
 pub type ConfiguredEffectivityContextAssignment<'a> = Id<ConfiguredEffectivityContextAssignment_<'a>>;
 impl<'a> Parse<'a> for ConfiguredEffectivityContextAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONFIGURED_EFFECTIVITY_CONTEXT_ASSIGNMENT(")(s)?;
         let (s, assigned_effectivity_assignment) = <EffectivityAssignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <EffectivityContextRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<ConfiguredEffectivityContextItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_effectivity_assignment,
             role,
@@ -4886,8 +5663,11 @@ pub struct Conic_<'a> { // entity
 pub type Conic<'a> = Id<Conic_<'a>>;
 impl<'a> Parse<'a> for Conic_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONIC(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -4904,10 +5684,15 @@ pub struct ConicalSurface_<'a> { // entity
 pub type ConicalSurface<'a> = Id<ConicalSurface_<'a>>;
 impl<'a> Parse<'a> for ConicalSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONICAL_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, semi_angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -4924,8 +5709,11 @@ pub struct ConnectedEdgeSet_<'a> { // entity
 pub type ConnectedEdgeSet<'a> = Id<ConnectedEdgeSet_<'a>>;
 impl<'a> Parse<'a> for ConnectedEdgeSet_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONNECTED_EDGE_SET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ces_edges) = <Vec<Edge<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             ces_edges,
@@ -4940,8 +5728,11 @@ pub struct ConnectedFaceSet_<'a> { // entity
 pub type ConnectedFaceSet<'a> = Id<ConnectedFaceSet_<'a>>;
 impl<'a> Parse<'a> for ConnectedFaceSet_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONNECTED_FACE_SET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, cfs_faces) = <Vec<Face<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             cfs_faces,
@@ -4957,9 +5748,13 @@ pub struct ConnectedFaceSubSet_<'a> { // entity
 pub type ConnectedFaceSubSet<'a> = Id<ConnectedFaceSubSet_<'a>>;
 impl<'a> Parse<'a> for ConnectedFaceSubSet_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONNECTED_FACE_SUB_SET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, cfs_faces) = <Vec<Face<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_face_set) = <ConnectedFaceSet<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             cfs_faces,
@@ -4976,9 +5771,13 @@ pub struct ConstructiveGeometryRepresentation_<'a> { // entity
 pub type ConstructiveGeometryRepresentation<'a> = Id<ConstructiveGeometryRepresentation_<'a>>;
 impl<'a> Parse<'a> for ConstructiveGeometryRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONSTRUCTIVE_GEOMETRY_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -4996,12 +5795,17 @@ pub struct ConstructiveGeometryRepresentationRelationship_<'a> { // entity
 pub type ConstructiveGeometryRepresentationRelationship<'a> = Id<ConstructiveGeometryRepresentationRelationship_<'a>>;
 impl<'a> Parse<'a> for ConstructiveGeometryRepresentationRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONSTRUCTIVE_GEOMETRY_REPRESENTATION_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -5019,9 +5823,13 @@ pub struct ContactRatioRepresentation_<'a> { // entity
 pub type ContactRatioRepresentation<'a> = Id<ContactRatioRepresentation_<'a>>;
 impl<'a> Parse<'a> for ContactRatioRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONTACT_RATIO_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -5037,8 +5845,11 @@ pub struct ContextDependentInvisibility_<'a> { // entity
 pub type ContextDependentInvisibility<'a> = Id<ContextDependentInvisibility_<'a>>;
 impl<'a> Parse<'a> for ContextDependentInvisibility_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONTEXT_DEPENDENT_INVISIBILITY(")(s)?;
         let (s, invisible_items) = <Vec<InvisibleItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, presentation_context) = <InvisibilityContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             invisible_items,
             presentation_context,
@@ -5067,11 +5878,17 @@ pub struct ContextDependentOverRidingStyledItem_<'a> { // entity
 pub type ContextDependentOverRidingStyledItem<'a> = Id<ContextDependentOverRidingStyledItem_<'a>>;
 impl<'a> Parse<'a> for ContextDependentOverRidingStyledItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONTEXT_DEPENDENT_OVER_RIDING_STYLED_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, over_ridden_style) = <StyledItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, style_context) = <Vec<StyleContextSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -5089,8 +5906,11 @@ pub struct ContextDependentShapeRepresentation_<'a> { // entity
 pub type ContextDependentShapeRepresentation<'a> = Id<ContextDependentShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for ContextDependentShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONTEXT_DEPENDENT_SHAPE_REPRESENTATION(")(s)?;
         let (s, representation_relation) = <ShapeRepresentationRelationship<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, represented_product_relation) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             representation_relation,
             represented_product_relation,
@@ -5105,8 +5925,11 @@ pub struct ContextDependentUnit_<'a> { // entity
 pub type ContextDependentUnit<'a> = Id<ContextDependentUnit_<'a>>;
 impl<'a> Parse<'a> for ContextDependentUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONTEXT_DEPENDENT_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             name,
@@ -5122,9 +5945,13 @@ pub struct Contract_<'a> { // entity
 pub type Contract<'a> = Id<Contract_<'a>>;
 impl<'a> Parse<'a> for Contract_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONTRACT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, kind) = <ContractType<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             purpose,
@@ -5139,7 +5966,9 @@ pub struct ContractAssignment_<'a> { // entity
 pub type ContractAssignment<'a> = Id<ContractAssignment_<'a>>;
 impl<'a> Parse<'a> for ContractAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONTRACT_ASSIGNMENT(")(s)?;
         let (s, assigned_contract) = <Contract<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_contract,
             _marker: std::marker::PhantomData}))
@@ -5167,7 +5996,9 @@ pub struct ContractType_<'a> { // entity
 pub type ContractType<'a> = Id<ContractType_<'a>>;
 impl<'a> Parse<'a> for ContractType_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONTRACT_TYPE(")(s)?;
         let (s, description) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             description,
             _marker: std::marker::PhantomData}))
@@ -5181,9 +6012,14 @@ pub struct ConversionBasedUnit_<'a> { // entity
 pub type ConversionBasedUnit<'a> = Id<ConversionBasedUnit_<'a>>;
 impl<'a> Parse<'a> for ConversionBasedUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CONVERSION_BASED_UNIT(")(s)?;
+        let (s, _) = char('*')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, conversion_factor) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
+            dimensions,
             name,
             conversion_factor,
             _marker: std::marker::PhantomData}))
@@ -5198,11 +6034,15 @@ pub struct CoordinatedUniversalTimeOffset_<'a> { // entity
 pub type CoordinatedUniversalTimeOffset<'a> = Id<CoordinatedUniversalTimeOffset_<'a>>;
 impl<'a> Parse<'a> for CoordinatedUniversalTimeOffset_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COORDINATED_UNIVERSAL_TIME_OFFSET(")(s)?;
         let (s, hour_offset) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, minute_offset) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<i64>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, sense) = <AheadOrBehind<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             hour_offset,
             minute_offset,
@@ -5217,7 +6057,9 @@ pub struct CosFunction_<'a> { // entity
 pub type CosFunction<'a> = Id<CosFunction_<'a>>;
 impl<'a> Parse<'a> for CosFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("COS_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -5277,9 +6119,13 @@ pub struct CsgShapeRepresentation_<'a> { // entity
 pub type CsgShapeRepresentation<'a> = Id<CsgShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for CsgShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CSG_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -5295,8 +6141,11 @@ pub struct CsgSolid_<'a> { // entity
 pub type CsgSolid<'a> = Id<CsgSolid_<'a>>;
 impl<'a> Parse<'a> for CsgSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CSG_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, tree_root_expression) = <CsgSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             tree_root_expression,
@@ -5310,7 +6159,9 @@ pub struct Curve_<'a> { // entity
 pub type Curve<'a> = Id<Curve_<'a>>;
 impl<'a> Parse<'a> for Curve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -5326,10 +6177,15 @@ pub struct CurveBoundedSurface_<'a> { // entity
 pub type CurveBoundedSurface<'a> = Id<CurveBoundedSurface_<'a>>;
 impl<'a> Parse<'a> for CurveBoundedSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE_BOUNDED_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, boundaries) = <Vec<BoundaryCurve<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, implicit_outer) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_surface,
@@ -5346,8 +6202,11 @@ pub struct CurveDimension_<'a> { // entity
 pub type CurveDimension<'a> = Id<CurveDimension_<'a>>;
 impl<'a> Parse<'a> for CurveDimension_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE_DIMENSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -5400,9 +6259,13 @@ pub struct CurveReplica_<'a> { // entity
 pub type CurveReplica<'a> = Id<CurveReplica_<'a>>;
 impl<'a> Parse<'a> for CurveReplica_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE_REPLICA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transformation) = <CartesianTransformationOperator<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             parent_curve,
@@ -5420,10 +6283,15 @@ pub struct CurveStyle_<'a> { // entity
 pub type CurveStyle<'a> = Id<CurveStyle_<'a>>;
 impl<'a> Parse<'a> for CurveStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_font) = <CurveFontOrScaledCurveFontSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_width) = <SizeSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             curve_font,
@@ -5440,8 +6308,11 @@ pub struct CurveStyleFont_<'a> { // entity
 pub type CurveStyleFont<'a> = Id<CurveStyleFont_<'a>>;
 impl<'a> Parse<'a> for CurveStyleFont_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE_STYLE_FONT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pattern_list) = <Vec<CurveStyleFontPattern<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             pattern_list,
@@ -5456,8 +6327,11 @@ pub struct CurveStyleFontPattern_<'a> { // entity
 pub type CurveStyleFontPattern<'a> = Id<CurveStyleFontPattern_<'a>>;
 impl<'a> Parse<'a> for CurveStyleFontPattern_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE_STYLE_FONT_PATTERN(")(s)?;
         let (s, visible_segment_length) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, invisible_segment_length) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             visible_segment_length,
             invisible_segment_length,
@@ -5487,8 +6361,11 @@ pub struct CurveStyleRendering_<'a> { // entity
 pub type CurveStyleRendering<'a> = Id<CurveStyleRendering_<'a>>;
 impl<'a> Parse<'a> for CurveStyleRendering_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE_STYLE_RENDERING(")(s)?;
         let (s, rendering_method) = <ShadingCurveMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rendering_properties) = <SurfaceRenderingProperties<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             rendering_method,
             rendering_properties,
@@ -5504,9 +6381,13 @@ pub struct CurveSweptSolidShapeRepresentation_<'a> { // entity
 pub type CurveSweptSolidShapeRepresentation<'a> = Id<CurveSweptSolidShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for CurveSweptSolidShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CURVE_SWEPT_SOLID_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -5548,13 +6429,19 @@ pub struct CylindricalPair_<'a> { // entity
 pub type CylindricalPair<'a> = Id<CylindricalPair_<'a>>;
 impl<'a> Parse<'a> for CylindricalPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CYLINDRICAL_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -5575,11 +6462,17 @@ pub struct CylindricalPairRange_<'a> { // entity
 pub type CylindricalPairRange<'a> = Id<CylindricalPairRange_<'a>>;
 impl<'a> Parse<'a> for CylindricalPairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CYLINDRICAL_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_translation) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_translation) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_actual_translation,
@@ -5598,9 +6491,13 @@ pub struct CylindricalPairValue_<'a> { // entity
 pub type CylindricalPairValue<'a> = Id<CylindricalPairValue_<'a>>;
 impl<'a> Parse<'a> for CylindricalPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CYLINDRICAL_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_translation) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_rotation) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_translation,
@@ -5617,9 +6514,13 @@ pub struct CylindricalSurface_<'a> { // entity
 pub type CylindricalSurface<'a> = Id<CylindricalSurface_<'a>>;
 impl<'a> Parse<'a> for CylindricalSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CYLINDRICAL_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -5637,10 +6538,15 @@ pub struct CylindricityTolerance_<'a> { // entity
 pub type CylindricityTolerance<'a> = Id<CylindricityTolerance_<'a>>;
 impl<'a> Parse<'a> for CylindricityTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("CYLINDRICITY_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -5658,9 +6564,13 @@ pub struct DataEnvironment_<'a> { // entity
 pub type DataEnvironment<'a> = Id<DataEnvironment_<'a>>;
 impl<'a> Parse<'a> for DataEnvironment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATA_ENVIRONMENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, elements) = <Vec<PropertyDefinitionRepresentation<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -5675,7 +6585,9 @@ pub struct Date_<'a> { // entity
 pub type Date<'a> = Id<Date_<'a>>;
 impl<'a> Parse<'a> for Date_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATE(")(s)?;
         let (s, year_component) = <YearNumber<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             year_component,
             _marker: std::marker::PhantomData}))
@@ -5689,8 +6601,11 @@ pub struct DateAndTime_<'a> { // entity
 pub type DateAndTime<'a> = Id<DateAndTime_<'a>>;
 impl<'a> Parse<'a> for DateAndTime_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATE_AND_TIME(")(s)?;
         let (s, date_component) = <Date<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, time_component) = <LocalTime<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             date_component,
             time_component,
@@ -5705,8 +6620,11 @@ pub struct DateAndTimeAssignment_<'a> { // entity
 pub type DateAndTimeAssignment<'a> = Id<DateAndTimeAssignment_<'a>>;
 impl<'a> Parse<'a> for DateAndTimeAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATE_AND_TIME_ASSIGNMENT(")(s)?;
         let (s, assigned_date_and_time) = <DateAndTime<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <DateTimeRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_date_and_time,
             role,
@@ -5836,8 +6754,11 @@ pub struct DateAssignment_<'a> { // entity
 pub type DateAssignment<'a> = Id<DateAssignment_<'a>>;
 impl<'a> Parse<'a> for DateAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATE_ASSIGNMENT(")(s)?;
         let (s, assigned_date) = <Date<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <DateRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_date,
             role,
@@ -5966,7 +6887,9 @@ pub struct DateRole_<'a> { // entity
 pub type DateRole<'a> = Id<DateRole_<'a>>;
 impl<'a> Parse<'a> for DateRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATE_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -5992,7 +6915,9 @@ pub struct DateTimeRole_<'a> { // entity
 pub type DateTimeRole<'a> = Id<DateTimeRole_<'a>>;
 impl<'a> Parse<'a> for DateTimeRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATE_TIME_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -6022,11 +6947,15 @@ pub struct DatedEffectivity_<'a> { // entity
 pub type DatedEffectivity<'a> = Id<DatedEffectivity_<'a>>;
 impl<'a> Parse<'a> for DatedEffectivity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATED_EFFECTIVITY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, effectivity_end_date) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<DateTimeOrEventOccurrence<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, effectivity_start_date) = <DateTimeOrEventOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             effectivity_end_date,
@@ -6045,13 +6974,19 @@ pub struct Datum_<'a> { // entity
 pub type Datum<'a> = Id<Datum_<'a>>;
 impl<'a> Parse<'a> for Datum_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATUM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identification) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6071,12 +7006,17 @@ pub struct DatumFeature_<'a> { // entity
 pub type DatumFeature<'a> = Id<DatumFeature_<'a>>;
 impl<'a> Parse<'a> for DatumFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATUM_FEATURE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6093,8 +7033,11 @@ pub struct DatumFeatureCallout_<'a> { // entity
 pub type DatumFeatureCallout<'a> = Id<DatumFeatureCallout_<'a>>;
 impl<'a> Parse<'a> for DatumFeatureCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATUM_FEATURE_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -6109,8 +7052,11 @@ pub struct DatumReference_<'a> { // entity
 pub type DatumReference<'a> = Id<DatumReference_<'a>>;
 impl<'a> Parse<'a> for DatumReference_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATUM_REFERENCE(")(s)?;
         let (s, precedence) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, referenced_datum) = <Datum<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             precedence,
             referenced_datum,
@@ -6128,13 +7074,19 @@ pub struct DatumTarget_<'a> { // entity
 pub type DatumTarget<'a> = Id<DatumTarget_<'a>>;
 impl<'a> Parse<'a> for DatumTarget_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATUM_TARGET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, target_id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6152,8 +7104,11 @@ pub struct DatumTargetCallout_<'a> { // entity
 pub type DatumTargetCallout<'a> = Id<DatumTargetCallout_<'a>>;
 impl<'a> Parse<'a> for DatumTargetCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DATUM_TARGET_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -6180,9 +7135,13 @@ pub struct DefaultToleranceTable_<'a> { // entity
 pub type DefaultToleranceTable<'a> = Id<DefaultToleranceTable_<'a>>;
 impl<'a> Parse<'a> for DefaultToleranceTable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DEFAULT_TOLERANCE_TABLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -6198,8 +7157,11 @@ pub struct DefaultToleranceTableCell_<'a> { // entity
 pub type DefaultToleranceTableCell<'a> = Id<DefaultToleranceTableCell_<'a>>;
 impl<'a> Parse<'a> for DefaultToleranceTableCell_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DEFAULT_TOLERANCE_TABLE_CELL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_element) = <CompoundItemDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             item_element,
@@ -6215,9 +7177,13 @@ pub struct DefinedCharacterGlyph_<'a> { // entity
 pub type DefinedCharacterGlyph<'a> = Id<DefinedCharacterGlyph_<'a>>;
 impl<'a> Parse<'a> for DefinedCharacterGlyph_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DEFINED_CHARACTER_GLYPH(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <DefinedGlyphSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             definition,
@@ -6231,6 +7197,7 @@ pub struct DefinedFunction_<'a> { // entity
 pub type DefinedFunction<'a> = Id<DefinedFunction_<'a>>;
 impl<'a> Parse<'a> for DefinedFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DEFINED_FUNCTION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -6253,9 +7220,13 @@ pub struct DefinedSymbol_<'a> { // entity
 pub type DefinedSymbol<'a> = Id<DefinedSymbol_<'a>>;
 impl<'a> Parse<'a> for DefinedSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DEFINED_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <DefinedSymbolSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, target) = <SymbolTarget<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             definition,
@@ -6285,9 +7256,13 @@ pub struct DefinitionalRepresentation_<'a> { // entity
 pub type DefinitionalRepresentation<'a> = Id<DefinitionalRepresentation_<'a>>;
 impl<'a> Parse<'a> for DefinitionalRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DEFINITIONAL_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -6304,9 +7279,13 @@ pub struct DegeneratePcurve_<'a> { // entity
 pub type DegeneratePcurve<'a> = Id<DegeneratePcurve_<'a>>;
 impl<'a> Parse<'a> for DegeneratePcurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DEGENERATE_PCURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_to_curve) = <DefinitionalRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_surface,
@@ -6325,11 +7304,17 @@ pub struct DegenerateToroidalSurface_<'a> { // entity
 pub type DegenerateToroidalSurface<'a> = Id<DegenerateToroidalSurface_<'a>>;
 impl<'a> Parse<'a> for DegenerateToroidalSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DEGENERATE_TOROIDAL_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, major_radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, minor_radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, select_outer) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -6364,12 +7349,17 @@ pub struct DerivedShapeAspect_<'a> { // entity
 pub type DerivedShapeAspect<'a> = Id<DerivedShapeAspect_<'a>>;
 impl<'a> Parse<'a> for DerivedShapeAspect_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DERIVED_SHAPE_ASPECT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6385,7 +7375,9 @@ pub struct DerivedUnit_<'a> { // entity
 pub type DerivedUnit<'a> = Id<DerivedUnit_<'a>>;
 impl<'a> Parse<'a> for DerivedUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DERIVED_UNIT(")(s)?;
         let (s, elements) = <Vec<DerivedUnitElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             elements,
             _marker: std::marker::PhantomData}))
@@ -6399,8 +7391,11 @@ pub struct DerivedUnitElement_<'a> { // entity
 pub type DerivedUnitElement<'a> = Id<DerivedUnitElement_<'a>>;
 impl<'a> Parse<'a> for DerivedUnitElement_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DERIVED_UNIT_ELEMENT(")(s)?;
         let (s, unit) = <NamedUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, exponent) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             unit,
             exponent,
@@ -6414,7 +7409,9 @@ pub struct DerivedUnitVariable_<'a> { // entity
 pub type DerivedUnitVariable<'a> = Id<DerivedUnitVariable_<'a>>;
 impl<'a> Parse<'a> for DerivedUnitVariable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DERIVED_UNIT_VARIABLE(")(s)?;
         let (s, elements) = <Vec<DerivedUnitElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             elements,
             _marker: std::marker::PhantomData}))
@@ -6428,8 +7425,11 @@ pub struct DescriptionAttribute_<'a> { // entity
 pub type DescriptionAttribute<'a> = Id<DescriptionAttribute_<'a>>;
 impl<'a> Parse<'a> for DescriptionAttribute_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DESCRIPTION_ATTRIBUTE(")(s)?;
         let (s, attribute_value) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, described_item) = <DescriptionAttributeSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             attribute_value,
             described_item,
@@ -6492,8 +7492,11 @@ pub struct DescriptiveRepresentationItem_<'a> { // entity
 pub type DescriptiveRepresentationItem<'a> = Id<DescriptiveRepresentationItem_<'a>>;
 impl<'a> Parse<'a> for DescriptiveRepresentationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DESCRIPTIVE_REPRESENTATION_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6508,8 +7511,11 @@ pub struct DiameterDimension_<'a> { // entity
 pub type DiameterDimension<'a> = Id<DiameterDimension_<'a>>;
 impl<'a> Parse<'a> for DiameterDimension_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIAMETER_DIMENSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -6524,8 +7530,11 @@ pub struct DimensionCallout_<'a> { // entity
 pub type DimensionCallout<'a> = Id<DimensionCallout_<'a>>;
 impl<'a> Parse<'a> for DimensionCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -6542,10 +7551,15 @@ pub struct DimensionCalloutComponentRelationship_<'a> { // entity
 pub type DimensionCalloutComponentRelationship<'a> = Id<DimensionCalloutComponentRelationship_<'a>>;
 impl<'a> Parse<'a> for DimensionCalloutComponentRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_CALLOUT_COMPONENT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_draughting_callout) = <DraughtingCallout<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_draughting_callout) = <DraughtingCallout<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6564,10 +7578,15 @@ pub struct DimensionCalloutRelationship_<'a> { // entity
 pub type DimensionCalloutRelationship<'a> = Id<DimensionCalloutRelationship_<'a>>;
 impl<'a> Parse<'a> for DimensionCalloutRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_CALLOUT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_draughting_callout) = <DraughtingCallout<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_draughting_callout) = <DraughtingCallout<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6596,9 +7615,13 @@ pub struct DimensionCurve_<'a> { // entity
 pub type DimensionCurve<'a> = Id<DimensionCurve_<'a>>;
 impl<'a> Parse<'a> for DimensionCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -6614,8 +7637,11 @@ pub struct DimensionCurveDirectedCallout_<'a> { // entity
 pub type DimensionCurveDirectedCallout<'a> = Id<DimensionCurveDirectedCallout_<'a>>;
 impl<'a> Parse<'a> for DimensionCurveDirectedCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_CURVE_DIRECTED_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -6633,11 +7659,17 @@ pub struct DimensionCurveTerminator_<'a> { // entity
 pub type DimensionCurveTerminator<'a> = Id<DimensionCurveTerminator_<'a>>;
 impl<'a> Parse<'a> for DimensionCurveTerminator_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_CURVE_TERMINATOR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, annotated_curve) = <AnnotationCurveOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <DimensionExtentUsage<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -6671,10 +7703,15 @@ pub struct DimensionPair_<'a> { // entity
 pub type DimensionPair<'a> = Id<DimensionPair_<'a>>;
 impl<'a> Parse<'a> for DimensionPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_draughting_callout) = <DraughtingCallout<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_draughting_callout) = <DraughtingCallout<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6691,8 +7728,11 @@ pub struct DimensionRelatedToleranceZoneElement_<'a> { // entity
 pub type DimensionRelatedToleranceZoneElement<'a> = Id<DimensionRelatedToleranceZoneElement_<'a>>;
 impl<'a> Parse<'a> for DimensionRelatedToleranceZoneElement_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_RELATED_TOLERANCE_ZONE_ELEMENT(")(s)?;
         let (s, related_dimension) = <DimensionalLocation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_element) = <ToleranceZoneDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             related_dimension,
             related_element,
@@ -6713,14 +7753,23 @@ pub struct DimensionTextAssociativity_<'a> { // entity
 pub type DimensionTextAssociativity<'a> = Id<DimensionTextAssociativity_<'a>>;
 impl<'a> Parse<'a> for DimensionTextAssociativity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSION_TEXT_ASSOCIATIVITY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, literal) = <PresentableText<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alignment) = <TextAlignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <TextPath<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, font) = <FontSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_source) = <RepresentationMap<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_target) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             literal,
@@ -6754,8 +7803,11 @@ pub struct DimensionalCharacteristicRepresentation_<'a> { // entity
 pub type DimensionalCharacteristicRepresentation<'a> = Id<DimensionalCharacteristicRepresentation_<'a>>;
 impl<'a> Parse<'a> for DimensionalCharacteristicRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSIONAL_CHARACTERISTIC_REPRESENTATION(")(s)?;
         let (s, dimension) = <DimensionalCharacteristic<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, representation) = <ShapeDimensionRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimension,
             representation,
@@ -6775,13 +7827,21 @@ pub struct DimensionalExponents_<'a> { // entity
 pub type DimensionalExponents<'a> = Id<DimensionalExponents_<'a>>;
 impl<'a> Parse<'a> for DimensionalExponents_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSIONAL_EXPONENTS(")(s)?;
         let (s, length_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mass_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, time_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, electric_current_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, thermodynamic_temperature_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, amount_of_substance_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, luminous_intensity_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             length_exponent,
             mass_exponent,
@@ -6803,12 +7863,17 @@ pub struct DimensionalLocation_<'a> { // entity
 pub type DimensionalLocation<'a> = Id<DimensionalLocation_<'a>>;
 impl<'a> Parse<'a> for DimensionalLocation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSIONAL_LOCATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6828,13 +7893,19 @@ pub struct DimensionalLocationWithPath_<'a> { // entity
 pub type DimensionalLocationWithPath<'a> = Id<DimensionalLocationWithPath_<'a>>;
 impl<'a> Parse<'a> for DimensionalLocationWithPath_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSIONAL_LOCATION_WITH_PATH(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6852,8 +7923,11 @@ pub struct DimensionalSize_<'a> { // entity
 pub type DimensionalSize<'a> = Id<DimensionalSize_<'a>>;
 impl<'a> Parse<'a> for DimensionalSize_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSIONAL_SIZE(")(s)?;
         let (s, applies_to) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to,
             name,
@@ -6869,9 +7943,13 @@ pub struct DimensionalSizeWithPath_<'a> { // entity
 pub type DimensionalSizeWithPath<'a> = Id<DimensionalSizeWithPath_<'a>>;
 impl<'a> Parse<'a> for DimensionalSizeWithPath_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIMENSIONAL_SIZE_WITH_PATH(")(s)?;
         let (s, applies_to) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to,
             name,
@@ -6889,12 +7967,17 @@ pub struct DirectedAction_<'a> { // entity
 pub type DirectedAction<'a> = Id<DirectedAction_<'a>>;
 impl<'a> Parse<'a> for DirectedAction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIRECTED_ACTION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, directive) = <ActionDirective<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6913,12 +7996,17 @@ pub struct DirectedAngle_<'a> { // entity
 pub type DirectedAngle<'a> = Id<DirectedAngle_<'a>>;
 impl<'a> Parse<'a> for DirectedAngle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIRECTED_ANGLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6937,12 +8025,17 @@ pub struct DirectedDimensionalLocation_<'a> { // entity
 pub type DirectedDimensionalLocation<'a> = Id<DirectedDimensionalLocation_<'a>>;
 impl<'a> Parse<'a> for DirectedDimensionalLocation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIRECTED_DIMENSIONAL_LOCATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -6959,8 +8052,11 @@ pub struct Direction_<'a> { // entity
 pub type Direction<'a> = Id<Direction_<'a>>;
 impl<'a> Parse<'a> for Direction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIRECTION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, direction_ratios) = <Vec<f64>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             direction_ratios,
@@ -6989,9 +8085,13 @@ pub struct DirectionShapeRepresentation_<'a> { // entity
 pub type DirectionShapeRepresentation<'a> = Id<DirectionShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for DirectionShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIRECTION_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -7006,7 +8106,9 @@ pub struct DivExpression_<'a> { // entity
 pub type DivExpression<'a> = Id<DivExpression_<'a>>;
 impl<'a> Parse<'a> for DivExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DIV_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -7022,12 +8124,17 @@ pub struct Document_<'a> { // entity
 pub type Document<'a> = Id<Document_<'a>>;
 impl<'a> Parse<'a> for Document_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, kind) = <DocumentType<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -7049,20 +8156,27 @@ pub struct DocumentFile_<'a> { // entity
 pub type DocumentFile<'a> = Id<DocumentFile_<'a>>;
 impl<'a> Parse<'a> for DocumentFile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_FILE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, document__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, document__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, kind) = <DocumentType<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             document__name,
@@ -7083,12 +8197,17 @@ pub struct DocumentProductAssociation_<'a> { // entity
 pub type DocumentProductAssociation<'a> = Id<DocumentProductAssociation_<'a>>;
 impl<'a> Parse<'a> for DocumentProductAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_PRODUCT_ASSOCIATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_document) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product) = <ProductOrFormationOrDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -7107,12 +8226,17 @@ pub struct DocumentProductEquivalence_<'a> { // entity
 pub type DocumentProductEquivalence<'a> = Id<DocumentProductEquivalence_<'a>>;
 impl<'a> Parse<'a> for DocumentProductEquivalence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_PRODUCT_EQUIVALENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_document) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product) = <ProductOrFormationOrDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -7129,8 +8253,11 @@ pub struct DocumentReference_<'a> { // entity
 pub type DocumentReference<'a> = Id<DocumentReference_<'a>>;
 impl<'a> Parse<'a> for DocumentReference_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_REFERENCE(")(s)?;
         let (s, assigned_document) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_document,
             source,
@@ -7240,12 +8367,17 @@ pub struct DocumentRelationship_<'a> { // entity
 pub type DocumentRelationship<'a> = Id<DocumentRelationship_<'a>>;
 impl<'a> Parse<'a> for DocumentRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_document) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_document) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -7262,8 +8394,11 @@ pub struct DocumentRepresentationType_<'a> { // entity
 pub type DocumentRepresentationType<'a> = Id<DocumentRepresentationType_<'a>>;
 impl<'a> Parse<'a> for DocumentRepresentationType_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_REPRESENTATION_TYPE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, represented_document) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             represented_document,
@@ -7277,7 +8412,9 @@ pub struct DocumentType_<'a> { // entity
 pub type DocumentType<'a> = Id<DocumentType_<'a>>;
 impl<'a> Parse<'a> for DocumentType_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_TYPE(")(s)?;
         let (s, product_data_type) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             product_data_type,
             _marker: std::marker::PhantomData}))
@@ -7292,9 +8429,13 @@ pub struct DocumentUsageConstraint_<'a> { // entity
 pub type DocumentUsageConstraint<'a> = Id<DocumentUsageConstraint_<'a>>;
 impl<'a> Parse<'a> for DocumentUsageConstraint_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_USAGE_CONSTRAINT(")(s)?;
         let (s, source) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, subject_element) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, subject_element_value) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             source,
             subject_element,
@@ -7310,8 +8451,11 @@ pub struct DocumentUsageConstraintAssignment_<'a> { // entity
 pub type DocumentUsageConstraintAssignment<'a> = Id<DocumentUsageConstraintAssignment_<'a>>;
 impl<'a> Parse<'a> for DocumentUsageConstraintAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_USAGE_CONSTRAINT_ASSIGNMENT(")(s)?;
         let (s, assigned_document_usage) = <DocumentUsageConstraint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <DocumentUsageRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_document_usage,
             role,
@@ -7326,10 +8470,13 @@ pub struct DocumentUsageRole_<'a> { // entity
 pub type DocumentUsageRole<'a> = Id<DocumentUsageRole_<'a>>;
 impl<'a> Parse<'a> for DocumentUsageRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DOCUMENT_USAGE_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -7345,9 +8492,13 @@ pub struct DraughtingAnnotationOccurrence_<'a> { // entity
 pub type DraughtingAnnotationOccurrence<'a> = Id<DraughtingAnnotationOccurrence_<'a>>;
 impl<'a> Parse<'a> for DraughtingAnnotationOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_ANNOTATION_OCCURRENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -7363,8 +8514,11 @@ pub struct DraughtingCallout_<'a> { // entity
 pub type DraughtingCallout<'a> = Id<DraughtingCallout_<'a>>;
 impl<'a> Parse<'a> for DraughtingCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -7396,10 +8550,15 @@ pub struct DraughtingCalloutRelationship_<'a> { // entity
 pub type DraughtingCalloutRelationship<'a> = Id<DraughtingCalloutRelationship_<'a>>;
 impl<'a> Parse<'a> for DraughtingCalloutRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_CALLOUT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_draughting_callout) = <DraughtingCallout<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_draughting_callout) = <DraughtingCallout<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -7416,8 +8575,11 @@ pub struct DraughtingElements_<'a> { // entity
 pub type DraughtingElements<'a> = Id<DraughtingElements_<'a>>;
 impl<'a> Parse<'a> for DraughtingElements_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_ELEMENTS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -7433,9 +8595,13 @@ pub struct DraughtingModel_<'a> { // entity
 pub type DraughtingModel<'a> = Id<DraughtingModel_<'a>>;
 impl<'a> Parse<'a> for DraughtingModel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_MODEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -7454,13 +8620,19 @@ pub struct DraughtingModelItemAssociation_<'a> { // entity
 pub type DraughtingModelItemAssociation<'a> = Id<DraughtingModelItemAssociation_<'a>>;
 impl<'a> Parse<'a> for DraughtingModelItemAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_MODEL_ITEM_ASSOCIATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <RepresentedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, used_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identified_item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -7490,7 +8662,9 @@ pub struct DraughtingPreDefinedColour_<'a> { // entity
 pub type DraughtingPreDefinedColour<'a> = Id<DraughtingPreDefinedColour_<'a>>;
 impl<'a> Parse<'a> for DraughtingPreDefinedColour_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_PRE_DEFINED_COLOUR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -7503,7 +8677,9 @@ pub struct DraughtingPreDefinedCurveFont_<'a> { // entity
 pub type DraughtingPreDefinedCurveFont<'a> = Id<DraughtingPreDefinedCurveFont_<'a>>;
 impl<'a> Parse<'a> for DraughtingPreDefinedCurveFont_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_PRE_DEFINED_CURVE_FONT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -7516,7 +8692,9 @@ pub struct DraughtingPreDefinedTextFont_<'a> { // entity
 pub type DraughtingPreDefinedTextFont<'a> = Id<DraughtingPreDefinedTextFont_<'a>>;
 impl<'a> Parse<'a> for DraughtingPreDefinedTextFont_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_PRE_DEFINED_TEXT_FONT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -7531,9 +8709,13 @@ pub struct DraughtingSpecificationReference_<'a> { // entity
 pub type DraughtingSpecificationReference<'a> = Id<DraughtingSpecificationReference_<'a>>;
 impl<'a> Parse<'a> for DraughtingSpecificationReference_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_SPECIFICATION_REFERENCE(")(s)?;
         let (s, assigned_document) = <Document<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, specified_items) = <Vec<SpecifiedItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_document,
             source,
@@ -7550,9 +8732,13 @@ pub struct DraughtingSubfigureRepresentation_<'a> { // entity
 pub type DraughtingSubfigureRepresentation<'a> = Id<DraughtingSubfigureRepresentation_<'a>>;
 impl<'a> Parse<'a> for DraughtingSubfigureRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_SUBFIGURE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -7569,9 +8755,13 @@ pub struct DraughtingSymbolRepresentation_<'a> { // entity
 pub type DraughtingSymbolRepresentation<'a> = Id<DraughtingSymbolRepresentation_<'a>>;
 impl<'a> Parse<'a> for DraughtingSymbolRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_SYMBOL_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -7592,13 +8782,21 @@ pub struct DraughtingTextLiteralWithDelineation_<'a> { // entity
 pub type DraughtingTextLiteralWithDelineation<'a> = Id<DraughtingTextLiteralWithDelineation_<'a>>;
 impl<'a> Parse<'a> for DraughtingTextLiteralWithDelineation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_TEXT_LITERAL_WITH_DELINEATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, literal) = <PresentableText<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alignment) = <TextAlignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <TextPath<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, font) = <FontSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, delineation) = <TextDelineation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             literal,
@@ -7619,9 +8817,13 @@ pub struct DraughtingTitle_<'a> { // entity
 pub type DraughtingTitle<'a> = Id<DraughtingTitle_<'a>>;
 impl<'a> Parse<'a> for DraughtingTitle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAUGHTING_TITLE(")(s)?;
         let (s, items) = <Vec<DraughtingTitledItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, language) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             items,
             language,
@@ -7650,10 +8852,13 @@ pub struct DrawingDefinition_<'a> { // entity
 pub type DrawingDefinition<'a> = Id<DrawingDefinition_<'a>>;
 impl<'a> Parse<'a> for DrawingDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAWING_DEFINITION(")(s)?;
         let (s, drawing_number) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, drawing_type) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             drawing_number,
             drawing_type,
@@ -7669,11 +8874,15 @@ pub struct DrawingRevision_<'a> { // entity
 pub type DrawingRevision<'a> = Id<DrawingRevision_<'a>>;
 impl<'a> Parse<'a> for DrawingRevision_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAWING_REVISION(")(s)?;
         let (s, revision_identifier) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, drawing_identifier) = <DrawingDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, intended_scale) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             revision_identifier,
             drawing_identifier,
@@ -7689,8 +8898,11 @@ pub struct DrawingRevisionSequence_<'a> { // entity
 pub type DrawingRevisionSequence<'a> = Id<DrawingRevisionSequence_<'a>>;
 impl<'a> Parse<'a> for DrawingRevisionSequence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAWING_REVISION_SEQUENCE(")(s)?;
         let (s, predecessor) = <DrawingRevision<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, successor) = <DrawingRevision<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             predecessor,
             successor,
@@ -7706,9 +8918,13 @@ pub struct DrawingSheetLayout_<'a> { // entity
 pub type DrawingSheetLayout<'a> = Id<DrawingSheetLayout_<'a>>;
 impl<'a> Parse<'a> for DrawingSheetLayout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAWING_SHEET_LAYOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -7726,10 +8942,15 @@ pub struct DrawingSheetRevision_<'a> { // entity
 pub type DrawingSheetRevision<'a> = Id<DrawingSheetRevision_<'a>>;
 impl<'a> Parse<'a> for DrawingSheetRevision_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAWING_SHEET_REVISION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, revision_identifier) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -7747,9 +8968,13 @@ pub struct DrawingSheetRevisionUsage_<'a> { // entity
 pub type DrawingSheetRevisionUsage<'a> = Id<DrawingSheetRevisionUsage_<'a>>;
 impl<'a> Parse<'a> for DrawingSheetRevisionUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("DRAWING_SHEET_REVISION_USAGE(")(s)?;
         let (s, area) = <PresentationArea<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, in_set) = <PresentationSet<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, sheet_number) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             area,
             in_set,
@@ -7766,9 +8991,13 @@ pub struct Edge_<'a> { // entity
 pub type Edge<'a> = Id<Edge_<'a>>;
 impl<'a> Parse<'a> for Edge_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EDGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_start) = <Vertex<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_end) = <Vertex<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             edge_start,
@@ -7784,8 +9013,11 @@ pub struct EdgeBasedWireframeModel_<'a> { // entity
 pub type EdgeBasedWireframeModel<'a> = Id<EdgeBasedWireframeModel_<'a>>;
 impl<'a> Parse<'a> for EdgeBasedWireframeModel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EDGE_BASED_WIREFRAME_MODEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ebwm_boundary) = <Vec<ConnectedEdgeSet<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             ebwm_boundary,
@@ -7801,9 +9033,13 @@ pub struct EdgeBasedWireframeShapeRepresentation_<'a> { // entity
 pub type EdgeBasedWireframeShapeRepresentation<'a> = Id<EdgeBasedWireframeShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for EdgeBasedWireframeShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EDGE_BASED_WIREFRAME_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -7822,11 +9058,17 @@ pub struct EdgeCurve_<'a> { // entity
 pub type EdgeCurve<'a> = Id<EdgeCurve_<'a>>;
 impl<'a> Parse<'a> for EdgeCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EDGE_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_start) = <Vertex<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_end) = <Vertex<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_geometry) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, same_sense) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             edge_start,
@@ -7844,8 +9086,11 @@ pub struct EdgeLoop_<'a> { // entity
 pub type EdgeLoop<'a> = Id<EdgeLoop_<'a>>;
 impl<'a> Parse<'a> for EdgeLoop_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EDGE_LOOP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_list) = <Vec<OrientedEdge<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             edge_list,
@@ -7862,12 +9107,17 @@ pub struct EdgeRound_<'a> { // entity
 pub type EdgeRound<'a> = Id<EdgeRound_<'a>>;
 impl<'a> Parse<'a> for EdgeRound_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EDGE_ROUND(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -7883,7 +9133,9 @@ pub struct Effectivity_<'a> { // entity
 pub type Effectivity<'a> = Id<Effectivity_<'a>>;
 impl<'a> Parse<'a> for Effectivity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EFFECTIVITY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             _marker: std::marker::PhantomData}))
@@ -7896,7 +9148,9 @@ pub struct EffectivityAssignment_<'a> { // entity
 pub type EffectivityAssignment<'a> = Id<EffectivityAssignment_<'a>>;
 impl<'a> Parse<'a> for EffectivityAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EFFECTIVITY_ASSIGNMENT(")(s)?;
         let (s, assigned_effectivity) = <Effectivity<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_effectivity,
             _marker: std::marker::PhantomData}))
@@ -7910,8 +9164,11 @@ pub struct EffectivityContextAssignment_<'a> { // entity
 pub type EffectivityContextAssignment<'a> = Id<EffectivityContextAssignment_<'a>>;
 impl<'a> Parse<'a> for EffectivityContextAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EFFECTIVITY_CONTEXT_ASSIGNMENT(")(s)?;
         let (s, assigned_effectivity_assignment) = <EffectivityAssignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <EffectivityContextRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_effectivity_assignment,
             role,
@@ -7926,10 +9183,13 @@ pub struct EffectivityContextRole_<'a> { // entity
 pub type EffectivityContextRole<'a> = Id<EffectivityContextRole_<'a>>;
 impl<'a> Parse<'a> for EffectivityContextRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EFFECTIVITY_CONTEXT_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8026,12 +9286,17 @@ pub struct EffectivityRelationship_<'a> { // entity
 pub type EffectivityRelationship<'a> = Id<EffectivityRelationship_<'a>>;
 impl<'a> Parse<'a> for EffectivityRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EFFECTIVITY_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_effectivity) = <Effectivity<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_effectivity) = <Effectivity<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8059,8 +9324,11 @@ pub struct ElectricCurrentMeasureWithUnit_<'a> { // entity
 pub type ElectricCurrentMeasureWithUnit<'a> = Id<ElectricCurrentMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for ElectricCurrentMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ELECTRIC_CURRENT_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -8074,7 +9342,9 @@ pub struct ElectricCurrentUnit_<'a> { // entity
 pub type ElectricCurrentUnit<'a> = Id<ElectricCurrentUnit_<'a>>;
 impl<'a> Parse<'a> for ElectricCurrentUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ELECTRIC_CURRENT_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -8089,11 +9359,15 @@ pub struct ElementDelivery_<'a> { // entity
 pub type ElementDelivery<'a> = Id<ElementDelivery_<'a>>;
 impl<'a> Parse<'a> for ElementDelivery_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ELEMENT_DELIVERY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8109,8 +9383,11 @@ pub struct ElementarySurface_<'a> { // entity
 pub type ElementarySurface<'a> = Id<ElementarySurface_<'a>>;
 impl<'a> Parse<'a> for ElementarySurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ELEMENTARY_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -8127,10 +9404,15 @@ pub struct Ellipse_<'a> { // entity
 pub type Ellipse<'a> = Id<Ellipse_<'a>>;
 impl<'a> Parse<'a> for Ellipse_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ELLIPSE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, semi_axis_1) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, semi_axis_2) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -8147,8 +9429,11 @@ pub struct Environment_<'a> { // entity
 pub type Environment<'a> = Id<Environment_<'a>>;
 impl<'a> Parse<'a> for Environment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ENVIRONMENT(")(s)?;
         let (s, syntactic_representation) = <GenericVariable<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, semantics) = <VariableSemantics<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             syntactic_representation,
             semantics,
@@ -8162,7 +9447,9 @@ pub struct EqualsExpression_<'a> { // entity
 pub type EqualsExpression<'a> = Id<EqualsExpression_<'a>>;
 impl<'a> Parse<'a> for EqualsExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EQUALS_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -8178,10 +9465,15 @@ pub struct EvaluatedDegeneratePcurve_<'a> { // entity
 pub type EvaluatedDegeneratePcurve<'a> = Id<EvaluatedDegeneratePcurve_<'a>>;
 impl<'a> Parse<'a> for EvaluatedDegeneratePcurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EVALUATED_DEGENERATE_PCURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_to_curve) = <DefinitionalRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, equivalent_point) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_surface,
@@ -8199,11 +9491,15 @@ pub struct EventOccurrence_<'a> { // entity
 pub type EventOccurrence<'a> = Id<EventOccurrence_<'a>>;
 impl<'a> Parse<'a> for EventOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EVENT_OCCURRENCE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -8219,8 +9515,11 @@ pub struct EventOccurrenceAssignment_<'a> { // entity
 pub type EventOccurrenceAssignment<'a> = Id<EventOccurrenceAssignment_<'a>>;
 impl<'a> Parse<'a> for EventOccurrenceAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EVENT_OCCURRENCE_ASSIGNMENT(")(s)?;
         let (s, assigned_event_occurrence) = <EventOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <EventOccurrenceRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_event_occurrence,
             role,
@@ -8235,8 +9534,11 @@ pub struct EventOccurrenceContextAssignment_<'a> { // entity
 pub type EventOccurrenceContextAssignment<'a> = Id<EventOccurrenceContextAssignment_<'a>>;
 impl<'a> Parse<'a> for EventOccurrenceContextAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EVENT_OCCURRENCE_CONTEXT_ASSIGNMENT(")(s)?;
         let (s, assigned_event_occurrence_assignment) = <EventOccurrenceAssignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <EventOccurrenceContextRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_event_occurrence_assignment,
             role,
@@ -8251,10 +9553,13 @@ pub struct EventOccurrenceContextRole_<'a> { // entity
 pub type EventOccurrenceContextRole<'a> = Id<EventOccurrenceContextRole_<'a>>;
 impl<'a> Parse<'a> for EventOccurrenceContextRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EVENT_OCCURRENCE_CONTEXT_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8378,10 +9683,13 @@ pub struct EventOccurrenceRole_<'a> { // entity
 pub type EventOccurrenceRole<'a> = Id<EventOccurrenceRole_<'a>>;
 impl<'a> Parse<'a> for EventOccurrenceRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EVENT_OCCURRENCE_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8396,10 +9704,13 @@ pub struct ExclusiveProductConceptFeatureCategory_<'a> { // entity
 pub type ExclusiveProductConceptFeatureCategory<'a> = Id<ExclusiveProductConceptFeatureCategory_<'a>>;
 impl<'a> Parse<'a> for ExclusiveProductConceptFeatureCategory_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXCLUSIVE_PRODUCT_CONCEPT_FEATURE_CATEGORY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8415,11 +9726,15 @@ pub struct ExecutedAction_<'a> { // entity
 pub type ExecutedAction<'a> = Id<ExecutedAction_<'a>>;
 impl<'a> Parse<'a> for ExecutedAction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXECUTED_ACTION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8434,7 +9749,9 @@ pub struct ExpFunction_<'a> { // entity
 pub type ExpFunction<'a> = Id<ExpFunction_<'a>>;
 impl<'a> Parse<'a> for ExpFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXP_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -8446,6 +9763,7 @@ pub struct Expression_<'a> { // entity
 pub type Expression<'a> = Id<Expression_<'a>>;
 impl<'a> Parse<'a> for Expression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -8458,8 +9776,11 @@ pub struct ExpressionConversionBasedUnit_<'a> { // entity
 pub type ExpressionConversionBasedUnit<'a> = Id<ExpressionConversionBasedUnit_<'a>>;
 impl<'a> Parse<'a> for ExpressionConversionBasedUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXPRESSION_CONVERSION_BASED_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             name,
@@ -8476,12 +9797,17 @@ pub struct Extension_<'a> { // entity
 pub type Extension<'a> = Id<Extension_<'a>>;
 impl<'a> Parse<'a> for Extension_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTENSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8499,9 +9825,13 @@ pub struct ExternalIdentificationAssignment_<'a> { // entity
 pub type ExternalIdentificationAssignment<'a> = Id<ExternalIdentificationAssignment_<'a>>;
 impl<'a> Parse<'a> for ExternalIdentificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNAL_IDENTIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <IdentificationRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_id,
             role,
@@ -8533,7 +9863,9 @@ pub struct ExternalSource_<'a> { // entity
 pub type ExternalSource<'a> = Id<ExternalSource_<'a>>;
 impl<'a> Parse<'a> for ExternalSource_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNAL_SOURCE(")(s)?;
         let (s, source_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             source_id,
             _marker: std::marker::PhantomData}))
@@ -8547,8 +9879,11 @@ pub struct ExternallyDefinedCharacterGlyph_<'a> { // entity
 pub type ExternallyDefinedCharacterGlyph<'a> = Id<ExternallyDefinedCharacterGlyph_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedCharacterGlyph_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_CHARACTER_GLYPH(")(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             item_id,
             source,
@@ -8565,12 +9900,17 @@ pub struct ExternallyDefinedClass_<'a> { // entity
 pub type ExternallyDefinedClass<'a> = Id<ExternallyDefinedClass_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedClass_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_CLASS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8587,8 +9927,11 @@ pub struct ExternallyDefinedCurveFont_<'a> { // entity
 pub type ExternallyDefinedCurveFont<'a> = Id<ExternallyDefinedCurveFont_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedCurveFont_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_CURVE_FONT(")(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             item_id,
             source,
@@ -8605,10 +9948,15 @@ pub struct ExternallyDefinedDimensionDefinition_<'a> { // entity
 pub type ExternallyDefinedDimensionDefinition<'a> = Id<ExternallyDefinedDimensionDefinition_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedDimensionDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_DIMENSION_DEFINITION(")(s)?;
         let (s, applies_to) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to,
             name,
@@ -8627,12 +9975,17 @@ pub struct ExternallyDefinedFeatureDefinition_<'a> { // entity
 pub type ExternallyDefinedFeatureDefinition<'a> = Id<ExternallyDefinedFeatureDefinition_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedFeatureDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_FEATURE_DEFINITION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8652,13 +10005,19 @@ pub struct ExternallyDefinedGeneralProperty_<'a> { // entity
 pub type ExternallyDefinedGeneralProperty<'a> = Id<ExternallyDefinedGeneralProperty_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedGeneralProperty_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_GENERAL_PROPERTY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -8677,9 +10036,13 @@ pub struct ExternallyDefinedHatchStyle_<'a> { // entity
 pub type ExternallyDefinedHatchStyle<'a> = Id<ExternallyDefinedHatchStyle_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedHatchStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_HATCH_STYLE(")(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             item_id,
             source,
@@ -8695,8 +10058,11 @@ pub struct ExternallyDefinedItem_<'a> { // entity
 pub type ExternallyDefinedItem<'a> = Id<ExternallyDefinedItem_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_ITEM(")(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             item_id,
             source,
@@ -8713,12 +10079,17 @@ pub struct ExternallyDefinedItemRelationship_<'a> { // entity
 pub type ExternallyDefinedItemRelationship<'a> = Id<ExternallyDefinedItemRelationship_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedItemRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_ITEM_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_item) = <ExternallyDefinedItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_item) = <ExternallyDefinedItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -8735,8 +10106,11 @@ pub struct ExternallyDefinedStyle_<'a> { // entity
 pub type ExternallyDefinedStyle<'a> = Id<ExternallyDefinedStyle_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_STYLE(")(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             item_id,
             source,
@@ -8751,8 +10125,11 @@ pub struct ExternallyDefinedSymbol_<'a> { // entity
 pub type ExternallyDefinedSymbol<'a> = Id<ExternallyDefinedSymbol_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_SYMBOL(")(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             item_id,
             source,
@@ -8767,8 +10144,11 @@ pub struct ExternallyDefinedTextFont_<'a> { // entity
 pub type ExternallyDefinedTextFont<'a> = Id<ExternallyDefinedTextFont_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedTextFont_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_TEXT_FONT(")(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             item_id,
             source,
@@ -8784,9 +10164,13 @@ pub struct ExternallyDefinedTileStyle_<'a> { // entity
 pub type ExternallyDefinedTileStyle<'a> = Id<ExternallyDefinedTileStyle_<'a>>;
 impl<'a> Parse<'a> for ExternallyDefinedTileStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTERNALLY_DEFINED_TILE_STYLE(")(s)?;
         let (s, item_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <ExternalSource<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             item_id,
             source,
@@ -8804,10 +10188,15 @@ pub struct ExtrudedAreaSolid_<'a> { // entity
 pub type ExtrudedAreaSolid<'a> = Id<ExtrudedAreaSolid_<'a>>;
 impl<'a> Parse<'a> for ExtrudedAreaSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTRUDED_AREA_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_area) = <CurveBoundedSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, extruded_direction) = <Direction<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, depth) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_area,
@@ -8826,10 +10215,15 @@ pub struct ExtrudedFaceSolid_<'a> { // entity
 pub type ExtrudedFaceSolid<'a> = Id<ExtrudedFaceSolid_<'a>>;
 impl<'a> Parse<'a> for ExtrudedFaceSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("EXTRUDED_FACE_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_face) = <FaceSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, extruded_direction) = <Direction<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, depth) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_face,
@@ -8846,8 +10240,11 @@ pub struct Face_<'a> { // entity
 pub type Face<'a> = Id<Face_<'a>>;
 impl<'a> Parse<'a> for Face_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, bounds) = <Vec<FaceBound<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             bounds,
@@ -8862,8 +10259,11 @@ pub struct FaceBasedSurfaceModel_<'a> { // entity
 pub type FaceBasedSurfaceModel<'a> = Id<FaceBasedSurfaceModel_<'a>>;
 impl<'a> Parse<'a> for FaceBasedSurfaceModel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FACE_BASED_SURFACE_MODEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, fbsm_faces) = <Vec<ConnectedFaceSet<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             fbsm_faces,
@@ -8879,9 +10279,13 @@ pub struct FaceBound_<'a> { // entity
 pub type FaceBound<'a> = Id<FaceBound_<'a>>;
 impl<'a> Parse<'a> for FaceBound_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FACE_BOUND(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, bound) = <Loop<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             bound,
@@ -8898,9 +10302,13 @@ pub struct FaceOuterBound_<'a> { // entity
 pub type FaceOuterBound<'a> = Id<FaceOuterBound_<'a>>;
 impl<'a> Parse<'a> for FaceOuterBound_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FACE_OUTER_BOUND(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, bound) = <Loop<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             bound,
@@ -8917,9 +10325,13 @@ pub struct FaceShapeRepresentation_<'a> { // entity
 pub type FaceShapeRepresentation<'a> = Id<FaceShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for FaceShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FACE_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -8937,10 +10349,15 @@ pub struct FaceSurface_<'a> { // entity
 pub type FaceSurface<'a> = Id<FaceSurface_<'a>>;
 impl<'a> Parse<'a> for FaceSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FACE_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, bounds) = <Vec<FaceBound<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, face_geometry) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, same_sense) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             bounds,
@@ -8957,8 +10374,11 @@ pub struct FacetedBrep_<'a> { // entity
 pub type FacetedBrep<'a> = Id<FacetedBrep_<'a>>;
 impl<'a> Parse<'a> for FacetedBrep_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FACETED_BREP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, outer) = <ClosedShell<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             outer,
@@ -8974,9 +10394,13 @@ pub struct FacetedBrepShapeRepresentation_<'a> { // entity
 pub type FacetedBrepShapeRepresentation<'a> = Id<FacetedBrepShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for FacetedBrepShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FACETED_BREP_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -8992,10 +10416,13 @@ pub struct FeatureComponentDefinition_<'a> { // entity
 pub type FeatureComponentDefinition<'a> = Id<FeatureComponentDefinition_<'a>>;
 impl<'a> Parse<'a> for FeatureComponentDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FEATURE_COMPONENT_DEFINITION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9012,12 +10439,17 @@ pub struct FeatureComponentRelationship_<'a> { // entity
 pub type FeatureComponentRelationship<'a> = Id<FeatureComponentRelationship_<'a>>;
 impl<'a> Parse<'a> for FeatureComponentRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FEATURE_COMPONENT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9034,10 +10466,13 @@ pub struct FeatureDefinition_<'a> { // entity
 pub type FeatureDefinition<'a> = Id<FeatureDefinition_<'a>>;
 impl<'a> Parse<'a> for FeatureDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FEATURE_DEFINITION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9052,10 +10487,13 @@ pub struct FeatureInPanel_<'a> { // entity
 pub type FeatureInPanel<'a> = Id<FeatureInPanel_<'a>>;
 impl<'a> Parse<'a> for FeatureInPanel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FEATURE_IN_PANEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9070,10 +10508,13 @@ pub struct FeaturePattern_<'a> { // entity
 pub type FeaturePattern<'a> = Id<FeaturePattern_<'a>>;
 impl<'a> Parse<'a> for FeaturePattern_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FEATURE_PATTERN(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9089,11 +10530,15 @@ pub struct FeaturedShape_<'a> { // entity
 pub type FeaturedShape<'a> = Id<FeaturedShape_<'a>>;
 impl<'a> Parse<'a> for FeaturedShape_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FEATURED_SHAPE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <CharacterizedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9109,8 +10554,11 @@ pub struct FillAreaStyle_<'a> { // entity
 pub type FillAreaStyle<'a> = Id<FillAreaStyle_<'a>>;
 impl<'a> Parse<'a> for FillAreaStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FILL_AREA_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, fill_styles) = <Vec<FillStyleSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             fill_styles,
@@ -9125,8 +10573,11 @@ pub struct FillAreaStyleColour_<'a> { // entity
 pub type FillAreaStyleColour<'a> = Id<FillAreaStyleColour_<'a>>;
 impl<'a> Parse<'a> for FillAreaStyleColour_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FILL_AREA_STYLE_COLOUR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, fill_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             fill_colour,
@@ -9145,12 +10596,19 @@ pub struct FillAreaStyleHatching_<'a> { // entity
 pub type FillAreaStyleHatching<'a> = Id<FillAreaStyleHatching_<'a>>;
 impl<'a> Parse<'a> for FillAreaStyleHatching_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FILL_AREA_STYLE_HATCHING(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, hatch_line_appearance) = <CurveStyle<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, start_of_next_hatch_line) = <OneDirectionRepeatFactor<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, point_of_reference_hatch_line) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pattern_start) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, hatch_line_angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             hatch_line_appearance,
@@ -9178,8 +10636,11 @@ pub struct FillAreaStyleTileSymbolWithStyle_<'a> { // entity
 pub type FillAreaStyleTileSymbolWithStyle<'a> = Id<FillAreaStyleTileSymbolWithStyle_<'a>>;
 impl<'a> Parse<'a> for FillAreaStyleTileSymbolWithStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FILL_AREA_STYLE_TILE_SYMBOL_WITH_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, symbol) = <AnnotationSymbolOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             symbol,
@@ -9196,10 +10657,15 @@ pub struct FillAreaStyleTiles_<'a> { // entity
 pub type FillAreaStyleTiles<'a> = Id<FillAreaStyleTiles_<'a>>;
 impl<'a> Parse<'a> for FillAreaStyleTiles_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FILL_AREA_STYLE_TILES(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, tiling_pattern) = <TwoDirectionRepeatFactor<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, tiles) = <Vec<FillAreaStyleTileShapeSelect<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, tiling_scale) = <PositiveRatioMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             tiling_pattern,
@@ -9237,12 +10703,17 @@ pub struct Fillet_<'a> { // entity
 pub type Fillet<'a> = Id<Fillet_<'a>>;
 impl<'a> Parse<'a> for Fillet_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FILLET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9261,10 +10732,15 @@ pub struct FlatnessTolerance_<'a> { // entity
 pub type FlatnessTolerance<'a> = Id<FlatnessTolerance_<'a>>;
 impl<'a> Parse<'a> for FlatnessTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FLATNESS_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9293,7 +10769,9 @@ pub struct FormatFunction_<'a> { // entity
 pub type FormatFunction<'a> = Id<FormatFunction_<'a>>;
 impl<'a> Parse<'a> for FormatFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FORMAT_FUNCTION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -9305,6 +10783,7 @@ pub struct FoundedItem_<'a> { // entity
 pub type FoundedItem<'a> = Id<FoundedItem_<'a>>;
 impl<'a> Parse<'a> for FoundedItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FOUNDED_ITEM(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -9331,9 +10810,13 @@ pub struct FoundedKinematicPath_<'a> { // entity
 pub type FoundedKinematicPath<'a> = Id<FoundedKinematicPath_<'a>>;
 impl<'a> Parse<'a> for FoundedKinematicPath_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FOUNDED_KINEMATIC_PATH(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -9352,13 +10835,19 @@ pub struct FullyConstrainedPair_<'a> { // entity
 pub type FullyConstrainedPair<'a> = Id<FullyConstrainedPair_<'a>>;
 impl<'a> Parse<'a> for FullyConstrainedPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FULLY_CONSTRAINED_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9376,10 +10865,13 @@ pub struct FunctionallyDefinedTransformation_<'a> { // entity
 pub type FunctionallyDefinedTransformation<'a> = Id<FunctionallyDefinedTransformation_<'a>>;
 impl<'a> Parse<'a> for FunctionallyDefinedTransformation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("FUNCTIONALLY_DEFINED_TRANSFORMATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9402,18 +10894,29 @@ pub struct GearPair_<'a> { // entity
 pub type GearPair<'a> = Id<GearPair_<'a>>;
 impl<'a> Parse<'a> for GearPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEAR_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius_first_link) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius_second_link) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, bevel) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, helical_angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, gear_ratio) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9437,9 +10940,13 @@ pub struct GearPairRange_<'a> { // entity
 pub type GearPairRange<'a> = Id<GearPairRange_<'a>>;
 impl<'a> Parse<'a> for GearPairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEAR_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_rotation_1) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_rotation_1) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_actual_rotation_1,
@@ -9455,8 +10962,11 @@ pub struct GearPairValue_<'a> { // entity
 pub type GearPairValue<'a> = Id<GearPairValue_<'a>>;
 impl<'a> Parse<'a> for GearPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEAR_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_rotation_1) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_rotation_1,
@@ -9471,10 +10981,13 @@ pub struct GeneralFeature_<'a> { // entity
 pub type GeneralFeature<'a> = Id<GeneralFeature_<'a>>;
 impl<'a> Parse<'a> for GeneralFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERAL_FEATURE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9490,11 +11003,15 @@ pub struct GeneralMaterialProperty_<'a> { // entity
 pub type GeneralMaterialProperty<'a> = Id<GeneralMaterialProperty_<'a>>;
 impl<'a> Parse<'a> for GeneralMaterialProperty_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERAL_MATERIAL_PROPERTY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -9511,11 +11028,15 @@ pub struct GeneralProperty_<'a> { // entity
 pub type GeneralProperty<'a> = Id<GeneralProperty_<'a>>;
 impl<'a> Parse<'a> for GeneralProperty_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERAL_PROPERTY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -9533,12 +11054,17 @@ pub struct GeneralPropertyAssociation_<'a> { // entity
 pub type GeneralPropertyAssociation<'a> = Id<GeneralPropertyAssociation_<'a>>;
 impl<'a> Parse<'a> for GeneralPropertyAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERAL_PROPERTY_ASSOCIATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, base_definition) = <GeneralProperty<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, derived_definition) = <DerivedPropertySelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9557,12 +11083,17 @@ pub struct GeneralPropertyRelationship_<'a> { // entity
 pub type GeneralPropertyRelationship<'a> = Id<GeneralPropertyRelationship_<'a>>;
 impl<'a> Parse<'a> for GeneralPropertyRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERAL_PROPERTY_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_property) = <GeneralProperty<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_property) = <GeneralProperty<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9580,9 +11111,13 @@ pub struct GenericCharacterGlyphSymbol_<'a> { // entity
 pub type GenericCharacterGlyphSymbol<'a> = Id<GenericCharacterGlyphSymbol_<'a>>;
 impl<'a> Parse<'a> for GenericCharacterGlyphSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERIC_CHARACTER_GLYPH_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -9596,6 +11131,7 @@ pub struct GenericExpression_<'a> { // entity
 pub type GenericExpression<'a> = Id<GenericExpression_<'a>>;
 impl<'a> Parse<'a> for GenericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERIC_EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -9606,6 +11142,7 @@ pub struct GenericLiteral_<'a> { // entity
 pub type GenericLiteral<'a> = Id<GenericLiteral_<'a>>;
 impl<'a> Parse<'a> for GenericLiteral_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERIC_LITERAL(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -9616,6 +11153,7 @@ pub struct GenericVariable_<'a> { // entity
 pub type GenericVariable<'a> = Id<GenericVariable_<'a>>;
 impl<'a> Parse<'a> for GenericVariable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GENERIC_VARIABLE(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -9630,12 +11168,17 @@ pub struct GeometricAlignment_<'a> { // entity
 pub type GeometricAlignment<'a> = Id<GeometricAlignment_<'a>>;
 impl<'a> Parse<'a> for GeometricAlignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_ALIGNMENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9652,8 +11195,11 @@ pub struct GeometricCurveSet_<'a> { // entity
 pub type GeometricCurveSet<'a> = Id<GeometricCurveSet_<'a>>;
 impl<'a> Parse<'a> for GeometricCurveSet_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_CURVE_SET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, elements) = <Vec<GeometricSetSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             elements,
@@ -9670,12 +11216,17 @@ pub struct GeometricIntersection_<'a> { // entity
 pub type GeometricIntersection<'a> = Id<GeometricIntersection_<'a>>;
 impl<'a> Parse<'a> for GeometricIntersection_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_INTERSECTION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9695,13 +11246,19 @@ pub struct GeometricItemSpecificUsage_<'a> { // entity
 pub type GeometricItemSpecificUsage<'a> = Id<GeometricItemSpecificUsage_<'a>>;
 impl<'a> Parse<'a> for GeometricItemSpecificUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_ITEM_SPECIFIC_USAGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <RepresentedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, used_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identified_item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9720,9 +11277,13 @@ pub struct GeometricRepresentationContext_<'a> { // entity
 pub type GeometricRepresentationContext<'a> = Id<GeometricRepresentationContext_<'a>>;
 impl<'a> Parse<'a> for GeometricRepresentationContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_REPRESENTATION_CONTEXT(")(s)?;
         let (s, context_identifier) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_type) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, coordinate_space_dimension) = <DimensionCount<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             context_identifier,
             context_type,
@@ -9737,7 +11298,9 @@ pub struct GeometricRepresentationItem_<'a> { // entity
 pub type GeometricRepresentationItem<'a> = Id<GeometricRepresentationItem_<'a>>;
 impl<'a> Parse<'a> for GeometricRepresentationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_REPRESENTATION_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -9751,8 +11314,11 @@ pub struct GeometricSet_<'a> { // entity
 pub type GeometricSet<'a> = Id<GeometricSet_<'a>>;
 impl<'a> Parse<'a> for GeometricSet_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_SET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, elements) = <Vec<GeometricSetSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             elements,
@@ -9784,10 +11350,15 @@ pub struct GeometricTolerance_<'a> { // entity
 pub type GeometricTolerance<'a> = Id<GeometricTolerance_<'a>>;
 impl<'a> Parse<'a> for GeometricTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9806,10 +11377,15 @@ pub struct GeometricToleranceRelationship_<'a> { // entity
 pub type GeometricToleranceRelationship<'a> = Id<GeometricToleranceRelationship_<'a>>;
 impl<'a> Parse<'a> for GeometricToleranceRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_TOLERANCE_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_geometric_tolerance) = <GeometricTolerance<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_geometric_tolerance) = <GeometricTolerance<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9829,11 +11405,17 @@ pub struct GeometricToleranceWithDatumReference_<'a> { // entity
 pub type GeometricToleranceWithDatumReference<'a> = Id<GeometricToleranceWithDatumReference_<'a>>;
 impl<'a> Parse<'a> for GeometricToleranceWithDatumReference_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_TOLERANCE_WITH_DATUM_REFERENCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9854,11 +11436,17 @@ pub struct GeometricToleranceWithDefinedUnit_<'a> { // entity
 pub type GeometricToleranceWithDefinedUnit<'a> = Id<GeometricToleranceWithDefinedUnit_<'a>>;
 impl<'a> Parse<'a> for GeometricToleranceWithDefinedUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRIC_TOLERANCE_WITH_DEFINED_UNIT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_size) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -9876,8 +11464,11 @@ pub struct GeometricalToleranceCallout_<'a> { // entity
 pub type GeometricalToleranceCallout<'a> = Id<GeometricalToleranceCallout_<'a>>;
 impl<'a> Parse<'a> for GeometricalToleranceCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRICAL_TOLERANCE_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -9893,9 +11484,13 @@ pub struct GeometricallyBounded2dWireframeRepresentation_<'a> { // entity
 pub type GeometricallyBounded2dWireframeRepresentation<'a> = Id<GeometricallyBounded2dWireframeRepresentation_<'a>>;
 impl<'a> Parse<'a> for GeometricallyBounded2dWireframeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRICALLY_BOUNDED_2D_WIREFRAME_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -9912,9 +11507,13 @@ pub struct GeometricallyBoundedSurfaceShapeRepresentation_<'a> { // entity
 pub type GeometricallyBoundedSurfaceShapeRepresentation<'a> = Id<GeometricallyBoundedSurfaceShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for GeometricallyBoundedSurfaceShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRICALLY_BOUNDED_SURFACE_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -9931,9 +11530,13 @@ pub struct GeometricallyBoundedWireframeShapeRepresentation_<'a> { // entity
 pub type GeometricallyBoundedWireframeShapeRepresentation<'a> = Id<GeometricallyBoundedWireframeShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for GeometricallyBoundedWireframeShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GEOMETRICALLY_BOUNDED_WIREFRAME_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -9950,9 +11553,13 @@ pub struct GlobalUncertaintyAssignedContext_<'a> { // entity
 pub type GlobalUncertaintyAssignedContext<'a> = Id<GlobalUncertaintyAssignedContext_<'a>>;
 impl<'a> Parse<'a> for GlobalUncertaintyAssignedContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT(")(s)?;
         let (s, context_identifier) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_type) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, uncertainty) = <Vec<UncertaintyMeasureWithUnit<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             context_identifier,
             context_type,
@@ -9969,9 +11576,13 @@ pub struct GlobalUnitAssignedContext_<'a> { // entity
 pub type GlobalUnitAssignedContext<'a> = Id<GlobalUnitAssignedContext_<'a>>;
 impl<'a> Parse<'a> for GlobalUnitAssignedContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GLOBAL_UNIT_ASSIGNED_CONTEXT(")(s)?;
         let (s, context_identifier) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_type) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, units) = <Vec<Unit<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             context_identifier,
             context_type,
@@ -9987,10 +11598,13 @@ pub struct Group_<'a> { // entity
 pub type Group<'a> = Id<Group_<'a>>;
 impl<'a> Parse<'a> for Group_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GROUP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10004,7 +11618,9 @@ pub struct GroupAssignment_<'a> { // entity
 pub type GroupAssignment<'a> = Id<GroupAssignment_<'a>>;
 impl<'a> Parse<'a> for GroupAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GROUP_ASSIGNMENT(")(s)?;
         let (s, assigned_group) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_group,
             _marker: std::marker::PhantomData}))
@@ -10041,12 +11657,17 @@ pub struct GroupRelationship_<'a> { // entity
 pub type GroupRelationship<'a> = Id<GroupRelationship_<'a>>;
 impl<'a> Parse<'a> for GroupRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("GROUP_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_group) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_group) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10064,9 +11685,13 @@ pub struct HalfSpaceSolid_<'a> { // entity
 pub type HalfSpaceSolid<'a> = Id<HalfSpaceSolid_<'a>>;
 impl<'a> Parse<'a> for HalfSpaceSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("HALF_SPACE_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, base_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, agreement_flag) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             base_surface,
@@ -10083,9 +11708,13 @@ pub struct HardnessRepresentation_<'a> { // entity
 pub type HardnessRepresentation<'a> = Id<HardnessRepresentation_<'a>>;
 impl<'a> Parse<'a> for HardnessRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("HARDNESS_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -10104,11 +11733,17 @@ pub struct HiddenElementOverRidingStyledItem_<'a> { // entity
 pub type HiddenElementOverRidingStyledItem<'a> = Id<HiddenElementOverRidingStyledItem_<'a>>;
 impl<'a> Parse<'a> for HiddenElementOverRidingStyledItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("HIDDEN_ELEMENT_OVER_RIDING_STYLED_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, over_ridden_style) = <StyledItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, style_context) = <Vec<StyleContextSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -10128,12 +11763,17 @@ pub struct HoleBottom_<'a> { // entity
 pub type HoleBottom<'a> = Id<HoleBottom_<'a>>;
 impl<'a> Parse<'a> for HoleBottom_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("HOLE_BOTTOM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10150,10 +11790,13 @@ pub struct HoleInPanel_<'a> { // entity
 pub type HoleInPanel<'a> = Id<HoleInPanel_<'a>>;
 impl<'a> Parse<'a> for HoleInPanel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("HOLE_IN_PANEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10172,16 +11815,23 @@ pub struct HomokineticPair_<'a> { // entity
 pub type HomokineticPair<'a> = Id<HomokineticPair_<'a>>;
 impl<'a> Parse<'a> for HomokineticPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("HOMOKINETIC_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, input_skew_angle) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<PlaneAngleMeasure<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10213,10 +11863,15 @@ pub struct Hyperbola_<'a> { // entity
 pub type Hyperbola<'a> = Id<Hyperbola_<'a>>;
 impl<'a> Parse<'a> for Hyperbola_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("HYPERBOLA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, semi_axis) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, semi_imag_axis) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -10233,8 +11888,11 @@ pub struct IdAttribute_<'a> { // entity
 pub type IdAttribute<'a> = Id<IdAttribute_<'a>>;
 impl<'a> Parse<'a> for IdAttribute_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ID_ATTRIBUTE(")(s)?;
         let (s, attribute_value) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identified_item) = <IdAttributeSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             attribute_value,
             identified_item,
@@ -10278,8 +11936,11 @@ pub struct IdentificationAssignment_<'a> { // entity
 pub type IdentificationAssignment<'a> = Id<IdentificationAssignment_<'a>>;
 impl<'a> Parse<'a> for IdentificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("IDENTIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <IdentificationRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_id,
             role,
@@ -10372,10 +12033,13 @@ pub struct IdentificationRole_<'a> { // entity
 pub type IdentificationRole<'a> = Id<IdentificationRole_<'a>>;
 impl<'a> Parse<'a> for IdentificationRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("IDENTIFICATION_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10403,12 +12067,17 @@ pub struct InclusionProductConceptFeature_<'a> { // entity
 pub type InclusionProductConceptFeature<'a> = Id<InclusionProductConceptFeature_<'a>>;
 impl<'a> Parse<'a> for InclusionProductConceptFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INCLUSION_PRODUCT_CONCEPT_FEATURE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, condition) = <ConceptFeatureRelationshipWithCondition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -10424,7 +12093,9 @@ pub struct IndexExpression_<'a> { // entity
 pub type IndexExpression<'a> = Id<IndexExpression_<'a>>;
 impl<'a> Parse<'a> for IndexExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INDEX_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -10438,8 +12109,11 @@ pub struct InitialState_<'a> { // entity
 pub type InitialState<'a> = Id<InitialState_<'a>>;
 impl<'a> Parse<'a> for InitialState_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INITIAL_STATE(")(s)?;
         let (s, applies_to_mechanism) = <Mechanism<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pair_values) = <Vec<PairValue<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_mechanism,
             pair_values,
@@ -10459,18 +12133,25 @@ pub struct InstancedFeature_<'a> { // entity
 pub type InstancedFeature<'a> = Id<InstancedFeature_<'a>>;
 impl<'a> Parse<'a> for InstancedFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INSTANCED_FEATURE(")(s)?;
         #[allow(non_snake_case)]
         let (s, shape_aspect__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, shape_aspect__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             shape_aspect__name,
             shape_aspect__description,
@@ -10488,7 +12169,9 @@ pub struct IntLiteral_<'a> { // entity
 pub type IntLiteral<'a> = Id<IntLiteral_<'a>>;
 impl<'a> Parse<'a> for IntLiteral_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INT_LITERAL(")(s)?;
         let (s, the_value) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             the_value,
             _marker: std::marker::PhantomData}))
@@ -10500,6 +12183,7 @@ pub struct IntNumericVariable_<'a> { // entity
 pub type IntNumericVariable<'a> = Id<IntNumericVariable_<'a>>;
 impl<'a> Parse<'a> for IntNumericVariable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INT_NUMERIC_VARIABLE(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -10511,7 +12195,9 @@ pub struct IntValueFunction_<'a> { // entity
 pub type IntValueFunction<'a> = Id<IntValueFunction_<'a>>;
 impl<'a> Parse<'a> for IntValueFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INT_VALUE_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -10523,6 +12209,7 @@ pub struct IntegerDefinedFunction_<'a> { // entity
 pub type IntegerDefinedFunction<'a> = Id<IntegerDefinedFunction_<'a>>;
 impl<'a> Parse<'a> for IntegerDefinedFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INTEGER_DEFINED_FUNCTION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -10534,7 +12221,9 @@ pub struct InterpolatedConfigurationSequence_<'a> { // entity
 pub type InterpolatedConfigurationSequence<'a> = Id<InterpolatedConfigurationSequence_<'a>>;
 impl<'a> Parse<'a> for InterpolatedConfigurationSequence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INTERPOLATED_CONFIGURATION_SEQUENCE(")(s)?;
         let (s, interpolation) = <Vec<ConfigurationInterpolation<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             interpolation,
             _marker: std::marker::PhantomData}))
@@ -10566,10 +12255,15 @@ pub struct IntersectionCurve_<'a> { // entity
 pub type IntersectionCurve<'a> = Id<IntersectionCurve_<'a>>;
 impl<'a> Parse<'a> for IntersectionCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INTERSECTION_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_3d) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, associated_geometry) = <Vec<PcurveOrSurface<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, master_representation) = <PreferredSurfaceCurveRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             curve_3d,
@@ -10585,7 +12279,9 @@ pub struct IntervalExpression_<'a> { // entity
 pub type IntervalExpression<'a> = Id<IntervalExpression_<'a>>;
 impl<'a> Parse<'a> for IntervalExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INTERVAL_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -10598,7 +12294,9 @@ pub struct Invisibility_<'a> { // entity
 pub type Invisibility<'a> = Id<Invisibility_<'a>>;
 impl<'a> Parse<'a> for Invisibility_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("INVISIBILITY(")(s)?;
         let (s, invisible_items) = <Vec<InvisibleItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             invisible_items,
             _marker: std::marker::PhantomData}))
@@ -10644,12 +12342,17 @@ pub struct ItemDefinedTransformation_<'a> { // entity
 pub type ItemDefinedTransformation<'a> = Id<ItemDefinedTransformation_<'a>>;
 impl<'a> Parse<'a> for ItemDefinedTransformation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ITEM_DEFINED_TRANSFORMATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10669,13 +12372,19 @@ pub struct ItemIdentifiedRepresentationUsage_<'a> { // entity
 pub type ItemIdentifiedRepresentationUsage<'a> = Id<ItemIdentifiedRepresentationUsage_<'a>>;
 impl<'a> Parse<'a> for ItemIdentifiedRepresentationUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ITEM_IDENTIFIED_REPRESENTATION_USAGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <RepresentedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, used_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identified_item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10693,10 +12402,13 @@ pub struct Joggle_<'a> { // entity
 pub type Joggle<'a> = Id<Joggle_<'a>>;
 impl<'a> Parse<'a> for Joggle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("JOGGLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10713,12 +12425,17 @@ pub struct JoggleTermination_<'a> { // entity
 pub type JoggleTermination<'a> = Id<JoggleTermination_<'a>>;
 impl<'a> Parse<'a> for JoggleTermination_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("JOGGLE_TERMINATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10735,8 +12452,11 @@ pub struct KinematicAnalysisConsistency_<'a> { // entity
 pub type KinematicAnalysisConsistency<'a> = Id<KinematicAnalysisConsistency_<'a>>;
 impl<'a> Parse<'a> for KinematicAnalysisConsistency_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_ANALYSIS_CONSISTENCY(")(s)?;
         let (s, control) = <KinematicControl<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, result) = <KinematicAnalysisResult<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             control,
             result,
@@ -10760,8 +12480,11 @@ pub struct KinematicAnalysisResult_<'a> { // entity
 pub type KinematicAnalysisResult<'a> = Id<KinematicAnalysisResult_<'a>>;
 impl<'a> Parse<'a> for KinematicAnalysisResult_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_ANALYSIS_RESULT(")(s)?;
         let (s, analysed_mechanism) = <Mechanism<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contained_kinematic_results) = <Vec<KinematicResult<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             analysed_mechanism,
             contained_kinematic_results,
@@ -10776,8 +12499,11 @@ pub struct KinematicControl_<'a> { // entity
 pub type KinematicControl<'a> = Id<KinematicControl_<'a>>;
 impl<'a> Parse<'a> for KinematicControl_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_CONTROL(")(s)?;
         let (s, controlled_mechanism) = <Mechanism<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contained_kinematic_programs) = <Vec<KinematicAnalysisDefinition<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             controlled_mechanism,
             contained_kinematic_programs,
@@ -10808,9 +12534,13 @@ pub struct KinematicFrameBackgroundRepresentation_<'a> { // entity
 pub type KinematicFrameBackgroundRepresentation<'a> = Id<KinematicFrameBackgroundRepresentation_<'a>>;
 impl<'a> Parse<'a> for KinematicFrameBackgroundRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_FRAME_BACKGROUND_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -10829,13 +12559,19 @@ pub struct KinematicFrameBackgroundRepresentationAssociation_<'a> { // entity
 pub type KinematicFrameBackgroundRepresentationAssociation<'a> = Id<KinematicFrameBackgroundRepresentationAssociation_<'a>>;
 impl<'a> Parse<'a> for KinematicFrameBackgroundRepresentationAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_FRAME_BACKGROUND_REPRESENTATION_ASSOCIATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transformation_operator) = <Transformation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10856,13 +12592,18 @@ pub struct KinematicFrameBasedTransformation_<'a> { // entity
 pub type KinematicFrameBasedTransformation<'a> = Id<KinematicFrameBasedTransformation_<'a>>;
 impl<'a> Parse<'a> for KinematicFrameBasedTransformation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_FRAME_BASED_TRANSFORMATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, functionally_defined_transformation__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transformator) = <RigidPlacement<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             functionally_defined_transformation__name,
@@ -10880,9 +12621,13 @@ pub struct KinematicGroundRepresentation_<'a> { // entity
 pub type KinematicGroundRepresentation<'a> = Id<KinematicGroundRepresentation_<'a>>;
 impl<'a> Parse<'a> for KinematicGroundRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_GROUND_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -10898,8 +12643,11 @@ pub struct KinematicJoint_<'a> { // entity
 pub type KinematicJoint<'a> = Id<KinematicJoint_<'a>>;
 impl<'a> Parse<'a> for KinematicJoint_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_JOINT(")(s)?;
         let (s, first_link) = <KinematicLink<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, second_link) = <KinematicLink<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             first_link,
             second_link,
@@ -10912,6 +12660,7 @@ pub struct KinematicLink_<'a> { // entity
 pub type KinematicLink<'a> = Id<KinematicLink_<'a>>;
 impl<'a> Parse<'a> for KinematicLink_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_LINK(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -10925,9 +12674,13 @@ pub struct KinematicLinkRepresentation_<'a> { // entity
 pub type KinematicLinkRepresentation<'a> = Id<KinematicLinkRepresentation_<'a>>;
 impl<'a> Parse<'a> for KinematicLinkRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_LINK_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -10945,12 +12698,17 @@ pub struct KinematicLinkRepresentationAssociation_<'a> { // entity
 pub type KinematicLinkRepresentationAssociation<'a> = Id<KinematicLinkRepresentationAssociation_<'a>>;
 impl<'a> Parse<'a> for KinematicLinkRepresentationAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_LINK_REPRESENTATION_ASSOCIATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -10967,8 +12725,11 @@ pub struct KinematicLinkRepresentationRelation_<'a> { // entity
 pub type KinematicLinkRepresentationRelation<'a> = Id<KinematicLinkRepresentationRelation_<'a>>;
 impl<'a> Parse<'a> for KinematicLinkRepresentationRelation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_LINK_REPRESENTATION_RELATION(")(s)?;
         let (s, topological_aspects) = <KinematicLink<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, geometric_aspects) = <KinematicLinkRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             topological_aspects,
             geometric_aspects,
@@ -10986,13 +12747,19 @@ pub struct KinematicPair_<'a> { // entity
 pub type KinematicPair<'a> = Id<KinematicPair_<'a>>;
 impl<'a> Parse<'a> for KinematicPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -11009,7 +12776,9 @@ pub struct KinematicPath_<'a> { // entity
 pub type KinematicPath<'a> = Id<KinematicPath_<'a>>;
 impl<'a> Parse<'a> for KinematicPath_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_PATH(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -11025,12 +12794,17 @@ pub struct KinematicPropertyDefinition_<'a> { // entity
 pub type KinematicPropertyDefinition<'a> = Id<KinematicPropertyDefinition_<'a>>;
 impl<'a> Parse<'a> for KinematicPropertyDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_PROPERTY_DEFINITION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <CharacterizedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ground_definition) = <CharacterizedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -11047,8 +12821,11 @@ pub struct KinematicPropertyRepresentationRelation_<'a> { // entity
 pub type KinematicPropertyRepresentationRelation<'a> = Id<KinematicPropertyRepresentationRelation_<'a>>;
 impl<'a> Parse<'a> for KinematicPropertyRepresentationRelation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_PROPERTY_REPRESENTATION_RELATION(")(s)?;
         let (s, definition) = <RepresentedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, used_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             definition,
             used_representation,
@@ -11075,7 +12852,9 @@ pub struct KinematicStructure_<'a> { // entity
 pub type KinematicStructure<'a> = Id<KinematicStructure_<'a>>;
 impl<'a> Parse<'a> for KinematicStructure_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KINEMATIC_STRUCTURE(")(s)?;
         let (s, joints) = <Vec<KinematicJoint<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             joints,
             _marker: std::marker::PhantomData}))
@@ -11107,8 +12886,11 @@ pub struct KnownSource_<'a> { // entity
 pub type KnownSource<'a> = Id<KnownSource_<'a>>;
 impl<'a> Parse<'a> for KnownSource_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("KNOWN_SOURCE(")(s)?;
         let (s, source_id) = <SourceItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             source_id,
             name,
@@ -11134,10 +12916,13 @@ pub struct Language_<'a> { // entity
 pub type Language<'a> = Id<Language_<'a>>;
 impl<'a> Parse<'a> for Language_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LANGUAGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -11153,9 +12938,13 @@ pub struct LanguageAssignment_<'a> { // entity
 pub type LanguageAssignment<'a> = Id<LanguageAssignment_<'a>>;
 impl<'a> Parse<'a> for LanguageAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LANGUAGE_ASSIGNMENT(")(s)?;
         let (s, assigned_class) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <ClassificationRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<LanguageItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_class,
             role,
@@ -11194,9 +12983,13 @@ pub struct LeaderCurve_<'a> { // entity
 pub type LeaderCurve<'a> = Id<LeaderCurve_<'a>>;
 impl<'a> Parse<'a> for LeaderCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LEADER_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -11212,8 +13005,11 @@ pub struct LeaderDirectedCallout_<'a> { // entity
 pub type LeaderDirectedCallout<'a> = Id<LeaderDirectedCallout_<'a>>;
 impl<'a> Parse<'a> for LeaderDirectedCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LEADER_DIRECTED_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -11228,8 +13024,11 @@ pub struct LeaderDirectedDimension_<'a> { // entity
 pub type LeaderDirectedDimension<'a> = Id<LeaderDirectedDimension_<'a>>;
 impl<'a> Parse<'a> for LeaderDirectedDimension_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LEADER_DIRECTED_DIMENSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -11246,10 +13045,15 @@ pub struct LeaderTerminator_<'a> { // entity
 pub type LeaderTerminator<'a> = Id<LeaderTerminator_<'a>>;
 impl<'a> Parse<'a> for LeaderTerminator_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LEADER_TERMINATOR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, annotated_curve) = <AnnotationCurveOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -11265,7 +13069,9 @@ pub struct LengthFunction_<'a> { // entity
 pub type LengthFunction<'a> = Id<LengthFunction_<'a>>;
 impl<'a> Parse<'a> for LengthFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LENGTH_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -11290,8 +13096,11 @@ pub struct LengthMeasureWithUnit_<'a> { // entity
 pub type LengthMeasureWithUnit<'a> = Id<LengthMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for LengthMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LENGTH_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -11305,7 +13114,9 @@ pub struct LengthUnit_<'a> { // entity
 pub type LengthUnit<'a> = Id<LengthUnit_<'a>>;
 impl<'a> Parse<'a> for LengthUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LENGTH_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -11319,8 +13130,11 @@ pub struct LightSource_<'a> { // entity
 pub type LightSource<'a> = Id<LightSource_<'a>>;
 impl<'a> Parse<'a> for LightSource_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LIGHT_SOURCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, light_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             light_colour,
@@ -11335,8 +13149,11 @@ pub struct LightSourceAmbient_<'a> { // entity
 pub type LightSourceAmbient<'a> = Id<LightSourceAmbient_<'a>>;
 impl<'a> Parse<'a> for LightSourceAmbient_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LIGHT_SOURCE_AMBIENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, light_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             light_colour,
@@ -11352,9 +13169,13 @@ pub struct LightSourceDirectional_<'a> { // entity
 pub type LightSourceDirectional<'a> = Id<LightSourceDirectional_<'a>>;
 impl<'a> Parse<'a> for LightSourceDirectional_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LIGHT_SOURCE_DIRECTIONAL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, light_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <Direction<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             light_colour,
@@ -11373,11 +13194,17 @@ pub struct LightSourcePositional_<'a> { // entity
 pub type LightSourcePositional<'a> = Id<LightSourcePositional_<'a>>;
 impl<'a> Parse<'a> for LightSourcePositional_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LIGHT_SOURCE_POSITIONAL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, light_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, constant_attenuation) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, distance_attenuation) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             light_colour,
@@ -11401,14 +13228,23 @@ pub struct LightSourceSpot_<'a> { // entity
 pub type LightSourceSpot<'a> = Id<LightSourceSpot_<'a>>;
 impl<'a> Parse<'a> for LightSourceSpot_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LIGHT_SOURCE_SPOT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, light_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <Direction<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, concentration_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, constant_attenuation) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, distance_attenuation) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, spread_angle) = <PositivePlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             light_colour,
@@ -11428,7 +13264,9 @@ pub struct LikeExpression_<'a> { // entity
 pub type LikeExpression<'a> = Id<LikeExpression_<'a>>;
 impl<'a> Parse<'a> for LikeExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LIKE_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -11460,10 +13298,15 @@ pub struct LimitsAndFits_<'a> { // entity
 pub type LimitsAndFits<'a> = Id<LimitsAndFits_<'a>>;
 impl<'a> Parse<'a> for LimitsAndFits_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LIMITS_AND_FITS(")(s)?;
         let (s, form_variance) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, zone_variance) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, grade) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, source) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             form_variance,
             zone_variance,
@@ -11481,9 +13324,13 @@ pub struct Line_<'a> { // entity
 pub type Line<'a> = Id<Line_<'a>>;
 impl<'a> Parse<'a> for Line_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LINE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pnt) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, dir) = <Vector<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             pnt,
@@ -11501,10 +13348,15 @@ pub struct LineProfileTolerance_<'a> { // entity
 pub type LineProfileTolerance<'a> = Id<LineProfileTolerance_<'a>>;
 impl<'a> Parse<'a> for LineProfileTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LINE_PROFILE_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -11521,8 +13373,11 @@ pub struct LinearDimension_<'a> { // entity
 pub type LinearDimension<'a> = Id<LinearDimension_<'a>>;
 impl<'a> Parse<'a> for LinearDimension_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LINEAR_DIMENSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -11548,7 +13403,9 @@ pub struct LiteralNumber_<'a> { // entity
 pub type LiteralNumber<'a> = Id<LiteralNumber_<'a>>;
 impl<'a> Parse<'a> for LiteralNumber_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LITERAL_NUMBER(")(s)?;
         let (s, the_value) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             the_value,
             _marker: std::marker::PhantomData}))
@@ -11564,14 +13421,19 @@ pub struct LocalTime_<'a> { // entity
 pub type LocalTime<'a> = Id<LocalTime_<'a>>;
 impl<'a> Parse<'a> for LocalTime_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LOCAL_TIME(")(s)?;
         let (s, hour_component) = <HourInDay<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, minute_component) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<MinuteInHour<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, second_component) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<SecondInMinute<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, zone) = <CoordinatedUniversalTimeOffset<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             hour_component,
             minute_component,
@@ -11589,9 +13451,13 @@ pub struct LocationShapeRepresentation_<'a> { // entity
 pub type LocationShapeRepresentation<'a> = Id<LocationShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for LocationShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LOCATION_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -11607,10 +13473,13 @@ pub struct Locator_<'a> { // entity
 pub type Locator<'a> = Id<Locator_<'a>>;
 impl<'a> Parse<'a> for Locator_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LOCATOR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -11624,7 +13493,9 @@ pub struct Log10Function_<'a> { // entity
 pub type Log10Function<'a> = Id<Log10Function_<'a>>;
 impl<'a> Parse<'a> for Log10Function_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LOG10_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -11637,7 +13508,9 @@ pub struct Log2Function_<'a> { // entity
 pub type Log2Function<'a> = Id<Log2Function_<'a>>;
 impl<'a> Parse<'a> for Log2Function_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LOG2_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -11650,7 +13523,9 @@ pub struct LogFunction_<'a> { // entity
 pub type LogFunction<'a> = Id<LogFunction_<'a>>;
 impl<'a> Parse<'a> for LogFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LOG_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -11663,7 +13538,9 @@ pub struct Loop_<'a> { // entity
 pub type Loop<'a> = Id<Loop_<'a>>;
 impl<'a> Parse<'a> for Loop_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LOOP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -11678,9 +13555,13 @@ pub struct LotEffectivity_<'a> { // entity
 pub type LotEffectivity<'a> = Id<LotEffectivity_<'a>>;
 impl<'a> Parse<'a> for LotEffectivity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LOT_EFFECTIVITY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, effectivity_lot_id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, effectivity_lot_size) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             effectivity_lot_id,
@@ -11707,8 +13588,11 @@ pub struct LuminousIntensityMeasureWithUnit_<'a> { // entity
 pub type LuminousIntensityMeasureWithUnit<'a> = Id<LuminousIntensityMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for LuminousIntensityMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LUMINOUS_INTENSITY_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -11722,7 +13606,9 @@ pub struct LuminousIntensityUnit_<'a> { // entity
 pub type LuminousIntensityUnit<'a> = Id<LuminousIntensityUnit_<'a>>;
 impl<'a> Parse<'a> for LuminousIntensityUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("LUMINOUS_INTENSITY_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -11742,16 +13628,25 @@ pub struct MakeFromUsageOption_<'a> { // entity
 pub type MakeFromUsageOption<'a> = Id<MakeFromUsageOption_<'a>>;
 impl<'a> Parse<'a> for MakeFromUsageOption_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MAKE_FROM_USAGE_OPTION(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ranking) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ranking_rationale) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, quantity) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -11772,8 +13667,11 @@ pub struct ManifoldSolidBrep_<'a> { // entity
 pub type ManifoldSolidBrep<'a> = Id<ManifoldSolidBrep_<'a>>;
 impl<'a> Parse<'a> for ManifoldSolidBrep_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MANIFOLD_SOLID_BREP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, outer) = <ClosedShell<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             outer,
@@ -11789,9 +13687,13 @@ pub struct ManifoldSubsurfaceShapeRepresentation_<'a> { // entity
 pub type ManifoldSubsurfaceShapeRepresentation<'a> = Id<ManifoldSubsurfaceShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for ManifoldSubsurfaceShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MANIFOLD_SUBSURFACE_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -11808,9 +13710,13 @@ pub struct ManifoldSurfaceShapeRepresentation_<'a> { // entity
 pub type ManifoldSurfaceShapeRepresentation<'a> = Id<ManifoldSurfaceShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for ManifoldSurfaceShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MANIFOLD_SURFACE_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -11827,9 +13733,13 @@ pub struct MappedItem_<'a> { // entity
 pub type MappedItem<'a> = Id<MappedItem_<'a>>;
 impl<'a> Parse<'a> for MappedItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MAPPED_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_source) = <RepresentationMap<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapping_target) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             mapping_source,
@@ -11893,8 +13803,11 @@ pub struct MassMeasureWithUnit_<'a> { // entity
 pub type MassMeasureWithUnit<'a> = Id<MassMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for MassMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MASS_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -11908,7 +13821,9 @@ pub struct MassUnit_<'a> { // entity
 pub type MassUnit<'a> = Id<MassUnit_<'a>>;
 impl<'a> Parse<'a> for MassUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MASS_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -11922,8 +13837,11 @@ pub struct MaterialDesignation_<'a> { // entity
 pub type MaterialDesignation<'a> = Id<MaterialDesignation_<'a>>;
 impl<'a> Parse<'a> for MaterialDesignation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MATERIAL_DESIGNATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definitions) = <Vec<CharacterizedDefinition<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             definitions,
@@ -11940,10 +13858,15 @@ pub struct MaterialDesignationCharacterization_<'a> { // entity
 pub type MaterialDesignationCharacterization<'a> = Id<MaterialDesignationCharacterization_<'a>>;
 impl<'a> Parse<'a> for MaterialDesignationCharacterization_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MATERIAL_DESIGNATION_CHARACTERIZATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, designation) = <MaterialDesignation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, property) = <CharacterizedMaterialProperty<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -11961,11 +13884,15 @@ pub struct MaterialProperty_<'a> { // entity
 pub type MaterialProperty<'a> = Id<MaterialProperty_<'a>>;
 impl<'a> Parse<'a> for MaterialProperty_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MATERIAL_PROPERTY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <CharacterizedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -11982,9 +13909,13 @@ pub struct MaterialPropertyRepresentation_<'a> { // entity
 pub type MaterialPropertyRepresentation<'a> = Id<MaterialPropertyRepresentation_<'a>>;
 impl<'a> Parse<'a> for MaterialPropertyRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MATERIAL_PROPERTY_REPRESENTATION(")(s)?;
         let (s, definition) = <RepresentedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, used_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, dependent_environment) = <DataEnvironment<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             definition,
             used_representation,
@@ -11999,7 +13930,9 @@ pub struct MaximumFunction_<'a> { // entity
 pub type MaximumFunction<'a> = Id<MaximumFunction_<'a>>;
 impl<'a> Parse<'a> for MaximumFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MAXIMUM_FUNCTION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12015,10 +13948,15 @@ pub struct MeasureQualification_<'a> { // entity
 pub type MeasureQualification<'a> = Id<MeasureQualification_<'a>>;
 impl<'a> Parse<'a> for MeasureQualification_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MEASURE_QUALIFICATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, qualified_measure) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, qualifiers) = <Vec<ValueQualifier<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -12036,9 +13974,13 @@ pub struct MeasureRepresentationItem_<'a> { // entity
 pub type MeasureRepresentationItem<'a> = Id<MeasureRepresentationItem_<'a>>;
 impl<'a> Parse<'a> for MeasureRepresentationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MEASURE_REPRESENTATION_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             value_component,
@@ -12108,8 +14050,11 @@ pub struct MeasureWithUnit_<'a> { // entity
 pub type MeasureWithUnit<'a> = Id<MeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for MeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -12125,9 +14070,13 @@ pub struct MechanicalDesignGeometricPresentationArea_<'a> { // entity
 pub type MechanicalDesignGeometricPresentationArea<'a> = Id<MechanicalDesignGeometricPresentationArea_<'a>>;
 impl<'a> Parse<'a> for MechanicalDesignGeometricPresentationArea_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_AREA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -12144,9 +14093,13 @@ pub struct MechanicalDesignGeometricPresentationRepresentation_<'a> { // entity
 pub type MechanicalDesignGeometricPresentationRepresentation<'a> = Id<MechanicalDesignGeometricPresentationRepresentation_<'a>>;
 impl<'a> Parse<'a> for MechanicalDesignGeometricPresentationRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -12163,9 +14116,13 @@ pub struct Mechanism_<'a> { // entity
 pub type Mechanism<'a> = Id<Mechanism_<'a>>;
 impl<'a> Parse<'a> for Mechanism_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MECHANISM(")(s)?;
         let (s, structure_definition) = <KinematicStructure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, base) = <KinematicLink<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, containing_property) = <KinematicPropertyDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             structure_definition,
             base,
@@ -12177,6 +14134,7 @@ pub struct MechanismBasePlacement_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
+    pub rep_2: Representation<'a>,
     pub transformation_operator: Transformation<'a>,
     pub base_of_mechanism: Mechanism<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12184,17 +14142,26 @@ pub struct MechanismBasePlacement_<'a> { // entity
 pub type MechanismBasePlacement<'a> = Id<MechanismBasePlacement_<'a>>;
 impl<'a> Parse<'a> for MechanismBasePlacement_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MECHANISM_BASE_PLACEMENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
+        let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transformation_operator) = <Transformation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, base_of_mechanism) = <Mechanism<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
             rep_1,
+            rep_2,
             transformation_operator,
             base_of_mechanism,
             _marker: std::marker::PhantomData}))
@@ -12207,7 +14174,9 @@ pub struct MinimumFunction_<'a> { // entity
 pub type MinimumFunction<'a> = Id<MinimumFunction_<'a>>;
 impl<'a> Parse<'a> for MinimumFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MINIMUM_FUNCTION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12220,7 +14189,9 @@ pub struct MinusExpression_<'a> { // entity
 pub type MinusExpression<'a> = Id<MinusExpression_<'a>>;
 impl<'a> Parse<'a> for MinusExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MINUS_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12233,7 +14204,9 @@ pub struct MinusFunction_<'a> { // entity
 pub type MinusFunction<'a> = Id<MinusFunction_<'a>>;
 impl<'a> Parse<'a> for MinusFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MINUS_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -12257,7 +14230,9 @@ pub struct ModExpression_<'a> { // entity
 pub type ModExpression<'a> = Id<ModExpression_<'a>>;
 impl<'a> Parse<'a> for ModExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MOD_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12274,11 +14249,17 @@ pub struct ModifiedGeometricTolerance_<'a> { // entity
 pub type ModifiedGeometricTolerance<'a> = Id<ModifiedGeometricTolerance_<'a>>;
 impl<'a> Parse<'a> for ModifiedGeometricTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MODIFIED_GEOMETRIC_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, modifier) = <LimitCondition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -12296,10 +14277,13 @@ pub struct ModifiedPattern_<'a> { // entity
 pub type ModifiedPattern<'a> = Id<ModifiedPattern_<'a>>;
 impl<'a> Parse<'a> for ModifiedPattern_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MODIFIED_PATTERN(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -12315,9 +14299,13 @@ pub struct MomentsOfInertiaRepresentation_<'a> { // entity
 pub type MomentsOfInertiaRepresentation<'a> = Id<MomentsOfInertiaRepresentation_<'a>>;
 impl<'a> Parse<'a> for MomentsOfInertiaRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MOMENTS_OF_INERTIA_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -12347,13 +14335,19 @@ pub struct MotionLinkRelationship_<'a> { // entity
 pub type MotionLinkRelationship<'a> = Id<MotionLinkRelationship_<'a>>;
 impl<'a> Parse<'a> for MotionLinkRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MOTION_LINK_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_frame) = <RigidPlacement<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -12383,7 +14377,9 @@ pub struct MultExpression_<'a> { // entity
 pub type MultExpression<'a> = Id<MultExpression_<'a>>;
 impl<'a> Parse<'a> for MultExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MULT_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12399,10 +14395,15 @@ pub struct MultiLanguageAttributeAssignment_<'a> { // entity
 pub type MultiLanguageAttributeAssignment<'a> = Id<MultiLanguageAttributeAssignment_<'a>>;
 impl<'a> Parse<'a> for MultiLanguageAttributeAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MULTI_LANGUAGE_ATTRIBUTE_ASSIGNMENT(")(s)?;
         let (s, attribute_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, attribute_value) = <AttributeType<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <AttributeValueRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<MultiLanguageAttributeItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             attribute_name,
             attribute_value,
@@ -12568,7 +14569,9 @@ pub struct MultipleArityBooleanExpression_<'a> { // entity
 pub type MultipleArityBooleanExpression<'a> = Id<MultipleArityBooleanExpression_<'a>>;
 impl<'a> Parse<'a> for MultipleArityBooleanExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MULTIPLE_ARITY_BOOLEAN_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12581,7 +14584,9 @@ pub struct MultipleArityFunctionCall_<'a> { // entity
 pub type MultipleArityFunctionCall<'a> = Id<MultipleArityFunctionCall_<'a>>;
 impl<'a> Parse<'a> for MultipleArityFunctionCall_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MULTIPLE_ARITY_FUNCTION_CALL(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12594,7 +14599,9 @@ pub struct MultipleArityGenericExpression_<'a> { // entity
 pub type MultipleArityGenericExpression<'a> = Id<MultipleArityGenericExpression_<'a>>;
 impl<'a> Parse<'a> for MultipleArityGenericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MULTIPLE_ARITY_GENERIC_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12607,7 +14614,9 @@ pub struct MultipleArityNumericExpression_<'a> { // entity
 pub type MultipleArityNumericExpression<'a> = Id<MultipleArityNumericExpression_<'a>>;
 impl<'a> Parse<'a> for MultipleArityNumericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("MULTIPLE_ARITY_NUMERIC_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12620,7 +14629,9 @@ pub struct NameAssignment_<'a> { // entity
 pub type NameAssignment<'a> = Id<NameAssignment_<'a>>;
 impl<'a> Parse<'a> for NameAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NAME_ASSIGNMENT(")(s)?;
         let (s, assigned_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_name,
             _marker: std::marker::PhantomData}))
@@ -12634,8 +14645,11 @@ pub struct NameAttribute_<'a> { // entity
 pub type NameAttribute<'a> = Id<NameAttribute_<'a>>;
 impl<'a> Parse<'a> for NameAttribute_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NAME_ATTRIBUTE(")(s)?;
         let (s, attribute_value) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, named_item) = <NameAttributeSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             attribute_value,
             named_item,
@@ -12693,7 +14707,9 @@ pub struct NamedUnit_<'a> { // entity
 pub type NamedUnit<'a> = Id<NamedUnit_<'a>>;
 impl<'a> Parse<'a> for NamedUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NAMED_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -12706,7 +14722,9 @@ pub struct NamedUnitVariable_<'a> { // entity
 pub type NamedUnitVariable<'a> = Id<NamedUnitVariable_<'a>>;
 impl<'a> Parse<'a> for NamedUnitVariable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NAMED_UNIT_VARIABLE(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -12724,16 +14742,23 @@ pub struct NextAssemblyUsageOccurrence_<'a> { // entity
 pub type NextAssemblyUsageOccurrence<'a> = Id<NextAssemblyUsageOccurrence_<'a>>;
 impl<'a> Parse<'a> for NextAssemblyUsageOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NEXT_ASSEMBLY_USAGE_OCCURRENCE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_designator) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Identifier<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -12754,12 +14779,17 @@ pub struct NgonClosedProfile_<'a> { // entity
 pub type NgonClosedProfile<'a> = Id<NgonClosedProfile_<'a>>;
 impl<'a> Parse<'a> for NgonClosedProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NGON_CLOSED_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -12777,9 +14807,13 @@ pub struct NonManifoldSurfaceShapeRepresentation_<'a> { // entity
 pub type NonManifoldSurfaceShapeRepresentation<'a> = Id<NonManifoldSurfaceShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for NonManifoldSurfaceShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NON_MANIFOLD_SURFACE_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -12806,7 +14840,9 @@ pub struct NotExpression_<'a> { // entity
 pub type NotExpression<'a> = Id<NotExpression_<'a>>;
 impl<'a> Parse<'a> for NotExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NOT_EXPRESSION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -12828,6 +14864,7 @@ pub struct NumericDefinedFunction_<'a> { // entity
 pub type NumericDefinedFunction<'a> = Id<NumericDefinedFunction_<'a>>;
 impl<'a> Parse<'a> for NumericDefinedFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NUMERIC_DEFINED_FUNCTION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -12838,6 +14875,7 @@ pub struct NumericExpression_<'a> { // entity
 pub type NumericExpression<'a> = Id<NumericExpression_<'a>>;
 impl<'a> Parse<'a> for NumericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NUMERIC_EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -12859,6 +14897,7 @@ pub struct NumericVariable_<'a> { // entity
 pub type NumericVariable<'a> = Id<NumericVariable_<'a>>;
 impl<'a> Parse<'a> for NumericVariable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("NUMERIC_VARIABLE(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -12871,10 +14910,13 @@ pub struct ObjectRole_<'a> { // entity
 pub type ObjectRole<'a> = Id<ObjectRole_<'a>>;
 impl<'a> Parse<'a> for ObjectRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OBJECT_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -12888,7 +14930,9 @@ pub struct OddFunction_<'a> { // entity
 pub type OddFunction<'a> = Id<OddFunction_<'a>>;
 impl<'a> Parse<'a> for OddFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ODD_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -12904,10 +14948,15 @@ pub struct OffsetCurve2d_<'a> { // entity
 pub type OffsetCurve2d<'a> = Id<OffsetCurve2d_<'a>>;
 impl<'a> Parse<'a> for OffsetCurve2d_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OFFSET_CURVE_2D(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, distance) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_curve,
@@ -12927,11 +14976,17 @@ pub struct OffsetCurve3d_<'a> { // entity
 pub type OffsetCurve3d<'a> = Id<OffsetCurve3d_<'a>>;
 impl<'a> Parse<'a> for OffsetCurve3d_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OFFSET_CURVE_3D(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, distance) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ref_direction) = <Direction<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_curve,
@@ -12951,10 +15006,15 @@ pub struct OffsetSurface_<'a> { // entity
 pub type OffsetSurface<'a> = Id<OffsetSurface_<'a>>;
 impl<'a> Parse<'a> for OffsetSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OFFSET_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, distance) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_surface,
@@ -12971,8 +15031,11 @@ pub struct OneDirectionRepeatFactor_<'a> { // entity
 pub type OneDirectionRepeatFactor<'a> = Id<OneDirectionRepeatFactor_<'a>>;
 impl<'a> Parse<'a> for OneDirectionRepeatFactor_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ONE_DIRECTION_REPEAT_FACTOR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, repeat_factor) = <Vector<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             repeat_factor,
@@ -12989,12 +15052,17 @@ pub struct OpenPathProfile_<'a> { // entity
 pub type OpenPathProfile<'a> = Id<OpenPathProfile_<'a>>;
 impl<'a> Parse<'a> for OpenPathProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OPEN_PATH_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13011,8 +15079,11 @@ pub struct OpenShell_<'a> { // entity
 pub type OpenShell<'a> = Id<OpenShell_<'a>>;
 impl<'a> Parse<'a> for OpenShell_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OPEN_SHELL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, cfs_faces) = <Vec<Face<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             cfs_faces,
@@ -13026,7 +15097,9 @@ pub struct OrExpression_<'a> { // entity
 pub type OrExpression<'a> = Id<OrExpression_<'a>>;
 impl<'a> Parse<'a> for OrExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OR_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -13040,8 +15113,11 @@ pub struct OrdinateDimension_<'a> { // entity
 pub type OrdinateDimension<'a> = Id<OrdinateDimension_<'a>>;
 impl<'a> Parse<'a> for OrdinateDimension_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORDINATE_DIMENSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -13057,13 +15133,17 @@ pub struct Organization_<'a> { // entity
 pub type Organization<'a> = Id<Organization_<'a>>;
 impl<'a> Parse<'a> for Organization_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATION(")(s)?;
         let (s, id) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Identifier<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -13079,8 +15159,11 @@ pub struct OrganizationAssignment_<'a> { // entity
 pub type OrganizationAssignment<'a> = Id<OrganizationAssignment_<'a>>;
 impl<'a> Parse<'a> for OrganizationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATION_ASSIGNMENT(")(s)?;
         let (s, assigned_organization) = <Organization<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <OrganizationRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_organization,
             role,
@@ -13220,12 +15303,17 @@ pub struct OrganizationRelationship_<'a> { // entity
 pub type OrganizationRelationship<'a> = Id<OrganizationRelationship_<'a>>;
 impl<'a> Parse<'a> for OrganizationRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATION_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_organization) = <Organization<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_organization) = <Organization<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13241,7 +15329,9 @@ pub struct OrganizationRole_<'a> { // entity
 pub type OrganizationRole<'a> = Id<OrganizationRole_<'a>>;
 impl<'a> Parse<'a> for OrganizationRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATION_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -13267,46 +15357,61 @@ pub struct OrganizationalAddress_<'a> { // entity
 pub type OrganizationalAddress<'a> = Id<OrganizationalAddress_<'a>>;
 impl<'a> Parse<'a> for OrganizationalAddress_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATIONAL_ADDRESS(")(s)?;
         let (s, internal_location) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, street_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, street) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, postal_box) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, town) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, region) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, postal_code) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, country) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, facsimile_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, telephone_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, electronic_mail_address) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, telex_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, organizations) = <Vec<Organization<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             internal_location,
             street_number,
@@ -13334,11 +15439,15 @@ pub struct OrganizationalProject_<'a> { // entity
 pub type OrganizationalProject<'a> = Id<OrganizationalProject_<'a>>;
 impl<'a> Parse<'a> for OrganizationalProject_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATIONAL_PROJECT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, responsible_organizations) = <Vec<Organization<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13354,8 +15463,11 @@ pub struct OrganizationalProjectAssignment_<'a> { // entity
 pub type OrganizationalProjectAssignment<'a> = Id<OrganizationalProjectAssignment_<'a>>;
 impl<'a> Parse<'a> for OrganizationalProjectAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATIONAL_PROJECT_ASSIGNMENT(")(s)?;
         let (s, assigned_organizational_project) = <OrganizationalProject<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <OrganizationalProjectRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_organizational_project,
             role,
@@ -13395,12 +15507,17 @@ pub struct OrganizationalProjectRelationship_<'a> { // entity
 pub type OrganizationalProjectRelationship<'a> = Id<OrganizationalProjectRelationship_<'a>>;
 impl<'a> Parse<'a> for OrganizationalProjectRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATIONAL_PROJECT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_organizational_project) = <OrganizationalProject<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_organizational_project) = <OrganizationalProject<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13417,10 +15534,13 @@ pub struct OrganizationalProjectRole_<'a> { // entity
 pub type OrganizationalProjectRole<'a> = Id<OrganizationalProjectRole_<'a>>;
 impl<'a> Parse<'a> for OrganizationalProjectRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORGANIZATIONAL_PROJECT_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13429,6 +15549,7 @@ impl<'a> Parse<'a> for OrganizationalProjectRole_<'a> {
 }
 pub struct OrientedClosedShell_<'a> { // entity
     pub name: Label<'a>,
+    pub cfs_faces: Vec<Face<'a>>,
     pub closed_shell_element: ClosedShell<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -13436,11 +15557,18 @@ pub struct OrientedClosedShell_<'a> { // entity
 pub type OrientedClosedShell<'a> = Id<OrientedClosedShell_<'a>>;
 impl<'a> Parse<'a> for OrientedClosedShell_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORIENTED_CLOSED_SHELL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
+        let (s, cfs_faces) = <Vec<Face<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, closed_shell_element) = <ClosedShell<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
+            cfs_faces,
             closed_shell_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -13455,11 +15583,19 @@ pub struct OrientedEdge_<'a> { // entity
 pub type OrientedEdge<'a> = Id<OrientedEdge_<'a>>;
 impl<'a> Parse<'a> for OrientedEdge_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORIENTED_EDGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
+        let (s, _) = char('*')(s)?;
+        let (s, _) = char('*')(s)?;
         let (s, edge_element) = <Edge<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
+            edge_start,
+            edge_end,
             edge_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -13474,11 +15610,17 @@ pub struct OrientedFace_<'a> { // entity
 pub type OrientedFace<'a> = Id<OrientedFace_<'a>>;
 impl<'a> Parse<'a> for OrientedFace_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORIENTED_FACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
+        let (s, _) = char('*')(s)?;
         let (s, face_element) = <Face<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
+            bounds,
             face_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -13486,6 +15628,7 @@ impl<'a> Parse<'a> for OrientedFace_<'a> {
 }
 pub struct OrientedOpenShell_<'a> { // entity
     pub name: Label<'a>,
+    pub cfs_faces: Vec<Face<'a>>,
     pub open_shell_element: OpenShell<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -13493,11 +15636,18 @@ pub struct OrientedOpenShell_<'a> { // entity
 pub type OrientedOpenShell<'a> = Id<OrientedOpenShell_<'a>>;
 impl<'a> Parse<'a> for OrientedOpenShell_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORIENTED_OPEN_SHELL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
+        let (s, cfs_faces) = <Vec<Face<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, open_shell_element) = <OpenShell<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
+            cfs_faces,
             open_shell_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -13512,11 +15662,17 @@ pub struct OrientedPath_<'a> { // entity
 pub type OrientedPath<'a> = Id<OrientedPath_<'a>>;
 impl<'a> Parse<'a> for OrientedPath_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORIENTED_PATH(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
+        let (s, _) = char('*')(s)?;
         let (s, path_element) = <Path<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
+            edge_list,
             path_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -13530,8 +15686,11 @@ pub struct OrientedSurface_<'a> { // entity
 pub type OrientedSurface<'a> = Id<OrientedSurface_<'a>>;
 impl<'a> Parse<'a> for OrientedSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ORIENTED_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             orientation,
@@ -13547,9 +15706,13 @@ pub struct OuterBoundaryCurve_<'a> { // entity
 pub type OuterBoundaryCurve<'a> = Id<OuterBoundaryCurve_<'a>>;
 impl<'a> Parse<'a> for OuterBoundaryCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OUTER_BOUNDARY_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, segments) = <Vec<CompositeCurveSegment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             segments,
@@ -13567,10 +15730,15 @@ pub struct OverRidingStyledItem_<'a> { // entity
 pub type OverRidingStyledItem<'a> = Id<OverRidingStyledItem_<'a>>;
 impl<'a> Parse<'a> for OverRidingStyledItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("OVER_RIDING_STYLED_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, over_ridden_style) = <StyledItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -13588,11 +15756,15 @@ pub struct PackageProductConceptFeature_<'a> { // entity
 pub type PackageProductConceptFeature<'a> = Id<PackageProductConceptFeature_<'a>>;
 impl<'a> Parse<'a> for PackageProductConceptFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PACKAGE_PRODUCT_CONCEPT_FEATURE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -13608,8 +15780,11 @@ pub struct PairActuator_<'a> { // entity
 pub type PairActuator<'a> = Id<PairActuator_<'a>>;
 impl<'a> Parse<'a> for PairActuator_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PAIR_ACTUATOR(")(s)?;
         let (s, actuated_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             actuated_pair,
             name,
@@ -13623,7 +15798,9 @@ pub struct PairValue_<'a> { // entity
 pub type PairValue<'a> = Id<PairValue_<'a>>;
 impl<'a> Parse<'a> for PairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             _marker: std::marker::PhantomData}))
@@ -13638,9 +15815,13 @@ pub struct Parabola_<'a> { // entity
 pub type Parabola<'a> = Id<Parabola_<'a>>;
 impl<'a> Parse<'a> for Parabola_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PARABOLA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, focal_dist) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -13659,13 +15840,19 @@ pub struct ParallelOffset_<'a> { // entity
 pub type ParallelOffset<'a> = Id<ParallelOffset_<'a>>;
 impl<'a> Parse<'a> for ParallelOffset_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PARALLEL_OFFSET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, offset) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13686,11 +15873,17 @@ pub struct ParallelismTolerance_<'a> { // entity
 pub type ParallelismTolerance<'a> = Id<ParallelismTolerance_<'a>>;
 impl<'a> Parse<'a> for ParallelismTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PARALLELISM_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13719,8 +15912,11 @@ pub struct ParametricRepresentationContext_<'a> { // entity
 pub type ParametricRepresentationContext<'a> = Id<ParametricRepresentationContext_<'a>>;
 impl<'a> Parse<'a> for ParametricRepresentationContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PARAMETRIC_REPRESENTATION_CONTEXT(")(s)?;
         let (s, context_identifier) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_type) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             context_identifier,
             context_type,
@@ -13737,12 +15933,17 @@ pub struct PartialCircularProfile_<'a> { // entity
 pub type PartialCircularProfile<'a> = Id<PartialCircularProfile_<'a>>;
 impl<'a> Parse<'a> for PartialCircularProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PARTIAL_CIRCULAR_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13759,8 +15960,11 @@ pub struct Path_<'a> { // entity
 pub type Path<'a> = Id<Path_<'a>>;
 impl<'a> Parse<'a> for Path_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PATH(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_list) = <Vec<OrientedEdge<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             edge_list,
@@ -13777,12 +15981,17 @@ pub struct PathFeatureComponent_<'a> { // entity
 pub type PathFeatureComponent<'a> = Id<PathFeatureComponent_<'a>>;
 impl<'a> Parse<'a> for PathFeatureComponent_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PATH_FEATURE_COMPONENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13800,9 +16009,13 @@ pub struct PathShapeRepresentation_<'a> { // entity
 pub type PathShapeRepresentation<'a> = Id<PathShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for PathShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PATH_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -13820,12 +16033,17 @@ pub struct PatternOffsetMembership_<'a> { // entity
 pub type PatternOffsetMembership<'a> = Id<PatternOffsetMembership_<'a>>;
 impl<'a> Parse<'a> for PatternOffsetMembership_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PATTERN_OFFSET_MEMBERSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13844,12 +16062,17 @@ pub struct PatternOmitMembership_<'a> { // entity
 pub type PatternOmitMembership<'a> = Id<PatternOmitMembership_<'a>>;
 impl<'a> Parse<'a> for PatternOmitMembership_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PATTERN_OMIT_MEMBERSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13867,9 +16090,13 @@ pub struct Pcurve_<'a> { // entity
 pub type Pcurve<'a> = Id<Pcurve_<'a>>;
 impl<'a> Parse<'a> for Pcurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PCURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_to_curve) = <DefinitionalRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_surface,
@@ -13900,12 +16127,17 @@ pub struct PerpendicularTo_<'a> { // entity
 pub type PerpendicularTo<'a> = Id<PerpendicularTo_<'a>>;
 impl<'a> Parse<'a> for PerpendicularTo_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PERPENDICULAR_TO(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13925,11 +16157,17 @@ pub struct PerpendicularityTolerance_<'a> { // entity
 pub type PerpendicularityTolerance<'a> = Id<PerpendicularityTolerance_<'a>>;
 impl<'a> Parse<'a> for PerpendicularityTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PERPENDICULARITY_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -13951,22 +16189,29 @@ pub struct Person_<'a> { // entity
 pub type Person<'a> = Id<Person_<'a>>;
 impl<'a> Parse<'a> for Person_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PERSON(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, last_name) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, first_name) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, middle_names) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Vec<Label<'a>>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, prefix_titles) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Vec<Label<'a>>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, suffix_titles) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Vec<Label<'a>>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             last_name,
@@ -13985,8 +16230,11 @@ pub struct PersonAndOrganization_<'a> { // entity
 pub type PersonAndOrganization<'a> = Id<PersonAndOrganization_<'a>>;
 impl<'a> Parse<'a> for PersonAndOrganization_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PERSON_AND_ORGANIZATION(")(s)?;
         let (s, the_person) = <Person<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, the_organization) = <Organization<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             the_person,
             the_organization,
@@ -14016,52 +16264,69 @@ pub struct PersonAndOrganizationAddress_<'a> { // entity
 pub type PersonAndOrganizationAddress<'a> = Id<PersonAndOrganizationAddress_<'a>>;
 impl<'a> Parse<'a> for PersonAndOrganizationAddress_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PERSON_AND_ORGANIZATION_ADDRESS(")(s)?;
         let (s, internal_location) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, street_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, street) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, postal_box) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, town) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, region) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, postal_code) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, country) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, facsimile_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, telephone_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, electronic_mail_address) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, telex_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, organizations) = <Vec<Organization<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, organizational_address__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, people) = <Vec<Person<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, personal_address__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             internal_location,
             street_number,
@@ -14090,8 +16355,11 @@ pub struct PersonAndOrganizationAssignment_<'a> { // entity
 pub type PersonAndOrganizationAssignment<'a> = Id<PersonAndOrganizationAssignment_<'a>>;
 impl<'a> Parse<'a> for PersonAndOrganizationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PERSON_AND_ORGANIZATION_ASSIGNMENT(")(s)?;
         let (s, assigned_person_and_organization) = <PersonAndOrganization<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <PersonAndOrganizationRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_person_and_organization,
             role,
@@ -14222,7 +16490,9 @@ pub struct PersonAndOrganizationRole_<'a> { // entity
 pub type PersonAndOrganizationRole<'a> = Id<PersonAndOrganizationRole_<'a>>;
 impl<'a> Parse<'a> for PersonAndOrganizationRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PERSON_AND_ORGANIZATION_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -14263,46 +16533,61 @@ pub struct PersonalAddress_<'a> { // entity
 pub type PersonalAddress<'a> = Id<PersonalAddress_<'a>>;
 impl<'a> Parse<'a> for PersonalAddress_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PERSONAL_ADDRESS(")(s)?;
         let (s, internal_location) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, street_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, street) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, postal_box) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, town) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, region) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, postal_code) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, country) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, facsimile_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, telephone_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, electronic_mail_address) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, telex_number) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, people) = <Vec<Person<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             internal_location,
             street_number,
@@ -14332,13 +16617,19 @@ pub struct PhysicallyModelledProductDefinition_<'a> { // entity
 pub type PhysicallyModelledProductDefinition<'a> = Id<PhysicallyModelledProductDefinition_<'a>>;
 impl<'a> Parse<'a> for PhysicallyModelledProductDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PHYSICALLY_MODELLED_PRODUCT_DEFINITION(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, formation) = <ProductDefinitionFormation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ProductDefinitionContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, documentation_ids) = <Vec<Document<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             description,
@@ -14359,13 +16650,19 @@ pub struct PlacedDatumTargetFeature_<'a> { // entity
 pub type PlacedDatumTargetFeature<'a> = Id<PlacedDatumTargetFeature_<'a>>;
 impl<'a> Parse<'a> for PlacedDatumTargetFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLACED_DATUM_TARGET_FEATURE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, target_id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -14385,12 +16682,17 @@ pub struct PlacedFeature_<'a> { // entity
 pub type PlacedFeature<'a> = Id<PlacedFeature_<'a>>;
 impl<'a> Parse<'a> for PlacedFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLACED_FEATURE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -14407,8 +16709,11 @@ pub struct Placement_<'a> { // entity
 pub type Placement<'a> = Id<Placement_<'a>>;
 impl<'a> Parse<'a> for Placement_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLACEMENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, location) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             location,
@@ -14425,10 +16730,15 @@ pub struct PlanarBox_<'a> { // entity
 pub type PlanarBox<'a> = Id<PlanarBox_<'a>>;
 impl<'a> Parse<'a> for PlanarBox_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANAR_BOX(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, size_in_x) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, size_in_y) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             size_in_x,
@@ -14451,16 +16761,25 @@ pub struct PlanarCurvePair_<'a> { // entity
 pub type PlanarCurvePair<'a> = Id<PlanarCurvePair_<'a>>;
 impl<'a> Parse<'a> for PlanarCurvePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANAR_CURVE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_1) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_2) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -14482,9 +16801,13 @@ pub struct PlanarCurvePairRange_<'a> { // entity
 pub type PlanarCurvePairRange<'a> = Id<PlanarCurvePairRange_<'a>>;
 impl<'a> Parse<'a> for PlanarCurvePairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANAR_CURVE_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, range_on_curve_1) = <TrimmedCurve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, range_on_curve_2) = <TrimmedCurve<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             range_on_curve_1,
@@ -14501,9 +16824,13 @@ pub struct PlanarExtent_<'a> { // entity
 pub type PlanarExtent<'a> = Id<PlanarExtent_<'a>>;
 impl<'a> Parse<'a> for PlanarExtent_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANAR_EXTENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, size_in_x) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, size_in_y) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             size_in_x,
@@ -14522,13 +16849,19 @@ pub struct PlanarPair_<'a> { // entity
 pub type PlanarPair<'a> = Id<PlanarPair_<'a>>;
 impl<'a> Parse<'a> for PlanarPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANAR_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -14551,13 +16884,21 @@ pub struct PlanarPairRange_<'a> { // entity
 pub type PlanarPairRange<'a> = Id<PlanarPairRange_<'a>>;
 impl<'a> Parse<'a> for PlanarPairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANAR_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_translation_x) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_translation_x) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_translation_y) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_translation_y) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_actual_rotation,
@@ -14579,10 +16920,15 @@ pub struct PlanarPairValue_<'a> { // entity
 pub type PlanarPairValue<'a> = Id<PlanarPairValue_<'a>>;
 impl<'a> Parse<'a> for PlanarPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANAR_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_rotation) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_translation_x) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_translation_y) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_rotation,
@@ -14600,9 +16946,13 @@ pub struct PlanarShapeRepresentation_<'a> { // entity
 pub type PlanarShapeRepresentation<'a> = Id<PlanarShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for PlanarShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANAR_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -14618,8 +16968,11 @@ pub struct Plane_<'a> { // entity
 pub type Plane<'a> = Id<Plane_<'a>>;
 impl<'a> Parse<'a> for Plane_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -14645,8 +16998,11 @@ pub struct PlaneAngleMeasureWithUnit_<'a> { // entity
 pub type PlaneAngleMeasureWithUnit<'a> = Id<PlaneAngleMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for PlaneAngleMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANE_ANGLE_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -14660,7 +17016,9 @@ pub struct PlaneAngleUnit_<'a> { // entity
 pub type PlaneAngleUnit<'a> = Id<PlaneAngleUnit_<'a>>;
 impl<'a> Parse<'a> for PlaneAngleUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLANE_ANGLE_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -14686,7 +17044,9 @@ pub struct PlusExpression_<'a> { // entity
 pub type PlusExpression<'a> = Id<PlusExpression_<'a>>;
 impl<'a> Parse<'a> for PlusExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLUS_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -14700,8 +17060,11 @@ pub struct PlusMinusTolerance_<'a> { // entity
 pub type PlusMinusTolerance<'a> = Id<PlusMinusTolerance_<'a>>;
 impl<'a> Parse<'a> for PlusMinusTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PLUS_MINUS_TOLERANCE(")(s)?;
         let (s, range) = <ToleranceMethodDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_dimension) = <DimensionalCharacteristic<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             range,
             toleranced_dimension,
@@ -14716,10 +17079,13 @@ pub struct Pocket_<'a> { // entity
 pub type Pocket<'a> = Id<Pocket_<'a>>;
 impl<'a> Parse<'a> for Pocket_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POCKET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -14736,12 +17102,17 @@ pub struct PocketBottom_<'a> { // entity
 pub type PocketBottom<'a> = Id<PocketBottom_<'a>>;
 impl<'a> Parse<'a> for PocketBottom_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POCKET_BOTTOM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -14757,7 +17128,9 @@ pub struct Point_<'a> { // entity
 pub type Point<'a> = Id<Point_<'a>>;
 impl<'a> Parse<'a> for Point_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -14772,9 +17145,13 @@ pub struct PointOnCurve_<'a> { // entity
 pub type PointOnCurve<'a> = Id<PointOnCurve_<'a>>;
 impl<'a> Parse<'a> for PointOnCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_ON_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, point_parameter) = <ParameterValue<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_curve,
@@ -14795,15 +17172,23 @@ pub struct PointOnPlanarCurvePair_<'a> { // entity
 pub type PointOnPlanarCurvePair<'a> = Id<PointOnPlanarCurvePair_<'a>>;
 impl<'a> Parse<'a> for PointOnPlanarCurvePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_ON_PLANAR_CURVE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pair_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -14829,14 +17214,23 @@ pub struct PointOnPlanarCurvePairRange_<'a> { // entity
 pub type PointOnPlanarCurvePairRange<'a> = Id<PointOnPlanarCurvePairRange_<'a>>;
 impl<'a> Parse<'a> for PointOnPlanarCurvePairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_ON_PLANAR_CURVE_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, range_on_pair_curve) = <TrimmedCurve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_yaw) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_yaw) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_pitch) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_pitch) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_roll) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_roll) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             range_on_pair_curve,
@@ -14858,9 +17252,13 @@ pub struct PointOnPlanarCurvePairValue_<'a> { // entity
 pub type PointOnPlanarCurvePairValue<'a> = Id<PointOnPlanarCurvePairValue_<'a>>;
 impl<'a> Parse<'a> for PointOnPlanarCurvePairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_ON_PLANAR_CURVE_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_point_on_curve) = <PointOnCurve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, input_orientation) = <SpatialRotation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_point_on_curve,
@@ -14878,10 +17276,15 @@ pub struct PointOnSurface_<'a> { // entity
 pub type PointOnSurface<'a> = Id<PointOnSurface_<'a>>;
 impl<'a> Parse<'a> for PointOnSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_ON_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, point_parameter_u) = <ParameterValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, point_parameter_v) = <ParameterValue<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_surface,
@@ -14902,14 +17305,21 @@ pub struct PointOnSurfacePair_<'a> { // entity
 pub type PointOnSurfacePair<'a> = Id<PointOnSurfacePair_<'a>>;
 impl<'a> Parse<'a> for PointOnSurfacePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_ON_SURFACE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pair_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -14934,14 +17344,23 @@ pub struct PointOnSurfacePairRange_<'a> { // entity
 pub type PointOnSurfacePairRange<'a> = Id<PointOnSurfacePairRange_<'a>>;
 impl<'a> Parse<'a> for PointOnSurfacePairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_ON_SURFACE_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, range_on_pair_surface) = <RectangularTrimmedSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_yaw) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_yaw) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_pitch) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_pitch) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_roll) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_roll) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             range_on_pair_surface,
@@ -14963,9 +17382,13 @@ pub struct PointOnSurfacePairValue_<'a> { // entity
 pub type PointOnSurfacePairValue<'a> = Id<PointOnSurfacePairValue_<'a>>;
 impl<'a> Parse<'a> for PointOnSurfacePairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_ON_SURFACE_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_point_on_surface) = <PointOnSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, input_orientation) = <SpatialRotation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_point_on_surface,
@@ -14982,9 +17405,13 @@ pub struct PointPlacementShapeRepresentation_<'a> { // entity
 pub type PointPlacementShapeRepresentation<'a> = Id<PointPlacementShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for PointPlacementShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_PLACEMENT_SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -15001,9 +17428,13 @@ pub struct PointReplica_<'a> { // entity
 pub type PointReplica<'a> = Id<PointReplica_<'a>>;
 impl<'a> Parse<'a> for PointReplica_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_REPLICA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_pt) = <Point<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transformation) = <CartesianTransformationOperator<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             parent_pt,
@@ -15021,10 +17452,15 @@ pub struct PointStyle_<'a> { // entity
 pub type PointStyle<'a> = Id<PointStyle_<'a>>;
 impl<'a> Parse<'a> for PointStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POINT_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, marker) = <MarkerSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, marker_size) = <SizeSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, marker_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             marker,
@@ -15041,8 +17477,11 @@ pub struct PolyLoop_<'a> { // entity
 pub type PolyLoop<'a> = Id<PolyLoop_<'a>>;
 impl<'a> Parse<'a> for PolyLoop_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POLY_LOOP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, polygon) = <Vec<CartesianPoint<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             polygon,
@@ -15057,8 +17496,11 @@ pub struct Polyline_<'a> { // entity
 pub type Polyline<'a> = Id<Polyline_<'a>>;
 impl<'a> Parse<'a> for Polyline_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POLYLINE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, points) = <Vec<CartesianPoint<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             points,
@@ -15075,10 +17517,15 @@ pub struct PositionTolerance_<'a> { // entity
 pub type PositionTolerance<'a> = Id<PositionTolerance_<'a>>;
 impl<'a> Parse<'a> for PositionTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POSITION_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15130,7 +17577,9 @@ pub struct PowerExpression_<'a> { // entity
 pub type PowerExpression<'a> = Id<PowerExpression_<'a>>;
 impl<'a> Parse<'a> for PowerExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("POWER_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -15143,7 +17592,9 @@ pub struct PreDefinedColour_<'a> { // entity
 pub type PreDefinedColour<'a> = Id<PreDefinedColour_<'a>>;
 impl<'a> Parse<'a> for PreDefinedColour_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_COLOUR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15156,7 +17607,9 @@ pub struct PreDefinedCurveFont_<'a> { // entity
 pub type PreDefinedCurveFont<'a> = Id<PreDefinedCurveFont_<'a>>;
 impl<'a> Parse<'a> for PreDefinedCurveFont_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_CURVE_FONT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15169,7 +17622,9 @@ pub struct PreDefinedDimensionSymbol_<'a> { // entity
 pub type PreDefinedDimensionSymbol<'a> = Id<PreDefinedDimensionSymbol_<'a>>;
 impl<'a> Parse<'a> for PreDefinedDimensionSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_DIMENSION_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15182,7 +17637,9 @@ pub struct PreDefinedGeometricalToleranceSymbol_<'a> { // entity
 pub type PreDefinedGeometricalToleranceSymbol<'a> = Id<PreDefinedGeometricalToleranceSymbol_<'a>>;
 impl<'a> Parse<'a> for PreDefinedGeometricalToleranceSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_GEOMETRICAL_TOLERANCE_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15195,7 +17652,9 @@ pub struct PreDefinedItem_<'a> { // entity
 pub type PreDefinedItem<'a> = Id<PreDefinedItem_<'a>>;
 impl<'a> Parse<'a> for PreDefinedItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15208,7 +17667,9 @@ pub struct PreDefinedMarker_<'a> { // entity
 pub type PreDefinedMarker<'a> = Id<PreDefinedMarker_<'a>>;
 impl<'a> Parse<'a> for PreDefinedMarker_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_MARKER(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15221,7 +17682,9 @@ pub struct PreDefinedPointMarkerSymbol_<'a> { // entity
 pub type PreDefinedPointMarkerSymbol<'a> = Id<PreDefinedPointMarkerSymbol_<'a>>;
 impl<'a> Parse<'a> for PreDefinedPointMarkerSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_POINT_MARKER_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15234,7 +17697,9 @@ pub struct PreDefinedPresentationStyle_<'a> { // entity
 pub type PreDefinedPresentationStyle<'a> = Id<PreDefinedPresentationStyle_<'a>>;
 impl<'a> Parse<'a> for PreDefinedPresentationStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_PRESENTATION_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15247,7 +17712,9 @@ pub struct PreDefinedSurfaceConditionSymbol_<'a> { // entity
 pub type PreDefinedSurfaceConditionSymbol<'a> = Id<PreDefinedSurfaceConditionSymbol_<'a>>;
 impl<'a> Parse<'a> for PreDefinedSurfaceConditionSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_SURFACE_CONDITION_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15260,7 +17727,9 @@ pub struct PreDefinedSymbol_<'a> { // entity
 pub type PreDefinedSymbol<'a> = Id<PreDefinedSymbol_<'a>>;
 impl<'a> Parse<'a> for PreDefinedSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15273,7 +17742,9 @@ pub struct PreDefinedTerminatorSymbol_<'a> { // entity
 pub type PreDefinedTerminatorSymbol<'a> = Id<PreDefinedTerminatorSymbol_<'a>>;
 impl<'a> Parse<'a> for PreDefinedTerminatorSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_TERMINATOR_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15286,7 +17757,9 @@ pub struct PreDefinedTextFont_<'a> { // entity
 pub type PreDefinedTextFont<'a> = Id<PreDefinedTextFont_<'a>>;
 impl<'a> Parse<'a> for PreDefinedTextFont_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRE_DEFINED_TEXT_FONT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -15299,7 +17772,9 @@ pub struct PrecisionQualifier_<'a> { // entity
 pub type PrecisionQualifier<'a> = Id<PrecisionQualifier_<'a>>;
 impl<'a> Parse<'a> for PrecisionQualifier_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRECISION_QUALIFIER(")(s)?;
         let (s, precision_value) = <i64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             precision_value,
             _marker: std::marker::PhantomData}))
@@ -15341,9 +17816,13 @@ pub struct PresentationArea_<'a> { // entity
 pub type PresentationArea<'a> = Id<PresentationArea_<'a>>;
 impl<'a> Parse<'a> for PresentationArea_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTATION_AREA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -15360,9 +17839,13 @@ pub struct PresentationLayerAssignment_<'a> { // entity
 pub type PresentationLayerAssignment<'a> = Id<PresentationLayerAssignment_<'a>>;
 impl<'a> Parse<'a> for PresentationLayerAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTATION_LAYER_ASSIGNMENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, assigned_items) = <Vec<LayeredItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15379,9 +17862,13 @@ pub struct PresentationRepresentation_<'a> { // entity
 pub type PresentationRepresentation<'a> = Id<PresentationRepresentation_<'a>>;
 impl<'a> Parse<'a> for PresentationRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTATION_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -15408,6 +17895,7 @@ pub struct PresentationSet_<'a> { // entity
 pub type PresentationSet<'a> = Id<PresentationSet_<'a>>;
 impl<'a> Parse<'a> for PresentationSet_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTATION_SET(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -15420,8 +17908,11 @@ pub struct PresentationSize_<'a> { // entity
 pub type PresentationSize<'a> = Id<PresentationSize_<'a>>;
 impl<'a> Parse<'a> for PresentationSize_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTATION_SIZE(")(s)?;
         let (s, unit) = <PresentationSizeAssignmentSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, size) = <PlanarBox<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             unit,
             size,
@@ -15450,7 +17941,9 @@ pub struct PresentationStyleAssignment_<'a> { // entity
 pub type PresentationStyleAssignment<'a> = Id<PresentationStyleAssignment_<'a>>;
 impl<'a> Parse<'a> for PresentationStyleAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTATION_STYLE_ASSIGNMENT(")(s)?;
         let (s, styles) = <Vec<PresentationStyleSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             styles,
             _marker: std::marker::PhantomData}))
@@ -15464,8 +17957,11 @@ pub struct PresentationStyleByContext_<'a> { // entity
 pub type PresentationStyleByContext<'a> = Id<PresentationStyleByContext_<'a>>;
 impl<'a> Parse<'a> for PresentationStyleByContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTATION_STYLE_BY_CONTEXT(")(s)?;
         let (s, styles) = <Vec<PresentationStyleSelect<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, style_context) = <StyleContextSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             styles,
             style_context,
@@ -15510,9 +18006,13 @@ pub struct PresentationView_<'a> { // entity
 pub type PresentationView<'a> = Id<PresentationView_<'a>>;
 impl<'a> Parse<'a> for PresentationView_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTATION_VIEW(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -15526,6 +18026,7 @@ pub struct PresentedItem_<'a> { // entity
 pub type PresentedItem<'a> = Id<PresentedItem_<'a>>;
 impl<'a> Parse<'a> for PresentedItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTED_ITEM(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -15538,8 +18039,11 @@ pub struct PresentedItemRepresentation_<'a> { // entity
 pub type PresentedItemRepresentation<'a> = Id<PresentedItemRepresentation_<'a>>;
 impl<'a> Parse<'a> for PresentedItemRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRESENTED_ITEM_REPRESENTATION(")(s)?;
         let (s, presentation) = <PresentationRepresentationSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <PresentedItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             presentation,
             item,
@@ -15584,13 +18088,19 @@ pub struct PrismaticPair_<'a> { // entity
 pub type PrismaticPair<'a> = Id<PrismaticPair_<'a>>;
 impl<'a> Parse<'a> for PrismaticPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRISMATIC_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15609,9 +18119,13 @@ pub struct PrismaticPairRange_<'a> { // entity
 pub type PrismaticPairRange<'a> = Id<PrismaticPairRange_<'a>>;
 impl<'a> Parse<'a> for PrismaticPairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRISMATIC_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_translation) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_translation) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_actual_translation,
@@ -15627,8 +18141,11 @@ pub struct PrismaticPairValue_<'a> { // entity
 pub type PrismaticPairValue<'a> = Id<PrismaticPairValue_<'a>>;
 impl<'a> Parse<'a> for PrismaticPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRISMATIC_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_translation) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_translation,
@@ -15645,12 +18162,17 @@ pub struct ProcessOperation_<'a> { // entity
 pub type ProcessOperation<'a> = Id<ProcessOperation_<'a>>;
 impl<'a> Parse<'a> for ProcessOperation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROCESS_OPERATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, consequence) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15668,11 +18190,15 @@ pub struct ProcessPlan_<'a> { // entity
 pub type ProcessPlan<'a> = Id<ProcessPlan_<'a>>;
 impl<'a> Parse<'a> for ProcessPlan_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROCESS_PLAN(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15690,10 +18216,15 @@ pub struct ProcessProductAssociation_<'a> { // entity
 pub type ProcessProductAssociation<'a> = Id<ProcessProductAssociation_<'a>>;
 impl<'a> Parse<'a> for ProcessProductAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROCESS_PRODUCT_ASSOCIATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, defined_product) = <CharacterizedProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, process) = <ProductDefinitionProcess<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15712,10 +18243,15 @@ pub struct ProcessPropertyAssociation_<'a> { // entity
 pub type ProcessPropertyAssociation<'a> = Id<ProcessPropertyAssociation_<'a>>;
 impl<'a> Parse<'a> for ProcessPropertyAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROCESS_PROPERTY_ASSOCIATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, process) = <PropertyProcess<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, property_or_shape) = <PropertyOrShapeSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15734,12 +18270,17 @@ pub struct Product_<'a> { // entity
 pub type Product<'a> = Id<Product_<'a>>;
 impl<'a> Parse<'a> for Product_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <Vec<ProductContext<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -15756,10 +18297,13 @@ pub struct ProductCategory_<'a> { // entity
 pub type ProductCategory<'a> = Id<ProductCategory_<'a>>;
 impl<'a> Parse<'a> for ProductCategory_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CATEGORY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15776,12 +18320,17 @@ pub struct ProductCategoryRelationship_<'a> { // entity
 pub type ProductCategoryRelationship<'a> = Id<ProductCategoryRelationship_<'a>>;
 impl<'a> Parse<'a> for ProductCategoryRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CATEGORY_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, category) = <ProductCategory<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, sub_category) = <ProductCategory<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15803,20 +18352,27 @@ pub struct ProductClass_<'a> { // entity
 pub type ProductClass<'a> = Id<ProductClass_<'a>>;
 impl<'a> Parse<'a> for ProductClass_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CLASS(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, product_concept__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, product_concept__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, market_context) = <ProductConceptContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             product_concept__name,
@@ -15837,12 +18393,17 @@ pub struct ProductConcept_<'a> { // entity
 pub type ProductConcept<'a> = Id<ProductConcept_<'a>>;
 impl<'a> Parse<'a> for ProductConcept_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CONCEPT(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, market_context) = <ProductConceptContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -15860,9 +18421,13 @@ pub struct ProductConceptContext_<'a> { // entity
 pub type ProductConceptContext<'a> = Id<ProductConceptContext_<'a>>;
 impl<'a> Parse<'a> for ProductConceptContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CONCEPT_CONTEXT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ApplicationContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, market_segment_type) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             frame_of_reference,
@@ -15879,11 +18444,15 @@ pub struct ProductConceptFeature_<'a> { // entity
 pub type ProductConceptFeature<'a> = Id<ProductConceptFeature_<'a>>;
 impl<'a> Parse<'a> for ProductConceptFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CONCEPT_FEATURE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -15901,12 +18470,17 @@ pub struct ProductConceptFeatureAssociation_<'a> { // entity
 pub type ProductConceptFeatureAssociation<'a> = Id<ProductConceptFeatureAssociation_<'a>>;
 impl<'a> Parse<'a> for ProductConceptFeatureAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CONCEPT_FEATURE_ASSOCIATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, concept) = <ProductConcept<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, feature) = <ProductConceptFeature<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15923,10 +18497,13 @@ pub struct ProductConceptFeatureCategory_<'a> { // entity
 pub type ProductConceptFeatureCategory<'a> = Id<ProductConceptFeatureCategory_<'a>>;
 impl<'a> Parse<'a> for ProductConceptFeatureCategory_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CONCEPT_FEATURE_CATEGORY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15941,8 +18518,11 @@ pub struct ProductConceptFeatureCategoryUsage_<'a> { // entity
 pub type ProductConceptFeatureCategoryUsage<'a> = Id<ProductConceptFeatureCategoryUsage_<'a>>;
 impl<'a> Parse<'a> for ProductConceptFeatureCategoryUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CONCEPT_FEATURE_CATEGORY_USAGE(")(s)?;
         let (s, assigned_group) = <Group<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<CategoryUsageItem<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_group,
             items,
@@ -15959,12 +18539,17 @@ pub struct ProductConceptRelationship_<'a> { // entity
 pub type ProductConceptRelationship<'a> = Id<ProductConceptRelationship_<'a>>;
 impl<'a> Parse<'a> for ProductConceptRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CONCEPT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_concept) = <ProductConcept<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_concept) = <ProductConcept<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -15982,9 +18567,13 @@ pub struct ProductContext_<'a> { // entity
 pub type ProductContext<'a> = Id<ProductContext_<'a>>;
 impl<'a> Parse<'a> for ProductContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_CONTEXT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ApplicationContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, discipline_type) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             frame_of_reference,
@@ -16002,12 +18591,17 @@ pub struct ProductDefinition_<'a> { // entity
 pub type ProductDefinition<'a> = Id<ProductDefinition_<'a>>;
 impl<'a> Parse<'a> for ProductDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, formation) = <ProductDefinitionFormation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ProductDefinitionContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             description,
@@ -16025,9 +18619,13 @@ pub struct ProductDefinitionContext_<'a> { // entity
 pub type ProductDefinitionContext<'a> = Id<ProductDefinitionContext_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_CONTEXT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ApplicationContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, life_cycle_stage) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             frame_of_reference,
@@ -16044,9 +18642,13 @@ pub struct ProductDefinitionContextAssociation_<'a> { // entity
 pub type ProductDefinitionContextAssociation<'a> = Id<ProductDefinitionContextAssociation_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionContextAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_CONTEXT_ASSOCIATION(")(s)?;
         let (s, definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ProductDefinitionContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <ProductDefinitionContextRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             definition,
             frame_of_reference,
@@ -16062,10 +18664,13 @@ pub struct ProductDefinitionContextRole_<'a> { // entity
 pub type ProductDefinitionContextRole<'a> = Id<ProductDefinitionContextRole_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionContextRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_CONTEXT_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16080,8 +18685,11 @@ pub struct ProductDefinitionEffectivity_<'a> { // entity
 pub type ProductDefinitionEffectivity<'a> = Id<ProductDefinitionEffectivity_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionEffectivity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_EFFECTIVITY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, usage) = <ProductDefinitionRelationship<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             usage,
@@ -16097,11 +18705,15 @@ pub struct ProductDefinitionFormation_<'a> { // entity
 pub type ProductDefinitionFormation<'a> = Id<ProductDefinitionFormation_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionFormation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_FORMATION(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_product) = <Product<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             description,
@@ -16120,13 +18732,19 @@ pub struct ProductDefinitionFormationRelationship_<'a> { // entity
 pub type ProductDefinitionFormationRelationship<'a> = Id<ProductDefinitionFormationRelationship_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionFormationRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_FORMATION_RELATIONSHIP(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition_formation) = <ProductDefinitionFormation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition_formation) = <ProductDefinitionFormation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -16146,12 +18764,17 @@ pub struct ProductDefinitionFormationWithSpecifiedSource_<'a> { // entity
 pub type ProductDefinitionFormationWithSpecifiedSource<'a> = Id<ProductDefinitionFormationWithSpecifiedSource_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionFormationWithSpecifiedSource_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_FORMATION_WITH_SPECIFIED_SOURCE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_product) = <Product<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, make_or_buy) = <Source<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             description,
@@ -16170,12 +18793,17 @@ pub struct ProductDefinitionOccurrenceRelationship_<'a> { // entity
 pub type ProductDefinitionOccurrenceRelationship<'a> = Id<ProductDefinitionOccurrenceRelationship_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionOccurrenceRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_OCCURRENCE_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, occurrence) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, occurrence_usage) = <AssemblyComponentUsage<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16194,12 +18822,17 @@ pub struct ProductDefinitionProcess_<'a> { // entity
 pub type ProductDefinitionProcess<'a> = Id<ProductDefinitionProcess_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionProcess_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_PROCESS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identification) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16219,13 +18852,19 @@ pub struct ProductDefinitionRelationship_<'a> { // entity
 pub type ProductDefinitionRelationship<'a> = Id<ProductDefinitionRelationship_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_RELATIONSHIP(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -16250,20 +18889,29 @@ pub struct ProductDefinitionResource_<'a> { // entity
 pub type ProductDefinitionResource<'a> = Id<ProductDefinitionResource_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionResource_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_RESOURCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, action_resource__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, usage) = <Vec<SupportedItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, kind) = <ActionResourceType<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, product_definition__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, formation) = <ProductDefinitionFormation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ProductDefinitionContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             action_resource__description,
@@ -16285,11 +18933,15 @@ pub struct ProductDefinitionShape_<'a> { // entity
 pub type ProductDefinitionShape<'a> = Id<ProductDefinitionShape_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionShape_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_SHAPE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <CharacterizedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16306,11 +18958,15 @@ pub struct ProductDefinitionSubstitute_<'a> { // entity
 pub type ProductDefinitionSubstitute<'a> = Id<ProductDefinitionSubstitute_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionSubstitute_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_SUBSTITUTE(")(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_relationship) = <ProductDefinitionRelationship<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, substitute_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             description,
             context_relationship,
@@ -16329,13 +18985,19 @@ pub struct ProductDefinitionUsage_<'a> { // entity
 pub type ProductDefinitionUsage<'a> = Id<ProductDefinitionUsage_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_USAGE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -16356,13 +19018,19 @@ pub struct ProductDefinitionWithAssociatedDocuments_<'a> { // entity
 pub type ProductDefinitionWithAssociatedDocuments<'a> = Id<ProductDefinitionWithAssociatedDocuments_<'a>>;
 impl<'a> Parse<'a> for ProductDefinitionWithAssociatedDocuments_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_DEFINITION_WITH_ASSOCIATED_DOCUMENTS(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, formation) = <ProductDefinitionFormation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, frame_of_reference) = <ProductDefinitionContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, documentation_ids) = <Vec<Document<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             description,
@@ -16386,23 +19054,31 @@ pub struct ProductIdentification_<'a> { // entity
 pub type ProductIdentification<'a> = Id<ProductIdentification_<'a>>;
 impl<'a> Parse<'a> for ProductIdentification_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_IDENTIFICATION(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, configuration_item__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, configuration_item__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_concept) = <ProductConcept<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             configuration_item__name,
@@ -16453,12 +19129,17 @@ pub struct ProductProcessPlan_<'a> { // entity
 pub type ProductProcessPlan<'a> = Id<ProductProcessPlan_<'a>>;
 impl<'a> Parse<'a> for ProductProcessPlan_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_PROCESS_PLAN(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identification) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16476,11 +19157,15 @@ pub struct ProductRelatedProductCategory_<'a> { // entity
 pub type ProductRelatedProductCategory<'a> = Id<ProductRelatedProductCategory_<'a>>;
 impl<'a> Parse<'a> for ProductRelatedProductCategory_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_RELATED_PRODUCT_CATEGORY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, products) = <Vec<Product<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16503,24 +19188,33 @@ pub struct ProductSpecification_<'a> { // entity
 pub type ProductSpecification<'a> = Id<ProductSpecification_<'a>>;
 impl<'a> Parse<'a> for ProductSpecification_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PRODUCT_SPECIFICATION(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, configuration_item__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, configuration_item__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_concept) = <ProductConcept<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Label<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_concept_feature) = <Vec<ProductConceptFeatureAssociation<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             configuration_item__name,
@@ -16543,10 +19237,15 @@ pub struct ProjectedZoneDefinition_<'a> { // entity
 pub type ProjectedZoneDefinition<'a> = Id<ProjectedZoneDefinition_<'a>>;
 impl<'a> Parse<'a> for ProjectedZoneDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROJECTED_ZONE_DEFINITION(")(s)?;
         let (s, zone) = <ToleranceZone<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, boundaries) = <Vec<ShapeAspect<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, projection_end) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, projected_length) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             zone,
             boundaries,
@@ -16564,9 +19263,13 @@ pub struct ProjectionCurve_<'a> { // entity
 pub type ProjectionCurve<'a> = Id<ProjectionCurve_<'a>>;
 impl<'a> Parse<'a> for ProjectionCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROJECTION_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -16582,8 +19285,11 @@ pub struct ProjectionDirectedCallout_<'a> { // entity
 pub type ProjectionDirectedCallout<'a> = Id<ProjectionDirectedCallout_<'a>>;
 impl<'a> Parse<'a> for ProjectionDirectedCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROJECTION_DIRECTED_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -16602,16 +19308,23 @@ pub struct PromissoryUsageOccurrence_<'a> { // entity
 pub type PromissoryUsageOccurrence<'a> = Id<PromissoryUsageOccurrence_<'a>>;
 impl<'a> Parse<'a> for PromissoryUsageOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROMISSORY_USAGE_OCCURRENCE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_designator) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Identifier<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -16631,11 +19344,15 @@ pub struct PropertyDefinition_<'a> { // entity
 pub type PropertyDefinition<'a> = Id<PropertyDefinition_<'a>>;
 impl<'a> Parse<'a> for PropertyDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROPERTY_DEFINITION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, definition) = <CharacterizedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16653,10 +19370,15 @@ pub struct PropertyDefinitionRelationship_<'a> { // entity
 pub type PropertyDefinitionRelationship<'a> = Id<PropertyDefinitionRelationship_<'a>>;
 impl<'a> Parse<'a> for PropertyDefinitionRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROPERTY_DEFINITION_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_property_definition) = <PropertyDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_property_definition) = <PropertyDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16673,8 +19395,11 @@ pub struct PropertyDefinitionRepresentation_<'a> { // entity
 pub type PropertyDefinitionRepresentation<'a> = Id<PropertyDefinitionRepresentation_<'a>>;
 impl<'a> Parse<'a> for PropertyDefinitionRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROPERTY_DEFINITION_REPRESENTATION(")(s)?;
         let (s, definition) = <RepresentedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, used_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             definition,
             used_representation,
@@ -16704,12 +19429,17 @@ pub struct PropertyProcess_<'a> { // entity
 pub type PropertyProcess<'a> = Id<PropertyProcess_<'a>>;
 impl<'a> Parse<'a> for PropertyProcess_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("PROPERTY_PROCESS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, identification) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16726,8 +19456,11 @@ pub struct QualifiedRepresentationItem_<'a> { // entity
 pub type QualifiedRepresentationItem<'a> = Id<QualifiedRepresentationItem_<'a>>;
 impl<'a> Parse<'a> for QualifiedRepresentationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("QUALIFIED_REPRESENTATION_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, qualifiers) = <Vec<ValueQualifier<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             qualifiers,
@@ -16743,9 +19476,13 @@ pub struct QualitativeUncertainty_<'a> { // entity
 pub type QualitativeUncertainty<'a> = Id<QualitativeUncertainty_<'a>>;
 impl<'a> Parse<'a> for QualitativeUncertainty_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("QUALITATIVE_UNCERTAINTY(")(s)?;
         let (s, measure_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, uncertainty_value) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             measure_name,
             description,
@@ -16766,17 +19503,25 @@ pub struct QuantifiedAssemblyComponentUsage_<'a> { // entity
 pub type QuantifiedAssemblyComponentUsage<'a> = Id<QuantifiedAssemblyComponentUsage_<'a>>;
 impl<'a> Parse<'a> for QuantifiedAssemblyComponentUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("QUANTIFIED_ASSEMBLY_COMPONENT_USAGE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_designator) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Identifier<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, quantity) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -16800,12 +19545,19 @@ pub struct QuasiUniformCurve_<'a> { // entity
 pub type QuasiUniformCurve<'a> = Id<QuasiUniformCurve_<'a>>;
 impl<'a> Parse<'a> for QuasiUniformCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("QUASI_UNIFORM_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<CartesianPoint<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_form) = <BSplineCurveForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, closed_curve) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             degree,
@@ -16830,14 +19582,23 @@ pub struct QuasiUniformSurface_<'a> { // entity
 pub type QuasiUniformSurface<'a> = Id<QuasiUniformSurface_<'a>>;
 impl<'a> Parse<'a> for QuasiUniformSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("QUASI_UNIFORM_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<Vec<CartesianPoint<'a>>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_form) = <BSplineSurfaceForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             u_degree,
@@ -16862,14 +19623,21 @@ pub struct RackAndPinionPair_<'a> { // entity
 pub type RackAndPinionPair<'a> = Id<RackAndPinionPair_<'a>>;
 impl<'a> Parse<'a> for RackAndPinionPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RACK_AND_PINION_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pinion_radius) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -16889,9 +19657,13 @@ pub struct RackAndPinionPairRange_<'a> { // entity
 pub type RackAndPinionPairRange<'a> = Id<RackAndPinionPairRange_<'a>>;
 impl<'a> Parse<'a> for RackAndPinionPairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RACK_AND_PINION_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_rack_displacement) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_rack_displacement) = <TranslationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_rack_displacement,
@@ -16907,8 +19679,11 @@ pub struct RackAndPinionPairValue_<'a> { // entity
 pub type RackAndPinionPairValue<'a> = Id<RackAndPinionPairValue_<'a>>;
 impl<'a> Parse<'a> for RackAndPinionPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RACK_AND_PINION_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_displacement) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_displacement,
@@ -16923,8 +19698,11 @@ pub struct RadiusDimension_<'a> { // entity
 pub type RadiusDimension<'a> = Id<RadiusDimension_<'a>>;
 impl<'a> Parse<'a> for RadiusDimension_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RADIUS_DIMENSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -16950,8 +19728,11 @@ pub struct RatioMeasureWithUnit_<'a> { // entity
 pub type RatioMeasureWithUnit<'a> = Id<RatioMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for RatioMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RATIO_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -16965,7 +19746,9 @@ pub struct RatioUnit_<'a> { // entity
 pub type RatioUnit<'a> = Id<RatioUnit_<'a>>;
 impl<'a> Parse<'a> for RatioUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RATIO_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -16984,13 +19767,21 @@ pub struct RationalBSplineCurve_<'a> { // entity
 pub type RationalBSplineCurve<'a> = Id<RationalBSplineCurve_<'a>>;
 impl<'a> Parse<'a> for RationalBSplineCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RATIONAL_B_SPLINE_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<CartesianPoint<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_form) = <BSplineCurveForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, closed_curve) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, weights_data) = <Vec<f64>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             degree,
@@ -17017,15 +19808,25 @@ pub struct RationalBSplineSurface_<'a> { // entity
 pub type RationalBSplineSurface<'a> = Id<RationalBSplineSurface_<'a>>;
 impl<'a> Parse<'a> for RationalBSplineSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RATIONAL_B_SPLINE_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<Vec<CartesianPoint<'a>>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_form) = <BSplineSurfaceForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, weights_data) = <Vec<Vec<f64>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             u_degree,
@@ -17045,6 +19846,7 @@ pub struct RealDefinedFunction_<'a> { // entity
 pub type RealDefinedFunction<'a> = Id<RealDefinedFunction_<'a>>;
 impl<'a> Parse<'a> for RealDefinedFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REAL_DEFINED_FUNCTION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -17056,7 +19858,9 @@ pub struct RealLiteral_<'a> { // entity
 pub type RealLiteral<'a> = Id<RealLiteral_<'a>>;
 impl<'a> Parse<'a> for RealLiteral_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REAL_LITERAL(")(s)?;
         let (s, the_value) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             the_value,
             _marker: std::marker::PhantomData}))
@@ -17068,6 +19872,7 @@ pub struct RealNumericVariable_<'a> { // entity
 pub type RealNumericVariable<'a> = Id<RealNumericVariable_<'a>>;
 impl<'a> Parse<'a> for RealNumericVariable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REAL_NUMERIC_VARIABLE(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -17082,12 +19887,17 @@ pub struct RectangularClosedProfile_<'a> { // entity
 pub type RectangularClosedProfile<'a> = Id<RectangularClosedProfile_<'a>>;
 impl<'a> Parse<'a> for RectangularClosedProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RECTANGULAR_CLOSED_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17104,8 +19914,11 @@ pub struct RectangularCompositeSurface_<'a> { // entity
 pub type RectangularCompositeSurface<'a> = Id<RectangularCompositeSurface_<'a>>;
 impl<'a> Parse<'a> for RectangularCompositeSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RECTANGULAR_COMPOSITE_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, segments) = <Vec<Vec<SurfacePatch<'a>>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             segments,
@@ -17120,10 +19933,13 @@ pub struct RectangularPattern_<'a> { // entity
 pub type RectangularPattern<'a> = Id<RectangularPattern_<'a>>;
 impl<'a> Parse<'a> for RectangularPattern_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RECTANGULAR_PATTERN(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17144,14 +19960,23 @@ pub struct RectangularTrimmedSurface_<'a> { // entity
 pub type RectangularTrimmedSurface<'a> = Id<RectangularTrimmedSurface_<'a>>;
 impl<'a> Parse<'a> for RectangularTrimmedSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RECTANGULAR_TRIMMED_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u1) = <ParameterValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u2) = <ParameterValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v1) = <ParameterValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v2) = <ParameterValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, usense) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, vsense) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_surface,
@@ -17173,9 +19998,13 @@ pub struct ReferencedModifiedDatum_<'a> { // entity
 pub type ReferencedModifiedDatum<'a> = Id<ReferencedModifiedDatum_<'a>>;
 impl<'a> Parse<'a> for ReferencedModifiedDatum_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REFERENCED_MODIFIED_DATUM(")(s)?;
         let (s, precedence) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, referenced_datum) = <Datum<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, modifier) = <LimitCondition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             precedence,
             referenced_datum,
@@ -17194,13 +20023,19 @@ pub struct RelativeEventOccurrence_<'a> { // entity
 pub type RelativeEventOccurrence<'a> = Id<RelativeEventOccurrence_<'a>>;
 impl<'a> Parse<'a> for RelativeEventOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RELATIVE_EVENT_OCCURRENCE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, base_event) = <EventOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, offset) = <TimeMeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -17233,13 +20068,17 @@ pub struct RepItemGroup_<'a> { // entity
 pub type RepItemGroup<'a> = Id<RepItemGroup_<'a>>;
 impl<'a> Parse<'a> for RepItemGroup_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REP_ITEM_GROUP(")(s)?;
         #[allow(non_snake_case)]
         let (s, group__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, representation_item__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             group__name,
             description,
@@ -17257,10 +20096,15 @@ pub struct ReparametrisedCompositeCurveSegment_<'a> { // entity
 pub type ReparametrisedCompositeCurveSegment<'a> = Id<ReparametrisedCompositeCurveSegment_<'a>>;
 impl<'a> Parse<'a> for ReparametrisedCompositeCurveSegment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REPARAMETRISED_COMPOSITE_CURVE_SEGMENT(")(s)?;
         let (s, transition) = <TransitionCode<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, same_sense) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, param_length) = <ParameterValue<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             transition,
             same_sense,
@@ -17277,10 +20121,13 @@ pub struct ReplicateFeature_<'a> { // entity
 pub type ReplicateFeature<'a> = Id<ReplicateFeature_<'a>>;
 impl<'a> Parse<'a> for ReplicateFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REPLICATE_FEATURE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17296,9 +20143,13 @@ pub struct Representation_<'a> { // entity
 pub type Representation<'a> = Id<Representation_<'a>>;
 impl<'a> Parse<'a> for Representation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -17314,8 +20165,11 @@ pub struct RepresentationContext_<'a> { // entity
 pub type RepresentationContext<'a> = Id<RepresentationContext_<'a>>;
 impl<'a> Parse<'a> for RepresentationContext_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REPRESENTATION_CONTEXT(")(s)?;
         let (s, context_identifier) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_type) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             context_identifier,
             context_type,
@@ -17329,7 +20183,9 @@ pub struct RepresentationItem_<'a> { // entity
 pub type RepresentationItem<'a> = Id<RepresentationItem_<'a>>;
 impl<'a> Parse<'a> for RepresentationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REPRESENTATION_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -17343,8 +20199,11 @@ pub struct RepresentationMap_<'a> { // entity
 pub type RepresentationMap<'a> = Id<RepresentationMap_<'a>>;
 impl<'a> Parse<'a> for RepresentationMap_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REPRESENTATION_MAP(")(s)?;
         let (s, mapping_origin) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapped_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             mapping_origin,
             mapped_representation,
@@ -17361,12 +20220,17 @@ pub struct RepresentationRelationship_<'a> { // entity
 pub type RepresentationRelationship<'a> = Id<RepresentationRelationship_<'a>>;
 impl<'a> Parse<'a> for RepresentationRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REPRESENTATION_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17386,13 +20250,19 @@ pub struct RepresentationRelationshipWithTransformation_<'a> { // entity
 pub type RepresentationRelationshipWithTransformation<'a> = Id<RepresentationRelationshipWithTransformation_<'a>>;
 impl<'a> Parse<'a> for RepresentationRelationshipWithTransformation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REPRESENTATION_RELATIONSHIP_WITH_TRANSFORMATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transformation_operator) = <Transformation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17432,11 +20302,17 @@ pub struct RequirementForActionResource_<'a> { // entity
 pub type RequirementForActionResource<'a> = Id<RequirementForActionResource_<'a>>;
 impl<'a> Parse<'a> for RequirementForActionResource_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REQUIREMENT_FOR_ACTION_RESOURCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, kind) = <ResourceRequirementType<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, operations) = <Vec<CharacterizedActionDefinition<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, resources) = <Vec<ActionResource<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17455,9 +20331,13 @@ pub struct ResourceProperty_<'a> { // entity
 pub type ResourceProperty<'a> = Id<ResourceProperty_<'a>>;
 impl<'a> Parse<'a> for ResourceProperty_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RESOURCE_PROPERTY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, resource) = <CharacterizedResourceDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17475,10 +20355,15 @@ pub struct ResourcePropertyRepresentation_<'a> { // entity
 pub type ResourcePropertyRepresentation<'a> = Id<ResourcePropertyRepresentation_<'a>>;
 impl<'a> Parse<'a> for ResourcePropertyRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RESOURCE_PROPERTY_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, property) = <ResourceProperty<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17495,8 +20380,11 @@ pub struct ResourceRequirementType_<'a> { // entity
 pub type ResourceRequirementType<'a> = Id<ResourceRequirementType_<'a>>;
 impl<'a> Parse<'a> for ResourceRequirementType_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RESOURCE_REQUIREMENT_TYPE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17515,14 +20403,21 @@ pub struct ResultingPath_<'a> { // entity
 pub type ResultingPath<'a> = Id<ResultingPath_<'a>>;
 impl<'a> Parse<'a> for ResultingPath_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RESULTING_PATH(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_frame) = <RigidPlacement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, controlling_joints) = <Vec<KinematicJoint<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17542,11 +20437,15 @@ pub struct Retention_<'a> { // entity
 pub type Retention<'a> = Id<Retention_<'a>>;
 impl<'a> Parse<'a> for Retention_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RETENTION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, chosen_method) = <ActionMethod<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17601,13 +20500,19 @@ pub struct RevolutePair_<'a> { // entity
 pub type RevolutePair<'a> = Id<RevolutePair_<'a>>;
 impl<'a> Parse<'a> for RevolutePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REVOLUTE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17626,9 +20531,13 @@ pub struct RevolutePairRange_<'a> { // entity
 pub type RevolutePairRange<'a> = Id<RevolutePairRange_<'a>>;
 impl<'a> Parse<'a> for RevolutePairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REVOLUTE_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_actual_rotation,
@@ -17644,8 +20553,11 @@ pub struct RevolutePairValue_<'a> { // entity
 pub type RevolutePairValue<'a> = Id<RevolutePairValue_<'a>>;
 impl<'a> Parse<'a> for RevolutePairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REVOLUTE_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_rotation) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_rotation,
@@ -17662,10 +20574,15 @@ pub struct RevolvedAreaSolid_<'a> { // entity
 pub type RevolvedAreaSolid<'a> = Id<RevolvedAreaSolid_<'a>>;
 impl<'a> Parse<'a> for RevolvedAreaSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REVOLVED_AREA_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_area) = <CurveBoundedSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis) = <Axis1Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_area,
@@ -17684,10 +20601,15 @@ pub struct RevolvedFaceSolid_<'a> { // entity
 pub type RevolvedFaceSolid<'a> = Id<RevolvedFaceSolid_<'a>>;
 impl<'a> Parse<'a> for RevolvedFaceSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("REVOLVED_FACE_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_face) = <FaceSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis) = <Axis1Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_face,
@@ -17704,10 +20626,13 @@ pub struct Rib_<'a> { // entity
 pub type Rib<'a> = Id<Rib_<'a>>;
 impl<'a> Parse<'a> for Rib_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RIB(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17726,12 +20651,19 @@ pub struct RightAngularWedge_<'a> { // entity
 pub type RightAngularWedge<'a> = Id<RightAngularWedge_<'a>>;
 impl<'a> Parse<'a> for RightAngularWedge_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RIGHT_ANGULAR_WEDGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, x) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, y) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, z) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, ltx) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -17753,11 +20685,17 @@ pub struct RightCircularCone_<'a> { // entity
 pub type RightCircularCone<'a> = Id<RightCircularCone_<'a>>;
 impl<'a> Parse<'a> for RightCircularCone_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RIGHT_CIRCULAR_CONE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis1Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, height) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, semi_angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -17777,10 +20715,15 @@ pub struct RightCircularCylinder_<'a> { // entity
 pub type RightCircularCylinder<'a> = Id<RightCircularCylinder_<'a>>;
 impl<'a> Parse<'a> for RightCircularCylinder_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RIGHT_CIRCULAR_CYLINDER(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis1Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, height) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -17806,8 +20749,11 @@ pub struct RoleAssociation_<'a> { // entity
 pub type RoleAssociation<'a> = Id<RoleAssociation_<'a>>;
 impl<'a> Parse<'a> for RoleAssociation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROLE_ASSOCIATION(")(s)?;
         let (s, role) = <ObjectRole<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_with_role) = <RoleSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             role,
             item_with_role,
@@ -17859,16 +20805,25 @@ pub struct RollingCurvePair_<'a> { // entity
 pub type RollingCurvePair<'a> = Id<RollingCurvePair_<'a>>;
 impl<'a> Parse<'a> for RollingCurvePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROLLING_CURVE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_1) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_2) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17889,8 +20844,11 @@ pub struct RollingCurvePairValue_<'a> { // entity
 pub type RollingCurvePairValue<'a> = Id<RollingCurvePairValue_<'a>>;
 impl<'a> Parse<'a> for RollingCurvePairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROLLING_CURVE_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_point_on_curve_1) = <PointOnCurve<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_point_on_curve_1,
@@ -17911,16 +20869,25 @@ pub struct RollingSurfacePair_<'a> { // entity
 pub type RollingSurfacePair<'a> = Id<RollingSurfacePair_<'a>>;
 impl<'a> Parse<'a> for RollingSurfacePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROLLING_SURFACE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_1) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_2) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -17942,9 +20909,13 @@ pub struct RollingSurfacePairValue_<'a> { // entity
 pub type RollingSurfacePairValue<'a> = Id<RollingSurfacePairValue_<'a>>;
 impl<'a> Parse<'a> for RollingSurfacePairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROLLING_SURFACE_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_point_on_surface) = <PointOnSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_rotation) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_point_on_surface,
@@ -17960,8 +20931,11 @@ pub struct RotationAboutDirection_<'a> { // entity
 pub type RotationAboutDirection<'a> = Id<RotationAboutDirection_<'a>>;
 impl<'a> Parse<'a> for RotationAboutDirection_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROTATION_ABOUT_DIRECTION(")(s)?;
         let (s, direction_of_axis) = <Direction<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rotation_angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             direction_of_axis,
             rotation_angle,
@@ -17989,10 +20963,13 @@ pub struct RoundHole_<'a> { // entity
 pub type RoundHole<'a> = Id<RoundHole_<'a>>;
 impl<'a> Parse<'a> for RoundHole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROUND_HOLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18009,12 +20986,17 @@ pub struct RoundedUProfile_<'a> { // entity
 pub type RoundedUProfile<'a> = Id<RoundedUProfile_<'a>>;
 impl<'a> Parse<'a> for RoundedUProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROUNDED_U_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18033,10 +21015,15 @@ pub struct RoundnessTolerance_<'a> { // entity
 pub type RoundnessTolerance<'a> = Id<RoundnessTolerance_<'a>>;
 impl<'a> Parse<'a> for RoundnessTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("ROUNDNESS_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18057,12 +21044,19 @@ pub struct RuledSurfaceSweptAreaSolid_<'a> { // entity
 pub type RuledSurfaceSweptAreaSolid<'a> = Id<RuledSurfaceSweptAreaSolid_<'a>>;
 impl<'a> Parse<'a> for RuledSurfaceSweptAreaSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RULED_SURFACE_SWEPT_AREA_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_area) = <CurveBoundedSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, directrix) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, start_param) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, end_param) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_area,
@@ -18082,9 +21076,13 @@ pub struct RunoutZoneDefinition_<'a> { // entity
 pub type RunoutZoneDefinition<'a> = Id<RunoutZoneDefinition_<'a>>;
 impl<'a> Parse<'a> for RunoutZoneDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RUNOUT_ZONE_DEFINITION(")(s)?;
         let (s, zone) = <ToleranceZone<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, boundaries) = <Vec<ShapeAspect<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <RunoutZoneOrientation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             zone,
             boundaries,
@@ -18099,7 +21097,9 @@ pub struct RunoutZoneOrientation_<'a> { // entity
 pub type RunoutZoneOrientation<'a> = Id<RunoutZoneOrientation_<'a>>;
 impl<'a> Parse<'a> for RunoutZoneOrientation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RUNOUT_ZONE_ORIENTATION(")(s)?;
         let (s, angle) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             angle,
             _marker: std::marker::PhantomData}))
@@ -18113,8 +21113,11 @@ pub struct RunoutZoneOrientationReferenceDirection_<'a> { // entity
 pub type RunoutZoneOrientationReferenceDirection<'a> = Id<RunoutZoneOrientationReferenceDirection_<'a>>;
 impl<'a> Parse<'a> for RunoutZoneOrientationReferenceDirection_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("RUNOUT_ZONE_ORIENTATION_REFERENCE_DIRECTION(")(s)?;
         let (s, angle) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation_defining_relationship) = <ShapeAspectRelationship<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             angle,
             orientation_defining_relationship,
@@ -18133,14 +21136,21 @@ pub struct ScrewPair_<'a> { // entity
 pub type ScrewPair<'a> = Id<ScrewPair_<'a>>;
 impl<'a> Parse<'a> for ScrewPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SCREW_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pitch) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18160,9 +21170,13 @@ pub struct ScrewPairRange_<'a> { // entity
 pub type ScrewPairRange<'a> = Id<ScrewPairRange_<'a>>;
 impl<'a> Parse<'a> for ScrewPairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SCREW_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_actual_rotation,
@@ -18178,8 +21192,11 @@ pub struct ScrewPairValue_<'a> { // entity
 pub type ScrewPairValue<'a> = Id<ScrewPairValue_<'a>>;
 impl<'a> Parse<'a> for ScrewPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SCREW_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_rotation) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_rotation,
@@ -18196,10 +21213,15 @@ pub struct SeamCurve_<'a> { // entity
 pub type SeamCurve<'a> = Id<SeamCurve_<'a>>;
 impl<'a> Parse<'a> for SeamCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SEAM_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_3d) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, associated_geometry) = <Vec<PcurveOrSurface<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, master_representation) = <PreferredSurfaceCurveRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             curve_3d,
@@ -18218,12 +21240,21 @@ pub struct SeamEdge_<'a> { // entity
 pub type SeamEdge<'a> = Id<SeamEdge_<'a>>;
 impl<'a> Parse<'a> for SeamEdge_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SEAM_EDGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
+        let (s, _) = char('*')(s)?;
+        let (s, _) = char('*')(s)?;
         let (s, edge_element) = <Edge<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, pcurve_reference) = <Pcurve<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
+            edge_start,
+            edge_end,
             edge_element,
             orientation,
             pcurve_reference,
@@ -18250,9 +21281,13 @@ pub struct SecurityClassification_<'a> { // entity
 pub type SecurityClassification<'a> = Id<SecurityClassification_<'a>>;
 impl<'a> Parse<'a> for SecurityClassification_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SECURITY_CLASSIFICATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, security_level) = <SecurityClassificationLevel<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             purpose,
@@ -18267,7 +21302,9 @@ pub struct SecurityClassificationAssignment_<'a> { // entity
 pub type SecurityClassificationAssignment<'a> = Id<SecurityClassificationAssignment_<'a>>;
 impl<'a> Parse<'a> for SecurityClassificationAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SECURITY_CLASSIFICATION_ASSIGNMENT(")(s)?;
         let (s, assigned_security_classification) = <SecurityClassification<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_security_classification,
             _marker: std::marker::PhantomData}))
@@ -18348,7 +21385,9 @@ pub struct SecurityClassificationLevel_<'a> { // entity
 pub type SecurityClassificationLevel<'a> = Id<SecurityClassificationLevel_<'a>>;
 impl<'a> Parse<'a> for SecurityClassificationLevel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SECURITY_CLASSIFICATION_LEVEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -18363,11 +21402,15 @@ pub struct SerialNumberedEffectivity_<'a> { // entity
 pub type SerialNumberedEffectivity<'a> = Id<SerialNumberedEffectivity_<'a>>;
 impl<'a> Parse<'a> for SerialNumberedEffectivity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SERIAL_NUMBERED_EFFECTIVITY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, effectivity_start_id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, effectivity_end_id) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Identifier<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             effectivity_start_id,
@@ -18429,12 +21472,17 @@ pub struct ShapeAspect_<'a> { // entity
 pub type ShapeAspect<'a> = Id<ShapeAspect_<'a>>;
 impl<'a> Parse<'a> for ShapeAspect_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_ASPECT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18453,12 +21501,17 @@ pub struct ShapeAspectAssociativity_<'a> { // entity
 pub type ShapeAspectAssociativity<'a> = Id<ShapeAspectAssociativity_<'a>>;
 impl<'a> Parse<'a> for ShapeAspectAssociativity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_ASPECT_ASSOCIATIVITY(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18477,12 +21530,17 @@ pub struct ShapeAspectDerivingRelationship_<'a> { // entity
 pub type ShapeAspectDerivingRelationship<'a> = Id<ShapeAspectDerivingRelationship_<'a>>;
 impl<'a> Parse<'a> for ShapeAspectDerivingRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_ASPECT_DERIVING_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18501,12 +21559,17 @@ pub struct ShapeAspectRelationship_<'a> { // entity
 pub type ShapeAspectRelationship<'a> = Id<ShapeAspectRelationship_<'a>>;
 impl<'a> Parse<'a> for ShapeAspectRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_ASPECT_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18525,12 +21588,17 @@ pub struct ShapeAspectTransition_<'a> { // entity
 pub type ShapeAspectTransition<'a> = Id<ShapeAspectTransition_<'a>>;
 impl<'a> Parse<'a> for ShapeAspectTransition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_ASPECT_TRANSITION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18549,12 +21617,17 @@ pub struct ShapeDefiningRelationship_<'a> { // entity
 pub type ShapeDefiningRelationship<'a> = Id<ShapeDefiningRelationship_<'a>>;
 impl<'a> Parse<'a> for ShapeDefiningRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_DEFINING_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18586,8 +21659,11 @@ pub struct ShapeDefinitionRepresentation_<'a> { // entity
 pub type ShapeDefinitionRepresentation<'a> = Id<ShapeDefinitionRepresentation_<'a>>;
 impl<'a> Parse<'a> for ShapeDefinitionRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_DEFINITION_REPRESENTATION(")(s)?;
         let (s, definition) = <RepresentedDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, used_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             definition,
             used_representation,
@@ -18603,9 +21679,13 @@ pub struct ShapeDimensionRepresentation_<'a> { // entity
 pub type ShapeDimensionRepresentation<'a> = Id<ShapeDimensionRepresentation_<'a>>;
 impl<'a> Parse<'a> for ShapeDimensionRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_DIMENSION_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -18622,9 +21702,13 @@ pub struct ShapeRepresentation_<'a> { // entity
 pub type ShapeRepresentation<'a> = Id<ShapeRepresentation_<'a>>;
 impl<'a> Parse<'a> for ShapeRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -18642,12 +21726,17 @@ pub struct ShapeRepresentationRelationship_<'a> { // entity
 pub type ShapeRepresentationRelationship<'a> = Id<ShapeRepresentationRelationship_<'a>>;
 impl<'a> Parse<'a> for ShapeRepresentationRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_REPRESENTATION_RELATIONSHIP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_1) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, rep_2) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18665,9 +21754,13 @@ pub struct ShapeRepresentationWithParameters_<'a> { // entity
 pub type ShapeRepresentationWithParameters<'a> = Id<ShapeRepresentationWithParameters_<'a>>;
 impl<'a> Parse<'a> for ShapeRepresentationWithParameters_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHAPE_REPRESENTATION_WITH_PARAMETERS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -18696,8 +21789,11 @@ pub struct ShellBasedSurfaceModel_<'a> { // entity
 pub type ShellBasedSurfaceModel<'a> = Id<ShellBasedSurfaceModel_<'a>>;
 impl<'a> Parse<'a> for ShellBasedSurfaceModel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SHELL_BASED_SURFACE_MODEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, sbsm_boundary) = <Vec<Shell<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             sbsm_boundary,
@@ -18754,11 +21850,16 @@ pub struct SiUnit_<'a> { // entity
 pub type SiUnit<'a> = Id<SiUnit_<'a>>;
 impl<'a> Parse<'a> for SiUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SI_UNIT(")(s)?;
+        let (s, _) = char('*')(s)?;
         let (s, prefix) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<SiPrefix<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <SiUnitName<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
+            dimensions,
             prefix,
             name,
             _marker: std::marker::PhantomData}))
@@ -18837,6 +21938,7 @@ pub struct SimpleBooleanExpression_<'a> { // entity
 pub type SimpleBooleanExpression<'a> = Id<SimpleBooleanExpression_<'a>>;
 impl<'a> Parse<'a> for SimpleBooleanExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SIMPLE_BOOLEAN_EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -18847,6 +21949,7 @@ pub struct SimpleGenericExpression_<'a> { // entity
 pub type SimpleGenericExpression<'a> = Id<SimpleGenericExpression_<'a>>;
 impl<'a> Parse<'a> for SimpleGenericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SIMPLE_GENERIC_EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -18857,6 +21960,7 @@ pub struct SimpleNumericExpression_<'a> { // entity
 pub type SimpleNumericExpression<'a> = Id<SimpleNumericExpression_<'a>>;
 impl<'a> Parse<'a> for SimpleNumericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SIMPLE_NUMERIC_EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -18868,7 +21972,9 @@ pub struct SimplePairRange_<'a> { // entity
 pub type SimplePairRange<'a> = Id<SimplePairRange_<'a>>;
 impl<'a> Parse<'a> for SimplePairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SIMPLE_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             _marker: std::marker::PhantomData}))
@@ -18880,6 +21986,7 @@ pub struct SimpleStringExpression_<'a> { // entity
 pub type SimpleStringExpression<'a> = Id<SimpleStringExpression_<'a>>;
 impl<'a> Parse<'a> for SimpleStringExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SIMPLE_STRING_EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -18891,7 +21998,9 @@ pub struct SinFunction_<'a> { // entity
 pub type SinFunction<'a> = Id<SinFunction_<'a>>;
 impl<'a> Parse<'a> for SinFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SIN_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -18919,7 +22028,9 @@ pub struct SlashExpression_<'a> { // entity
 pub type SlashExpression<'a> = Id<SlashExpression_<'a>>;
 impl<'a> Parse<'a> for SlashExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SLASH_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -18939,16 +22050,25 @@ pub struct SlidingCurvePair_<'a> { // entity
 pub type SlidingCurvePair<'a> = Id<SlidingCurvePair_<'a>>;
 impl<'a> Parse<'a> for SlidingCurvePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SLIDING_CURVE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_1) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_2) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -18970,9 +22090,13 @@ pub struct SlidingCurvePairValue_<'a> { // entity
 pub type SlidingCurvePairValue<'a> = Id<SlidingCurvePairValue_<'a>>;
 impl<'a> Parse<'a> for SlidingCurvePairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SLIDING_CURVE_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_point_on_curve_1) = <PointOnCurve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_point_on_curve_2) = <PointOnCurve<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_point_on_curve_1,
@@ -18994,16 +22118,25 @@ pub struct SlidingSurfacePair_<'a> { // entity
 pub type SlidingSurfacePair<'a> = Id<SlidingSurfacePair_<'a>>;
 impl<'a> Parse<'a> for SlidingSurfacePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SLIDING_SURFACE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_1) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_2) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -19026,10 +22159,15 @@ pub struct SlidingSurfacePairValue_<'a> { // entity
 pub type SlidingSurfacePairValue<'a> = Id<SlidingSurfacePairValue_<'a>>;
 impl<'a> Parse<'a> for SlidingSurfacePairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SLIDING_SURFACE_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_point_on_surface_1) = <PointOnSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_point_on_surface_2) = <PointOnSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_rotation) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_point_on_surface_1,
@@ -19046,10 +22184,13 @@ pub struct Slot_<'a> { // entity
 pub type Slot<'a> = Id<Slot_<'a>>;
 impl<'a> Parse<'a> for Slot_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SLOT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -19066,12 +22207,17 @@ pub struct SlotEnd_<'a> { // entity
 pub type SlotEnd<'a> = Id<SlotEnd_<'a>>;
 impl<'a> Parse<'a> for SlotEnd_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SLOT_END(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -19099,8 +22245,11 @@ pub struct SolidAngleMeasureWithUnit_<'a> { // entity
 pub type SolidAngleMeasureWithUnit<'a> = Id<SolidAngleMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for SolidAngleMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SOLID_ANGLE_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -19114,7 +22263,9 @@ pub struct SolidAngleUnit_<'a> { // entity
 pub type SolidAngleUnit<'a> = Id<SolidAngleUnit_<'a>>;
 impl<'a> Parse<'a> for SolidAngleUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SOLID_ANGLE_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -19127,7 +22278,9 @@ pub struct SolidModel_<'a> { // entity
 pub type SolidModel<'a> = Id<SolidModel_<'a>>;
 impl<'a> Parse<'a> for SolidModel_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SOLID_MODEL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -19142,9 +22295,13 @@ pub struct SolidReplica_<'a> { // entity
 pub type SolidReplica<'a> = Id<SolidReplica_<'a>>;
 impl<'a> Parse<'a> for SolidReplica_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SOLID_REPLICA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_solid) = <SolidModel<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transformation) = <CartesianTransformationOperator3d<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             parent_solid,
@@ -19204,18 +22361,27 @@ pub struct SpecifiedHigherUsageOccurrence_<'a> { // entity
 pub type SpecifiedHigherUsageOccurrence<'a> = Id<SpecifiedHigherUsageOccurrence_<'a>>;
 impl<'a> Parse<'a> for SpecifiedHigherUsageOccurrence_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SPECIFIED_HIGHER_USAGE_OCCURRENCE(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_product_definition) = <ProductDefinition<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_designator) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Identifier<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_usage) = <AssemblyComponentUsage<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, next_usage) = <NextAssemblyUsageOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -19246,9 +22412,13 @@ pub struct Sphere_<'a> { // entity
 pub type Sphere<'a> = Id<Sphere_<'a>>;
 impl<'a> Parse<'a> for Sphere_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SPHERE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, centre) = <Point<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             radius,
@@ -19267,13 +22437,19 @@ pub struct SphericalPair_<'a> { // entity
 pub type SphericalPair<'a> = Id<SphericalPair_<'a>>;
 impl<'a> Parse<'a> for SphericalPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SPHERICAL_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -19296,13 +22472,21 @@ pub struct SphericalPairRange_<'a> { // entity
 pub type SphericalPairRange<'a> = Id<SphericalPairRange_<'a>>;
 impl<'a> Parse<'a> for SphericalPairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SPHERICAL_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_yaw) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_yaw) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_pitch) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_pitch) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_roll) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_roll) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_yaw,
@@ -19322,8 +22506,11 @@ pub struct SphericalPairValue_<'a> { // entity
 pub type SphericalPairValue<'a> = Id<SphericalPairValue_<'a>>;
 impl<'a> Parse<'a> for SphericalPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SPHERICAL_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, input_orientation) = <SpatialRotation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             input_orientation,
@@ -19339,9 +22526,13 @@ pub struct SphericalSurface_<'a> { // entity
 pub type SphericalSurface<'a> = Id<SphericalSurface_<'a>>;
 impl<'a> Parse<'a> for SphericalSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SPHERICAL_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -19355,6 +22546,7 @@ pub struct SqlMappableDefinedFunction_<'a> { // entity
 pub type SqlMappableDefinedFunction<'a> = Id<SqlMappableDefinedFunction_<'a>>;
 impl<'a> Parse<'a> for SqlMappableDefinedFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SQL_MAPPABLE_DEFINED_FUNCTION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -19366,7 +22558,9 @@ pub struct SquareRootFunction_<'a> { // entity
 pub type SquareRootFunction<'a> = Id<SquareRootFunction_<'a>>;
 impl<'a> Parse<'a> for SquareRootFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SQUARE_ROOT_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -19382,12 +22576,17 @@ pub struct SquareUProfile_<'a> { // entity
 pub type SquareUProfile<'a> = Id<SquareUProfile_<'a>>;
 impl<'a> Parse<'a> for SquareUProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SQUARE_U_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -19405,9 +22604,13 @@ pub struct StandardUncertainty_<'a> { // entity
 pub type StandardUncertainty<'a> = Id<StandardUncertainty_<'a>>;
 impl<'a> Parse<'a> for StandardUncertainty_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("STANDARD_UNCERTAINTY(")(s)?;
         let (s, measure_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, uncertainty_value) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             measure_name,
             description,
@@ -19425,10 +22628,15 @@ pub struct StraightnessTolerance_<'a> { // entity
 pub type StraightnessTolerance<'a> = Id<StraightnessTolerance_<'a>>;
 impl<'a> Parse<'a> for StraightnessTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("STRAIGHTNESS_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -19443,6 +22651,7 @@ pub struct StringDefinedFunction_<'a> { // entity
 pub type StringDefinedFunction<'a> = Id<StringDefinedFunction_<'a>>;
 impl<'a> Parse<'a> for StringDefinedFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("STRING_DEFINED_FUNCTION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -19453,6 +22662,7 @@ pub struct StringExpression_<'a> { // entity
 pub type StringExpression<'a> = Id<StringExpression_<'a>>;
 impl<'a> Parse<'a> for StringExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("STRING_EXPRESSION(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -19464,7 +22674,9 @@ pub struct StringLiteral_<'a> { // entity
 pub type StringLiteral<'a> = Id<StringLiteral_<'a>>;
 impl<'a> Parse<'a> for StringLiteral_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("STRING_LITERAL(")(s)?;
         let (s, the_value) = <&'a str>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             the_value,
             _marker: std::marker::PhantomData}))
@@ -19476,6 +22688,7 @@ pub struct StringVariable_<'a> { // entity
 pub type StringVariable<'a> = Id<StringVariable_<'a>>;
 impl<'a> Parse<'a> for StringVariable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("STRING_VARIABLE(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -19488,8 +22701,11 @@ pub struct StructuredDimensionCallout_<'a> { // entity
 pub type StructuredDimensionCallout<'a> = Id<StructuredDimensionCallout_<'a>>;
 impl<'a> Parse<'a> for StructuredDimensionCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("STRUCTURED_DIMENSION_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -19526,9 +22742,13 @@ pub struct StyledItem_<'a> { // entity
 pub type StyledItem<'a> = Id<StyledItem_<'a>>;
 impl<'a> Parse<'a> for StyledItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("STYLED_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -19546,10 +22766,15 @@ pub struct Subedge_<'a> { // entity
 pub type Subedge<'a> = Id<Subedge_<'a>>;
 impl<'a> Parse<'a> for Subedge_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SUBEDGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_start) = <Vertex<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, edge_end) = <Vertex<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_edge) = <Edge<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             edge_start,
@@ -19567,9 +22792,13 @@ pub struct Subface_<'a> { // entity
 pub type Subface<'a> = Id<Subface_<'a>>;
 impl<'a> Parse<'a> for Subface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SUBFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, bounds) = <Vec<FaceBound<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_face) = <Face<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             bounds,
@@ -19584,7 +22813,9 @@ pub struct SubstringExpression_<'a> { // entity
 pub type SubstringExpression<'a> = Id<SubstringExpression_<'a>>;
 impl<'a> Parse<'a> for SubstringExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SUBSTRING_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -19612,7 +22843,9 @@ pub struct Surface_<'a> { // entity
 pub type Surface<'a> = Id<Surface_<'a>>;
 impl<'a> Parse<'a> for Surface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -19626,8 +22859,11 @@ pub struct SurfaceConditionCallout_<'a> { // entity
 pub type SurfaceConditionCallout<'a> = Id<SurfaceConditionCallout_<'a>>;
 impl<'a> Parse<'a> for SurfaceConditionCallout_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_CONDITION_CALLOUT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, contents) = <Vec<DraughtingCalloutElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             contents,
@@ -19644,10 +22880,15 @@ pub struct SurfaceCurve_<'a> { // entity
 pub type SurfaceCurve<'a> = Id<SurfaceCurve_<'a>>;
 impl<'a> Parse<'a> for SurfaceCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_3d) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, associated_geometry) = <Vec<PcurveOrSurface<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, master_representation) = <PreferredSurfaceCurveRepresentation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             curve_3d,
@@ -19668,12 +22909,19 @@ pub struct SurfaceCurveSweptAreaSolid_<'a> { // entity
 pub type SurfaceCurveSweptAreaSolid<'a> = Id<SurfaceCurveSweptAreaSolid_<'a>>;
 impl<'a> Parse<'a> for SurfaceCurveSweptAreaSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_CURVE_SWEPT_AREA_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_area) = <CurveBoundedSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, directrix) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, start_param) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, end_param) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, reference_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_area,
@@ -19693,9 +22941,13 @@ pub struct SurfaceOfLinearExtrusion_<'a> { // entity
 pub type SurfaceOfLinearExtrusion<'a> = Id<SurfaceOfLinearExtrusion_<'a>>;
 impl<'a> Parse<'a> for SurfaceOfLinearExtrusion_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_OF_LINEAR_EXTRUSION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, extrusion_axis) = <Vector<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_curve,
@@ -19712,9 +22964,13 @@ pub struct SurfaceOfRevolution_<'a> { // entity
 pub type SurfaceOfRevolution<'a> = Id<SurfaceOfRevolution_<'a>>;
 impl<'a> Parse<'a> for SurfaceOfRevolution_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_OF_REVOLUTION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, axis_position) = <Axis1Placement<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_curve,
@@ -19736,16 +22992,25 @@ pub struct SurfacePair_<'a> { // entity
 pub type SurfacePair<'a> = Id<SurfacePair_<'a>>;
 impl<'a> Parse<'a> for SurfacePair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_1) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_2) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -19769,11 +23034,17 @@ pub struct SurfacePairRange_<'a> { // entity
 pub type SurfacePairRange<'a> = Id<SurfacePairRange_<'a>>;
 impl<'a> Parse<'a> for SurfacePairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, range_on_surface_1) = <RectangularTrimmedSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, range_on_surface_2) = <RectangularTrimmedSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_actual_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             range_on_surface_1,
@@ -19794,11 +23065,17 @@ pub struct SurfacePatch_<'a> { // entity
 pub type SurfacePatch<'a> = Id<SurfacePatch_<'a>>;
 impl<'a> Parse<'a> for SurfacePatch_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_PATCH(")(s)?;
         let (s, parent_surface) = <BoundedSurface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_transition) = <TransitionCode<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_transition) = <TransitionCode<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_sense) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_sense) = <bool>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             parent_surface,
             u_transition,
@@ -19818,10 +23095,15 @@ pub struct SurfaceProfileTolerance_<'a> { // entity
 pub type SurfaceProfileTolerance<'a> = Id<SurfaceProfileTolerance_<'a>>;
 impl<'a> Parse<'a> for SurfaceProfileTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_PROFILE_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -19837,7 +23119,9 @@ pub struct SurfaceRenderingProperties_<'a> { // entity
 pub type SurfaceRenderingProperties<'a> = Id<SurfaceRenderingProperties_<'a>>;
 impl<'a> Parse<'a> for SurfaceRenderingProperties_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_RENDERING_PROPERTIES(")(s)?;
         let (s, rendered_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             rendered_colour,
             _marker: std::marker::PhantomData}))
@@ -19852,9 +23136,13 @@ pub struct SurfaceReplica_<'a> { // entity
 pub type SurfaceReplica<'a> = Id<SurfaceReplica_<'a>>;
 impl<'a> Parse<'a> for SurfaceReplica_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_REPLICA(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, parent_surface) = <Surface<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transformation) = <CartesianTransformationOperator3d<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             parent_surface,
@@ -19886,8 +23174,11 @@ pub struct SurfaceSideStyle_<'a> { // entity
 pub type SurfaceSideStyle<'a> = Id<SurfaceSideStyle_<'a>>;
 impl<'a> Parse<'a> for SurfaceSideStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_SIDE_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<SurfaceStyleElementSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -19910,7 +23201,9 @@ pub struct SurfaceStyleBoundary_<'a> { // entity
 pub type SurfaceStyleBoundary<'a> = Id<SurfaceStyleBoundary_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleBoundary_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_BOUNDARY(")(s)?;
         let (s, style_of_boundary) = <CurveOrRender<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             style_of_boundary,
             _marker: std::marker::PhantomData}))
@@ -19923,7 +23216,9 @@ pub struct SurfaceStyleControlGrid_<'a> { // entity
 pub type SurfaceStyleControlGrid<'a> = Id<SurfaceStyleControlGrid_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleControlGrid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_CONTROL_GRID(")(s)?;
         let (s, style_of_control_grid) = <CurveOrRender<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             style_of_control_grid,
             _marker: std::marker::PhantomData}))
@@ -19959,7 +23254,9 @@ pub struct SurfaceStyleFillArea_<'a> { // entity
 pub type SurfaceStyleFillArea<'a> = Id<SurfaceStyleFillArea_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleFillArea_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_FILL_AREA(")(s)?;
         let (s, fill_area) = <FillAreaStyle<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             fill_area,
             _marker: std::marker::PhantomData}))
@@ -19973,8 +23270,11 @@ pub struct SurfaceStyleParameterLine_<'a> { // entity
 pub type SurfaceStyleParameterLine<'a> = Id<SurfaceStyleParameterLine_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleParameterLine_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_PARAMETER_LINE(")(s)?;
         let (s, style_of_parameter_lines) = <CurveOrRender<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, direction_counts) = <Vec<DirectionCountSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             style_of_parameter_lines,
             direction_counts,
@@ -19988,7 +23288,9 @@ pub struct SurfaceStyleReflectanceAmbient_<'a> { // entity
 pub type SurfaceStyleReflectanceAmbient<'a> = Id<SurfaceStyleReflectanceAmbient_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleReflectanceAmbient_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_REFLECTANCE_AMBIENT(")(s)?;
         let (s, ambient_reflectance) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             ambient_reflectance,
             _marker: std::marker::PhantomData}))
@@ -20002,8 +23304,11 @@ pub struct SurfaceStyleReflectanceAmbientDiffuse_<'a> { // entity
 pub type SurfaceStyleReflectanceAmbientDiffuse<'a> = Id<SurfaceStyleReflectanceAmbientDiffuse_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleReflectanceAmbientDiffuse_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_REFLECTANCE_AMBIENT_DIFFUSE(")(s)?;
         let (s, ambient_reflectance) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, diffuse_reflectance) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             ambient_reflectance,
             diffuse_reflectance,
@@ -20021,11 +23326,17 @@ pub struct SurfaceStyleReflectanceAmbientDiffuseSpecular_<'a> { // entity
 pub type SurfaceStyleReflectanceAmbientDiffuseSpecular<'a> = Id<SurfaceStyleReflectanceAmbientDiffuseSpecular_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleReflectanceAmbientDiffuseSpecular_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_REFLECTANCE_AMBIENT_DIFFUSE_SPECULAR(")(s)?;
         let (s, ambient_reflectance) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, diffuse_reflectance) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, specular_reflectance) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, specular_exponent) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, specular_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             ambient_reflectance,
             diffuse_reflectance,
@@ -20043,8 +23354,11 @@ pub struct SurfaceStyleRendering_<'a> { // entity
 pub type SurfaceStyleRendering<'a> = Id<SurfaceStyleRendering_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleRendering_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_RENDERING(")(s)?;
         let (s, rendering_method) = <ShadingSurfaceMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             rendering_method,
             surface_colour,
@@ -20060,9 +23374,13 @@ pub struct SurfaceStyleRenderingWithProperties_<'a> { // entity
 pub type SurfaceStyleRenderingWithProperties<'a> = Id<SurfaceStyleRenderingWithProperties_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleRenderingWithProperties_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_RENDERING_WITH_PROPERTIES(")(s)?;
         let (s, rendering_method) = <ShadingSurfaceMethod<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, properties) = <Vec<RenderingPropertiesSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             rendering_method,
             surface_colour,
@@ -20077,7 +23395,9 @@ pub struct SurfaceStyleSegmentationCurve_<'a> { // entity
 pub type SurfaceStyleSegmentationCurve<'a> = Id<SurfaceStyleSegmentationCurve_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleSegmentationCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_SEGMENTATION_CURVE(")(s)?;
         let (s, style_of_segmentation_curve) = <CurveOrRender<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             style_of_segmentation_curve,
             _marker: std::marker::PhantomData}))
@@ -20090,7 +23410,9 @@ pub struct SurfaceStyleSilhouette_<'a> { // entity
 pub type SurfaceStyleSilhouette<'a> = Id<SurfaceStyleSilhouette_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleSilhouette_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_SILHOUETTE(")(s)?;
         let (s, style_of_silhouette) = <CurveOrRender<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             style_of_silhouette,
             _marker: std::marker::PhantomData}))
@@ -20103,7 +23425,9 @@ pub struct SurfaceStyleTransparent_<'a> { // entity
 pub type SurfaceStyleTransparent<'a> = Id<SurfaceStyleTransparent_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleTransparent_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_TRANSPARENT(")(s)?;
         let (s, transparency) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             transparency,
             _marker: std::marker::PhantomData}))
@@ -20117,8 +23441,11 @@ pub struct SurfaceStyleUsage_<'a> { // entity
 pub type SurfaceStyleUsage<'a> = Id<SurfaceStyleUsage_<'a>>;
 impl<'a> Parse<'a> for SurfaceStyleUsage_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_STYLE_USAGE(")(s)?;
         let (s, side) = <SurfaceSide<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, style) = <SurfaceSideStyleSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             side,
             style,
@@ -20134,9 +23461,13 @@ pub struct SurfaceTextureRepresentation_<'a> { // entity
 pub type SurfaceTextureRepresentation<'a> = Id<SurfaceTextureRepresentation_<'a>>;
 impl<'a> Parse<'a> for SurfaceTextureRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SURFACE_TEXTURE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -20175,8 +23506,11 @@ pub struct SweptAreaSolid_<'a> { // entity
 pub type SweptAreaSolid<'a> = Id<SweptAreaSolid_<'a>>;
 impl<'a> Parse<'a> for SweptAreaSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SWEPT_AREA_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_area) = <CurveBoundedSurface<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_area,
@@ -20195,14 +23529,21 @@ pub struct SweptDiskSolid_<'a> { // entity
 pub type SweptDiskSolid<'a> = Id<SweptDiskSolid_<'a>>;
 impl<'a> Parse<'a> for SweptDiskSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SWEPT_DISK_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, directrix) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, inner_radius) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<PositiveLengthMeasure<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, start_param) = <f64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, end_param) = <f64>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             directrix,
@@ -20221,8 +23562,11 @@ pub struct SweptFaceSolid_<'a> { // entity
 pub type SweptFaceSolid<'a> = Id<SweptFaceSolid_<'a>>;
 impl<'a> Parse<'a> for SweptFaceSolid_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SWEPT_FACE_SOLID(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_face) = <FaceSurface<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_face,
@@ -20237,8 +23581,11 @@ pub struct SweptSurface_<'a> { // entity
 pub type SweptSurface<'a> = Id<SweptSurface_<'a>>;
 impl<'a> Parse<'a> for SweptSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SWEPT_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, swept_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             swept_curve,
@@ -20252,7 +23599,9 @@ pub struct SymbolColour_<'a> { // entity
 pub type SymbolColour<'a> = Id<SymbolColour_<'a>>;
 impl<'a> Parse<'a> for SymbolColour_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SYMBOL_COLOUR(")(s)?;
         let (s, colour_of_symbol) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             colour_of_symbol,
             _marker: std::marker::PhantomData}))
@@ -20267,9 +23616,13 @@ pub struct SymbolRepresentation_<'a> { // entity
 pub type SymbolRepresentation<'a> = Id<SymbolRepresentation_<'a>>;
 impl<'a> Parse<'a> for SymbolRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SYMBOL_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -20285,8 +23638,11 @@ pub struct SymbolRepresentationMap_<'a> { // entity
 pub type SymbolRepresentationMap<'a> = Id<SymbolRepresentationMap_<'a>>;
 impl<'a> Parse<'a> for SymbolRepresentationMap_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SYMBOL_REPRESENTATION_MAP(")(s)?;
         let (s, mapping_origin) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mapped_representation) = <Representation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             mapping_origin,
             mapped_representation,
@@ -20301,8 +23657,11 @@ pub struct SymbolStyle_<'a> { // entity
 pub type SymbolStyle<'a> = Id<SymbolStyle_<'a>>;
 impl<'a> Parse<'a> for SymbolStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SYMBOL_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, style_of_symbol) = <SymbolStyleSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             style_of_symbol,
@@ -20328,10 +23687,15 @@ pub struct SymbolTarget_<'a> { // entity
 pub type SymbolTarget<'a> = Id<SymbolTarget_<'a>>;
 impl<'a> Parse<'a> for SymbolTarget_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SYMBOL_TARGET(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, x_scale) = <PositiveRatioMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, y_scale) = <PositiveRatioMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             placement,
@@ -20350,12 +23714,17 @@ pub struct SymmetricShapeAspect_<'a> { // entity
 pub type SymmetricShapeAspect<'a> = Id<SymmetricShapeAspect_<'a>>;
 impl<'a> Parse<'a> for SymmetricShapeAspect_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SYMMETRIC_SHAPE_ASPECT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -20375,11 +23744,17 @@ pub struct SymmetryTolerance_<'a> { // entity
 pub type SymmetryTolerance<'a> = Id<SymmetryTolerance_<'a>>;
 impl<'a> Parse<'a> for SymmetryTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("SYMMETRY_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -20398,9 +23773,13 @@ pub struct TactileAppearanceRepresentation_<'a> { // entity
 pub type TactileAppearanceRepresentation<'a> = Id<TactileAppearanceRepresentation_<'a>>;
 impl<'a> Parse<'a> for TactileAppearanceRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TACTILE_APPEARANCE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -20415,7 +23794,9 @@ pub struct TanFunction_<'a> { // entity
 pub type TanFunction<'a> = Id<TanFunction_<'a>>;
 impl<'a> Parse<'a> for TanFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TAN_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -20431,12 +23812,17 @@ pub struct Tangent_<'a> { // entity
 pub type Tangent<'a> = Id<Tangent_<'a>>;
 impl<'a> Parse<'a> for Tangent_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TANGENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -20455,12 +23841,17 @@ pub struct Taper_<'a> { // entity
 pub type Taper<'a> = Id<Taper_<'a>>;
 impl<'a> Parse<'a> for Taper_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TAPER(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -20479,12 +23870,17 @@ pub struct TeeProfile_<'a> { // entity
 pub type TeeProfile<'a> = Id<TeeProfile_<'a>>;
 impl<'a> Parse<'a> for TeeProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEE_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -20503,10 +23899,15 @@ pub struct TerminatorSymbol_<'a> { // entity
 pub type TerminatorSymbol<'a> = Id<TerminatorSymbol_<'a>>;
 impl<'a> Parse<'a> for TerminatorSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TERMINATOR_SYMBOL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, styles) = <Vec<PresentationStyleAssignment<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, annotated_curve) = <AnnotationCurveOccurrence<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             styles,
@@ -20562,12 +23963,19 @@ pub struct TextLiteral_<'a> { // entity
 pub type TextLiteral<'a> = Id<TextLiteral_<'a>>;
 impl<'a> Parse<'a> for TextLiteral_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_LITERAL(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, literal) = <PresentableText<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alignment) = <TextAlignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <TextPath<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, font) = <FontSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             literal,
@@ -20591,13 +23999,21 @@ pub struct TextLiteralWithAssociatedCurves_<'a> { // entity
 pub type TextLiteralWithAssociatedCurves<'a> = Id<TextLiteralWithAssociatedCurves_<'a>>;
 impl<'a> Parse<'a> for TextLiteralWithAssociatedCurves_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_LITERAL_WITH_ASSOCIATED_CURVES(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, literal) = <PresentableText<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alignment) = <TextAlignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <TextPath<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, font) = <FontSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, associated_curves) = <Vec<Curve<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             literal,
@@ -20622,13 +24038,21 @@ pub struct TextLiteralWithBlankingBox_<'a> { // entity
 pub type TextLiteralWithBlankingBox<'a> = Id<TextLiteralWithBlankingBox_<'a>>;
 impl<'a> Parse<'a> for TextLiteralWithBlankingBox_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_LITERAL_WITH_BLANKING_BOX(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, literal) = <PresentableText<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alignment) = <TextAlignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <TextPath<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, font) = <FontSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, blanking) = <PlanarBox<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             literal,
@@ -20653,13 +24077,21 @@ pub struct TextLiteralWithDelineation_<'a> { // entity
 pub type TextLiteralWithDelineation<'a> = Id<TextLiteralWithDelineation_<'a>>;
 impl<'a> Parse<'a> for TextLiteralWithDelineation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_LITERAL_WITH_DELINEATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, literal) = <PresentableText<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alignment) = <TextAlignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <TextPath<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, font) = <FontSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, delineation) = <TextDelineation<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             literal,
@@ -20684,13 +24116,21 @@ pub struct TextLiteralWithExtent_<'a> { // entity
 pub type TextLiteralWithExtent<'a> = Id<TextLiteralWithExtent_<'a>>;
 impl<'a> Parse<'a> for TextLiteralWithExtent_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_LITERAL_WITH_EXTENT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, literal) = <PresentableText<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, alignment) = <TextAlignment<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, path) = <TextPath<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, font) = <FontSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, extent) = <PlanarExtent<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             literal,
@@ -20748,9 +24188,13 @@ pub struct TextStringRepresentation_<'a> { // entity
 pub type TextStringRepresentation<'a> = Id<TextStringRepresentation_<'a>>;
 impl<'a> Parse<'a> for TextStringRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_STRING_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -20787,8 +24231,11 @@ pub struct TextStyle_<'a> { // entity
 pub type TextStyle<'a> = Id<TextStyle_<'a>>;
 impl<'a> Parse<'a> for TextStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, character_appearance) = <CharacterStyleSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             character_appearance,
@@ -20802,7 +24249,9 @@ pub struct TextStyleForDefinedFont_<'a> { // entity
 pub type TextStyleForDefinedFont<'a> = Id<TextStyleForDefinedFont_<'a>>;
 impl<'a> Parse<'a> for TextStyleForDefinedFont_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_STYLE_FOR_DEFINED_FONT(")(s)?;
         let (s, text_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             text_colour,
             _marker: std::marker::PhantomData}))
@@ -20817,9 +24266,13 @@ pub struct TextStyleWithBoxCharacteristics_<'a> { // entity
 pub type TextStyleWithBoxCharacteristics<'a> = Id<TextStyleWithBoxCharacteristics_<'a>>;
 impl<'a> Parse<'a> for TextStyleWithBoxCharacteristics_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_STYLE_WITH_BOX_CHARACTERISTICS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, character_appearance) = <CharacterStyleSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, characteristics) = <Vec<BoxCharacteristicSelect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             character_appearance,
@@ -20836,9 +24289,13 @@ pub struct TextStyleWithMirror_<'a> { // entity
 pub type TextStyleWithMirror<'a> = Id<TextStyleWithMirror_<'a>>;
 impl<'a> Parse<'a> for TextStyleWithMirror_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_STYLE_WITH_MIRROR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, character_appearance) = <CharacterStyleSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, mirror_placement) = <Axis2Placement<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             character_appearance,
@@ -20855,9 +24312,13 @@ pub struct TextStyleWithSpacing_<'a> { // entity
 pub type TextStyleWithSpacing<'a> = Id<TextStyleWithSpacing_<'a>>;
 impl<'a> Parse<'a> for TextStyleWithSpacing_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TEXT_STYLE_WITH_SPACING(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, character_appearance) = <CharacterStyleSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, character_spacing) = <CharacterSpacingSelect<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             character_appearance,
@@ -20884,8 +24345,11 @@ pub struct ThermodynamicTemperatureMeasureWithUnit_<'a> { // entity
 pub type ThermodynamicTemperatureMeasureWithUnit<'a> = Id<ThermodynamicTemperatureMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for ThermodynamicTemperatureMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("THERMODYNAMIC_TEMPERATURE_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -20899,7 +24363,9 @@ pub struct ThermodynamicTemperatureUnit_<'a> { // entity
 pub type ThermodynamicTemperatureUnit<'a> = Id<ThermodynamicTemperatureUnit_<'a>>;
 impl<'a> Parse<'a> for ThermodynamicTemperatureUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("THERMODYNAMIC_TEMPERATURE_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -20913,10 +24379,13 @@ pub struct Thread_<'a> { // entity
 pub type Thread<'a> = Id<Thread_<'a>>;
 impl<'a> Parse<'a> for Thread_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("THREAD(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -20932,11 +24401,15 @@ pub struct TimeInterval_<'a> { // entity
 pub type TimeInterval<'a> = Id<TimeInterval_<'a>>;
 impl<'a> Parse<'a> for TimeInterval_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TIME_INTERVAL(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -20952,8 +24425,11 @@ pub struct TimeIntervalAssignment_<'a> { // entity
 pub type TimeIntervalAssignment<'a> = Id<TimeIntervalAssignment_<'a>>;
 impl<'a> Parse<'a> for TimeIntervalAssignment_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TIME_INTERVAL_ASSIGNMENT(")(s)?;
         let (s, assigned_time_interval) = <TimeInterval<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, role) = <TimeIntervalRole<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             assigned_time_interval,
             role,
@@ -20968,8 +24444,11 @@ pub struct TimeIntervalBasedEffectivity_<'a> { // entity
 pub type TimeIntervalBasedEffectivity<'a> = Id<TimeIntervalBasedEffectivity_<'a>>;
 impl<'a> Parse<'a> for TimeIntervalBasedEffectivity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TIME_INTERVAL_BASED_EFFECTIVITY(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, effectivity_period) = <TimeInterval<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             effectivity_period,
@@ -21093,10 +24572,13 @@ pub struct TimeIntervalRole_<'a> { // entity
 pub type TimeIntervalRole<'a> = Id<TimeIntervalRole_<'a>>;
 impl<'a> Parse<'a> for TimeIntervalRole_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TIME_INTERVAL_ROLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -21115,20 +24597,27 @@ pub struct TimeIntervalWithBounds_<'a> { // entity
 pub type TimeIntervalWithBounds<'a> = Id<TimeIntervalWithBounds_<'a>>;
 impl<'a> Parse<'a> for TimeIntervalWithBounds_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TIME_INTERVAL_WITH_BOUNDS(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, primary_bound) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<DateTimeOrEventOccurrence<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, secondary_bound) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<DateTimeOrEventOccurrence<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, duration) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<TimeMeasureWithUnit<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -21158,8 +24647,11 @@ pub struct TimeMeasureWithUnit_<'a> { // entity
 pub type TimeMeasureWithUnit<'a> = Id<TimeMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for TimeMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TIME_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -21173,7 +24665,9 @@ pub struct TimeUnit_<'a> { // entity
 pub type TimeUnit<'a> = Id<TimeUnit_<'a>>;
 impl<'a> Parse<'a> for TimeUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TIME_UNIT(")(s)?;
         let (s, dimensions) = <DimensionalExponents<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             dimensions,
             _marker: std::marker::PhantomData}))
@@ -21239,8 +24733,11 @@ pub struct ToleranceValue_<'a> { // entity
 pub type ToleranceValue<'a> = Id<ToleranceValue_<'a>>;
 impl<'a> Parse<'a> for ToleranceValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TOLERANCE_VALUE(")(s)?;
         let (s, lower_bound) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_bound) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             lower_bound,
             upper_bound,
@@ -21259,14 +24756,21 @@ pub struct ToleranceZone_<'a> { // entity
 pub type ToleranceZone<'a> = Id<ToleranceZone_<'a>>;
 impl<'a> Parse<'a> for ToleranceZone_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TOLERANCE_ZONE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, defining_tolerance) = <Vec<GeometricTolerance<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, form) = <ToleranceZoneForm<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -21285,8 +24789,11 @@ pub struct ToleranceZoneDefinition_<'a> { // entity
 pub type ToleranceZoneDefinition<'a> = Id<ToleranceZoneDefinition_<'a>>;
 impl<'a> Parse<'a> for ToleranceZoneDefinition_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TOLERANCE_ZONE_DEFINITION(")(s)?;
         let (s, zone) = <ToleranceZone<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, boundaries) = <Vec<ShapeAspect<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             zone,
             boundaries,
@@ -21300,7 +24807,9 @@ pub struct ToleranceZoneForm_<'a> { // entity
 pub type ToleranceZoneForm<'a> = Id<ToleranceZoneForm_<'a>>;
 impl<'a> Parse<'a> for ToleranceZoneForm_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TOLERANCE_ZONE_FORM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -21313,7 +24822,9 @@ pub struct TopologicalRepresentationItem_<'a> { // entity
 pub type TopologicalRepresentationItem<'a> = Id<TopologicalRepresentationItem_<'a>>;
 impl<'a> Parse<'a> for TopologicalRepresentationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TOPOLOGICAL_REPRESENTATION_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -21329,10 +24840,15 @@ pub struct ToroidalSurface_<'a> { // entity
 pub type ToroidalSurface<'a> = Id<ToroidalSurface_<'a>>;
 impl<'a> Parse<'a> for ToroidalSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TOROIDAL_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, major_radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, minor_radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -21351,10 +24867,15 @@ pub struct Torus_<'a> { // entity
 pub type Torus<'a> = Id<Torus_<'a>>;
 impl<'a> Parse<'a> for Torus_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TORUS(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, position) = <Axis1Placement<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, major_radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, minor_radius) = <PositiveLengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             position,
@@ -21374,11 +24895,17 @@ pub struct TotalRunoutTolerance_<'a> { // entity
 pub type TotalRunoutTolerance<'a> = Id<TotalRunoutTolerance_<'a>>;
 impl<'a> Parse<'a> for TotalRunoutTolerance_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TOTAL_RUNOUT_TOLERANCE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <MeasureWithUnit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, toleranced_shape_aspect) = <ShapeAspect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, datum_system) = <Vec<DatumReference<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -21429,12 +24956,17 @@ pub struct TransitionFeature_<'a> { // entity
 pub type TransitionFeature<'a> = Id<TransitionFeature_<'a>>;
 impl<'a> Parse<'a> for TransitionFeature_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TRANSITION_FEATURE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -21468,12 +25000,19 @@ pub struct TrimmedCurve_<'a> { // entity
 pub type TrimmedCurve<'a> = Id<TrimmedCurve_<'a>>;
 impl<'a> Parse<'a> for TrimmedCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TRIMMED_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, basis_curve) = <Curve<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, trim_1) = <Vec<TrimmingSelect<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, trim_2) = <Vec<TrimmingSelect<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, sense_agreement) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, master_representation) = <TrimmingPreference<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             basis_curve,
@@ -21522,9 +25061,13 @@ pub struct TwoDirectionRepeatFactor_<'a> { // entity
 pub type TwoDirectionRepeatFactor<'a> = Id<TwoDirectionRepeatFactor_<'a>>;
 impl<'a> Parse<'a> for TwoDirectionRepeatFactor_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TWO_DIRECTION_REPEAT_FACTOR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, repeat_factor) = <Vector<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, second_repeat_factor) = <Vector<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             repeat_factor,
@@ -21539,7 +25082,9 @@ pub struct TypeQualifier_<'a> { // entity
 pub type TypeQualifier<'a> = Id<TypeQualifier_<'a>>;
 impl<'a> Parse<'a> for TypeQualifier_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("TYPE_QUALIFIER(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -21563,7 +25108,9 @@ pub struct UnaryBooleanExpression_<'a> { // entity
 pub type UnaryBooleanExpression<'a> = Id<UnaryBooleanExpression_<'a>>;
 impl<'a> Parse<'a> for UnaryBooleanExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNARY_BOOLEAN_EXPRESSION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -21576,7 +25123,9 @@ pub struct UnaryFunctionCall_<'a> { // entity
 pub type UnaryFunctionCall<'a> = Id<UnaryFunctionCall_<'a>>;
 impl<'a> Parse<'a> for UnaryFunctionCall_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNARY_FUNCTION_CALL(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -21589,7 +25138,9 @@ pub struct UnaryGenericExpression_<'a> { // entity
 pub type UnaryGenericExpression<'a> = Id<UnaryGenericExpression_<'a>>;
 impl<'a> Parse<'a> for UnaryGenericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNARY_GENERIC_EXPRESSION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -21602,7 +25153,9 @@ pub struct UnaryNumericExpression_<'a> { // entity
 pub type UnaryNumericExpression<'a> = Id<UnaryNumericExpression_<'a>>;
 impl<'a> Parse<'a> for UnaryNumericExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNARY_NUMERIC_EXPRESSION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -21618,10 +25171,15 @@ pub struct UncertaintyAssignedRepresentation_<'a> { // entity
 pub type UncertaintyAssignedRepresentation<'a> = Id<UncertaintyAssignedRepresentation_<'a>>;
 impl<'a> Parse<'a> for UncertaintyAssignedRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNCERTAINTY_ASSIGNED_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, uncertainty) = <Vec<UncertaintyMeasureWithUnit<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -21640,12 +25198,17 @@ pub struct UncertaintyMeasureWithUnit_<'a> { // entity
 pub type UncertaintyMeasureWithUnit<'a> = Id<UncertaintyMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for UncertaintyMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNCERTAINTY_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -21662,8 +25225,11 @@ pub struct UncertaintyQualifier_<'a> { // entity
 pub type UncertaintyQualifier<'a> = Id<UncertaintyQualifier_<'a>>;
 impl<'a> Parse<'a> for UncertaintyQualifier_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNCERTAINTY_QUALIFIER(")(s)?;
         let (s, measure_name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             measure_name,
             description,
@@ -21681,13 +25247,19 @@ pub struct UnconstrainedPair_<'a> { // entity
 pub type UnconstrainedPair<'a> = Id<UnconstrainedPair_<'a>>;
 impl<'a> Parse<'a> for UnconstrainedPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNCONSTRAINED_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -21705,8 +25277,11 @@ pub struct UnconstrainedPairValue_<'a> { // entity
 pub type UnconstrainedPairValue<'a> = Id<UnconstrainedPairValue_<'a>>;
 impl<'a> Parse<'a> for UnconstrainedPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNCONSTRAINED_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, actual_placement) = <Axis2Placement3d<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             actual_placement,
@@ -21725,12 +25300,19 @@ pub struct UniformCurve_<'a> { // entity
 pub type UniformCurve<'a> = Id<UniformCurve_<'a>>;
 impl<'a> Parse<'a> for UniformCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNIFORM_CURVE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<CartesianPoint<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_form) = <BSplineCurveForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, closed_curve) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             degree,
@@ -21755,14 +25337,23 @@ pub struct UniformSurface_<'a> { // entity
 pub type UniformSurface<'a> = Id<UniformSurface_<'a>>;
 impl<'a> Parse<'a> for UniformSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNIFORM_SURFACE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_degree) = <i64>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, control_points_list) = <Vec<Vec<CartesianPoint<'a>>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, surface_form) = <BSplineSurfaceForm<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, u_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, v_closed) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, self_intersect) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             u_degree,
@@ -21800,16 +25391,23 @@ pub struct UniversalPair_<'a> { // entity
 pub type UniversalPair<'a> = Id<UniversalPair_<'a>>;
 impl<'a> Parse<'a> for UniversalPair_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNIVERSAL_PAIR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_1) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, transform_item_2) = <RepresentationItem<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, joint) = <KinematicJoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, input_skew_angle) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<PlaneAngleMeasure<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -21831,11 +25429,17 @@ pub struct UniversalPairRange_<'a> { // entity
 pub type UniversalPairRange<'a> = Id<UniversalPairRange_<'a>>;
 impl<'a> Parse<'a> for UniversalPairRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNIVERSAL_PAIR_RANGE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_first_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_first_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, lower_limit_second_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, upper_limit_second_rotation) = <RotationalRangeMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             lower_limit_first_rotation,
@@ -21854,9 +25458,13 @@ pub struct UniversalPairValue_<'a> { // entity
 pub type UniversalPairValue<'a> = Id<UniversalPairValue_<'a>>;
 impl<'a> Parse<'a> for UniversalPairValue_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("UNIVERSAL_PAIR_VALUE(")(s)?;
         let (s, applies_to_pair) = <KinematicPair<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, first_rotation_angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, second_rotation_angle) = <PlaneAngleMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             applies_to_pair,
             first_rotation_angle,
@@ -21892,7 +25500,9 @@ pub struct ValueFunction_<'a> { // entity
 pub type ValueFunction<'a> = Id<ValueFunction_<'a>>;
 impl<'a> Parse<'a> for ValueFunction_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VALUE_FUNCTION(")(s)?;
         let (s, operand) = <GenericExpression<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operand,
             _marker: std::marker::PhantomData}))
@@ -21921,8 +25531,11 @@ pub struct ValueRange_<'a> { // entity
 pub type ValueRange<'a> = Id<ValueRange_<'a>>;
 impl<'a> Parse<'a> for ValueRange_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VALUE_RANGE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, item_element) = <CompoundItemDefinition<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             item_element,
@@ -21937,8 +25550,11 @@ pub struct ValueRepresentationItem_<'a> { // entity
 pub type ValueRepresentationItem<'a> = Id<ValueRepresentationItem_<'a>>;
 impl<'a> Parse<'a> for ValueRepresentationItem_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VALUE_REPRESENTATION_ITEM(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             value_component,
@@ -21951,6 +25567,7 @@ pub struct Variable_<'a> { // entity
 pub type Variable<'a> = Id<Variable_<'a>>;
 impl<'a> Parse<'a> for Variable_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VARIABLE(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -21961,6 +25578,7 @@ pub struct VariableSemantics_<'a> { // entity
 pub type VariableSemantics<'a> = Id<VariableSemantics_<'a>>;
 impl<'a> Parse<'a> for VariableSemantics_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VARIABLE_SEMANTICS(")(s)?;
         Ok((s, Self {
             _marker: std::marker::PhantomData}))
     }
@@ -21974,9 +25592,13 @@ pub struct Vector_<'a> { // entity
 pub type Vector<'a> = Id<Vector_<'a>>;
 impl<'a> Parse<'a> for Vector_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VECTOR(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, orientation) = <Direction<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, magnitude) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             orientation,
@@ -22009,12 +25631,18 @@ pub struct VectorStyle_<'a> { // entity
 pub type VectorStyle<'a> = Id<VectorStyle_<'a>>;
 impl<'a> Parse<'a> for VectorStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VECTOR_STYLE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         #[allow(non_snake_case)]
         let (s, curve_style__name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_font) = <CurveFontOrScaledCurveFontSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_width) = <SizeSelect<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, curve_colour) = <Colour<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             curve_style__name,
@@ -22034,12 +25662,17 @@ pub struct VeeProfile_<'a> { // entity
 pub type VeeProfile<'a> = Id<VeeProfile_<'a>>;
 impl<'a> Parse<'a> for VeeProfile_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VEE_PROFILE(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, of_shape) = <ProductDefinitionShape<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, product_definitional) = <Option<bool>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             description,
@@ -22058,12 +25691,17 @@ pub struct VersionedActionRequest_<'a> { // entity
 pub type VersionedActionRequest<'a> = Id<VersionedActionRequest_<'a>>;
 impl<'a> Parse<'a> for VersionedActionRequest_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VERSIONED_ACTION_REQUEST(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, version) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, purpose) = <Text<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             version,
@@ -22083,13 +25721,19 @@ pub struct VersionedActionRequestRelationship_<'a> { // entity
 pub type VersionedActionRequestRelationship<'a> = Id<VersionedActionRequestRelationship_<'a>>;
 impl<'a> Parse<'a> for VersionedActionRequestRelationship_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VERSIONED_ACTION_REQUEST_RELATIONSHIP(")(s)?;
         let (s, id) = <Identifier<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, description) = alt((
-            map(char('?'), |_| None),
+            map(char('$'), |_| None),
             map(<Text<'a>>::parse, |v| Some(v))))(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, relating_versioned_action_request) = <VersionedActionRequest<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, related_versioned_action_request) = <VersionedActionRequest<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             id,
             name,
@@ -22106,7 +25750,9 @@ pub struct Vertex_<'a> { // entity
 pub type Vertex<'a> = Id<Vertex_<'a>>;
 impl<'a> Parse<'a> for Vertex_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VERTEX(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             _marker: std::marker::PhantomData}))
@@ -22120,8 +25766,11 @@ pub struct VertexLoop_<'a> { // entity
 pub type VertexLoop<'a> = Id<VertexLoop_<'a>>;
 impl<'a> Parse<'a> for VertexLoop_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VERTEX_LOOP(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, loop_vertex) = <Vertex<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             loop_vertex,
@@ -22136,8 +25785,11 @@ pub struct VertexPoint_<'a> { // entity
 pub type VertexPoint<'a> = Id<VertexPoint_<'a>>;
 impl<'a> Parse<'a> for VertexPoint_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VERTEX_POINT(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, vertex_geometry) = <Point<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             vertex_geometry,
@@ -22159,15 +25811,25 @@ pub struct ViewVolume_<'a> { // entity
 pub type ViewVolume<'a> = Id<ViewVolume_<'a>>;
 impl<'a> Parse<'a> for ViewVolume_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VIEW_VOLUME(")(s)?;
         let (s, projection_type) = <CentralOrParallel<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, projection_point) = <CartesianPoint<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, view_plane_distance) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, front_plane_distance) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, front_plane_clipping) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, back_plane_distance) = <LengthMeasure<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, back_plane_clipping) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, view_volume_sides_clipping) = <bool>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, view_window) = <PlanarBox<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             projection_type,
             projection_point,
@@ -22190,9 +25852,13 @@ pub struct VisualAppearanceRepresentation_<'a> { // entity
 pub type VisualAppearanceRepresentation<'a> = Id<VisualAppearanceRepresentation_<'a>>;
 impl<'a> Parse<'a> for VisualAppearanceRepresentation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VISUAL_APPEARANCE_REPRESENTATION(")(s)?;
         let (s, name) = <Label<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, items) = <Vec<RepresentationItem<'a>>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, context_of_items) = <RepresentationContext<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             name,
             items,
@@ -22219,8 +25885,11 @@ pub struct VolumeMeasureWithUnit_<'a> { // entity
 pub type VolumeMeasureWithUnit<'a> = Id<VolumeMeasureWithUnit_<'a>>;
 impl<'a> Parse<'a> for VolumeMeasureWithUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VOLUME_MEASURE_WITH_UNIT(")(s)?;
         let (s, value_component) = <MeasureValue<'a>>::parse(s)?;
+        let (s, _) = char(',')(s)?;
         let (s, unit_component) = <Unit<'a>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             value_component,
             unit_component,
@@ -22234,7 +25903,9 @@ pub struct VolumeUnit_<'a> { // entity
 pub type VolumeUnit<'a> = Id<VolumeUnit_<'a>>;
 impl<'a> Parse<'a> for VolumeUnit_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("VOLUME_UNIT(")(s)?;
         let (s, elements) = <Vec<DerivedUnitElement<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             elements,
             _marker: std::marker::PhantomData}))
@@ -22247,7 +25918,9 @@ pub struct XorExpression_<'a> { // entity
 pub type XorExpression<'a> = Id<XorExpression_<'a>>;
 impl<'a> Parse<'a> for XorExpression_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
+        let (s, _) = tag("XOR_EXPRESSION(")(s)?;
         let (s, operands) = <Vec<GenericExpression<'a>>>::parse(s)?;
+        let (s, _) = char(')')(s)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
