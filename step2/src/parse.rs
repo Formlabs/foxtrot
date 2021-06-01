@@ -1,3 +1,4 @@
+use memchr::{memchr, memchr2, memchr_iter};
 use nom::{
     branch::{alt},
     bytes::complete::{tag, is_not},
@@ -5,7 +6,7 @@ use nom::{
     combinator::{map, map_res, opt},
     error::*,
     sequence::{delimited, preceded, terminated, tuple},
-    multi::{many0},
+    multi::{separated_list0},
 };
 
 pub type IResult<'a, U> = nom::IResult<&'a str, U, nom::error::VerboseError<&'a str>>;
@@ -66,8 +67,7 @@ impl<'a> Parse<'a> for &'a str {
 
 impl<'a, T: Parse<'a>> Parse<'a> for Vec<T> {
     fn parse(s: &'a str) -> IResult<'a, Vec<T>> {
-        // TODO: probably need delimiters and separators
-        many0(T::parse)(s)
+        delimited(char('('), separated_list0(char(','), T::parse), char(')'))(s)
     }
 }
 impl<'a, T: Parse<'a>> Parse<'a> for Option<T> {
@@ -97,6 +97,53 @@ impl<'a> Parse<'a> for bool {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/// Parse a single attribute from a parameter list, consuming the trailing
+/// comma (if this is midway through the list) or close parens (at the end)
 pub fn param<'a, T: Parse<'a>>(last: bool, s: &'a str) -> IResult<'a, T> {
     terminated(T::parse, char(if last { ')'} else { ',' }))(s)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// Flattens a STEP file, removing comments and whitespace
+pub fn strip_flatten(data: &[u8]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(data.len());
+    let mut i = 0;
+    while i < data.len() {
+        match data[i] {
+            b'/' => if i + 1 < data.len() && data[i + 1] == b'*' {
+                for j in memchr_iter(b'/', &data[i + 2..]) {
+                    if data[i + j + 1] == b'*' {
+                        i += j + 2;
+                        break;
+                    }
+                }
+            }
+            c if c.is_ascii_whitespace() => (),
+            c => out.push(c),
+        }
+        i += 1;
+    }
+    out
+}
+
+pub fn into_blocks(data: &[u8]) -> Vec<&[u8]> {
+    let mut blocks = Vec::new();
+    let mut i = 0;
+    let mut start = 0;
+    while i < data.len() {
+        let next = memchr2(b'\'', b';', &data[i..]).unwrap();
+        match data[i + next] {
+            // Skip over quoted blocks
+            b'\'' => i += next + memchr(b'\'', &data[i + next..]).unwrap() + 1,
+            b';' => {
+                blocks.push(&data[start..=(i + next)]);
+
+                i += next + 1; // Skip the semicolon
+                start = i;
+            },
+            _ => unreachable!(),
+        }
+    }
+    blocks
 }
