@@ -29,12 +29,12 @@ fn build_err<'a, U>(s: &'a str, msg: &'static str) -> IResult<'a, U> {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-pub trait ParseInner<'a> {
-    fn parse_inner(s: &'a str) -> IResult<'a, Self> where Self: Sized;
+pub trait Parse<'a> {
+    fn parse(s: &'a str) -> IResult<'a, Self> where Self: Sized;
 }
 
-impl ParseInner<'_> for f64 {
-    fn parse_inner(s: &str) -> IResult<Self> {
+impl Parse<'_> for f64 {
+    fn parse(s: &str) -> IResult<Self> {
         match fast_float::parse_partial::<f64, _>(s) {
             Err(_) => build_err(s, "Could not parse float"),
             Ok((x, n)) => Ok((&s[n..], x)),
@@ -42,8 +42,8 @@ impl ParseInner<'_> for f64 {
     }
 }
 
-impl ParseInner<'_> for i64 {
-    fn parse_inner(s: &str) -> IResult<Self> {
+impl Parse<'_> for i64 {
+    fn parse(s: &str) -> IResult<Self> {
         map_res(tuple((opt(char('-')), digit1)),
             |(sign, digits)| -> Result<i64, <i64 as std::str::FromStr>::Err> {
                 let num = str::parse::<i64>(digits)?;
@@ -56,22 +56,9 @@ impl ParseInner<'_> for i64 {
     }
 }
 
-impl<'a> ParseInner<'a> for &'a str {
-    fn parse_inner(s: &'a str) -> IResult<'a, &'a str> {
+impl<'a> Parse<'a> for &'a str {
+    fn parse(s: &'a str) -> IResult<'a, &'a str> {
         delimited(char('"'), is_not("'"), char('"'))(s)
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-pub trait Parse<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> where Self: Sized;
-}
-
-// Blanket implementation
-impl<'a, T: ParseInner<'a>> Parse<'a> for T {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        T::parse_inner(s)
     }
 }
 
