@@ -88,6 +88,25 @@ impl <'a> TypeMap<'a> {
 }
 
 impl<'a> Type<'a> {
+    fn enum_variant<W>(&self, name: &str, buf: &mut W) -> std::fmt::Result
+        where W: std::fmt::Write
+    {
+        match self {
+            Type::Entity{..} => writeln!(buf, "    {0}({0}<'a>),",
+                                         to_camel(name)),
+            _ => Ok(()),
+        }
+    }
+    fn enum_match<W>(&self, name: &str, buf: &mut W) -> std::fmt::Result
+        where W: std::fmt::Write
+    {
+        match self {
+            Type::Entity{..} => writeln!(buf,
+                r#"            "{0}" => map({1}::parse, Entity::{1})(s),"#,
+                capitalize(name), to_camel(name)),
+            _ => Ok(()),
+        }
+    }
     fn gen<W>(&self, name: &str, buf: &mut W, type_map: &TypeMap) -> std::fmt::Result
         where W: std::fmt::Write
     {
@@ -346,15 +365,34 @@ use crate::parse::{{Id, IResult, Logical, Parse, param}};
 use nom::{{
     branch::{{alt}},
     bytes::complete::{{tag}},
-    character::complete::{{char}},
-    combinator::{{map}},
+    character::complete::{{alpha1, alphanumeric1, char}},
+    combinator::{{map, recognize}},
     multi::{{many0}},
-    sequence::{{delimited}},
+    sequence::{{delimited, pair}},
 }};")?;
 
     for k in &keys {
         type_map.0[k].gen(k, &mut buf, &type_map)?;
     }
+    writeln!(&mut buf, "pub enum Entity<'a> {{")?;
+    for k in &keys {
+        type_map.0[k].enum_variant(k, &mut buf)?;
+    }
+    writeln!(&mut buf, r#"}}
+impl<'a> Parse<'a> for Entity<'a> {{
+    fn parse(s: &'a str) -> IResult<'a, Self> {{
+        let (_, r) = recognize(pair(
+            alt((alpha1, tag("_"))),
+            many0(alt((alphanumeric1, tag("_")))),
+        ))(s)?;
+        match r {{"#)?;
+    for k in &keys {
+        type_map.0[k].enum_match(k, &mut buf)?;
+    }
+    writeln!(&mut buf, r#"            _ => panic!("Invalid case"),
+        }}
+    }}
+}}"#)?;
     Ok(buf)
 }
 
