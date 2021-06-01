@@ -8,9 +8,11 @@ use nom::{
     sequence::{delimited, preceded, terminated, tuple},
     multi::{separated_list0},
 };
+use crate::ap214::Entity;
 
 pub type IResult<'a, U> = nom::IResult<&'a str, U, nom::error::VerboseError<&'a str>>;
 
+#[derive(Debug)]
 pub struct Id<T>(pub usize, std::marker::PhantomData<*const T>);
 impl<'a, T> Parse<'a> for Id<T> {
     fn parse(s: &str) -> IResult<Self> {
@@ -146,4 +148,23 @@ pub fn into_blocks(data: &[u8]) -> Vec<&[u8]> {
         }
     }
     blocks
+}
+
+pub fn parse_entity_decl(s: &[u8]) -> IResult<(usize, Entity)> {
+    let s = match std::str::from_utf8(s) {
+        Ok(s) => s,
+        Err(_) => return build_err("", "Invalid unicode"),
+    };
+    map(tuple((Id::<()>::parse, char('='), Entity::parse)),
+        |(i, _, e)| (i.0, e))(s)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_parse_entity_decl() {
+        println!("{:?}", parse_entity_decl(b"#3=SHAPE_DEFINITION_REPRESENTATION(#4,#10);"));
+        assert!(parse_entity_decl(b"#3=SHAPE_DEFINITION_REPRESENTATION(#4,#10);").is_ok());
+    }
 }

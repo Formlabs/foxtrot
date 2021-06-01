@@ -114,6 +114,7 @@ impl<'a> Type<'a> {
         match self {
             Type::Redeclared(c) => {
                 writeln!(buf,r#"
+#[derive(Debug)]
 pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for {0}<'a> {{
     fn parse(s: &'a str) -> IResult<'a, Self> {{
@@ -129,7 +130,8 @@ impl<'a> {0}<'a> {{
                 capitalize(&name), to_camel(c))?;
             },
             Type::RedeclaredPrimitive(c) => {
-                writeln!(buf, r#"pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // primitive
+                writeln!(buf, r#"#[derive(Debug)]
+pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for {0}<'a> {{
     fn parse(s: &'a str) -> IResult<'a, Self> {{
         Self::parse_inner(s)
@@ -144,7 +146,8 @@ impl<'a> {0}<'a> {{
             },
 
             Type::Enum(c) => {
-                writeln!(buf, "pub enum {}<'a> {{ // enum", camel_name)?;
+                writeln!(buf, "#[derive(Debug)]
+pub enum {}<'a> {{ // enum", camel_name)?;
                 for v in c {
                     writeln!(buf, "    {},", to_camel(v))?;
                 }
@@ -188,7 +191,8 @@ impl<'a> Parse<'a> for {0}<'a> {{
             },
 
             Type::Select(c) => {
-                writeln!(buf, "pub enum {}<'a> {{ // select", camel_name)?;
+                writeln!(buf, "#[derive(Debug)]
+pub enum {}<'a> {{ // select", camel_name)?;
                 for v in c {
                     writeln!(buf, "    {}({}),", to_camel(v),
                              type_map.to_rtype(v))?;
@@ -231,7 +235,8 @@ impl<'a> Parse<'a> for {}<'a> {{
 
             Type::Aggregation { type_, .. } => {
                 writeln!(buf,
-                    r#"pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // aggregation
+                    r#"#[derive(Debug)]
+pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // aggregation
 impl<'a> Parse<'a> for {0}<'a> {{
     fn parse(s: &'a str) -> IResult<'a, Self> {{
         map(many0(<{2}>::parse), |r| Self(r, std::marker::PhantomData))(s)
@@ -245,7 +250,8 @@ impl<'a> Parse<'a> for {0}<'a> {{
                 if attrs.iter().any(|a| a.dupe) {
                     writeln!(buf, "#[allow(non_snake_case)]")?;
                 }
-                writeln!(buf, "pub struct {}_<'a> {{ // entity", camel_name)?;
+                writeln!(buf, "#[derive(Debug)]
+pub struct {}_<'a> {{ // entity", camel_name)?;
                 for a in attrs {
                     // Skip derived attributes in the struct
                     if a.derived {
@@ -374,7 +380,8 @@ use nom::{{
     for k in &keys {
         type_map.0[k].gen(k, &mut buf, &type_map)?;
     }
-    writeln!(&mut buf, "pub enum Entity<'a> {{")?;
+    writeln!(&mut buf, "#[derive(Debug)]
+pub enum Entity<'a> {{")?;
     for k in &keys {
         type_map.0[k].enum_variant(k, &mut buf)?;
     }

@@ -8,6 +8,7 @@ use nom::{
     multi::{many0},
     sequence::{delimited, pair},
 };
+#[derive(Debug)]
 pub struct AbsFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -22,6 +23,7 @@ impl<'a> Parse<'a> for AbsFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AcosFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -36,6 +38,7 @@ impl<'a> Parse<'a> for AcosFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Action_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -56,6 +59,7 @@ impl<'a> Parse<'a> for Action_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionAssignment_<'a> { // entity
     pub assigned_action: Action<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -70,6 +74,7 @@ impl<'a> Parse<'a> for ActionAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionDirective_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -96,6 +101,7 @@ impl<'a> Parse<'a> for ActionDirective_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ActionItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -207,6 +213,7 @@ impl<'a> Parse<'a> for ActionItem<'a> {
         ))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct ActionMethod_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -230,6 +237,7 @@ impl<'a> Parse<'a> for ActionMethod_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionMethodRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -253,6 +261,7 @@ impl<'a> Parse<'a> for ActionMethodRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionProperty_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -273,6 +282,7 @@ impl<'a> Parse<'a> for ActionProperty_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionPropertyRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -296,6 +306,7 @@ impl<'a> Parse<'a> for ActionPropertyRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -319,6 +330,7 @@ impl<'a> Parse<'a> for ActionRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionRequestAssignment_<'a> { // entity
     pub assigned_action_request: VersionedActionRequest<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -333,6 +345,7 @@ impl<'a> Parse<'a> for ActionRequestAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ActionRequestItem<'a> { // select
     Action(Action<'a>),
     ActionMethod(ActionMethod<'a>),
@@ -407,6 +420,7 @@ impl<'a> Parse<'a> for ActionRequestItem<'a> {
         ))))(s)
     }
 }
+#[derive(Debug)]
 pub struct ActionRequestSolution_<'a> { // entity
     pub method: ActionMethod<'a>,
     pub request: VersionedActionRequest<'a>,
@@ -424,6 +438,7 @@ impl<'a> Parse<'a> for ActionRequestSolution_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionRequestStatus_<'a> { // entity
     pub status: Label<'a>,
     pub assigned_request: VersionedActionRequest<'a>,
@@ -441,6 +456,7 @@ impl<'a> Parse<'a> for ActionRequestStatus_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionResource_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -464,6 +480,7 @@ impl<'a> Parse<'a> for ActionResource_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionResourceRequirement_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -487,6 +504,7 @@ impl<'a> Parse<'a> for ActionResourceRequirement_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionResourceType_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -501,6 +519,7 @@ impl<'a> Parse<'a> for ActionResourceType_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ActionStatus_<'a> { // entity
     pub status: Label<'a>,
     pub assigned_action: ExecutedAction<'a>,
@@ -518,6 +537,7 @@ impl<'a> Parse<'a> for ActionStatus_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Address_<'a> { // entity
     pub internal_location: Option<Label<'a>>,
     pub street_number: Option<Label<'a>>,
@@ -565,6 +585,7 @@ impl<'a> Parse<'a> for Address_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AdvancedBrepShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -585,6 +606,7 @@ impl<'a> Parse<'a> for AdvancedBrepShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AdvancedFace_<'a> { // entity
     pub name: Label<'a>,
     pub bounds: Vec<FaceBound<'a>>,
@@ -608,6 +630,7 @@ impl<'a> Parse<'a> for AdvancedFace_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum AheadOrBehind<'a> { // enum
     Ahead,
     Exact,
@@ -624,6 +647,7 @@ impl<'a> Parse<'a> for AheadOrBehind<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct AlternateProductRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub definition: Option<Text<'a>>,
@@ -650,6 +674,7 @@ impl<'a> Parse<'a> for AlternateProductRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AmountOfSubstanceMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for AmountOfSubstanceMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -661,6 +686,7 @@ impl<'a> AmountOfSubstanceMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct AmountOfSubstanceMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -678,6 +704,7 @@ impl<'a> Parse<'a> for AmountOfSubstanceMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AmountOfSubstanceUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -692,6 +719,7 @@ impl<'a> Parse<'a> for AmountOfSubstanceUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AndExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -706,6 +734,7 @@ impl<'a> Parse<'a> for AndExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum AngleRelator<'a> { // enum
     Equal,
     Large,
@@ -722,6 +751,7 @@ impl<'a> Parse<'a> for AngleRelator<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct AngularDimension_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -739,6 +769,7 @@ impl<'a> Parse<'a> for AngularDimension_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AngularLocation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -765,6 +796,7 @@ impl<'a> Parse<'a> for AngularLocation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AngularSize_<'a> { // entity
     pub applies_to: ShapeAspect<'a>,
     pub name: Label<'a>,
@@ -785,6 +817,7 @@ impl<'a> Parse<'a> for AngularSize_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AngularityTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -811,6 +844,7 @@ impl<'a> Parse<'a> for AngularityTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationCurveOccurrence_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -831,6 +865,7 @@ impl<'a> Parse<'a> for AnnotationCurveOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationFillArea_<'a> { // entity
     pub name: Label<'a>,
     pub boundaries: Vec<Curve<'a>>,
@@ -848,6 +883,7 @@ impl<'a> Parse<'a> for AnnotationFillArea_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationFillAreaOccurrence_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -871,6 +907,7 @@ impl<'a> Parse<'a> for AnnotationFillAreaOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationOccurrence_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -891,6 +928,7 @@ impl<'a> Parse<'a> for AnnotationOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationOccurrenceAssociativity_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -914,6 +952,7 @@ impl<'a> Parse<'a> for AnnotationOccurrenceAssociativity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationOccurrenceRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -937,6 +976,7 @@ impl<'a> Parse<'a> for AnnotationOccurrenceRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationPlane_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -960,6 +1000,7 @@ impl<'a> Parse<'a> for AnnotationPlane_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum AnnotationPlaneElement<'a> { // select
     DraughtingCallout(DraughtingCallout<'a>),
     StyledItem(StyledItem<'a>),
@@ -973,6 +1014,7 @@ impl<'a> Parse<'a> for AnnotationPlaneElement<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct AnnotationSubfigureOccurrence_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -993,6 +1035,7 @@ impl<'a> Parse<'a> for AnnotationSubfigureOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationSymbol_<'a> { // entity
     pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
@@ -1013,6 +1056,7 @@ impl<'a> Parse<'a> for AnnotationSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationSymbolOccurrence_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -1033,6 +1077,7 @@ impl<'a> Parse<'a> for AnnotationSymbolOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum AnnotationSymbolOccurrenceItem<'a> { // select
     AnnotationSymbol(AnnotationSymbol<'a>),
     DefinedSymbol(DefinedSymbol<'a>),
@@ -1046,6 +1091,7 @@ impl<'a> Parse<'a> for AnnotationSymbolOccurrenceItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct AnnotationText_<'a> { // entity
     pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
@@ -1066,6 +1112,7 @@ impl<'a> Parse<'a> for AnnotationText_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationTextCharacter_<'a> { // entity
     pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
@@ -1089,6 +1136,7 @@ impl<'a> Parse<'a> for AnnotationTextCharacter_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AnnotationTextOccurrence_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -1109,6 +1157,7 @@ impl<'a> Parse<'a> for AnnotationTextOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum AnnotationTextOccurrenceItem<'a> { // select
     TextLiteral(TextLiteral<'a>),
     AnnotationText(AnnotationText<'a>),
@@ -1128,6 +1177,7 @@ impl<'a> Parse<'a> for AnnotationTextOccurrenceItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct Apex_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -1151,6 +1201,7 @@ impl<'a> Parse<'a> for Apex_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApplicationContext_<'a> { // entity
     pub application: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1165,6 +1216,7 @@ impl<'a> Parse<'a> for ApplicationContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApplicationContextElement_<'a> { // entity
     pub name: Label<'a>,
     pub frame_of_reference: ApplicationContext<'a>,
@@ -1182,6 +1234,7 @@ impl<'a> Parse<'a> for ApplicationContextElement_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApplicationContextRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -1205,6 +1258,7 @@ impl<'a> Parse<'a> for ApplicationContextRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApplicationProtocolDefinition_<'a> { // entity
     pub status: Label<'a>,
     pub application_interpreted_model_schema_name: Label<'a>,
@@ -1228,6 +1282,7 @@ impl<'a> Parse<'a> for ApplicationProtocolDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedActionAssignment_<'a> { // entity
     pub assigned_action: Action<'a>,
     pub items: Vec<ActionItem<'a>>,
@@ -1245,6 +1300,7 @@ impl<'a> Parse<'a> for AppliedActionAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedActionRequestAssignment_<'a> { // entity
     pub assigned_action_request: VersionedActionRequest<'a>,
     pub items: Vec<ActionRequestItem<'a>>,
@@ -1262,6 +1318,7 @@ impl<'a> Parse<'a> for AppliedActionRequestAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedApprovalAssignment_<'a> { // entity
     pub assigned_approval: Approval<'a>,
     pub items: Vec<ApprovalItem<'a>>,
@@ -1279,6 +1336,7 @@ impl<'a> Parse<'a> for AppliedApprovalAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedArea_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -1302,6 +1360,7 @@ impl<'a> Parse<'a> for AppliedArea_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedCertificationAssignment_<'a> { // entity
     pub assigned_certification: Certification<'a>,
     pub items: Vec<CertificationItem<'a>>,
@@ -1319,6 +1378,7 @@ impl<'a> Parse<'a> for AppliedCertificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedClassificationAssignment_<'a> { // entity
     pub assigned_class: Group<'a>,
     pub role: ClassificationRole<'a>,
@@ -1339,6 +1399,7 @@ impl<'a> Parse<'a> for AppliedClassificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedContractAssignment_<'a> { // entity
     pub assigned_contract: Contract<'a>,
     pub items: Vec<ContractItem<'a>>,
@@ -1356,6 +1417,7 @@ impl<'a> Parse<'a> for AppliedContractAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedDateAndTimeAssignment_<'a> { // entity
     pub assigned_date_and_time: DateAndTime<'a>,
     pub role: DateTimeRole<'a>,
@@ -1376,6 +1438,7 @@ impl<'a> Parse<'a> for AppliedDateAndTimeAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedDateAssignment_<'a> { // entity
     pub assigned_date: Date<'a>,
     pub role: DateRole<'a>,
@@ -1396,6 +1459,7 @@ impl<'a> Parse<'a> for AppliedDateAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedDocumentReference_<'a> { // entity
     pub assigned_document: Document<'a>,
     pub source: Label<'a>,
@@ -1416,6 +1480,7 @@ impl<'a> Parse<'a> for AppliedDocumentReference_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedDocumentUsageConstraintAssignment_<'a> { // entity
     pub assigned_document_usage: DocumentUsageConstraint<'a>,
     pub role: DocumentUsageRole<'a>,
@@ -1436,6 +1501,7 @@ impl<'a> Parse<'a> for AppliedDocumentUsageConstraintAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedEffectivityAssignment_<'a> { // entity
     pub assigned_effectivity: Effectivity<'a>,
     pub items: Vec<EffectivityItem<'a>>,
@@ -1453,6 +1519,7 @@ impl<'a> Parse<'a> for AppliedEffectivityAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedEventOccurrenceAssignment_<'a> { // entity
     pub assigned_event_occurrence: EventOccurrence<'a>,
     pub role: EventOccurrenceRole<'a>,
@@ -1473,6 +1540,7 @@ impl<'a> Parse<'a> for AppliedEventOccurrenceAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedExternalIdentificationAssignment_<'a> { // entity
     pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
@@ -1496,6 +1564,7 @@ impl<'a> Parse<'a> for AppliedExternalIdentificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedGroupAssignment_<'a> { // entity
     pub assigned_group: Group<'a>,
     pub items: Vec<GroupItem<'a>>,
@@ -1513,6 +1582,7 @@ impl<'a> Parse<'a> for AppliedGroupAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedIdentificationAssignment_<'a> { // entity
     pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
@@ -1533,6 +1603,7 @@ impl<'a> Parse<'a> for AppliedIdentificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedIneffectivityAssignment_<'a> { // entity
     pub assigned_effectivity: Effectivity<'a>,
     pub items: Vec<EffectivityItem<'a>>,
@@ -1550,6 +1621,7 @@ impl<'a> Parse<'a> for AppliedIneffectivityAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedNameAssignment_<'a> { // entity
     pub assigned_name: Label<'a>,
     pub items: Vec<NameItem<'a>>,
@@ -1567,6 +1639,7 @@ impl<'a> Parse<'a> for AppliedNameAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedOrganizationAssignment_<'a> { // entity
     pub assigned_organization: Organization<'a>,
     pub role: OrganizationRole<'a>,
@@ -1587,6 +1660,7 @@ impl<'a> Parse<'a> for AppliedOrganizationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedOrganizationalProjectAssignment_<'a> { // entity
     pub assigned_organizational_project: OrganizationalProject<'a>,
     pub role: OrganizationalProjectRole<'a>,
@@ -1607,6 +1681,7 @@ impl<'a> Parse<'a> for AppliedOrganizationalProjectAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedPersonAndOrganizationAssignment_<'a> { // entity
     pub assigned_person_and_organization: PersonAndOrganization<'a>,
     pub role: PersonAndOrganizationRole<'a>,
@@ -1627,6 +1702,7 @@ impl<'a> Parse<'a> for AppliedPersonAndOrganizationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedPresentedItem_<'a> { // entity
     pub items: Vec<PresentedItemSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1641,6 +1717,7 @@ impl<'a> Parse<'a> for AppliedPresentedItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedSecurityClassificationAssignment_<'a> { // entity
     pub assigned_security_classification: SecurityClassification<'a>,
     pub items: Vec<SecurityClassificationItem<'a>>,
@@ -1658,6 +1735,7 @@ impl<'a> Parse<'a> for AppliedSecurityClassificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AppliedTimeIntervalAssignment_<'a> { // entity
     pub assigned_time_interval: TimeInterval<'a>,
     pub role: TimeIntervalRole<'a>,
@@ -1678,6 +1756,7 @@ impl<'a> Parse<'a> for AppliedTimeIntervalAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Approval_<'a> { // entity
     pub status: ApprovalStatus<'a>,
     pub level: Label<'a>,
@@ -1695,6 +1774,7 @@ impl<'a> Parse<'a> for Approval_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApprovalAssignment_<'a> { // entity
     pub assigned_approval: Approval<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1709,6 +1789,7 @@ impl<'a> Parse<'a> for ApprovalAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApprovalDateTime_<'a> { // entity
     pub date_time: DateTimeSelect<'a>,
     pub dated_approval: Approval<'a>,
@@ -1726,6 +1807,7 @@ impl<'a> Parse<'a> for ApprovalDateTime_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ApprovalItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -1812,6 +1894,7 @@ impl<'a> Parse<'a> for ApprovalItem<'a> {
         ))))(s)
     }
 }
+#[derive(Debug)]
 pub struct ApprovalPersonOrganization_<'a> { // entity
     pub person_organization: PersonOrganizationSelect<'a>,
     pub authorized_approval: Approval<'a>,
@@ -1832,6 +1915,7 @@ impl<'a> Parse<'a> for ApprovalPersonOrganization_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApprovalRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -1855,6 +1939,7 @@ impl<'a> Parse<'a> for ApprovalRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApprovalRole_<'a> { // entity
     pub role: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1869,6 +1954,7 @@ impl<'a> Parse<'a> for ApprovalRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApprovalStatus_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1883,6 +1969,7 @@ impl<'a> Parse<'a> for ApprovalStatus_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ApproximationMethod<'a> { // enum
     ChordalDeviation,
     ChordalLength,
@@ -1897,6 +1984,7 @@ impl<'a> Parse<'a> for ApproximationMethod<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ApproximationTolerance_<'a> { // entity
     pub tolerance: ToleranceSelect<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1911,6 +1999,7 @@ impl<'a> Parse<'a> for ApproximationTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApproximationToleranceDeviation_<'a> { // entity
     pub tessellation_type: ApproximationMethod<'a>,
     pub tolerances: Vec<ToleranceDeviationSelect<'a>>,
@@ -1931,6 +2020,7 @@ impl<'a> Parse<'a> for ApproximationToleranceDeviation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ApproximationToleranceParameter_<'a> { // entity
     pub tolerances: Vec<ToleranceParameterSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -1945,6 +2035,7 @@ impl<'a> Parse<'a> for ApproximationToleranceParameter_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AreaInSet_<'a> { // entity
     pub area: PresentationArea<'a>,
     pub in_set: PresentationSet<'a>,
@@ -1962,6 +2053,7 @@ impl<'a> Parse<'a> for AreaInSet_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AreaMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for AreaMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -1973,6 +2065,7 @@ impl<'a> AreaMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct AreaMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -1990,6 +2083,7 @@ impl<'a> Parse<'a> for AreaMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum AreaOrView<'a> { // select
     PresentationArea(PresentationArea<'a>),
     PresentationView(PresentationView<'a>),
@@ -2003,6 +2097,7 @@ impl<'a> Parse<'a> for AreaOrView<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct AreaUnit_<'a> { // entity
     pub elements: Vec<DerivedUnitElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2017,6 +2112,7 @@ impl<'a> Parse<'a> for AreaUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AsinFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2031,6 +2127,7 @@ impl<'a> Parse<'a> for AsinFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AssemblyComponentUsage_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -2060,6 +2157,7 @@ impl<'a> Parse<'a> for AssemblyComponentUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AssemblyComponentUsageSubstitute_<'a> { // entity
     pub name: Label<'a>,
     pub definition: Option<Text<'a>>,
@@ -2083,6 +2181,7 @@ impl<'a> Parse<'a> for AssemblyComponentUsageSubstitute_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AtanFunction_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2097,6 +2196,7 @@ impl<'a> Parse<'a> for AtanFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AttributeClassificationAssignment_<'a> { // entity
     pub assigned_class: Group<'a>,
     pub attribute_name: Label<'a>,
@@ -2117,6 +2217,7 @@ impl<'a> Parse<'a> for AttributeClassificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AttributeLanguageAssignment_<'a> { // entity
     pub assigned_class: Group<'a>,
     pub attribute_name: Label<'a>,
@@ -2140,6 +2241,7 @@ impl<'a> Parse<'a> for AttributeLanguageAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum AttributeLanguageItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -2292,6 +2394,7 @@ impl<'a> Parse<'a> for AttributeLanguageItem<'a> {
         ))))))))(s)
     }
 }
+#[derive(Debug)]
 pub enum AttributeType<'a> { // select
     Label(Label<'a>),
     Text(Text<'a>),
@@ -2305,6 +2408,7 @@ impl<'a> Parse<'a> for AttributeType<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct AttributeValueAssignment_<'a> { // entity
     pub attribute_name: Label<'a>,
     pub attribute_value: AttributeType<'a>,
@@ -2325,6 +2429,7 @@ impl<'a> Parse<'a> for AttributeValueAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct AttributeValueRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -2342,6 +2447,7 @@ impl<'a> Parse<'a> for AttributeValueRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Axis1Placement_<'a> { // entity
     pub name: Label<'a>,
     pub location: CartesianPoint<'a>,
@@ -2362,6 +2468,7 @@ impl<'a> Parse<'a> for Axis1Placement_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum Axis2Placement<'a> { // select
     Axis2Placement2d(Axis2Placement2d<'a>),
     Axis2Placement3d(Axis2Placement3d<'a>),
@@ -2375,6 +2482,7 @@ impl<'a> Parse<'a> for Axis2Placement<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct Axis2Placement2d_<'a> { // entity
     pub name: Label<'a>,
     pub location: CartesianPoint<'a>,
@@ -2395,6 +2503,7 @@ impl<'a> Parse<'a> for Axis2Placement2d_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Axis2Placement3d_<'a> { // entity
     pub name: Label<'a>,
     pub location: CartesianPoint<'a>,
@@ -2418,6 +2527,7 @@ impl<'a> Parse<'a> for Axis2Placement3d_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BSplineCurve_<'a> { // entity
     pub name: Label<'a>,
     pub degree: i64,
@@ -2447,6 +2557,7 @@ impl<'a> Parse<'a> for BSplineCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum BSplineCurveForm<'a> { // enum
     PolylineForm,
     CircularArc,
@@ -2469,6 +2580,7 @@ impl<'a> Parse<'a> for BSplineCurveForm<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct BSplineCurveWithKnots_<'a> { // entity
     pub name: Label<'a>,
     pub degree: i64,
@@ -2507,6 +2619,7 @@ impl<'a> Parse<'a> for BSplineCurveWithKnots_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BSplineSurface_<'a> { // entity
     pub name: Label<'a>,
     pub u_degree: i64,
@@ -2542,6 +2655,7 @@ impl<'a> Parse<'a> for BSplineSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum BSplineSurfaceForm<'a> { // enum
     PlaneSurf,
     CylindricalSurf,
@@ -2574,6 +2688,7 @@ impl<'a> Parse<'a> for BSplineSurfaceForm<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct BSplineSurfaceWithKnots_<'a> { // entity
     pub name: Label<'a>,
     pub u_degree: i64,
@@ -2624,6 +2739,7 @@ impl<'a> Parse<'a> for BSplineSurfaceWithKnots_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BackgroundColour_<'a> { // entity
     pub presentation: AreaOrView<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2638,6 +2754,7 @@ impl<'a> Parse<'a> for BackgroundColour_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BarringHole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -2655,6 +2772,7 @@ impl<'a> Parse<'a> for BarringHole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Bead_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -2672,6 +2790,7 @@ impl<'a> Parse<'a> for Bead_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BeadEnd_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -2695,6 +2814,7 @@ impl<'a> Parse<'a> for BeadEnd_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BezierCurve_<'a> { // entity
     pub name: Label<'a>,
     pub degree: i64,
@@ -2724,6 +2844,7 @@ impl<'a> Parse<'a> for BezierCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BezierSurface_<'a> { // entity
     pub name: Label<'a>,
     pub u_degree: i64,
@@ -2759,6 +2880,7 @@ impl<'a> Parse<'a> for BezierSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BinaryBooleanExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2773,6 +2895,7 @@ impl<'a> Parse<'a> for BinaryBooleanExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BinaryFunctionCall_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2787,6 +2910,7 @@ impl<'a> Parse<'a> for BinaryFunctionCall_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BinaryGenericExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2801,6 +2925,7 @@ impl<'a> Parse<'a> for BinaryGenericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BinaryNumericExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2815,6 +2940,7 @@ impl<'a> Parse<'a> for BinaryNumericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Block_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -2841,6 +2967,7 @@ impl<'a> Parse<'a> for Block_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BooleanDefinedFunction_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2852,6 +2979,7 @@ impl<'a> Parse<'a> for BooleanDefinedFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BooleanExpression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2863,6 +2991,7 @@ impl<'a> Parse<'a> for BooleanExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BooleanLiteral_<'a> { // entity
     pub the_value: bool,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -2877,6 +3006,7 @@ impl<'a> Parse<'a> for BooleanLiteral_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum BooleanOperand<'a> { // select
     SolidModel(SolidModel<'a>),
     HalfSpaceSolid(HalfSpaceSolid<'a>),
@@ -2894,6 +3024,7 @@ impl<'a> Parse<'a> for BooleanOperand<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum BooleanOperator<'a> { // enum
     Union,
     Intersection,
@@ -2910,6 +3041,7 @@ impl<'a> Parse<'a> for BooleanOperator<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct BooleanResult_<'a> { // entity
     pub name: Label<'a>,
     pub operator: BooleanOperator<'a>,
@@ -2933,6 +3065,7 @@ impl<'a> Parse<'a> for BooleanResult_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BooleanVariable_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2944,6 +3077,7 @@ impl<'a> Parse<'a> for BooleanVariable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Boss_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -2961,6 +3095,7 @@ impl<'a> Parse<'a> for Boss_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BossTop_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -2984,6 +3119,7 @@ impl<'a> Parse<'a> for BossTop_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BoundaryCurve_<'a> { // entity
     pub name: Label<'a>,
     pub segments: Vec<CompositeCurveSegment<'a>>,
@@ -3004,6 +3140,7 @@ impl<'a> Parse<'a> for BoundaryCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BoundedCurve_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3018,6 +3155,7 @@ impl<'a> Parse<'a> for BoundedCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BoundedPcurve_<'a> { // entity
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
@@ -3038,6 +3176,7 @@ impl<'a> Parse<'a> for BoundedPcurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BoundedSurface_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3052,6 +3191,7 @@ impl<'a> Parse<'a> for BoundedSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BoundedSurfaceCurve_<'a> { // entity
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
@@ -3075,6 +3215,7 @@ impl<'a> Parse<'a> for BoundedSurfaceCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum BoxCharacteristicSelect<'a> { // select
     BoxHeight(BoxHeight<'a>),
     BoxWidth(BoxWidth<'a>),
@@ -3092,6 +3233,7 @@ impl<'a> Parse<'a> for BoxCharacteristicSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct BoxDomain_<'a> { // entity
     pub corner: CartesianPoint<'a>,
     pub xlength: PositiveLengthMeasure<'a>,
@@ -3116,6 +3258,7 @@ impl<'a> Parse<'a> for BoxDomain_<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct BoxHeight<'a>(pub PositiveRatioMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for BoxHeight<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -3128,6 +3271,7 @@ impl<'a> BoxHeight<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct BoxRotateAngle<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for BoxRotateAngle<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -3140,6 +3284,7 @@ impl<'a> BoxRotateAngle<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct BoxSlantAngle<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for BoxSlantAngle<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -3152,6 +3297,7 @@ impl<'a> BoxSlantAngle<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct BoxWidth<'a>(pub PositiveRatioMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for BoxWidth<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -3163,6 +3309,7 @@ impl<'a> BoxWidth<'a> {
         map(PositiveRatioMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct BoxedHalfSpace_<'a> { // entity
     pub name: Label<'a>,
     pub base_surface: Surface<'a>,
@@ -3186,6 +3333,7 @@ impl<'a> Parse<'a> for BoxedHalfSpace_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct BrepWithVoids_<'a> { // entity
     pub name: Label<'a>,
     pub outer: ClosedShell<'a>,
@@ -3206,6 +3354,7 @@ impl<'a> Parse<'a> for BrepWithVoids_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CalendarDate_<'a> { // entity
     pub year_component: YearNumber<'a>,
     pub day_component: DayInMonthNumber<'a>,
@@ -3226,6 +3375,7 @@ impl<'a> Parse<'a> for CalendarDate_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CameraImage_<'a> { // entity
     pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
@@ -3246,6 +3396,7 @@ impl<'a> Parse<'a> for CameraImage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CameraImage2dWithScale_<'a> { // entity
     pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
@@ -3266,6 +3417,7 @@ impl<'a> Parse<'a> for CameraImage2dWithScale_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CameraImage3dWithScale_<'a> { // entity
     pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
@@ -3286,6 +3438,7 @@ impl<'a> Parse<'a> for CameraImage3dWithScale_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CameraModel_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3300,6 +3453,7 @@ impl<'a> Parse<'a> for CameraModel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CameraModelD2_<'a> { // entity
     pub name: Label<'a>,
     pub view_window: PlanarBox<'a>,
@@ -3320,6 +3474,7 @@ impl<'a> Parse<'a> for CameraModelD2_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CameraModelD3_<'a> { // entity
     pub name: Label<'a>,
     pub view_reference_system: Axis2Placement3d<'a>,
@@ -3340,6 +3495,7 @@ impl<'a> Parse<'a> for CameraModelD3_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CameraModelD3WithHlhsr_<'a> { // entity
     pub name: Label<'a>,
     pub view_reference_system: Axis2Placement3d<'a>,
@@ -3363,6 +3519,7 @@ impl<'a> Parse<'a> for CameraModelD3WithHlhsr_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CameraUsage_<'a> { // entity
     pub mapping_origin: RepresentationItem<'a>,
     pub mapped_representation: Representation<'a>,
@@ -3380,6 +3537,7 @@ impl<'a> Parse<'a> for CameraUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CartesianPoint_<'a> { // entity
     pub name: Label<'a>,
     pub coordinates: Vec<LengthMeasure<'a>>,
@@ -3398,6 +3556,7 @@ impl<'a> Parse<'a> for CartesianPoint_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct CartesianTransformationOperator_<'a> { // entity
     pub name: Label<'a>,
     pub functionally_defined_transformation__name: Label<'a>,
@@ -3432,6 +3591,7 @@ impl<'a> Parse<'a> for CartesianTransformationOperator_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct CartesianTransformationOperator2d_<'a> { // entity
     pub name: Label<'a>,
     pub functionally_defined_transformation__name: Label<'a>,
@@ -3466,6 +3626,7 @@ impl<'a> Parse<'a> for CartesianTransformationOperator2d_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct CartesianTransformationOperator3d_<'a> { // entity
     pub name: Label<'a>,
     pub functionally_defined_transformation__name: Label<'a>,
@@ -3502,6 +3663,7 @@ impl<'a> Parse<'a> for CartesianTransformationOperator3d_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CategoryUsageItem<'a> { // select
     ProductClass(ProductClass<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -3511,6 +3673,7 @@ impl<'a> Parse<'a> for CategoryUsageItem<'a> {
         map(<ProductClass<'a>>::parse, |r| CategoryUsageItem::ProductClass(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct CelsiusTemperatureMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for CelsiusTemperatureMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -3522,6 +3685,7 @@ impl<'a> CelsiusTemperatureMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct CelsiusTemperatureMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -3539,6 +3703,7 @@ impl<'a> Parse<'a> for CelsiusTemperatureMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CentralOrParallel<'a> { // enum
     Central,
     Parallel,
@@ -3553,6 +3718,7 @@ impl<'a> Parse<'a> for CentralOrParallel<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct CentreOfSymmetry_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -3576,6 +3742,7 @@ impl<'a> Parse<'a> for CentreOfSymmetry_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Certification_<'a> { // entity
     pub name: Label<'a>,
     pub purpose: Text<'a>,
@@ -3596,6 +3763,7 @@ impl<'a> Parse<'a> for Certification_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CertificationAssignment_<'a> { // entity
     pub assigned_certification: Certification<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3610,6 +3778,7 @@ impl<'a> Parse<'a> for CertificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CertificationItem<'a> { // select
     ProductDefinition(ProductDefinition<'a>),
     ProductDefinitionFormation(ProductDefinitionFormation<'a>),
@@ -3627,6 +3796,7 @@ impl<'a> Parse<'a> for CertificationItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct CertificationType_<'a> { // entity
     pub description: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3641,6 +3811,7 @@ impl<'a> Parse<'a> for CertificationType_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Chamfer_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -3664,6 +3835,7 @@ impl<'a> Parse<'a> for Chamfer_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ChamferOffset_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -3687,6 +3859,7 @@ impl<'a> Parse<'a> for ChamferOffset_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CharacterGlyphSymbol_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -3713,6 +3886,7 @@ impl<'a> Parse<'a> for CharacterGlyphSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CharacterSpacingSelect<'a> { // select
     LengthMeasure(LengthMeasure<'a>),
     RatioMeasure(RatioMeasure<'a>),
@@ -3730,6 +3904,7 @@ impl<'a> Parse<'a> for CharacterSpacingSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum CharacterStyleSelect<'a> { // select
     TextStyleForDefinedFont(TextStyleForDefinedFont<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -3739,6 +3914,7 @@ impl<'a> Parse<'a> for CharacterStyleSelect<'a> {
         map(<TextStyleForDefinedFont<'a>>::parse, |r| CharacterStyleSelect::TextStyleForDefinedFont(r))(s)
     }
 }
+#[derive(Debug)]
 pub enum CharacterizedActionDefinition<'a> { // select
     Action(Action<'a>),
     ActionMethod(ActionMethod<'a>),
@@ -3757,6 +3933,7 @@ impl<'a> Parse<'a> for CharacterizedActionDefinition<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct CharacterizedClass_<'a> { // entity
     pub characterized_object__name: Label<'a>,
     pub characterized_object__description: Option<Text<'a>>,
@@ -3782,6 +3959,7 @@ impl<'a> Parse<'a> for CharacterizedClass_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CharacterizedDefinition<'a> { // select
     CharacterizedObject(CharacterizedObject<'a>),
     CharacterizedProductDefinition(CharacterizedProductDefinition<'a>),
@@ -3797,6 +3975,7 @@ impl<'a> Parse<'a> for CharacterizedDefinition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum CharacterizedMaterialProperty<'a> { // select
     MaterialPropertyRepresentation(MaterialPropertyRepresentation<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -3806,6 +3985,7 @@ impl<'a> Parse<'a> for CharacterizedMaterialProperty<'a> {
         map(<MaterialPropertyRepresentation<'a>>::parse, |r| CharacterizedMaterialProperty::MaterialPropertyRepresentation(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct CharacterizedObject_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -3823,6 +4003,7 @@ impl<'a> Parse<'a> for CharacterizedObject_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CharacterizedProductDefinition<'a> { // select
     ProductDefinition(ProductDefinition<'a>),
     ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
@@ -3836,6 +4017,7 @@ impl<'a> Parse<'a> for CharacterizedProductDefinition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum CharacterizedResourceDefinition<'a> { // select
     ActionResource(ActionResource<'a>),
     ActionResourceRequirement(ActionResourceRequirement<'a>),
@@ -3849,6 +4031,7 @@ impl<'a> Parse<'a> for CharacterizedResourceDefinition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct Circle_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
@@ -3869,6 +4052,7 @@ impl<'a> Parse<'a> for Circle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CircularClosedProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -3892,6 +4076,7 @@ impl<'a> Parse<'a> for CircularClosedProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CircularPattern_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -3909,6 +4094,7 @@ impl<'a> Parse<'a> for CircularPattern_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CircularRunoutTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -3935,6 +4121,7 @@ impl<'a> Parse<'a> for CircularRunoutTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Class_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -3952,6 +4139,7 @@ impl<'a> Parse<'a> for Class_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ClassSystem_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -3969,6 +4157,7 @@ impl<'a> Parse<'a> for ClassSystem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ClassUsageEffectivityContextAssignment_<'a> { // entity
     pub assigned_effectivity_assignment: EffectivityAssignment<'a>,
     pub role: EffectivityContextRole<'a>,
@@ -3989,6 +4178,7 @@ impl<'a> Parse<'a> for ClassUsageEffectivityContextAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ClassUsageEffectivityContextItem<'a> { // select
     ProductDefinition(ProductDefinition<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -3998,6 +4188,7 @@ impl<'a> Parse<'a> for ClassUsageEffectivityContextItem<'a> {
         map(<ProductDefinition<'a>>::parse, |r| ClassUsageEffectivityContextItem::ProductDefinition(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct ClassificationAssignment_<'a> { // entity
     pub assigned_class: Group<'a>,
     pub role: ClassificationRole<'a>,
@@ -4015,6 +4206,7 @@ impl<'a> Parse<'a> for ClassificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ClassificationItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -4091,6 +4283,7 @@ impl<'a> Parse<'a> for ClassificationItem<'a> {
         ))))(s)
     }
 }
+#[derive(Debug)]
 pub struct ClassificationRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4108,6 +4301,7 @@ impl<'a> Parse<'a> for ClassificationRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ClosedPathProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4131,6 +4325,7 @@ impl<'a> Parse<'a> for ClosedPathProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ClosedShell_<'a> { // entity
     pub name: Label<'a>,
     pub cfs_faces: Vec<Face<'a>>,
@@ -4148,6 +4343,7 @@ impl<'a> Parse<'a> for ClosedShell_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CoaxialityTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -4174,6 +4370,7 @@ impl<'a> Parse<'a> for CoaxialityTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Colour_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4185,6 +4382,7 @@ impl<'a> Parse<'a> for Colour_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ColourRgb_<'a> { // entity
     pub name: Label<'a>,
     pub red: f64,
@@ -4208,6 +4406,7 @@ impl<'a> Parse<'a> for ColourRgb_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ColourSpecification_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4222,6 +4421,7 @@ impl<'a> Parse<'a> for ColourSpecification_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CommonDatum_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4248,6 +4448,7 @@ impl<'a> Parse<'a> for CommonDatum_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ComparisonEqual_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4262,6 +4463,7 @@ impl<'a> Parse<'a> for ComparisonEqual_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ComparisonExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4276,6 +4478,7 @@ impl<'a> Parse<'a> for ComparisonExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ComparisonGreater_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4290,6 +4493,7 @@ impl<'a> Parse<'a> for ComparisonGreater_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ComparisonGreaterEqual_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4304,6 +4508,7 @@ impl<'a> Parse<'a> for ComparisonGreaterEqual_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ComparisonLess_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4318,6 +4523,7 @@ impl<'a> Parse<'a> for ComparisonLess_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ComparisonLessEqual_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4332,6 +4538,7 @@ impl<'a> Parse<'a> for ComparisonLessEqual_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ComparisonNotEqual_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4346,6 +4553,7 @@ impl<'a> Parse<'a> for ComparisonNotEqual_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeCurve_<'a> { // entity
     pub name: Label<'a>,
     pub segments: Vec<CompositeCurveSegment<'a>>,
@@ -4366,6 +4574,7 @@ impl<'a> Parse<'a> for CompositeCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeCurveOnSurface_<'a> { // entity
     pub name: Label<'a>,
     pub segments: Vec<CompositeCurveSegment<'a>>,
@@ -4386,6 +4595,7 @@ impl<'a> Parse<'a> for CompositeCurveOnSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeCurveSegment_<'a> { // entity
     pub transition: TransitionCode<'a>,
     pub same_sense: bool,
@@ -4406,6 +4616,7 @@ impl<'a> Parse<'a> for CompositeCurveSegment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeHole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4423,6 +4634,7 @@ impl<'a> Parse<'a> for CompositeHole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeShapeAspect_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4446,6 +4658,7 @@ impl<'a> Parse<'a> for CompositeShapeAspect_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeText_<'a> { // entity
     pub name: Label<'a>,
     pub collected_text: Vec<TextOrCharacter<'a>>,
@@ -4463,6 +4676,7 @@ impl<'a> Parse<'a> for CompositeText_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeTextWithAssociatedCurves_<'a> { // entity
     pub name: Label<'a>,
     pub collected_text: Vec<TextOrCharacter<'a>>,
@@ -4483,6 +4697,7 @@ impl<'a> Parse<'a> for CompositeTextWithAssociatedCurves_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeTextWithBlankingBox_<'a> { // entity
     pub name: Label<'a>,
     pub collected_text: Vec<TextOrCharacter<'a>>,
@@ -4503,6 +4718,7 @@ impl<'a> Parse<'a> for CompositeTextWithBlankingBox_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompositeTextWithExtent_<'a> { // entity
     pub name: Label<'a>,
     pub collected_text: Vec<TextOrCharacter<'a>>,
@@ -4523,6 +4739,7 @@ impl<'a> Parse<'a> for CompositeTextWithExtent_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompoundFeature_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4540,6 +4757,7 @@ impl<'a> Parse<'a> for CompoundFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CompoundItemDefinition<'a> { // select
     ListRepresentationItem(Vec<RepresentationItem<'a>>),
     SetRepresentationItem(Vec<RepresentationItem<'a>>),
@@ -4553,6 +4771,7 @@ impl<'a> Parse<'a> for CompoundItemDefinition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct CompoundRepresentationItem_<'a> { // entity
     pub name: Label<'a>,
     pub item_element: CompoundItemDefinition<'a>,
@@ -4570,6 +4789,7 @@ impl<'a> Parse<'a> for CompoundRepresentationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CompoundShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -4590,6 +4810,7 @@ impl<'a> Parse<'a> for CompoundShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConcatExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -4604,6 +4825,7 @@ impl<'a> Parse<'a> for ConcatExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConcentricityTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -4630,6 +4852,7 @@ impl<'a> Parse<'a> for ConcentricityTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConceptFeatureOperator_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4647,6 +4870,7 @@ impl<'a> Parse<'a> for ConceptFeatureOperator_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConceptFeatureRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4670,6 +4894,7 @@ impl<'a> Parse<'a> for ConceptFeatureRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConceptFeatureRelationshipWithCondition_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -4696,6 +4921,7 @@ impl<'a> Parse<'a> for ConceptFeatureRelationshipWithCondition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConditionalConceptFeature_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -4719,6 +4945,7 @@ impl<'a> Parse<'a> for ConditionalConceptFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConfigurableItem_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -4748,6 +4975,7 @@ impl<'a> Parse<'a> for ConfigurableItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConfigurationDefinition_<'a> { // entity
     pub pair_values: Vec<PairValue<'a>>,
     pub t_parameter: MotionParameterMeasure<'a>,
@@ -4765,6 +4993,7 @@ impl<'a> Parse<'a> for ConfigurationDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConfigurationDesign_<'a> { // entity
     pub configuration: ConfigurationItem<'a>,
     pub design: ConfigurationDesignItem<'a>,
@@ -4782,6 +5011,7 @@ impl<'a> Parse<'a> for ConfigurationDesign_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ConfigurationDesignItem<'a> { // select
     ProductDefinition(ProductDefinition<'a>),
     ProductDefinitionFormation(ProductDefinitionFormation<'a>),
@@ -4795,6 +5025,7 @@ impl<'a> Parse<'a> for ConfigurationDesignItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ConfigurationEffectivity_<'a> { // entity
     pub id: Identifier<'a>,
     pub usage: ProductDefinitionRelationship<'a>,
@@ -4815,6 +5046,7 @@ impl<'a> Parse<'a> for ConfigurationEffectivity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConfigurationInterpolation_<'a> { // entity
     pub previous_configuration_definition: ConfigurationDefinition<'a>,
     pub next_configuration_definition: ConfigurationDefinition<'a>,
@@ -4835,6 +5067,7 @@ impl<'a> Parse<'a> for ConfigurationInterpolation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConfigurationItem_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -4861,6 +5094,7 @@ impl<'a> Parse<'a> for ConfigurationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConfiguredEffectivityAssignment_<'a> { // entity
     pub assigned_effectivity: Effectivity<'a>,
     pub items: Vec<ConfiguredEffectivityItem<'a>>,
@@ -4878,6 +5112,7 @@ impl<'a> Parse<'a> for ConfiguredEffectivityAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConfiguredEffectivityContextAssignment_<'a> { // entity
     pub assigned_effectivity_assignment: EffectivityAssignment<'a>,
     pub role: EffectivityContextRole<'a>,
@@ -4898,6 +5133,7 @@ impl<'a> Parse<'a> for ConfiguredEffectivityContextAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ConfiguredEffectivityContextItem<'a> { // select
     ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -4907,6 +5143,7 @@ impl<'a> Parse<'a> for ConfiguredEffectivityContextItem<'a> {
         map(<ProductConceptFeatureAssociation<'a>>::parse, |r| ConfiguredEffectivityContextItem::ProductConceptFeatureAssociation(r))(s)
     }
 }
+#[derive(Debug)]
 pub enum ConfiguredEffectivityItem<'a> { // select
     ActionRelationship(ActionRelationship<'a>),
     ProcessPlan(ProcessPlan<'a>),
@@ -4924,6 +5161,7 @@ impl<'a> Parse<'a> for ConfiguredEffectivityItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct Conic_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
@@ -4941,6 +5179,7 @@ impl<'a> Parse<'a> for Conic_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConicalSurface_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -4964,6 +5203,7 @@ impl<'a> Parse<'a> for ConicalSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConnectedEdgeSet_<'a> { // entity
     pub name: Label<'a>,
     pub ces_edges: Vec<Edge<'a>>,
@@ -4981,6 +5221,7 @@ impl<'a> Parse<'a> for ConnectedEdgeSet_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConnectedFaceSet_<'a> { // entity
     pub name: Label<'a>,
     pub cfs_faces: Vec<Face<'a>>,
@@ -4998,6 +5239,7 @@ impl<'a> Parse<'a> for ConnectedFaceSet_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConnectedFaceSubSet_<'a> { // entity
     pub name: Label<'a>,
     pub cfs_faces: Vec<Face<'a>>,
@@ -5018,6 +5260,7 @@ impl<'a> Parse<'a> for ConnectedFaceSubSet_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConstructiveGeometryRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -5038,6 +5281,7 @@ impl<'a> Parse<'a> for ConstructiveGeometryRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConstructiveGeometryRepresentationRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -5061,6 +5305,7 @@ impl<'a> Parse<'a> for ConstructiveGeometryRepresentationRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ContactRatioRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -5081,6 +5326,7 @@ impl<'a> Parse<'a> for ContactRatioRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ContextDependentInvisibility_<'a> { // entity
     pub invisible_items: Vec<InvisibleItem<'a>>,
     pub presentation_context: InvisibilityContext<'a>,
@@ -5098,6 +5344,7 @@ impl<'a> Parse<'a> for ContextDependentInvisibility_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ContextDependentMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for ContextDependentMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -5109,6 +5356,7 @@ impl<'a> ContextDependentMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct ContextDependentOverRidingStyledItem_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -5135,6 +5383,7 @@ impl<'a> Parse<'a> for ContextDependentOverRidingStyledItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ContextDependentShapeRepresentation_<'a> { // entity
     pub representation_relation: ShapeRepresentationRelationship<'a>,
     pub represented_product_relation: ProductDefinitionShape<'a>,
@@ -5152,6 +5401,7 @@ impl<'a> Parse<'a> for ContextDependentShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ContextDependentUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     pub name: Label<'a>,
@@ -5169,6 +5419,7 @@ impl<'a> Parse<'a> for ContextDependentUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Contract_<'a> { // entity
     pub name: Label<'a>,
     pub purpose: Text<'a>,
@@ -5189,6 +5440,7 @@ impl<'a> Parse<'a> for Contract_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ContractAssignment_<'a> { // entity
     pub assigned_contract: Contract<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5203,6 +5455,7 @@ impl<'a> Parse<'a> for ContractAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ContractItem<'a> { // select
     DrawingRevision(DrawingRevision<'a>),
     ExecutedAction(ExecutedAction<'a>),
@@ -5218,6 +5471,7 @@ impl<'a> Parse<'a> for ContractItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ContractType_<'a> { // entity
     pub description: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5232,6 +5486,7 @@ impl<'a> Parse<'a> for ContractType_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ConversionBasedUnit_<'a> { // entity
     pub name: Label<'a>,
     pub conversion_factor: MeasureWithUnit<'a>,
@@ -5250,6 +5505,7 @@ impl<'a> Parse<'a> for ConversionBasedUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CoordinatedUniversalTimeOffset_<'a> { // entity
     pub hour_offset: i64,
     pub minute_offset: Option<i64>,
@@ -5270,6 +5526,7 @@ impl<'a> Parse<'a> for CoordinatedUniversalTimeOffset_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CosFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5284,6 +5541,7 @@ impl<'a> Parse<'a> for CosFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CountMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for CountMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -5295,6 +5553,7 @@ impl<'a> CountMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub enum CsgPrimitive<'a> { // select
     Sphere(Sphere<'a>),
     Block(Block<'a>),
@@ -5316,6 +5575,7 @@ impl<'a> Parse<'a> for CsgPrimitive<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum CsgSelect<'a> { // select
     BooleanResult(BooleanResult<'a>),
     CsgPrimitive(CsgPrimitive<'a>),
@@ -5329,6 +5589,7 @@ impl<'a> Parse<'a> for CsgSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct CsgShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -5349,6 +5610,7 @@ impl<'a> Parse<'a> for CsgShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CsgSolid_<'a> { // entity
     pub name: Label<'a>,
     pub tree_root_expression: CsgSelect<'a>,
@@ -5366,6 +5628,7 @@ impl<'a> Parse<'a> for CsgSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Curve_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5380,6 +5643,7 @@ impl<'a> Parse<'a> for Curve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CurveBoundedSurface_<'a> { // entity
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
@@ -5403,6 +5667,7 @@ impl<'a> Parse<'a> for CurveBoundedSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CurveDimension_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -5420,6 +5685,7 @@ impl<'a> Parse<'a> for CurveDimension_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CurveFontOrScaledCurveFontSelect<'a> { // select
     CurveStyleFontSelect(CurveStyleFontSelect<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -5429,6 +5695,7 @@ impl<'a> Parse<'a> for CurveFontOrScaledCurveFontSelect<'a> {
         map(<CurveStyleFontSelect<'a>>::parse, |r| CurveFontOrScaledCurveFontSelect::CurveStyleFontSelect(r))(s)
     }
 }
+#[derive(Debug)]
 pub enum CurveOnSurface<'a> { // select
     Pcurve(Pcurve<'a>),
     SurfaceCurve(SurfaceCurve<'a>),
@@ -5444,6 +5711,7 @@ impl<'a> Parse<'a> for CurveOnSurface<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum CurveOrRender<'a> { // select
     CurveStyle(CurveStyle<'a>),
     CurveStyleRendering(CurveStyleRendering<'a>),
@@ -5457,6 +5725,7 @@ impl<'a> Parse<'a> for CurveOrRender<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct CurveReplica_<'a> { // entity
     pub name: Label<'a>,
     pub parent_curve: Curve<'a>,
@@ -5477,6 +5746,7 @@ impl<'a> Parse<'a> for CurveReplica_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CurveStyle_<'a> { // entity
     pub name: Label<'a>,
     pub curve_font: CurveFontOrScaledCurveFontSelect<'a>,
@@ -5500,6 +5770,7 @@ impl<'a> Parse<'a> for CurveStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CurveStyleFont_<'a> { // entity
     pub name: Label<'a>,
     pub pattern_list: Vec<CurveStyleFontPattern<'a>>,
@@ -5517,6 +5788,7 @@ impl<'a> Parse<'a> for CurveStyleFont_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CurveStyleFontPattern_<'a> { // entity
     pub visible_segment_length: PositiveLengthMeasure<'a>,
     pub invisible_segment_length: PositiveLengthMeasure<'a>,
@@ -5534,6 +5806,7 @@ impl<'a> Parse<'a> for CurveStyleFontPattern_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum CurveStyleFontSelect<'a> { // select
     CurveStyleFont(CurveStyleFont<'a>),
     PreDefinedCurveFont(PreDefinedCurveFont<'a>),
@@ -5549,6 +5822,7 @@ impl<'a> Parse<'a> for CurveStyleFontSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct CurveStyleRendering_<'a> { // entity
     pub rendering_method: ShadingCurveMethod<'a>,
     pub rendering_properties: SurfaceRenderingProperties<'a>,
@@ -5566,6 +5840,7 @@ impl<'a> Parse<'a> for CurveStyleRendering_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CurveSweptSolidShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -5587,6 +5862,7 @@ impl<'a> Parse<'a> for CurveSweptSolidShapeRepresentation_<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct CurveToleranceDeviation<'a>(pub PositiveLengthMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for CurveToleranceDeviation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -5598,6 +5874,7 @@ impl<'a> CurveToleranceDeviation<'a> {
         map(PositiveLengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct CurveToleranceParameter<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for CurveToleranceParameter<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -5609,6 +5886,7 @@ impl<'a> CurveToleranceParameter<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct CylindricalPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -5635,6 +5913,7 @@ impl<'a> Parse<'a> for CylindricalPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CylindricalPairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_actual_translation: TranslationalRangeMeasure<'a>,
@@ -5661,6 +5940,7 @@ impl<'a> Parse<'a> for CylindricalPairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CylindricalPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_translation: LengthMeasure<'a>,
@@ -5681,6 +5961,7 @@ impl<'a> Parse<'a> for CylindricalPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CylindricalSurface_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -5701,6 +5982,7 @@ impl<'a> Parse<'a> for CylindricalSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct CylindricityTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -5724,6 +6006,7 @@ impl<'a> Parse<'a> for CylindricityTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DataEnvironment_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -5744,6 +6027,7 @@ impl<'a> Parse<'a> for DataEnvironment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Date_<'a> { // entity
     pub year_component: YearNumber<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -5758,6 +6042,7 @@ impl<'a> Parse<'a> for Date_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DateAndTime_<'a> { // entity
     pub date_component: Date<'a>,
     pub time_component: LocalTime<'a>,
@@ -5775,6 +6060,7 @@ impl<'a> Parse<'a> for DateAndTime_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DateAndTimeAssignment_<'a> { // entity
     pub assigned_date_and_time: DateAndTime<'a>,
     pub role: DateTimeRole<'a>,
@@ -5792,6 +6078,7 @@ impl<'a> Parse<'a> for DateAndTimeAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DateAndTimeItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -5907,6 +6194,7 @@ impl<'a> Parse<'a> for DateAndTimeItem<'a> {
         ))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct DateAssignment_<'a> { // entity
     pub assigned_date: Date<'a>,
     pub role: DateRole<'a>,
@@ -5924,6 +6212,7 @@ impl<'a> Parse<'a> for DateAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DateItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -6039,6 +6328,7 @@ impl<'a> Parse<'a> for DateItem<'a> {
         ))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct DateRole_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6053,6 +6343,7 @@ impl<'a> Parse<'a> for DateRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DateTimeOrEventOccurrence<'a> { // select
     DateTimeSelect(DateTimeSelect<'a>),
     EventOccurrence(EventOccurrence<'a>),
@@ -6066,6 +6357,7 @@ impl<'a> Parse<'a> for DateTimeOrEventOccurrence<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DateTimeRole_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6080,6 +6372,7 @@ impl<'a> Parse<'a> for DateTimeRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DateTimeSelect<'a> { // select
     Date(Date<'a>),
     DateAndTime(DateAndTime<'a>),
@@ -6095,6 +6388,7 @@ impl<'a> Parse<'a> for DateTimeSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DatedEffectivity_<'a> { // entity
     pub id: Identifier<'a>,
     pub effectivity_end_date: Option<DateTimeOrEventOccurrence<'a>>,
@@ -6115,6 +6409,7 @@ impl<'a> Parse<'a> for DatedEffectivity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Datum_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -6141,6 +6436,7 @@ impl<'a> Parse<'a> for Datum_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DatumFeature_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -6164,6 +6460,7 @@ impl<'a> Parse<'a> for DatumFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DatumFeatureCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -6181,6 +6478,7 @@ impl<'a> Parse<'a> for DatumFeatureCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DatumReference_<'a> { // entity
     pub precedence: i64,
     pub referenced_datum: Datum<'a>,
@@ -6198,6 +6496,7 @@ impl<'a> Parse<'a> for DatumReference_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DatumTarget_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -6224,6 +6523,7 @@ impl<'a> Parse<'a> for DatumTarget_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DatumTargetCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -6241,6 +6541,7 @@ impl<'a> Parse<'a> for DatumTargetCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DayInMonthNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for DayInMonthNumber<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -6252,6 +6553,7 @@ impl<'a> DayInMonthNumber<'a> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct DefaultToleranceTable_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -6272,6 +6574,7 @@ impl<'a> Parse<'a> for DefaultToleranceTable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DefaultToleranceTableCell_<'a> { // entity
     pub name: Label<'a>,
     pub item_element: CompoundItemDefinition<'a>,
@@ -6289,6 +6592,7 @@ impl<'a> Parse<'a> for DefaultToleranceTableCell_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DefinedCharacterGlyph_<'a> { // entity
     pub name: Label<'a>,
     pub definition: DefinedGlyphSelect<'a>,
@@ -6309,6 +6613,7 @@ impl<'a> Parse<'a> for DefinedCharacterGlyph_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DefinedFunction_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -6320,6 +6625,7 @@ impl<'a> Parse<'a> for DefinedFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DefinedGlyphSelect<'a> { // select
     ExternallyDefinedCharacterGlyph(ExternallyDefinedCharacterGlyph<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -6329,6 +6635,7 @@ impl<'a> Parse<'a> for DefinedGlyphSelect<'a> {
         map(<ExternallyDefinedCharacterGlyph<'a>>::parse, |r| DefinedGlyphSelect::ExternallyDefinedCharacterGlyph(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct DefinedSymbol_<'a> { // entity
     pub name: Label<'a>,
     pub definition: DefinedSymbolSelect<'a>,
@@ -6349,6 +6656,7 @@ impl<'a> Parse<'a> for DefinedSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DefinedSymbolSelect<'a> { // select
     PreDefinedSymbol(PreDefinedSymbol<'a>),
     ExternallyDefinedSymbol(ExternallyDefinedSymbol<'a>),
@@ -6362,6 +6670,7 @@ impl<'a> Parse<'a> for DefinedSymbolSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DefinitionalRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -6382,6 +6691,7 @@ impl<'a> Parse<'a> for DefinitionalRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DegeneratePcurve_<'a> { // entity
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
@@ -6402,6 +6712,7 @@ impl<'a> Parse<'a> for DegeneratePcurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DegenerateToroidalSurface_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -6428,6 +6739,7 @@ impl<'a> Parse<'a> for DegenerateToroidalSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DerivedPropertySelect<'a> { // select
     PropertyDefinition(PropertyDefinition<'a>),
     ActionProperty(ActionProperty<'a>),
@@ -6443,6 +6755,7 @@ impl<'a> Parse<'a> for DerivedPropertySelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DerivedShapeAspect_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -6466,6 +6779,7 @@ impl<'a> Parse<'a> for DerivedShapeAspect_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DerivedUnit_<'a> { // entity
     pub elements: Vec<DerivedUnitElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6480,6 +6794,7 @@ impl<'a> Parse<'a> for DerivedUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DerivedUnitElement_<'a> { // entity
     pub unit: NamedUnit<'a>,
     pub exponent: f64,
@@ -6497,6 +6812,7 @@ impl<'a> Parse<'a> for DerivedUnitElement_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DerivedUnitVariable_<'a> { // entity
     pub elements: Vec<DerivedUnitElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -6511,6 +6827,7 @@ impl<'a> Parse<'a> for DerivedUnitVariable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DescriptionAttribute_<'a> { // entity
     pub attribute_value: Text<'a>,
     pub described_item: DescriptionAttributeSelect<'a>,
@@ -6528,6 +6845,7 @@ impl<'a> Parse<'a> for DescriptionAttribute_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DescriptionAttributeSelect<'a> { // select
     ActionRequestSolution(ActionRequestSolution<'a>),
     ApplicationContext(ApplicationContext<'a>),
@@ -6565,6 +6883,7 @@ impl<'a> Parse<'a> for DescriptionAttributeSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DescriptiveMeasure<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for DescriptiveMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -6576,6 +6895,7 @@ impl<'a> DescriptiveMeasure<'a> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct DescriptiveRepresentationItem_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -6593,6 +6913,7 @@ impl<'a> Parse<'a> for DescriptiveRepresentationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DiameterDimension_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -6610,6 +6931,7 @@ impl<'a> Parse<'a> for DiameterDimension_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -6627,6 +6949,7 @@ impl<'a> Parse<'a> for DimensionCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionCalloutComponentRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -6650,6 +6973,7 @@ impl<'a> Parse<'a> for DimensionCalloutComponentRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionCalloutRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -6673,6 +6997,7 @@ impl<'a> Parse<'a> for DimensionCalloutRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for DimensionCount<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -6684,6 +7009,7 @@ impl<'a> DimensionCount<'a> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct DimensionCurve_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -6704,6 +7030,7 @@ impl<'a> Parse<'a> for DimensionCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionCurveDirectedCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -6721,6 +7048,7 @@ impl<'a> Parse<'a> for DimensionCurveDirectedCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionCurveTerminator_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -6747,6 +7075,7 @@ impl<'a> Parse<'a> for DimensionCurveTerminator_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DimensionExtentUsage<'a> { // enum
     Origin,
     Target,
@@ -6761,6 +7090,7 @@ impl<'a> Parse<'a> for DimensionExtentUsage<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DimensionPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -6784,6 +7114,7 @@ impl<'a> Parse<'a> for DimensionPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionRelatedToleranceZoneElement_<'a> { // entity
     pub related_dimension: DimensionalLocation<'a>,
     pub related_element: ToleranceZoneDefinition<'a>,
@@ -6801,6 +7132,7 @@ impl<'a> Parse<'a> for DimensionRelatedToleranceZoneElement_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionTextAssociativity_<'a> { // entity
     pub name: Label<'a>,
     pub literal: PresentableText<'a>,
@@ -6836,6 +7168,7 @@ impl<'a> Parse<'a> for DimensionTextAssociativity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DimensionalCharacteristic<'a> { // select
     DimensionalLocation(DimensionalLocation<'a>),
     DimensionalSize(DimensionalSize<'a>),
@@ -6849,6 +7182,7 @@ impl<'a> Parse<'a> for DimensionalCharacteristic<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DimensionalCharacteristicRepresentation_<'a> { // entity
     pub dimension: DimensionalCharacteristic<'a>,
     pub representation: ShapeDimensionRepresentation<'a>,
@@ -6866,6 +7200,7 @@ impl<'a> Parse<'a> for DimensionalCharacteristicRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionalExponents_<'a> { // entity
     pub length_exponent: f64,
     pub mass_exponent: f64,
@@ -6898,6 +7233,7 @@ impl<'a> Parse<'a> for DimensionalExponents_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionalLocation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -6921,6 +7257,7 @@ impl<'a> Parse<'a> for DimensionalLocation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionalLocationWithPath_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -6947,6 +7284,7 @@ impl<'a> Parse<'a> for DimensionalLocationWithPath_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionalSize_<'a> { // entity
     pub applies_to: ShapeAspect<'a>,
     pub name: Label<'a>,
@@ -6964,6 +7302,7 @@ impl<'a> Parse<'a> for DimensionalSize_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DimensionalSizeWithPath_<'a> { // entity
     pub applies_to: ShapeAspect<'a>,
     pub name: Label<'a>,
@@ -6984,6 +7323,7 @@ impl<'a> Parse<'a> for DimensionalSizeWithPath_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DirectedAction_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7007,6 +7347,7 @@ impl<'a> Parse<'a> for DirectedAction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DirectedAngle_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7030,6 +7371,7 @@ impl<'a> Parse<'a> for DirectedAngle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DirectedDimensionalLocation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7053,6 +7395,7 @@ impl<'a> Parse<'a> for DirectedDimensionalLocation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Direction_<'a> { // entity
     pub name: Label<'a>,
     pub direction_ratios: Vec<f64>,
@@ -7070,6 +7413,7 @@ impl<'a> Parse<'a> for Direction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DirectionCountSelect<'a> { // select
     UDirectionCount(UDirectionCount<'a>),
     VDirectionCount(VDirectionCount<'a>),
@@ -7083,6 +7427,7 @@ impl<'a> Parse<'a> for DirectionCountSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DirectionShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -7103,6 +7448,7 @@ impl<'a> Parse<'a> for DirectionShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DivExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7117,6 +7463,7 @@ impl<'a> Parse<'a> for DivExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Document_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -7141,6 +7488,7 @@ impl<'a> Parse<'a> for Document_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct DocumentFile_<'a> { // entity
     pub id: Identifier<'a>,
     pub document__name: Label<'a>,
@@ -7174,6 +7522,7 @@ impl<'a> Parse<'a> for DocumentFile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DocumentProductAssociation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7197,6 +7546,7 @@ impl<'a> Parse<'a> for DocumentProductAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DocumentProductEquivalence_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7220,6 +7570,7 @@ impl<'a> Parse<'a> for DocumentProductEquivalence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DocumentReference_<'a> { // entity
     pub assigned_document: Document<'a>,
     pub source: Label<'a>,
@@ -7237,6 +7588,7 @@ impl<'a> Parse<'a> for DocumentReference_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DocumentReferenceItem<'a> { // select
     ActionDirective(ActionDirective<'a>),
     ActionMethod(ActionMethod<'a>),
@@ -7330,6 +7682,7 @@ impl<'a> Parse<'a> for DocumentReferenceItem<'a> {
         ))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct DocumentRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7353,6 +7706,7 @@ impl<'a> Parse<'a> for DocumentRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DocumentRepresentationType_<'a> { // entity
     pub name: Label<'a>,
     pub represented_document: Document<'a>,
@@ -7370,6 +7724,7 @@ impl<'a> Parse<'a> for DocumentRepresentationType_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DocumentType_<'a> { // entity
     pub product_data_type: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7384,6 +7739,7 @@ impl<'a> Parse<'a> for DocumentType_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DocumentUsageConstraint_<'a> { // entity
     pub source: Document<'a>,
     pub subject_element: Label<'a>,
@@ -7404,6 +7760,7 @@ impl<'a> Parse<'a> for DocumentUsageConstraint_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DocumentUsageConstraintAssignment_<'a> { // entity
     pub assigned_document_usage: DocumentUsageConstraint<'a>,
     pub role: DocumentUsageRole<'a>,
@@ -7421,6 +7778,7 @@ impl<'a> Parse<'a> for DocumentUsageConstraintAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DocumentUsageRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7438,6 +7796,7 @@ impl<'a> Parse<'a> for DocumentUsageRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingAnnotationOccurrence_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -7458,6 +7817,7 @@ impl<'a> Parse<'a> for DraughtingAnnotationOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -7475,6 +7835,7 @@ impl<'a> Parse<'a> for DraughtingCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DraughtingCalloutElement<'a> { // select
     AnnotationTextOccurrence(AnnotationTextOccurrence<'a>),
     AnnotationSymbolOccurrence(AnnotationSymbolOccurrence<'a>),
@@ -7490,6 +7851,7 @@ impl<'a> Parse<'a> for DraughtingCalloutElement<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DraughtingCalloutRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -7513,6 +7875,7 @@ impl<'a> Parse<'a> for DraughtingCalloutRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingElements_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -7530,6 +7893,7 @@ impl<'a> Parse<'a> for DraughtingElements_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingModel_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -7550,6 +7914,7 @@ impl<'a> Parse<'a> for DraughtingModel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingModelItemAssociation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7576,6 +7941,7 @@ impl<'a> Parse<'a> for DraughtingModelItemAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DraughtingModelItemAssociationSelect<'a> { // select
     AnnotationOccurrence(AnnotationOccurrence<'a>),
     DraughtingCallout(DraughtingCallout<'a>),
@@ -7589,6 +7955,7 @@ impl<'a> Parse<'a> for DraughtingModelItemAssociationSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DraughtingPreDefinedColour_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7603,6 +7970,7 @@ impl<'a> Parse<'a> for DraughtingPreDefinedColour_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingPreDefinedCurveFont_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7617,6 +7985,7 @@ impl<'a> Parse<'a> for DraughtingPreDefinedCurveFont_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingPreDefinedTextFont_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -7631,6 +8000,7 @@ impl<'a> Parse<'a> for DraughtingPreDefinedTextFont_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingSpecificationReference_<'a> { // entity
     pub assigned_document: Document<'a>,
     pub source: Label<'a>,
@@ -7651,6 +8021,7 @@ impl<'a> Parse<'a> for DraughtingSpecificationReference_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingSubfigureRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -7671,6 +8042,7 @@ impl<'a> Parse<'a> for DraughtingSubfigureRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingSymbolRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -7691,6 +8063,7 @@ impl<'a> Parse<'a> for DraughtingSymbolRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingTextLiteralWithDelineation_<'a> { // entity
     pub name: Label<'a>,
     pub literal: PresentableText<'a>,
@@ -7723,6 +8096,7 @@ impl<'a> Parse<'a> for DraughtingTextLiteralWithDelineation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DraughtingTitle_<'a> { // entity
     pub items: Vec<DraughtingTitledItem<'a>>,
     pub language: Label<'a>,
@@ -7743,6 +8117,7 @@ impl<'a> Parse<'a> for DraughtingTitle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum DraughtingTitledItem<'a> { // select
     DrawingRevision(DrawingRevision<'a>),
     DrawingSheetRevision(DrawingSheetRevision<'a>),
@@ -7756,6 +8131,7 @@ impl<'a> Parse<'a> for DraughtingTitledItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct DrawingDefinition_<'a> { // entity
     pub drawing_number: Identifier<'a>,
     pub drawing_type: Option<Label<'a>>,
@@ -7773,6 +8149,7 @@ impl<'a> Parse<'a> for DrawingDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DrawingRevision_<'a> { // entity
     pub revision_identifier: Identifier<'a>,
     pub drawing_identifier: DrawingDefinition<'a>,
@@ -7793,6 +8170,7 @@ impl<'a> Parse<'a> for DrawingRevision_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DrawingRevisionSequence_<'a> { // entity
     pub predecessor: DrawingRevision<'a>,
     pub successor: DrawingRevision<'a>,
@@ -7810,6 +8188,7 @@ impl<'a> Parse<'a> for DrawingRevisionSequence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DrawingSheetLayout_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -7830,6 +8209,7 @@ impl<'a> Parse<'a> for DrawingSheetLayout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DrawingSheetRevision_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -7853,6 +8233,7 @@ impl<'a> Parse<'a> for DrawingSheetRevision_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct DrawingSheetRevisionUsage_<'a> { // entity
     pub area: PresentationArea<'a>,
     pub in_set: PresentationSet<'a>,
@@ -7873,6 +8254,7 @@ impl<'a> Parse<'a> for DrawingSheetRevisionUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Edge_<'a> { // entity
     pub name: Label<'a>,
     pub edge_start: Vertex<'a>,
@@ -7893,6 +8275,7 @@ impl<'a> Parse<'a> for Edge_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EdgeBasedWireframeModel_<'a> { // entity
     pub name: Label<'a>,
     pub ebwm_boundary: Vec<ConnectedEdgeSet<'a>>,
@@ -7910,6 +8293,7 @@ impl<'a> Parse<'a> for EdgeBasedWireframeModel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EdgeBasedWireframeShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -7930,6 +8314,7 @@ impl<'a> Parse<'a> for EdgeBasedWireframeShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EdgeCurve_<'a> { // entity
     pub name: Label<'a>,
     pub edge_start: Vertex<'a>,
@@ -7956,6 +8341,7 @@ impl<'a> Parse<'a> for EdgeCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EdgeLoop_<'a> { // entity
     pub name: Label<'a>,
     pub edge_list: Vec<OrientedEdge<'a>>,
@@ -7973,6 +8359,7 @@ impl<'a> Parse<'a> for EdgeLoop_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EdgeRound_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -7996,6 +8383,7 @@ impl<'a> Parse<'a> for EdgeRound_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Effectivity_<'a> { // entity
     pub id: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -8010,6 +8398,7 @@ impl<'a> Parse<'a> for Effectivity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EffectivityAssignment_<'a> { // entity
     pub assigned_effectivity: Effectivity<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -8024,6 +8413,7 @@ impl<'a> Parse<'a> for EffectivityAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EffectivityContextAssignment_<'a> { // entity
     pub assigned_effectivity_assignment: EffectivityAssignment<'a>,
     pub role: EffectivityContextRole<'a>,
@@ -8041,6 +8431,7 @@ impl<'a> Parse<'a> for EffectivityContextAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EffectivityContextRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8058,6 +8449,7 @@ impl<'a> Parse<'a> for EffectivityContextRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum EffectivityItem<'a> { // select
     Action(Action<'a>),
     ActionMethod(ActionMethod<'a>),
@@ -8138,6 +8530,7 @@ impl<'a> Parse<'a> for EffectivityItem<'a> {
         ))))(s)
     }
 }
+#[derive(Debug)]
 pub struct EffectivityRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8161,6 +8554,7 @@ impl<'a> Parse<'a> for EffectivityRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ElectricCurrentMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for ElectricCurrentMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -8172,6 +8566,7 @@ impl<'a> ElectricCurrentMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct ElectricCurrentMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -8189,6 +8584,7 @@ impl<'a> Parse<'a> for ElectricCurrentMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ElectricCurrentUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -8203,6 +8599,7 @@ impl<'a> Parse<'a> for ElectricCurrentUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ElementDelivery_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8223,6 +8620,7 @@ impl<'a> Parse<'a> for ElementDelivery_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ElementarySurface_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -8240,6 +8638,7 @@ impl<'a> Parse<'a> for ElementarySurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Ellipse_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
@@ -8263,6 +8662,7 @@ impl<'a> Parse<'a> for Ellipse_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Environment_<'a> { // entity
     pub syntactic_representation: GenericVariable<'a>,
     pub semantics: VariableSemantics<'a>,
@@ -8280,6 +8680,7 @@ impl<'a> Parse<'a> for Environment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EqualsExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -8294,6 +8695,7 @@ impl<'a> Parse<'a> for EqualsExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EvaluatedDegeneratePcurve_<'a> { // entity
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
@@ -8317,6 +8719,7 @@ impl<'a> Parse<'a> for EvaluatedDegeneratePcurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EventOccurrence_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -8337,6 +8740,7 @@ impl<'a> Parse<'a> for EventOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EventOccurrenceAssignment_<'a> { // entity
     pub assigned_event_occurrence: EventOccurrence<'a>,
     pub role: EventOccurrenceRole<'a>,
@@ -8354,6 +8758,7 @@ impl<'a> Parse<'a> for EventOccurrenceAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EventOccurrenceContextAssignment_<'a> { // entity
     pub assigned_event_occurrence_assignment: EventOccurrenceAssignment<'a>,
     pub role: EventOccurrenceContextRole<'a>,
@@ -8371,6 +8776,7 @@ impl<'a> Parse<'a> for EventOccurrenceContextAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct EventOccurrenceContextRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8388,6 +8794,7 @@ impl<'a> Parse<'a> for EventOccurrenceContextRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum EventOccurrenceItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -8497,6 +8904,7 @@ impl<'a> Parse<'a> for EventOccurrenceItem<'a> {
         ))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct EventOccurrenceRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8514,6 +8922,7 @@ impl<'a> Parse<'a> for EventOccurrenceRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExclusiveProductConceptFeatureCategory_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8531,6 +8940,7 @@ impl<'a> Parse<'a> for ExclusiveProductConceptFeatureCategory_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExecutedAction_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8551,6 +8961,7 @@ impl<'a> Parse<'a> for ExecutedAction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExpFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -8565,6 +8976,7 @@ impl<'a> Parse<'a> for ExpFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Expression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -8576,6 +8988,7 @@ impl<'a> Parse<'a> for Expression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExpressionConversionBasedUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     pub name: Label<'a>,
@@ -8593,6 +9006,7 @@ impl<'a> Parse<'a> for ExpressionConversionBasedUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Extension_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8616,6 +9030,7 @@ impl<'a> Parse<'a> for Extension_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternalIdentificationAssignment_<'a> { // entity
     pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
@@ -8636,6 +9051,7 @@ impl<'a> Parse<'a> for ExternalIdentificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ExternalIdentificationItem<'a> { // select
     DocumentFile(DocumentFile<'a>),
     ExternallyDefinedClass(ExternallyDefinedClass<'a>),
@@ -8653,6 +9069,7 @@ impl<'a> Parse<'a> for ExternalIdentificationItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ExternalSource_<'a> { // entity
     pub source_id: SourceItem<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -8667,6 +9084,7 @@ impl<'a> Parse<'a> for ExternalSource_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedCharacterGlyph_<'a> { // entity
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
@@ -8684,6 +9102,7 @@ impl<'a> Parse<'a> for ExternallyDefinedCharacterGlyph_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedClass_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8707,6 +9126,7 @@ impl<'a> Parse<'a> for ExternallyDefinedClass_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedCurveFont_<'a> { // entity
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
@@ -8724,6 +9144,7 @@ impl<'a> Parse<'a> for ExternallyDefinedCurveFont_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedDimensionDefinition_<'a> { // entity
     pub applies_to: ShapeAspect<'a>,
     pub name: Label<'a>,
@@ -8747,6 +9168,7 @@ impl<'a> Parse<'a> for ExternallyDefinedDimensionDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedFeatureDefinition_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8770,6 +9192,7 @@ impl<'a> Parse<'a> for ExternallyDefinedFeatureDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedGeneralProperty_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -8796,6 +9219,7 @@ impl<'a> Parse<'a> for ExternallyDefinedGeneralProperty_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedHatchStyle_<'a> { // entity
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
@@ -8816,6 +9240,7 @@ impl<'a> Parse<'a> for ExternallyDefinedHatchStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedItem_<'a> { // entity
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
@@ -8833,6 +9258,7 @@ impl<'a> Parse<'a> for ExternallyDefinedItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedItemRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -8856,6 +9282,7 @@ impl<'a> Parse<'a> for ExternallyDefinedItemRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedStyle_<'a> { // entity
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
@@ -8873,6 +9300,7 @@ impl<'a> Parse<'a> for ExternallyDefinedStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedSymbol_<'a> { // entity
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
@@ -8890,6 +9318,7 @@ impl<'a> Parse<'a> for ExternallyDefinedSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedTextFont_<'a> { // entity
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
@@ -8907,6 +9336,7 @@ impl<'a> Parse<'a> for ExternallyDefinedTextFont_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExternallyDefinedTileStyle_<'a> { // entity
     pub item_id: SourceItem<'a>,
     pub source: ExternalSource<'a>,
@@ -8927,6 +9357,7 @@ impl<'a> Parse<'a> for ExternallyDefinedTileStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExtrudedAreaSolid_<'a> { // entity
     pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
@@ -8950,6 +9381,7 @@ impl<'a> Parse<'a> for ExtrudedAreaSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ExtrudedFaceSolid_<'a> { // entity
     pub name: Label<'a>,
     pub swept_face: FaceSurface<'a>,
@@ -8973,6 +9405,7 @@ impl<'a> Parse<'a> for ExtrudedFaceSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Face_<'a> { // entity
     pub name: Label<'a>,
     pub bounds: Vec<FaceBound<'a>>,
@@ -8990,6 +9423,7 @@ impl<'a> Parse<'a> for Face_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FaceBasedSurfaceModel_<'a> { // entity
     pub name: Label<'a>,
     pub fbsm_faces: Vec<ConnectedFaceSet<'a>>,
@@ -9007,6 +9441,7 @@ impl<'a> Parse<'a> for FaceBasedSurfaceModel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FaceBound_<'a> { // entity
     pub name: Label<'a>,
     pub bound: Loop<'a>,
@@ -9027,6 +9462,7 @@ impl<'a> Parse<'a> for FaceBound_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FaceOuterBound_<'a> { // entity
     pub name: Label<'a>,
     pub bound: Loop<'a>,
@@ -9047,6 +9483,7 @@ impl<'a> Parse<'a> for FaceOuterBound_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FaceShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -9067,6 +9504,7 @@ impl<'a> Parse<'a> for FaceShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FaceSurface_<'a> { // entity
     pub name: Label<'a>,
     pub bounds: Vec<FaceBound<'a>>,
@@ -9090,6 +9528,7 @@ impl<'a> Parse<'a> for FaceSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FacetedBrep_<'a> { // entity
     pub name: Label<'a>,
     pub outer: ClosedShell<'a>,
@@ -9107,6 +9546,7 @@ impl<'a> Parse<'a> for FacetedBrep_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FacetedBrepShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -9127,6 +9567,7 @@ impl<'a> Parse<'a> for FacetedBrepShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FeatureComponentDefinition_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9144,6 +9585,7 @@ impl<'a> Parse<'a> for FeatureComponentDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FeatureComponentRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9167,6 +9609,7 @@ impl<'a> Parse<'a> for FeatureComponentRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FeatureDefinition_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9184,6 +9627,7 @@ impl<'a> Parse<'a> for FeatureDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FeatureInPanel_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9201,6 +9645,7 @@ impl<'a> Parse<'a> for FeatureInPanel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FeaturePattern_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9218,6 +9663,7 @@ impl<'a> Parse<'a> for FeaturePattern_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FeaturedShape_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9238,6 +9684,7 @@ impl<'a> Parse<'a> for FeaturedShape_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FillAreaStyle_<'a> { // entity
     pub name: Label<'a>,
     pub fill_styles: Vec<FillStyleSelect<'a>>,
@@ -9255,6 +9702,7 @@ impl<'a> Parse<'a> for FillAreaStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FillAreaStyleColour_<'a> { // entity
     pub name: Label<'a>,
     pub fill_colour: Colour<'a>,
@@ -9272,6 +9720,7 @@ impl<'a> Parse<'a> for FillAreaStyleColour_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FillAreaStyleHatching_<'a> { // entity
     pub name: Label<'a>,
     pub hatch_line_appearance: CurveStyle<'a>,
@@ -9301,6 +9750,7 @@ impl<'a> Parse<'a> for FillAreaStyleHatching_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum FillAreaStyleTileShapeSelect<'a> { // select
     FillAreaStyleTileSymbolWithStyle(FillAreaStyleTileSymbolWithStyle<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -9310,6 +9760,7 @@ impl<'a> Parse<'a> for FillAreaStyleTileShapeSelect<'a> {
         map(<FillAreaStyleTileSymbolWithStyle<'a>>::parse, |r| FillAreaStyleTileShapeSelect::FillAreaStyleTileSymbolWithStyle(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct FillAreaStyleTileSymbolWithStyle_<'a> { // entity
     pub name: Label<'a>,
     pub symbol: AnnotationSymbolOccurrence<'a>,
@@ -9327,6 +9778,7 @@ impl<'a> Parse<'a> for FillAreaStyleTileSymbolWithStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FillAreaStyleTiles_<'a> { // entity
     pub name: Label<'a>,
     pub tiling_pattern: TwoDirectionRepeatFactor<'a>,
@@ -9350,6 +9802,7 @@ impl<'a> Parse<'a> for FillAreaStyleTiles_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum FillStyleSelect<'a> { // select
     FillAreaStyleColour(FillAreaStyleColour<'a>),
     ExternallyDefinedTileStyle(ExternallyDefinedTileStyle<'a>),
@@ -9369,6 +9822,7 @@ impl<'a> Parse<'a> for FillStyleSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct Fillet_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9392,6 +9846,7 @@ impl<'a> Parse<'a> for Fillet_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FlatnessTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -9415,6 +9870,7 @@ impl<'a> Parse<'a> for FlatnessTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum FontSelect<'a> { // select
     PreDefinedTextFont(PreDefinedTextFont<'a>),
     ExternallyDefinedTextFont(ExternallyDefinedTextFont<'a>),
@@ -9428,6 +9884,7 @@ impl<'a> Parse<'a> for FontSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct FormatFunction_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -9442,6 +9899,7 @@ impl<'a> Parse<'a> for FormatFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FoundedItem_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -9453,6 +9911,7 @@ impl<'a> Parse<'a> for FoundedItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum FoundedItemSelect<'a> { // select
     FoundedItem(FoundedItem<'a>),
     RepresentationItem(RepresentationItem<'a>),
@@ -9466,6 +9925,7 @@ impl<'a> Parse<'a> for FoundedItemSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct FoundedKinematicPath_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -9486,6 +9946,7 @@ impl<'a> Parse<'a> for FoundedKinematicPath_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FullyConstrainedPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9512,6 +9973,7 @@ impl<'a> Parse<'a> for FullyConstrainedPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct FunctionallyDefinedTransformation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9529,6 +9991,7 @@ impl<'a> Parse<'a> for FunctionallyDefinedTransformation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GearPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9570,6 +10033,7 @@ impl<'a> Parse<'a> for GearPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GearPairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_actual_rotation_1: RotationalRangeMeasure<'a>,
@@ -9590,6 +10054,7 @@ impl<'a> Parse<'a> for GearPairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GearPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_rotation_1: PlaneAngleMeasure<'a>,
@@ -9607,6 +10072,7 @@ impl<'a> Parse<'a> for GearPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeneralFeature_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9624,6 +10090,7 @@ impl<'a> Parse<'a> for GeneralFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeneralMaterialProperty_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -9644,6 +10111,7 @@ impl<'a> Parse<'a> for GeneralMaterialProperty_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeneralProperty_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -9664,6 +10132,7 @@ impl<'a> Parse<'a> for GeneralProperty_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeneralPropertyAssociation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9687,6 +10156,7 @@ impl<'a> Parse<'a> for GeneralPropertyAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeneralPropertyRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9710,6 +10180,7 @@ impl<'a> Parse<'a> for GeneralPropertyRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GenericCharacterGlyphSymbol_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -9730,6 +10201,7 @@ impl<'a> Parse<'a> for GenericCharacterGlyphSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GenericExpression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -9741,6 +10213,7 @@ impl<'a> Parse<'a> for GenericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GenericLiteral_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -9752,6 +10225,7 @@ impl<'a> Parse<'a> for GenericLiteral_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GenericVariable_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -9763,6 +10237,7 @@ impl<'a> Parse<'a> for GenericVariable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricAlignment_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9786,6 +10261,7 @@ impl<'a> Parse<'a> for GeometricAlignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricCurveSet_<'a> { // entity
     pub name: Label<'a>,
     pub elements: Vec<GeometricSetSelect<'a>>,
@@ -9803,6 +10279,7 @@ impl<'a> Parse<'a> for GeometricCurveSet_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricIntersection_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9826,6 +10303,7 @@ impl<'a> Parse<'a> for GeometricIntersection_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricItemSpecificUsage_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -9852,6 +10330,7 @@ impl<'a> Parse<'a> for GeometricItemSpecificUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricRepresentationContext_<'a> { // entity
     pub context_identifier: Identifier<'a>,
     pub context_type: Text<'a>,
@@ -9872,6 +10351,7 @@ impl<'a> Parse<'a> for GeometricRepresentationContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricRepresentationItem_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -9886,6 +10366,7 @@ impl<'a> Parse<'a> for GeometricRepresentationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricSet_<'a> { // entity
     pub name: Label<'a>,
     pub elements: Vec<GeometricSetSelect<'a>>,
@@ -9903,6 +10384,7 @@ impl<'a> Parse<'a> for GeometricSet_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum GeometricSetSelect<'a> { // select
     Point(Point<'a>),
     Curve(Curve<'a>),
@@ -9918,6 +10400,7 @@ impl<'a> Parse<'a> for GeometricSetSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct GeometricTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -9941,6 +10424,7 @@ impl<'a> Parse<'a> for GeometricTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricToleranceRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -9964,6 +10448,7 @@ impl<'a> Parse<'a> for GeometricToleranceRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricToleranceWithDatumReference_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -9990,6 +10475,7 @@ impl<'a> Parse<'a> for GeometricToleranceWithDatumReference_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricToleranceWithDefinedUnit_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -10016,6 +10502,7 @@ impl<'a> Parse<'a> for GeometricToleranceWithDefinedUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricalToleranceCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -10033,6 +10520,7 @@ impl<'a> Parse<'a> for GeometricalToleranceCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricallyBounded2dWireframeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -10053,6 +10541,7 @@ impl<'a> Parse<'a> for GeometricallyBounded2dWireframeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricallyBoundedSurfaceShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -10073,6 +10562,7 @@ impl<'a> Parse<'a> for GeometricallyBoundedSurfaceShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GeometricallyBoundedWireframeShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -10093,6 +10583,7 @@ impl<'a> Parse<'a> for GeometricallyBoundedWireframeShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GlobalUncertaintyAssignedContext_<'a> { // entity
     pub context_identifier: Identifier<'a>,
     pub context_type: Text<'a>,
@@ -10113,6 +10604,7 @@ impl<'a> Parse<'a> for GlobalUncertaintyAssignedContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GlobalUnitAssignedContext_<'a> { // entity
     pub context_identifier: Identifier<'a>,
     pub context_type: Text<'a>,
@@ -10133,6 +10625,7 @@ impl<'a> Parse<'a> for GlobalUnitAssignedContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Group_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10150,6 +10643,7 @@ impl<'a> Parse<'a> for Group_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct GroupAssignment_<'a> { // entity
     pub assigned_group: Group<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -10164,6 +10658,7 @@ impl<'a> Parse<'a> for GroupAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum GroupItem<'a> { // select
     GeometricRepresentationItem(GeometricRepresentationItem<'a>),
     MappedItem(MappedItem<'a>),
@@ -10185,6 +10680,7 @@ impl<'a> Parse<'a> for GroupItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct GroupRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10208,6 +10704,7 @@ impl<'a> Parse<'a> for GroupRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct HalfSpaceSolid_<'a> { // entity
     pub name: Label<'a>,
     pub base_surface: Surface<'a>,
@@ -10228,6 +10725,7 @@ impl<'a> Parse<'a> for HalfSpaceSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct HardnessRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -10248,6 +10746,7 @@ impl<'a> Parse<'a> for HardnessRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct HiddenElementOverRidingStyledItem_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -10274,6 +10773,7 @@ impl<'a> Parse<'a> for HiddenElementOverRidingStyledItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct HoleBottom_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10297,6 +10797,7 @@ impl<'a> Parse<'a> for HoleBottom_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct HoleInPanel_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10314,6 +10815,7 @@ impl<'a> Parse<'a> for HoleInPanel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct HomokineticPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10343,6 +10845,7 @@ impl<'a> Parse<'a> for HomokineticPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct HourInDay<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for HourInDay<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -10354,6 +10857,7 @@ impl<'a> HourInDay<'a> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct Hyperbola_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
@@ -10377,6 +10881,7 @@ impl<'a> Parse<'a> for Hyperbola_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct IdAttribute_<'a> { // entity
     pub attribute_value: Identifier<'a>,
     pub identified_item: IdAttributeSelect<'a>,
@@ -10394,6 +10899,7 @@ impl<'a> Parse<'a> for IdAttribute_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum IdAttributeSelect<'a> { // select
     Action(Action<'a>),
     Address(Address<'a>),
@@ -10423,6 +10929,7 @@ impl<'a> Parse<'a> for IdAttributeSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct IdentificationAssignment_<'a> { // entity
     pub assigned_id: Identifier<'a>,
     pub role: IdentificationRole<'a>,
@@ -10440,6 +10947,7 @@ impl<'a> Parse<'a> for IdentificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum IdentificationItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -10518,6 +11026,7 @@ impl<'a> Parse<'a> for IdentificationItem<'a> {
         ))))(s)
     }
 }
+#[derive(Debug)]
 pub struct IdentificationRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10535,6 +11044,7 @@ impl<'a> Parse<'a> for IdentificationRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Identifier<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for Identifier<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -10546,6 +11056,7 @@ impl<'a> Identifier<'a> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct InclusionProductConceptFeature_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -10569,6 +11080,7 @@ impl<'a> Parse<'a> for InclusionProductConceptFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct IndexExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -10583,6 +11095,7 @@ impl<'a> Parse<'a> for IndexExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct InitialState_<'a> { // entity
     pub applies_to_mechanism: Mechanism<'a>,
     pub pair_values: Vec<PairValue<'a>>,
@@ -10601,6 +11114,7 @@ impl<'a> Parse<'a> for InitialState_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct InstancedFeature_<'a> { // entity
     pub shape_aspect__name: Label<'a>,
     pub shape_aspect__description: Option<Text<'a>>,
@@ -10632,6 +11146,7 @@ impl<'a> Parse<'a> for InstancedFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct IntLiteral_<'a> { // entity
     pub the_value: f64,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -10646,6 +11161,7 @@ impl<'a> Parse<'a> for IntLiteral_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct IntNumericVariable_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -10657,6 +11173,7 @@ impl<'a> Parse<'a> for IntNumericVariable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct IntValueFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -10671,6 +11188,7 @@ impl<'a> Parse<'a> for IntValueFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct IntegerDefinedFunction_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -10682,6 +11200,7 @@ impl<'a> Parse<'a> for IntegerDefinedFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct InterpolatedConfigurationSequence_<'a> { // entity
     pub interpolation: Vec<ConfigurationInterpolation<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -10696,6 +11215,7 @@ impl<'a> Parse<'a> for InterpolatedConfigurationSequence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum InterpolationType<'a> { // enum
     Undefined,
     Synchronous,
@@ -10712,6 +11232,7 @@ impl<'a> Parse<'a> for InterpolationType<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct IntersectionCurve_<'a> { // entity
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
@@ -10735,6 +11256,7 @@ impl<'a> Parse<'a> for IntersectionCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct IntervalExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -10749,6 +11271,7 @@ impl<'a> Parse<'a> for IntervalExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Invisibility_<'a> { // entity
     pub invisible_items: Vec<InvisibleItem<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -10763,6 +11286,7 @@ impl<'a> Parse<'a> for Invisibility_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum InvisibilityContext<'a> { // select
     PresentationRepresentation(PresentationRepresentation<'a>),
     PresentationSet(PresentationSet<'a>),
@@ -10776,6 +11300,7 @@ impl<'a> Parse<'a> for InvisibilityContext<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum InvisibleItem<'a> { // select
     DraughtingCallout(DraughtingCallout<'a>),
     PresentationLayerAssignment(PresentationLayerAssignment<'a>),
@@ -10793,6 +11318,7 @@ impl<'a> Parse<'a> for InvisibleItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ItemDefinedTransformation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10816,6 +11342,7 @@ impl<'a> Parse<'a> for ItemDefinedTransformation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ItemIdentifiedRepresentationUsage_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10842,6 +11369,7 @@ impl<'a> Parse<'a> for ItemIdentifiedRepresentationUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Joggle_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10859,6 +11387,7 @@ impl<'a> Parse<'a> for Joggle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct JoggleTermination_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -10882,6 +11411,7 @@ impl<'a> Parse<'a> for JoggleTermination_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicAnalysisConsistency_<'a> { // entity
     pub control: KinematicControl<'a>,
     pub result: KinematicAnalysisResult<'a>,
@@ -10899,6 +11429,7 @@ impl<'a> Parse<'a> for KinematicAnalysisConsistency_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum KinematicAnalysisDefinition<'a> { // select
     InterpolatedConfigurationSequence(InterpolatedConfigurationSequence<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -10908,6 +11439,7 @@ impl<'a> Parse<'a> for KinematicAnalysisDefinition<'a> {
         map(<InterpolatedConfigurationSequence<'a>>::parse, |r| KinematicAnalysisDefinition::InterpolatedConfigurationSequence(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct KinematicAnalysisResult_<'a> { // entity
     pub analysed_mechanism: Mechanism<'a>,
     pub contained_kinematic_results: Vec<KinematicResult<'a>>,
@@ -10925,6 +11457,7 @@ impl<'a> Parse<'a> for KinematicAnalysisResult_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicControl_<'a> { // entity
     pub controlled_mechanism: Mechanism<'a>,
     pub contained_kinematic_programs: Vec<KinematicAnalysisDefinition<'a>>,
@@ -10942,6 +11475,7 @@ impl<'a> Parse<'a> for KinematicControl_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum KinematicFrameBackground<'a> { // select
     Point(Point<'a>),
     Curve(Curve<'a>),
@@ -10957,6 +11491,7 @@ impl<'a> Parse<'a> for KinematicFrameBackground<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct KinematicFrameBackgroundRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -10977,6 +11512,7 @@ impl<'a> Parse<'a> for KinematicFrameBackgroundRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicFrameBackgroundRepresentationAssociation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -11004,6 +11540,7 @@ impl<'a> Parse<'a> for KinematicFrameBackgroundRepresentationAssociation_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct KinematicFrameBasedTransformation_<'a> { // entity
     pub name: Label<'a>,
     pub functionally_defined_transformation__name: Label<'a>,
@@ -11028,6 +11565,7 @@ impl<'a> Parse<'a> for KinematicFrameBasedTransformation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicGroundRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -11048,6 +11586,7 @@ impl<'a> Parse<'a> for KinematicGroundRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicJoint_<'a> { // entity
     pub first_link: KinematicLink<'a>,
     pub second_link: KinematicLink<'a>,
@@ -11065,6 +11604,7 @@ impl<'a> Parse<'a> for KinematicJoint_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicLink_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -11076,6 +11616,7 @@ impl<'a> Parse<'a> for KinematicLink_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicLinkRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -11096,6 +11637,7 @@ impl<'a> Parse<'a> for KinematicLinkRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicLinkRepresentationAssociation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -11119,6 +11661,7 @@ impl<'a> Parse<'a> for KinematicLinkRepresentationAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicLinkRepresentationRelation_<'a> { // entity
     pub topological_aspects: KinematicLink<'a>,
     pub geometric_aspects: KinematicLinkRepresentation<'a>,
@@ -11136,6 +11679,7 @@ impl<'a> Parse<'a> for KinematicLinkRepresentationRelation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -11162,6 +11706,7 @@ impl<'a> Parse<'a> for KinematicPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicPath_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11176,6 +11721,7 @@ impl<'a> Parse<'a> for KinematicPath_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicPropertyDefinition_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -11199,6 +11745,7 @@ impl<'a> Parse<'a> for KinematicPropertyDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct KinematicPropertyRepresentationRelation_<'a> { // entity
     pub definition: RepresentedDefinition<'a>,
     pub used_representation: Representation<'a>,
@@ -11216,6 +11763,7 @@ impl<'a> Parse<'a> for KinematicPropertyRepresentationRelation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum KinematicResult<'a> { // select
     InterpolatedConfigurationSequence(InterpolatedConfigurationSequence<'a>),
     ResultingPath(ResultingPath<'a>),
@@ -11229,6 +11777,7 @@ impl<'a> Parse<'a> for KinematicResult<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct KinematicStructure_<'a> { // entity
     pub joints: Vec<KinematicJoint<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11243,6 +11792,7 @@ impl<'a> Parse<'a> for KinematicStructure_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum KnotType<'a> { // enum
     UniformKnots,
     QuasiUniformKnots,
@@ -11261,6 +11811,7 @@ impl<'a> Parse<'a> for KnotType<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct KnownSource_<'a> { // entity
     pub source_id: SourceItem<'a>,
     pub name: Label<'a>,
@@ -11278,6 +11829,7 @@ impl<'a> Parse<'a> for KnownSource_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Label<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for Label<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -11289,6 +11841,7 @@ impl<'a> Label<'a> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct Language_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -11306,6 +11859,7 @@ impl<'a> Parse<'a> for Language_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LanguageAssignment_<'a> { // entity
     pub assigned_class: Group<'a>,
     pub role: ClassificationRole<'a>,
@@ -11326,6 +11880,7 @@ impl<'a> Parse<'a> for LanguageAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum LanguageItem<'a> { // select
     Representation(Representation<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -11335,6 +11890,7 @@ impl<'a> Parse<'a> for LanguageItem<'a> {
         map(<Representation<'a>>::parse, |r| LanguageItem::Representation(r))(s)
     }
 }
+#[derive(Debug)]
 pub enum LayeredItem<'a> { // select
     PresentationRepresentation(PresentationRepresentation<'a>),
     RepresentationItem(RepresentationItem<'a>),
@@ -11348,6 +11904,7 @@ impl<'a> Parse<'a> for LayeredItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct LeaderCurve_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -11368,6 +11925,7 @@ impl<'a> Parse<'a> for LeaderCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LeaderDirectedCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -11385,6 +11943,7 @@ impl<'a> Parse<'a> for LeaderDirectedCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LeaderDirectedDimension_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -11402,6 +11961,7 @@ impl<'a> Parse<'a> for LeaderDirectedDimension_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LeaderTerminator_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -11425,6 +11985,7 @@ impl<'a> Parse<'a> for LeaderTerminator_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LengthFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11439,6 +12000,7 @@ impl<'a> Parse<'a> for LengthFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LengthMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for LengthMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -11450,6 +12012,7 @@ impl<'a> LengthMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct LengthMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -11467,6 +12030,7 @@ impl<'a> Parse<'a> for LengthMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LengthUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11481,6 +12045,7 @@ impl<'a> Parse<'a> for LengthUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LightSource_<'a> { // entity
     pub name: Label<'a>,
     pub light_colour: Colour<'a>,
@@ -11498,6 +12063,7 @@ impl<'a> Parse<'a> for LightSource_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LightSourceAmbient_<'a> { // entity
     pub name: Label<'a>,
     pub light_colour: Colour<'a>,
@@ -11515,6 +12081,7 @@ impl<'a> Parse<'a> for LightSourceAmbient_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LightSourceDirectional_<'a> { // entity
     pub name: Label<'a>,
     pub light_colour: Colour<'a>,
@@ -11535,6 +12102,7 @@ impl<'a> Parse<'a> for LightSourceDirectional_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LightSourcePositional_<'a> { // entity
     pub name: Label<'a>,
     pub light_colour: Colour<'a>,
@@ -11561,6 +12129,7 @@ impl<'a> Parse<'a> for LightSourcePositional_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LightSourceSpot_<'a> { // entity
     pub name: Label<'a>,
     pub light_colour: Colour<'a>,
@@ -11596,6 +12165,7 @@ impl<'a> Parse<'a> for LightSourceSpot_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LikeExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11610,6 +12180,7 @@ impl<'a> Parse<'a> for LikeExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum LimitCondition<'a> { // enum
     MaximumMaterialCondition,
     LeastMaterialCondition,
@@ -11626,6 +12197,7 @@ impl<'a> Parse<'a> for LimitCondition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct LimitsAndFits_<'a> { // entity
     pub form_variance: Label<'a>,
     pub zone_variance: Label<'a>,
@@ -11649,6 +12221,7 @@ impl<'a> Parse<'a> for LimitsAndFits_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Line_<'a> { // entity
     pub name: Label<'a>,
     pub pnt: CartesianPoint<'a>,
@@ -11669,6 +12242,7 @@ impl<'a> Parse<'a> for Line_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LineProfileTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -11692,6 +12266,7 @@ impl<'a> Parse<'a> for LineProfileTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LinearDimension_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -11709,18 +12284,21 @@ impl<'a> Parse<'a> for LinearDimension_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ListOfReversibleTopologyItem<'a>(pub Vec<ReversibleTopologyItem<'a>>, std::marker::PhantomData<&'a ()>); // aggregation
 impl<'a> Parse<'a> for ListOfReversibleTopologyItem<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         map(many0(<ReversibleTopologyItem<'a>>::parse), |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct ListRepresentationItem<'a>(pub Vec<RepresentationItem<'a>>, std::marker::PhantomData<&'a ()>); // aggregation
 impl<'a> Parse<'a> for ListRepresentationItem<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         map(many0(<RepresentationItem<'a>>::parse), |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct LiteralNumber_<'a> { // entity
     pub the_value: f64,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11735,6 +12313,7 @@ impl<'a> Parse<'a> for LiteralNumber_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LocalTime_<'a> { // entity
     pub hour_component: HourInDay<'a>,
     pub minute_component: Option<MinuteInHour<'a>>,
@@ -11758,6 +12337,7 @@ impl<'a> Parse<'a> for LocalTime_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LocationShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -11778,6 +12358,7 @@ impl<'a> Parse<'a> for LocationShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Locator_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -11795,6 +12376,7 @@ impl<'a> Parse<'a> for Locator_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Log10Function_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11809,6 +12391,7 @@ impl<'a> Parse<'a> for Log10Function_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Log2Function_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11823,6 +12406,7 @@ impl<'a> Parse<'a> for Log2Function_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LogFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11837,6 +12421,7 @@ impl<'a> Parse<'a> for LogFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Loop_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11851,6 +12436,7 @@ impl<'a> Parse<'a> for Loop_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LotEffectivity_<'a> { // entity
     pub id: Identifier<'a>,
     pub effectivity_lot_id: Identifier<'a>,
@@ -11871,6 +12457,7 @@ impl<'a> Parse<'a> for LotEffectivity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LuminousIntensityMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for LuminousIntensityMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -11882,6 +12469,7 @@ impl<'a> LuminousIntensityMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct LuminousIntensityMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -11899,6 +12487,7 @@ impl<'a> Parse<'a> for LuminousIntensityMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct LuminousIntensityUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -11913,6 +12502,7 @@ impl<'a> Parse<'a> for LuminousIntensityUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MakeFromUsageOption_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -11948,6 +12538,7 @@ impl<'a> Parse<'a> for MakeFromUsageOption_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ManifoldSolidBrep_<'a> { // entity
     pub name: Label<'a>,
     pub outer: ClosedShell<'a>,
@@ -11965,6 +12556,7 @@ impl<'a> Parse<'a> for ManifoldSolidBrep_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ManifoldSubsurfaceShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -11985,6 +12577,7 @@ impl<'a> Parse<'a> for ManifoldSubsurfaceShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ManifoldSurfaceShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -12005,6 +12598,7 @@ impl<'a> Parse<'a> for ManifoldSurfaceShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MappedItem_<'a> { // entity
     pub name: Label<'a>,
     pub mapping_source: RepresentationMap<'a>,
@@ -12025,6 +12619,7 @@ impl<'a> Parse<'a> for MappedItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum MarkerSelect<'a> { // select
     MarkerType(MarkerType<'a>),
     PreDefinedMarker(PreDefinedMarker<'a>),
@@ -12038,6 +12633,7 @@ impl<'a> Parse<'a> for MarkerSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum MarkerType<'a> { // enum
     Dot,
     X,
@@ -12062,6 +12658,7 @@ impl<'a> Parse<'a> for MarkerType<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct MassMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for MassMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -12073,6 +12670,7 @@ impl<'a> MassMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct MassMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -12090,6 +12688,7 @@ impl<'a> Parse<'a> for MassMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MassUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12104,6 +12703,7 @@ impl<'a> Parse<'a> for MassUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MaterialDesignation_<'a> { // entity
     pub name: Label<'a>,
     pub definitions: Vec<CharacterizedDefinition<'a>>,
@@ -12121,6 +12721,7 @@ impl<'a> Parse<'a> for MaterialDesignation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MaterialDesignationCharacterization_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -12144,6 +12745,7 @@ impl<'a> Parse<'a> for MaterialDesignationCharacterization_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MaterialProperty_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -12164,6 +12766,7 @@ impl<'a> Parse<'a> for MaterialProperty_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MaterialPropertyRepresentation_<'a> { // entity
     pub definition: RepresentedDefinition<'a>,
     pub used_representation: Representation<'a>,
@@ -12184,6 +12787,7 @@ impl<'a> Parse<'a> for MaterialPropertyRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MaximumFunction_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12198,6 +12802,7 @@ impl<'a> Parse<'a> for MaximumFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MeasureQualification_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -12221,6 +12826,7 @@ impl<'a> Parse<'a> for MeasureQualification_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MeasureRepresentationItem_<'a> { // entity
     pub name: Label<'a>,
     pub value_component: MeasureValue<'a>,
@@ -12241,6 +12847,7 @@ impl<'a> Parse<'a> for MeasureRepresentationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum MeasureValue<'a> { // select
     AmountOfSubstanceMeasure(AmountOfSubstanceMeasure<'a>),
     AreaMeasure(AreaMeasure<'a>),
@@ -12295,6 +12902,7 @@ impl<'a> Parse<'a> for MeasureValue<'a> {
         ))))(s)
     }
 }
+#[derive(Debug)]
 pub struct MeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -12312,6 +12920,7 @@ impl<'a> Parse<'a> for MeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MechanicalDesignGeometricPresentationArea_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -12332,6 +12941,7 @@ impl<'a> Parse<'a> for MechanicalDesignGeometricPresentationArea_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MechanicalDesignGeometricPresentationRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -12352,6 +12962,7 @@ impl<'a> Parse<'a> for MechanicalDesignGeometricPresentationRepresentation_<'a> 
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Mechanism_<'a> { // entity
     pub structure_definition: KinematicStructure<'a>,
     pub base: KinematicLink<'a>,
@@ -12372,6 +12983,7 @@ impl<'a> Parse<'a> for Mechanism_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MechanismBasePlacement_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -12401,6 +13013,7 @@ impl<'a> Parse<'a> for MechanismBasePlacement_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MinimumFunction_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12415,6 +13028,7 @@ impl<'a> Parse<'a> for MinimumFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MinusExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12429,6 +13043,7 @@ impl<'a> Parse<'a> for MinusExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MinusFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12443,6 +13058,7 @@ impl<'a> Parse<'a> for MinusFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MinuteInHour<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for MinuteInHour<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -12454,6 +13070,7 @@ impl<'a> MinuteInHour<'a> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct ModExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12468,6 +13085,7 @@ impl<'a> Parse<'a> for ModExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ModifiedGeometricTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -12494,6 +13112,7 @@ impl<'a> Parse<'a> for ModifiedGeometricTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ModifiedPattern_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -12511,6 +13130,7 @@ impl<'a> Parse<'a> for ModifiedPattern_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MomentsOfInertiaRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -12531,6 +13151,7 @@ impl<'a> Parse<'a> for MomentsOfInertiaRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MonthInYearNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for MonthInYearNumber<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -12542,6 +13163,7 @@ impl<'a> MonthInYearNumber<'a> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct MotionLinkRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -12568,6 +13190,7 @@ impl<'a> Parse<'a> for MotionLinkRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum MotionParameterMeasure<'a> { // select
     ParameterValue(ParameterValue<'a>),
     MeasureWithUnit(MeasureWithUnit<'a>),
@@ -12581,6 +13204,7 @@ impl<'a> Parse<'a> for MotionParameterMeasure<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct MultExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12595,6 +13219,7 @@ impl<'a> Parse<'a> for MultExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MultiLanguageAttributeAssignment_<'a> { // entity
     pub attribute_name: Label<'a>,
     pub attribute_value: AttributeType<'a>,
@@ -12618,6 +13243,7 @@ impl<'a> Parse<'a> for MultiLanguageAttributeAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum MultiLanguageAttributeItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -12768,6 +13394,7 @@ impl<'a> Parse<'a> for MultiLanguageAttributeItem<'a> {
         ))))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct MultipleArityBooleanExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12782,6 +13409,7 @@ impl<'a> Parse<'a> for MultipleArityBooleanExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MultipleArityFunctionCall_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12796,6 +13424,7 @@ impl<'a> Parse<'a> for MultipleArityFunctionCall_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MultipleArityGenericExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12810,6 +13439,7 @@ impl<'a> Parse<'a> for MultipleArityGenericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct MultipleArityNumericExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12824,6 +13454,7 @@ impl<'a> Parse<'a> for MultipleArityNumericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct NameAssignment_<'a> { // entity
     pub assigned_name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12838,6 +13469,7 @@ impl<'a> Parse<'a> for NameAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct NameAttribute_<'a> { // entity
     pub attribute_value: Label<'a>,
     pub named_item: NameAttributeSelect<'a>,
@@ -12855,6 +13487,7 @@ impl<'a> Parse<'a> for NameAttribute_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum NameAttributeSelect<'a> { // select
     ActionRequestSolution(ActionRequestSolution<'a>),
     Address(Address<'a>),
@@ -12884,6 +13517,7 @@ impl<'a> Parse<'a> for NameAttributeSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum NameItem<'a> { // select
     KinematicJoint(KinematicJoint<'a>),
     KinematicLink(KinematicLink<'a>),
@@ -12899,6 +13533,7 @@ impl<'a> Parse<'a> for NameItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct NamedUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12913,6 +13548,7 @@ impl<'a> Parse<'a> for NamedUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct NamedUnitVariable_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -12927,6 +13563,7 @@ impl<'a> Parse<'a> for NamedUnitVariable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct NextAssemblyUsageOccurrence_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -12956,6 +13593,7 @@ impl<'a> Parse<'a> for NextAssemblyUsageOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct NgonClosedProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -12979,6 +13617,7 @@ impl<'a> Parse<'a> for NgonClosedProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct NonManifoldSurfaceShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -13000,6 +13639,7 @@ impl<'a> Parse<'a> for NonManifoldSurfaceShapeRepresentation_<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct NonNegativeLengthMeasure<'a>(pub LengthMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for NonNegativeLengthMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -13011,6 +13651,7 @@ impl<'a> NonNegativeLengthMeasure<'a> {
         map(LengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct NotExpression_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -13025,6 +13666,7 @@ impl<'a> Parse<'a> for NotExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum NullStyle<'a> { // enum
     Null,
     _Unused(std::marker::PhantomData<&'a ()>),
@@ -13035,6 +13677,7 @@ impl<'a> Parse<'a> for NullStyle<'a> {
         map(tag(".NULL."), |_| Null)(s)
     }
 }
+#[derive(Debug)]
 pub struct NumericDefinedFunction_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -13046,6 +13689,7 @@ impl<'a> Parse<'a> for NumericDefinedFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct NumericExpression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -13057,6 +13701,7 @@ impl<'a> Parse<'a> for NumericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct NumericMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for NumericMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -13068,6 +13713,7 @@ impl<'a> NumericMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct NumericVariable_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -13079,6 +13725,7 @@ impl<'a> Parse<'a> for NumericVariable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ObjectRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -13096,6 +13743,7 @@ impl<'a> Parse<'a> for ObjectRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OddFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -13110,6 +13758,7 @@ impl<'a> Parse<'a> for OddFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OffsetCurve2d_<'a> { // entity
     pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
@@ -13133,6 +13782,7 @@ impl<'a> Parse<'a> for OffsetCurve2d_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OffsetCurve3d_<'a> { // entity
     pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
@@ -13159,6 +13809,7 @@ impl<'a> Parse<'a> for OffsetCurve3d_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OffsetSurface_<'a> { // entity
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
@@ -13182,6 +13833,7 @@ impl<'a> Parse<'a> for OffsetSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OneDirectionRepeatFactor_<'a> { // entity
     pub name: Label<'a>,
     pub repeat_factor: Vector<'a>,
@@ -13199,6 +13851,7 @@ impl<'a> Parse<'a> for OneDirectionRepeatFactor_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OpenPathProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -13222,6 +13875,7 @@ impl<'a> Parse<'a> for OpenPathProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OpenShell_<'a> { // entity
     pub name: Label<'a>,
     pub cfs_faces: Vec<Face<'a>>,
@@ -13239,6 +13893,7 @@ impl<'a> Parse<'a> for OpenShell_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -13253,6 +13908,7 @@ impl<'a> Parse<'a> for OrExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrdinateDimension_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -13270,6 +13926,7 @@ impl<'a> Parse<'a> for OrdinateDimension_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Organization_<'a> { // entity
     pub id: Option<Identifier<'a>>,
     pub name: Label<'a>,
@@ -13290,6 +13947,7 @@ impl<'a> Parse<'a> for Organization_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrganizationAssignment_<'a> { // entity
     pub assigned_organization: Organization<'a>,
     pub role: OrganizationRole<'a>,
@@ -13307,6 +13965,7 @@ impl<'a> Parse<'a> for OrganizationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum OrganizationItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -13430,6 +14089,7 @@ impl<'a> Parse<'a> for OrganizationItem<'a> {
         ))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct OrganizationRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -13453,6 +14113,7 @@ impl<'a> Parse<'a> for OrganizationRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrganizationRole_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -13467,6 +14128,7 @@ impl<'a> Parse<'a> for OrganizationRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrganizationalAddress_<'a> { // entity
     pub internal_location: Option<Label<'a>>,
     pub street_number: Option<Label<'a>>,
@@ -13520,6 +14182,7 @@ impl<'a> Parse<'a> for OrganizationalAddress_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrganizationalProject_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -13540,6 +14203,7 @@ impl<'a> Parse<'a> for OrganizationalProject_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrganizationalProjectAssignment_<'a> { // entity
     pub assigned_organizational_project: OrganizationalProject<'a>,
     pub role: OrganizationalProjectRole<'a>,
@@ -13557,6 +14221,7 @@ impl<'a> Parse<'a> for OrganizationalProjectAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum OrganizationalProjectItem<'a> { // select
     AssemblyComponentUsage(AssemblyComponentUsage<'a>),
     ConfigurationItem(ConfigurationItem<'a>),
@@ -13580,6 +14245,7 @@ impl<'a> Parse<'a> for OrganizationalProjectItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct OrganizationalProjectRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -13603,6 +14269,7 @@ impl<'a> Parse<'a> for OrganizationalProjectRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrganizationalProjectRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -13620,6 +14287,7 @@ impl<'a> Parse<'a> for OrganizationalProjectRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrientedClosedShell_<'a> { // entity
     pub name: Label<'a>,
     pub cfs_faces: Vec<Face<'a>>,
@@ -13643,6 +14311,7 @@ impl<'a> Parse<'a> for OrientedClosedShell_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrientedEdge_<'a> { // entity
     pub name: Label<'a>,
     pub edge_element: Edge<'a>,
@@ -13665,6 +14334,7 @@ impl<'a> Parse<'a> for OrientedEdge_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrientedFace_<'a> { // entity
     pub name: Label<'a>,
     pub face_element: Face<'a>,
@@ -13686,6 +14356,7 @@ impl<'a> Parse<'a> for OrientedFace_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrientedOpenShell_<'a> { // entity
     pub name: Label<'a>,
     pub cfs_faces: Vec<Face<'a>>,
@@ -13709,6 +14380,7 @@ impl<'a> Parse<'a> for OrientedOpenShell_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrientedPath_<'a> { // entity
     pub name: Label<'a>,
     pub path_element: Path<'a>,
@@ -13730,6 +14402,7 @@ impl<'a> Parse<'a> for OrientedPath_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OrientedSurface_<'a> { // entity
     pub name: Label<'a>,
     pub orientation: bool,
@@ -13747,6 +14420,7 @@ impl<'a> Parse<'a> for OrientedSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OuterBoundaryCurve_<'a> { // entity
     pub name: Label<'a>,
     pub segments: Vec<CompositeCurveSegment<'a>>,
@@ -13767,6 +14441,7 @@ impl<'a> Parse<'a> for OuterBoundaryCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct OverRidingStyledItem_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -13790,6 +14465,7 @@ impl<'a> Parse<'a> for OverRidingStyledItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PackageProductConceptFeature_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -13810,6 +14486,7 @@ impl<'a> Parse<'a> for PackageProductConceptFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PairActuator_<'a> { // entity
     pub actuated_pair: KinematicPair<'a>,
     pub name: Label<'a>,
@@ -13827,6 +14504,7 @@ impl<'a> Parse<'a> for PairActuator_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -13841,6 +14519,7 @@ impl<'a> Parse<'a> for PairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Parabola_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement<'a>,
@@ -13861,6 +14540,7 @@ impl<'a> Parse<'a> for Parabola_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ParallelOffset_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -13887,6 +14567,7 @@ impl<'a> Parse<'a> for ParallelOffset_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ParallelismTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -13913,6 +14594,7 @@ impl<'a> Parse<'a> for ParallelismTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ParameterValue<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for ParameterValue<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -13924,6 +14606,7 @@ impl<'a> ParameterValue<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct ParametricRepresentationContext_<'a> { // entity
     pub context_identifier: Identifier<'a>,
     pub context_type: Text<'a>,
@@ -13941,6 +14624,7 @@ impl<'a> Parse<'a> for ParametricRepresentationContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PartialCircularProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -13964,6 +14648,7 @@ impl<'a> Parse<'a> for PartialCircularProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Path_<'a> { // entity
     pub name: Label<'a>,
     pub edge_list: Vec<OrientedEdge<'a>>,
@@ -13981,6 +14666,7 @@ impl<'a> Parse<'a> for Path_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PathFeatureComponent_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14004,6 +14690,7 @@ impl<'a> Parse<'a> for PathFeatureComponent_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PathShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -14024,6 +14711,7 @@ impl<'a> Parse<'a> for PathShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PatternOffsetMembership_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14047,6 +14735,7 @@ impl<'a> Parse<'a> for PatternOffsetMembership_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PatternOmitMembership_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14070,6 +14759,7 @@ impl<'a> Parse<'a> for PatternOmitMembership_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Pcurve_<'a> { // entity
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
@@ -14090,6 +14780,7 @@ impl<'a> Parse<'a> for Pcurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PcurveOrSurface<'a> { // select
     Pcurve(Pcurve<'a>),
     Surface(Surface<'a>),
@@ -14103,6 +14794,7 @@ impl<'a> Parse<'a> for PcurveOrSurface<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PerpendicularTo_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14126,6 +14818,7 @@ impl<'a> Parse<'a> for PerpendicularTo_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PerpendicularityTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -14152,6 +14845,7 @@ impl<'a> Parse<'a> for PerpendicularityTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Person_<'a> { // entity
     pub id: Identifier<'a>,
     pub last_name: Option<Label<'a>>,
@@ -14181,6 +14875,7 @@ impl<'a> Parse<'a> for Person_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PersonAndOrganization_<'a> { // entity
     pub the_person: Person<'a>,
     pub the_organization: Organization<'a>,
@@ -14199,6 +14894,7 @@ impl<'a> Parse<'a> for PersonAndOrganization_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct PersonAndOrganizationAddress_<'a> { // entity
     pub internal_location: Option<Label<'a>>,
     pub street_number: Option<Label<'a>>,
@@ -14260,6 +14956,7 @@ impl<'a> Parse<'a> for PersonAndOrganizationAddress_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PersonAndOrganizationAssignment_<'a> { // entity
     pub assigned_person_and_organization: PersonAndOrganization<'a>,
     pub role: PersonAndOrganizationRole<'a>,
@@ -14277,6 +14974,7 @@ impl<'a> Parse<'a> for PersonAndOrganizationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PersonAndOrganizationItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -14394,6 +15092,7 @@ impl<'a> Parse<'a> for PersonAndOrganizationItem<'a> {
         ))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct PersonAndOrganizationRole_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -14408,6 +15107,7 @@ impl<'a> Parse<'a> for PersonAndOrganizationRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PersonOrganizationSelect<'a> { // select
     Person(Person<'a>),
     Organization(Organization<'a>),
@@ -14423,6 +15123,7 @@ impl<'a> Parse<'a> for PersonOrganizationSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PersonalAddress_<'a> { // entity
     pub internal_location: Option<Label<'a>>,
     pub street_number: Option<Label<'a>>,
@@ -14476,6 +15177,7 @@ impl<'a> Parse<'a> for PersonalAddress_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PhysicallyModelledProductDefinition_<'a> { // entity
     pub id: Identifier<'a>,
     pub description: Option<Text<'a>>,
@@ -14502,6 +15204,7 @@ impl<'a> Parse<'a> for PhysicallyModelledProductDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlacedDatumTargetFeature_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14528,6 +15231,7 @@ impl<'a> Parse<'a> for PlacedDatumTargetFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlacedFeature_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14551,6 +15255,7 @@ impl<'a> Parse<'a> for PlacedFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Placement_<'a> { // entity
     pub name: Label<'a>,
     pub location: CartesianPoint<'a>,
@@ -14568,6 +15273,7 @@ impl<'a> Parse<'a> for Placement_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlanarBox_<'a> { // entity
     pub name: Label<'a>,
     pub size_in_x: LengthMeasure<'a>,
@@ -14591,6 +15297,7 @@ impl<'a> Parse<'a> for PlanarBox_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlanarCurvePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14626,6 +15333,7 @@ impl<'a> Parse<'a> for PlanarCurvePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlanarCurvePairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub range_on_curve_1: TrimmedCurve<'a>,
@@ -14646,6 +15354,7 @@ impl<'a> Parse<'a> for PlanarCurvePairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlanarExtent_<'a> { // entity
     pub name: Label<'a>,
     pub size_in_x: LengthMeasure<'a>,
@@ -14666,6 +15375,7 @@ impl<'a> Parse<'a> for PlanarExtent_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlanarPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14692,6 +15402,7 @@ impl<'a> Parse<'a> for PlanarPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlanarPairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_actual_rotation: RotationalRangeMeasure<'a>,
@@ -14724,6 +15435,7 @@ impl<'a> Parse<'a> for PlanarPairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlanarPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_rotation: PlaneAngleMeasure<'a>,
@@ -14747,6 +15459,7 @@ impl<'a> Parse<'a> for PlanarPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlanarShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -14767,6 +15480,7 @@ impl<'a> Parse<'a> for PlanarShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Plane_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -14784,6 +15498,7 @@ impl<'a> Parse<'a> for Plane_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlaneAngleMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for PlaneAngleMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -14795,6 +15510,7 @@ impl<'a> PlaneAngleMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct PlaneAngleMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -14812,6 +15528,7 @@ impl<'a> Parse<'a> for PlaneAngleMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlaneAngleUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -14826,6 +15543,7 @@ impl<'a> Parse<'a> for PlaneAngleUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PlaneOrPlanarBox<'a> { // select
     Plane(Plane<'a>),
     PlanarBox(PlanarBox<'a>),
@@ -14839,6 +15557,7 @@ impl<'a> Parse<'a> for PlaneOrPlanarBox<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PlusExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -14853,6 +15572,7 @@ impl<'a> Parse<'a> for PlusExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PlusMinusTolerance_<'a> { // entity
     pub range: ToleranceMethodDefinition<'a>,
     pub toleranced_dimension: DimensionalCharacteristic<'a>,
@@ -14870,6 +15590,7 @@ impl<'a> Parse<'a> for PlusMinusTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Pocket_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14887,6 +15608,7 @@ impl<'a> Parse<'a> for Pocket_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PocketBottom_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14910,6 +15632,7 @@ impl<'a> Parse<'a> for PocketBottom_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Point_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -14924,6 +15647,7 @@ impl<'a> Parse<'a> for Point_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointOnCurve_<'a> { // entity
     pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
@@ -14944,6 +15668,7 @@ impl<'a> Parse<'a> for PointOnCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointOnPlanarCurvePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -14976,6 +15701,7 @@ impl<'a> Parse<'a> for PointOnPlanarCurvePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointOnPlanarCurvePairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub range_on_pair_curve: TrimmedCurve<'a>,
@@ -15011,6 +15737,7 @@ impl<'a> Parse<'a> for PointOnPlanarCurvePairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointOnPlanarCurvePairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_point_on_curve: PointOnCurve<'a>,
@@ -15031,6 +15758,7 @@ impl<'a> Parse<'a> for PointOnPlanarCurvePairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointOnSurface_<'a> { // entity
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
@@ -15054,6 +15782,7 @@ impl<'a> Parse<'a> for PointOnSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointOnSurfacePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -15083,6 +15812,7 @@ impl<'a> Parse<'a> for PointOnSurfacePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointOnSurfacePairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub range_on_pair_surface: RectangularTrimmedSurface<'a>,
@@ -15118,6 +15848,7 @@ impl<'a> Parse<'a> for PointOnSurfacePairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointOnSurfacePairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_point_on_surface: PointOnSurface<'a>,
@@ -15138,6 +15869,7 @@ impl<'a> Parse<'a> for PointOnSurfacePairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointPlacementShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -15158,6 +15890,7 @@ impl<'a> Parse<'a> for PointPlacementShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointReplica_<'a> { // entity
     pub name: Label<'a>,
     pub parent_pt: Point<'a>,
@@ -15178,6 +15911,7 @@ impl<'a> Parse<'a> for PointReplica_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PointStyle_<'a> { // entity
     pub name: Label<'a>,
     pub marker: MarkerSelect<'a>,
@@ -15201,6 +15935,7 @@ impl<'a> Parse<'a> for PointStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PolyLoop_<'a> { // entity
     pub name: Label<'a>,
     pub polygon: Vec<CartesianPoint<'a>>,
@@ -15218,6 +15953,7 @@ impl<'a> Parse<'a> for PolyLoop_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Polyline_<'a> { // entity
     pub name: Label<'a>,
     pub points: Vec<CartesianPoint<'a>>,
@@ -15235,6 +15971,7 @@ impl<'a> Parse<'a> for Polyline_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PositionTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -15259,6 +15996,7 @@ impl<'a> Parse<'a> for PositionTolerance_<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct PositiveLengthMeasure<'a>(pub NonNegativeLengthMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for PositiveLengthMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -15271,6 +16009,7 @@ impl<'a> PositiveLengthMeasure<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct PositivePlaneAngleMeasure<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for PositivePlaneAngleMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -15283,6 +16022,7 @@ impl<'a> PositivePlaneAngleMeasure<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct PositiveRatioMeasure<'a>(pub RatioMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for PositiveRatioMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -15294,6 +16034,7 @@ impl<'a> PositiveRatioMeasure<'a> {
         map(RatioMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct PowerExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15308,6 +16049,7 @@ impl<'a> Parse<'a> for PowerExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedColour_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15322,6 +16064,7 @@ impl<'a> Parse<'a> for PreDefinedColour_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedCurveFont_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15336,6 +16079,7 @@ impl<'a> Parse<'a> for PreDefinedCurveFont_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedDimensionSymbol_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15350,6 +16094,7 @@ impl<'a> Parse<'a> for PreDefinedDimensionSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedGeometricalToleranceSymbol_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15364,6 +16109,7 @@ impl<'a> Parse<'a> for PreDefinedGeometricalToleranceSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedItem_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15378,6 +16124,7 @@ impl<'a> Parse<'a> for PreDefinedItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedMarker_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15392,6 +16139,7 @@ impl<'a> Parse<'a> for PreDefinedMarker_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedPointMarkerSymbol_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15406,6 +16154,7 @@ impl<'a> Parse<'a> for PreDefinedPointMarkerSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedPresentationStyle_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15420,6 +16169,7 @@ impl<'a> Parse<'a> for PreDefinedPresentationStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedSurfaceConditionSymbol_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15434,6 +16184,7 @@ impl<'a> Parse<'a> for PreDefinedSurfaceConditionSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedSymbol_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15448,6 +16199,7 @@ impl<'a> Parse<'a> for PreDefinedSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedTerminatorSymbol_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15462,6 +16214,7 @@ impl<'a> Parse<'a> for PreDefinedTerminatorSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PreDefinedTextFont_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15476,6 +16229,7 @@ impl<'a> Parse<'a> for PreDefinedTextFont_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PrecisionQualifier_<'a> { // entity
     pub precision_value: i64,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15490,6 +16244,7 @@ impl<'a> Parse<'a> for PrecisionQualifier_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PreferredSurfaceCurveRepresentation<'a> { // enum
     Curve3d,
     PcurveS1,
@@ -15506,6 +16261,7 @@ impl<'a> Parse<'a> for PreferredSurfaceCurveRepresentation<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PresentableText<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for PresentableText<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -15517,6 +16273,7 @@ impl<'a> PresentableText<'a> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct PresentationArea_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -15537,6 +16294,7 @@ impl<'a> Parse<'a> for PresentationArea_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PresentationLayerAssignment_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -15557,6 +16315,7 @@ impl<'a> Parse<'a> for PresentationLayerAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PresentationRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -15577,6 +16336,7 @@ impl<'a> Parse<'a> for PresentationRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PresentationRepresentationSelect<'a> { // select
     PresentationRepresentation(PresentationRepresentation<'a>),
     PresentationSet(PresentationSet<'a>),
@@ -15590,6 +16350,7 @@ impl<'a> Parse<'a> for PresentationRepresentationSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PresentationSet_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -15601,6 +16362,7 @@ impl<'a> Parse<'a> for PresentationSet_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PresentationSize_<'a> { // entity
     pub unit: PresentationSizeAssignmentSelect<'a>,
     pub size: PlanarBox<'a>,
@@ -15618,6 +16380,7 @@ impl<'a> Parse<'a> for PresentationSize_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PresentationSizeAssignmentSelect<'a> { // select
     PresentationView(PresentationView<'a>),
     PresentationArea(PresentationArea<'a>),
@@ -15633,6 +16396,7 @@ impl<'a> Parse<'a> for PresentationSizeAssignmentSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PresentationStyleAssignment_<'a> { // entity
     pub styles: Vec<PresentationStyleSelect<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -15647,6 +16411,7 @@ impl<'a> Parse<'a> for PresentationStyleAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PresentationStyleByContext_<'a> { // entity
     pub styles: Vec<PresentationStyleSelect<'a>>,
     pub style_context: StyleContextSelect<'a>,
@@ -15664,6 +16429,7 @@ impl<'a> Parse<'a> for PresentationStyleByContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PresentationStyleSelect<'a> { // select
     PreDefinedPresentationStyle(PreDefinedPresentationStyle<'a>),
     PointStyle(PointStyle<'a>),
@@ -15693,6 +16459,7 @@ impl<'a> Parse<'a> for PresentationStyleSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PresentationView_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -15713,6 +16480,7 @@ impl<'a> Parse<'a> for PresentationView_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PresentedItem_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -15724,6 +16492,7 @@ impl<'a> Parse<'a> for PresentedItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PresentedItemRepresentation_<'a> { // entity
     pub presentation: PresentationRepresentationSelect<'a>,
     pub item: PresentedItem<'a>,
@@ -15741,6 +16510,7 @@ impl<'a> Parse<'a> for PresentedItemRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PresentedItemSelect<'a> { // select
     Action(Action<'a>),
     ActionMethod(ActionMethod<'a>),
@@ -15768,6 +16538,7 @@ impl<'a> Parse<'a> for PresentedItemSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PrismaticPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -15794,6 +16565,7 @@ impl<'a> Parse<'a> for PrismaticPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PrismaticPairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_actual_translation: TranslationalRangeMeasure<'a>,
@@ -15814,6 +16586,7 @@ impl<'a> Parse<'a> for PrismaticPairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PrismaticPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_translation: LengthMeasure<'a>,
@@ -15831,6 +16604,7 @@ impl<'a> Parse<'a> for PrismaticPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProcessOperation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -15854,6 +16628,7 @@ impl<'a> Parse<'a> for ProcessOperation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProcessPlan_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -15874,6 +16649,7 @@ impl<'a> Parse<'a> for ProcessPlan_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProcessProductAssociation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -15897,6 +16673,7 @@ impl<'a> Parse<'a> for ProcessProductAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProcessPropertyAssociation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -15920,6 +16697,7 @@ impl<'a> Parse<'a> for ProcessPropertyAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Product_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -15943,6 +16721,7 @@ impl<'a> Parse<'a> for Product_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductCategory_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -15960,6 +16739,7 @@ impl<'a> Parse<'a> for ProductCategory_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductCategoryRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -15984,6 +16764,7 @@ impl<'a> Parse<'a> for ProductCategoryRelationship_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct ProductClass_<'a> { // entity
     pub id: Identifier<'a>,
     pub product_concept__name: Label<'a>,
@@ -16017,6 +16798,7 @@ impl<'a> Parse<'a> for ProductClass_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductConcept_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -16040,6 +16822,7 @@ impl<'a> Parse<'a> for ProductConcept_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductConceptContext_<'a> { // entity
     pub name: Label<'a>,
     pub frame_of_reference: ApplicationContext<'a>,
@@ -16060,6 +16843,7 @@ impl<'a> Parse<'a> for ProductConceptContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductConceptFeature_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -16080,6 +16864,7 @@ impl<'a> Parse<'a> for ProductConceptFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductConceptFeatureAssociation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16103,6 +16888,7 @@ impl<'a> Parse<'a> for ProductConceptFeatureAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductConceptFeatureCategory_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16120,6 +16906,7 @@ impl<'a> Parse<'a> for ProductConceptFeatureCategory_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductConceptFeatureCategoryUsage_<'a> { // entity
     pub assigned_group: Group<'a>,
     pub items: Vec<CategoryUsageItem<'a>>,
@@ -16137,6 +16924,7 @@ impl<'a> Parse<'a> for ProductConceptFeatureCategoryUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductConceptRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16160,6 +16948,7 @@ impl<'a> Parse<'a> for ProductConceptRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductContext_<'a> { // entity
     pub name: Label<'a>,
     pub frame_of_reference: ApplicationContext<'a>,
@@ -16180,6 +16969,7 @@ impl<'a> Parse<'a> for ProductContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinition_<'a> { // entity
     pub id: Identifier<'a>,
     pub description: Option<Text<'a>>,
@@ -16203,6 +16993,7 @@ impl<'a> Parse<'a> for ProductDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionContext_<'a> { // entity
     pub name: Label<'a>,
     pub frame_of_reference: ApplicationContext<'a>,
@@ -16223,6 +17014,7 @@ impl<'a> Parse<'a> for ProductDefinitionContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionContextAssociation_<'a> { // entity
     pub definition: ProductDefinition<'a>,
     pub frame_of_reference: ProductDefinitionContext<'a>,
@@ -16243,6 +17035,7 @@ impl<'a> Parse<'a> for ProductDefinitionContextAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionContextRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16260,6 +17053,7 @@ impl<'a> Parse<'a> for ProductDefinitionContextRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionEffectivity_<'a> { // entity
     pub id: Identifier<'a>,
     pub usage: ProductDefinitionRelationship<'a>,
@@ -16277,6 +17071,7 @@ impl<'a> Parse<'a> for ProductDefinitionEffectivity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionFormation_<'a> { // entity
     pub id: Identifier<'a>,
     pub description: Option<Text<'a>>,
@@ -16297,6 +17092,7 @@ impl<'a> Parse<'a> for ProductDefinitionFormation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionFormationRelationship_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -16323,6 +17119,7 @@ impl<'a> Parse<'a> for ProductDefinitionFormationRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionFormationWithSpecifiedSource_<'a> { // entity
     pub id: Identifier<'a>,
     pub description: Option<Text<'a>>,
@@ -16346,6 +17143,7 @@ impl<'a> Parse<'a> for ProductDefinitionFormationWithSpecifiedSource_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionOccurrenceRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16369,6 +17167,7 @@ impl<'a> Parse<'a> for ProductDefinitionOccurrenceRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionProcess_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16392,6 +17191,7 @@ impl<'a> Parse<'a> for ProductDefinitionProcess_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionRelationship_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -16419,6 +17219,7 @@ impl<'a> Parse<'a> for ProductDefinitionRelationship_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct ProductDefinitionResource_<'a> { // entity
     pub name: Label<'a>,
     pub action_resource__description: Option<Text<'a>>,
@@ -16456,6 +17257,7 @@ impl<'a> Parse<'a> for ProductDefinitionResource_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionShape_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16476,6 +17278,7 @@ impl<'a> Parse<'a> for ProductDefinitionShape_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionSubstitute_<'a> { // entity
     pub description: Option<Text<'a>>,
     pub context_relationship: ProductDefinitionRelationship<'a>,
@@ -16496,6 +17299,7 @@ impl<'a> Parse<'a> for ProductDefinitionSubstitute_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionUsage_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -16522,6 +17326,7 @@ impl<'a> Parse<'a> for ProductDefinitionUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductDefinitionWithAssociatedDocuments_<'a> { // entity
     pub id: Identifier<'a>,
     pub description: Option<Text<'a>>,
@@ -16549,6 +17354,7 @@ impl<'a> Parse<'a> for ProductDefinitionWithAssociatedDocuments_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct ProductIdentification_<'a> { // entity
     pub id: Identifier<'a>,
     pub configuration_item__name: Label<'a>,
@@ -16585,6 +17391,7 @@ impl<'a> Parse<'a> for ProductIdentification_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ProductOrFormationOrDefinition<'a> { // select
     Product(Product<'a>),
     ProductDefinitionFormation(ProductDefinitionFormation<'a>),
@@ -16600,6 +17407,7 @@ impl<'a> Parse<'a> for ProductOrFormationOrDefinition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum ProductOrPresentationSpace<'a> { // enum
     ProductShapeSpace,
     PresentationAreaSpace,
@@ -16614,6 +17422,7 @@ impl<'a> Parse<'a> for ProductOrPresentationSpace<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ProductProcessPlan_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16637,6 +17446,7 @@ impl<'a> Parse<'a> for ProductProcessPlan_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProductRelatedProductCategory_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16658,6 +17468,7 @@ impl<'a> Parse<'a> for ProductRelatedProductCategory_<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct ProductSpecification_<'a> { // entity
     pub id: Identifier<'a>,
     pub configuration_item__name: Label<'a>,
@@ -16697,6 +17508,7 @@ impl<'a> Parse<'a> for ProductSpecification_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProjectedZoneDefinition_<'a> { // entity
     pub zone: ToleranceZone<'a>,
     pub boundaries: Vec<ShapeAspect<'a>>,
@@ -16720,6 +17532,7 @@ impl<'a> Parse<'a> for ProjectedZoneDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProjectionCurve_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -16740,6 +17553,7 @@ impl<'a> Parse<'a> for ProjectionCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ProjectionDirectedCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -16757,6 +17571,7 @@ impl<'a> Parse<'a> for ProjectionDirectedCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PromissoryUsageOccurrence_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -16786,6 +17601,7 @@ impl<'a> Parse<'a> for PromissoryUsageOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PropertyDefinition_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16806,6 +17622,7 @@ impl<'a> Parse<'a> for PropertyDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PropertyDefinitionRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -16829,6 +17646,7 @@ impl<'a> Parse<'a> for PropertyDefinitionRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct PropertyDefinitionRepresentation_<'a> { // entity
     pub definition: RepresentedDefinition<'a>,
     pub used_representation: Representation<'a>,
@@ -16846,6 +17664,7 @@ impl<'a> Parse<'a> for PropertyDefinitionRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum PropertyOrShapeSelect<'a> { // select
     PropertyDefinition(PropertyDefinition<'a>),
     ShapeDefinition(ShapeDefinition<'a>),
@@ -16859,6 +17678,7 @@ impl<'a> Parse<'a> for PropertyOrShapeSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct PropertyProcess_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -16882,6 +17702,7 @@ impl<'a> Parse<'a> for PropertyProcess_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct QualifiedRepresentationItem_<'a> { // entity
     pub name: Label<'a>,
     pub qualifiers: Vec<ValueQualifier<'a>>,
@@ -16899,6 +17720,7 @@ impl<'a> Parse<'a> for QualifiedRepresentationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct QualitativeUncertainty_<'a> { // entity
     pub measure_name: Label<'a>,
     pub description: Text<'a>,
@@ -16919,6 +17741,7 @@ impl<'a> Parse<'a> for QualitativeUncertainty_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct QuantifiedAssemblyComponentUsage_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -16951,6 +17774,7 @@ impl<'a> Parse<'a> for QuantifiedAssemblyComponentUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct QuasiUniformCurve_<'a> { // entity
     pub name: Label<'a>,
     pub degree: i64,
@@ -16980,6 +17804,7 @@ impl<'a> Parse<'a> for QuasiUniformCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct QuasiUniformSurface_<'a> { // entity
     pub name: Label<'a>,
     pub u_degree: i64,
@@ -17015,6 +17840,7 @@ impl<'a> Parse<'a> for QuasiUniformSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RackAndPinionPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17044,6 +17870,7 @@ impl<'a> Parse<'a> for RackAndPinionPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RackAndPinionPairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_rack_displacement: TranslationalRangeMeasure<'a>,
@@ -17064,6 +17891,7 @@ impl<'a> Parse<'a> for RackAndPinionPairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RackAndPinionPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_displacement: LengthMeasure<'a>,
@@ -17081,6 +17909,7 @@ impl<'a> Parse<'a> for RackAndPinionPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RadiusDimension_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -17098,6 +17927,7 @@ impl<'a> Parse<'a> for RadiusDimension_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RatioMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for RatioMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -17109,6 +17939,7 @@ impl<'a> RatioMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct RatioMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -17126,6 +17957,7 @@ impl<'a> Parse<'a> for RatioMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RatioUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -17140,6 +17972,7 @@ impl<'a> Parse<'a> for RatioUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RationalBSplineCurve_<'a> { // entity
     pub name: Label<'a>,
     pub degree: i64,
@@ -17172,6 +18005,7 @@ impl<'a> Parse<'a> for RationalBSplineCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RationalBSplineSurface_<'a> { // entity
     pub name: Label<'a>,
     pub u_degree: i64,
@@ -17210,6 +18044,7 @@ impl<'a> Parse<'a> for RationalBSplineSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RealDefinedFunction_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -17221,6 +18056,7 @@ impl<'a> Parse<'a> for RealDefinedFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RealLiteral_<'a> { // entity
     pub the_value: f64,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -17235,6 +18071,7 @@ impl<'a> Parse<'a> for RealLiteral_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RealNumericVariable_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -17246,6 +18083,7 @@ impl<'a> Parse<'a> for RealNumericVariable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RectangularClosedProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17269,6 +18107,7 @@ impl<'a> Parse<'a> for RectangularClosedProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RectangularCompositeSurface_<'a> { // entity
     pub name: Label<'a>,
     pub segments: Vec<Vec<SurfacePatch<'a>>>,
@@ -17286,6 +18125,7 @@ impl<'a> Parse<'a> for RectangularCompositeSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RectangularPattern_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17303,6 +18143,7 @@ impl<'a> Parse<'a> for RectangularPattern_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RectangularTrimmedSurface_<'a> { // entity
     pub name: Label<'a>,
     pub basis_surface: Surface<'a>,
@@ -17338,6 +18179,7 @@ impl<'a> Parse<'a> for RectangularTrimmedSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ReferencedModifiedDatum_<'a> { // entity
     pub precedence: i64,
     pub referenced_datum: Datum<'a>,
@@ -17358,6 +18200,7 @@ impl<'a> Parse<'a> for ReferencedModifiedDatum_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RelativeEventOccurrence_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -17384,6 +18227,7 @@ impl<'a> Parse<'a> for RelativeEventOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum RenderingPropertiesSelect<'a> { // select
     SurfaceStyleReflectanceAmbient(SurfaceStyleReflectanceAmbient<'a>),
     SurfaceStyleTransparent(SurfaceStyleTransparent<'a>),
@@ -17398,6 +18242,7 @@ impl<'a> Parse<'a> for RenderingPropertiesSelect<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct RepItemGroup_<'a> { // entity
     pub group__name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17420,6 +18265,7 @@ impl<'a> Parse<'a> for RepItemGroup_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ReparametrisedCompositeCurveSegment_<'a> { // entity
     pub transition: TransitionCode<'a>,
     pub same_sense: bool,
@@ -17443,6 +18289,7 @@ impl<'a> Parse<'a> for ReparametrisedCompositeCurveSegment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ReplicateFeature_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17460,6 +18307,7 @@ impl<'a> Parse<'a> for ReplicateFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Representation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -17480,6 +18328,7 @@ impl<'a> Parse<'a> for Representation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RepresentationContext_<'a> { // entity
     pub context_identifier: Identifier<'a>,
     pub context_type: Text<'a>,
@@ -17497,6 +18346,7 @@ impl<'a> Parse<'a> for RepresentationContext_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RepresentationItem_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -17511,6 +18361,7 @@ impl<'a> Parse<'a> for RepresentationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RepresentationMap_<'a> { // entity
     pub mapping_origin: RepresentationItem<'a>,
     pub mapped_representation: Representation<'a>,
@@ -17528,6 +18379,7 @@ impl<'a> Parse<'a> for RepresentationMap_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RepresentationRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17551,6 +18403,7 @@ impl<'a> Parse<'a> for RepresentationRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RepresentationRelationshipWithTransformation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17577,6 +18430,7 @@ impl<'a> Parse<'a> for RepresentationRelationshipWithTransformation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum RepresentedDefinition<'a> { // select
     GeneralProperty(GeneralProperty<'a>),
     PropertyDefinition(PropertyDefinition<'a>),
@@ -17596,6 +18450,7 @@ impl<'a> Parse<'a> for RepresentedDefinition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct RequirementForActionResource_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -17622,6 +18477,7 @@ impl<'a> Parse<'a> for RequirementForActionResource_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ResourceProperty_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -17642,6 +18498,7 @@ impl<'a> Parse<'a> for ResourceProperty_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ResourcePropertyRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -17665,6 +18522,7 @@ impl<'a> Parse<'a> for ResourcePropertyRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ResourceRequirementType_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -17682,6 +18540,7 @@ impl<'a> Parse<'a> for ResourceRequirementType_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ResultingPath_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17711,6 +18570,7 @@ impl<'a> Parse<'a> for ResultingPath_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Retention_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17731,6 +18591,7 @@ impl<'a> Parse<'a> for Retention_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ReversibleTopology<'a> { // select
     ReversibleTopologyItem(ReversibleTopologyItem<'a>),
     ListOfReversibleTopologyItem(Vec<ReversibleTopologyItem<'a>>),
@@ -17746,6 +18607,7 @@ impl<'a> Parse<'a> for ReversibleTopology<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum ReversibleTopologyItem<'a> { // select
     Edge(Edge<'a>),
     Path(Path<'a>),
@@ -17767,6 +18629,7 @@ impl<'a> Parse<'a> for ReversibleTopologyItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct RevolutePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17793,6 +18656,7 @@ impl<'a> Parse<'a> for RevolutePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RevolutePairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_actual_rotation: RotationalRangeMeasure<'a>,
@@ -17813,6 +18677,7 @@ impl<'a> Parse<'a> for RevolutePairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RevolutePairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_rotation: PlaneAngleMeasure<'a>,
@@ -17830,6 +18695,7 @@ impl<'a> Parse<'a> for RevolutePairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RevolvedAreaSolid_<'a> { // entity
     pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
@@ -17853,6 +18719,7 @@ impl<'a> Parse<'a> for RevolvedAreaSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RevolvedFaceSolid_<'a> { // entity
     pub name: Label<'a>,
     pub swept_face: FaceSurface<'a>,
@@ -17876,6 +18743,7 @@ impl<'a> Parse<'a> for RevolvedFaceSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Rib_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -17893,6 +18761,7 @@ impl<'a> Parse<'a> for Rib_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RightAngularWedge_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -17922,6 +18791,7 @@ impl<'a> Parse<'a> for RightAngularWedge_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RightCircularCone_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis1Placement<'a>,
@@ -17948,6 +18818,7 @@ impl<'a> Parse<'a> for RightCircularCone_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RightCircularCylinder_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis1Placement<'a>,
@@ -17971,6 +18842,7 @@ impl<'a> Parse<'a> for RightCircularCylinder_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum RigidPlacement<'a> { // select
     Axis2Placement3d(Axis2Placement3d<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -17980,6 +18852,7 @@ impl<'a> Parse<'a> for RigidPlacement<'a> {
         map(<Axis2Placement3d<'a>>::parse, |r| RigidPlacement::Axis2Placement3d(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct RoleAssociation_<'a> { // entity
     pub role: ObjectRole<'a>,
     pub item_with_role: RoleSelect<'a>,
@@ -17997,6 +18870,7 @@ impl<'a> Parse<'a> for RoleAssociation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum RoleSelect<'a> { // select
     ActionAssignment(ActionAssignment<'a>),
     ActionRequestAssignment(ActionRequestAssignment<'a>),
@@ -18028,6 +18902,7 @@ impl<'a> Parse<'a> for RoleSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct RollingCurvePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18063,6 +18938,7 @@ impl<'a> Parse<'a> for RollingCurvePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RollingCurvePairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_point_on_curve_1: PointOnCurve<'a>,
@@ -18080,6 +18956,7 @@ impl<'a> Parse<'a> for RollingCurvePairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RollingSurfacePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18115,6 +18992,7 @@ impl<'a> Parse<'a> for RollingSurfacePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RollingSurfacePairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_point_on_surface: PointOnSurface<'a>,
@@ -18135,6 +19013,7 @@ impl<'a> Parse<'a> for RollingSurfacePairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RotationAboutDirection_<'a> { // entity
     pub direction_of_axis: Direction<'a>,
     pub rotation_angle: PlaneAngleMeasure<'a>,
@@ -18152,6 +19031,7 @@ impl<'a> Parse<'a> for RotationAboutDirection_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum RotationalRangeMeasure<'a> { // select
     PlaneAngleMeasure(PlaneAngleMeasure<'a>),
     UnlimitedRange(UnlimitedRange<'a>),
@@ -18165,6 +19045,7 @@ impl<'a> Parse<'a> for RotationalRangeMeasure<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct RoundHole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18182,6 +19063,7 @@ impl<'a> Parse<'a> for RoundHole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RoundedUProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18205,6 +19087,7 @@ impl<'a> Parse<'a> for RoundedUProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RoundnessTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -18228,6 +19111,7 @@ impl<'a> Parse<'a> for RoundnessTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RuledSurfaceSweptAreaSolid_<'a> { // entity
     pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
@@ -18257,6 +19141,7 @@ impl<'a> Parse<'a> for RuledSurfaceSweptAreaSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RunoutZoneDefinition_<'a> { // entity
     pub zone: ToleranceZone<'a>,
     pub boundaries: Vec<ShapeAspect<'a>>,
@@ -18277,6 +19162,7 @@ impl<'a> Parse<'a> for RunoutZoneDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RunoutZoneOrientation_<'a> { // entity
     pub angle: MeasureWithUnit<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -18291,6 +19177,7 @@ impl<'a> Parse<'a> for RunoutZoneOrientation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct RunoutZoneOrientationReferenceDirection_<'a> { // entity
     pub angle: MeasureWithUnit<'a>,
     pub orientation_defining_relationship: ShapeAspectRelationship<'a>,
@@ -18308,6 +19195,7 @@ impl<'a> Parse<'a> for RunoutZoneOrientationReferenceDirection_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ScrewPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18337,6 +19225,7 @@ impl<'a> Parse<'a> for ScrewPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ScrewPairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_actual_rotation: RotationalRangeMeasure<'a>,
@@ -18357,6 +19246,7 @@ impl<'a> Parse<'a> for ScrewPairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ScrewPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_rotation: PlaneAngleMeasure<'a>,
@@ -18374,6 +19264,7 @@ impl<'a> Parse<'a> for ScrewPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SeamCurve_<'a> { // entity
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
@@ -18397,6 +19288,7 @@ impl<'a> Parse<'a> for SeamCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SeamEdge_<'a> { // entity
     pub name: Label<'a>,
     pub edge_element: Edge<'a>,
@@ -18422,6 +19314,7 @@ impl<'a> Parse<'a> for SeamEdge_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SecondInMinute<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for SecondInMinute<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -18433,6 +19326,7 @@ impl<'a> SecondInMinute<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct SecurityClassification_<'a> { // entity
     pub name: Label<'a>,
     pub purpose: Text<'a>,
@@ -18453,6 +19347,7 @@ impl<'a> Parse<'a> for SecurityClassification_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SecurityClassificationAssignment_<'a> { // entity
     pub assigned_security_classification: SecurityClassification<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -18467,6 +19362,7 @@ impl<'a> Parse<'a> for SecurityClassificationAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SecurityClassificationItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -18535,6 +19431,7 @@ impl<'a> Parse<'a> for SecurityClassificationItem<'a> {
         ))))(s)
     }
 }
+#[derive(Debug)]
 pub struct SecurityClassificationLevel_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -18549,6 +19446,7 @@ impl<'a> Parse<'a> for SecurityClassificationLevel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SerialNumberedEffectivity_<'a> { // entity
     pub id: Identifier<'a>,
     pub effectivity_start_id: Identifier<'a>,
@@ -18569,18 +19467,21 @@ impl<'a> Parse<'a> for SerialNumberedEffectivity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SetOfReversibleTopologyItem<'a>(pub Vec<ReversibleTopologyItem<'a>>, std::marker::PhantomData<&'a ()>); // aggregation
 impl<'a> Parse<'a> for SetOfReversibleTopologyItem<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         map(many0(<ReversibleTopologyItem<'a>>::parse), |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct SetRepresentationItem<'a>(pub Vec<RepresentationItem<'a>>, std::marker::PhantomData<&'a ()>); // aggregation
 impl<'a> Parse<'a> for SetRepresentationItem<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         map(many0(<RepresentationItem<'a>>::parse), |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub enum ShadingCurveMethod<'a> { // enum
     ConstantColour,
     LinearColour,
@@ -18595,6 +19496,7 @@ impl<'a> Parse<'a> for ShadingCurveMethod<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum ShadingSurfaceMethod<'a> { // enum
     ConstantShading,
     ColourShading,
@@ -18613,6 +19515,7 @@ impl<'a> Parse<'a> for ShadingSurfaceMethod<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ShapeAspect_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18636,6 +19539,7 @@ impl<'a> Parse<'a> for ShapeAspect_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeAspectAssociativity_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18659,6 +19563,7 @@ impl<'a> Parse<'a> for ShapeAspectAssociativity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeAspectDerivingRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18682,6 +19587,7 @@ impl<'a> Parse<'a> for ShapeAspectDerivingRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeAspectRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18705,6 +19611,7 @@ impl<'a> Parse<'a> for ShapeAspectRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeAspectTransition_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18728,6 +19635,7 @@ impl<'a> Parse<'a> for ShapeAspectTransition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeDefiningRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18751,6 +19659,7 @@ impl<'a> Parse<'a> for ShapeDefiningRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ShapeDefinition<'a> { // select
     ProductDefinitionShape(ProductDefinitionShape<'a>),
     ShapeAspect(ShapeAspect<'a>),
@@ -18766,6 +19675,7 @@ impl<'a> Parse<'a> for ShapeDefinition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ShapeDefinitionRepresentation_<'a> { // entity
     pub definition: RepresentedDefinition<'a>,
     pub used_representation: Representation<'a>,
@@ -18783,6 +19693,7 @@ impl<'a> Parse<'a> for ShapeDefinitionRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeDimensionRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -18803,6 +19714,7 @@ impl<'a> Parse<'a> for ShapeDimensionRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -18823,6 +19735,7 @@ impl<'a> Parse<'a> for ShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeRepresentationRelationship_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -18846,6 +19759,7 @@ impl<'a> Parse<'a> for ShapeRepresentationRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ShapeRepresentationWithParameters_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -18866,6 +19780,7 @@ impl<'a> Parse<'a> for ShapeRepresentationWithParameters_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum Shell<'a> { // select
     OpenShell(OpenShell<'a>),
     ClosedShell(ClosedShell<'a>),
@@ -18879,6 +19794,7 @@ impl<'a> Parse<'a> for Shell<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ShellBasedSurfaceModel_<'a> { // entity
     pub name: Label<'a>,
     pub sbsm_boundary: Vec<Shell<'a>>,
@@ -18896,6 +19812,7 @@ impl<'a> Parse<'a> for ShellBasedSurfaceModel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SiPrefix<'a> { // enum
     Exa,
     Peta,
@@ -18938,6 +19855,7 @@ impl<'a> Parse<'a> for SiPrefix<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct SiUnit_<'a> { // entity
     pub prefix: Option<SiPrefix<'a>>,
     pub name: SiUnitName<'a>,
@@ -18956,6 +19874,7 @@ impl<'a> Parse<'a> for SiUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SiUnitName<'a> { // enum
     Metre,
     Gram,
@@ -19023,6 +19942,7 @@ impl<'a> Parse<'a> for SiUnitName<'a> {
         ))))(s)
     }
 }
+#[derive(Debug)]
 pub struct SimpleBooleanExpression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -19034,6 +19954,7 @@ impl<'a> Parse<'a> for SimpleBooleanExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SimpleGenericExpression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -19045,6 +19966,7 @@ impl<'a> Parse<'a> for SimpleGenericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SimpleNumericExpression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -19056,6 +19978,7 @@ impl<'a> Parse<'a> for SimpleNumericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SimplePairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19070,6 +19993,7 @@ impl<'a> Parse<'a> for SimplePairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SimpleStringExpression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -19081,6 +20005,7 @@ impl<'a> Parse<'a> for SimpleStringExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SinFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19095,6 +20020,7 @@ impl<'a> Parse<'a> for SinFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SizeSelect<'a> { // select
     PositiveLengthMeasure(PositiveLengthMeasure<'a>),
     MeasureWithUnit(MeasureWithUnit<'a>),
@@ -19110,6 +20036,7 @@ impl<'a> Parse<'a> for SizeSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct SlashExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19124,6 +20051,7 @@ impl<'a> Parse<'a> for SlashExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SlidingCurvePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -19159,6 +20087,7 @@ impl<'a> Parse<'a> for SlidingCurvePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SlidingCurvePairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_point_on_curve_1: PointOnCurve<'a>,
@@ -19179,6 +20108,7 @@ impl<'a> Parse<'a> for SlidingCurvePairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SlidingSurfacePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -19214,6 +20144,7 @@ impl<'a> Parse<'a> for SlidingSurfacePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SlidingSurfacePairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_point_on_surface_1: PointOnSurface<'a>,
@@ -19237,6 +20168,7 @@ impl<'a> Parse<'a> for SlidingSurfacePairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Slot_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -19254,6 +20186,7 @@ impl<'a> Parse<'a> for Slot_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SlotEnd_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -19277,6 +20210,7 @@ impl<'a> Parse<'a> for SlotEnd_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SolidAngleMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for SolidAngleMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -19288,6 +20222,7 @@ impl<'a> SolidAngleMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct SolidAngleMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -19305,6 +20240,7 @@ impl<'a> Parse<'a> for SolidAngleMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SolidAngleUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19319,6 +20255,7 @@ impl<'a> Parse<'a> for SolidAngleUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SolidModel_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19333,6 +20270,7 @@ impl<'a> Parse<'a> for SolidModel_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SolidReplica_<'a> { // entity
     pub name: Label<'a>,
     pub parent_solid: SolidModel<'a>,
@@ -19353,6 +20291,7 @@ impl<'a> Parse<'a> for SolidReplica_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum Source<'a> { // enum
     Made,
     Bought,
@@ -19369,6 +20308,7 @@ impl<'a> Parse<'a> for Source<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum SourceItem<'a> { // select
     Identifier(Identifier<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -19378,6 +20318,7 @@ impl<'a> Parse<'a> for SourceItem<'a> {
         map(<Identifier<'a>>::parse, |r| SourceItem::Identifier(r))(s)
     }
 }
+#[derive(Debug)]
 pub enum SpatialRotation<'a> { // select
     YprRotation(Vec<PlaneAngleMeasure<'a>>),
     RotationAboutDirection(RotationAboutDirection<'a>),
@@ -19391,6 +20332,7 @@ impl<'a> Parse<'a> for SpatialRotation<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct SpecifiedHigherUsageOccurrence_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -19426,6 +20368,7 @@ impl<'a> Parse<'a> for SpecifiedHigherUsageOccurrence_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SpecifiedItem<'a> { // select
     DrawingRevision(DrawingRevision<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -19435,6 +20378,7 @@ impl<'a> Parse<'a> for SpecifiedItem<'a> {
         map(<DrawingRevision<'a>>::parse, |r| SpecifiedItem::DrawingRevision(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct Sphere_<'a> { // entity
     pub name: Label<'a>,
     pub radius: PositiveLengthMeasure<'a>,
@@ -19455,6 +20399,7 @@ impl<'a> Parse<'a> for Sphere_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SphericalPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -19481,6 +20426,7 @@ impl<'a> Parse<'a> for SphericalPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SphericalPairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_yaw: RotationalRangeMeasure<'a>,
@@ -19513,6 +20459,7 @@ impl<'a> Parse<'a> for SphericalPairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SphericalPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub input_orientation: SpatialRotation<'a>,
@@ -19530,6 +20477,7 @@ impl<'a> Parse<'a> for SphericalPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SphericalSurface_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -19550,6 +20498,7 @@ impl<'a> Parse<'a> for SphericalSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SqlMappableDefinedFunction_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -19561,6 +20510,7 @@ impl<'a> Parse<'a> for SqlMappableDefinedFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SquareRootFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19575,6 +20525,7 @@ impl<'a> Parse<'a> for SquareRootFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SquareUProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -19598,6 +20549,7 @@ impl<'a> Parse<'a> for SquareUProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct StandardUncertainty_<'a> { // entity
     pub measure_name: Label<'a>,
     pub description: Text<'a>,
@@ -19618,6 +20570,7 @@ impl<'a> Parse<'a> for StandardUncertainty_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct StraightnessTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -19641,6 +20594,7 @@ impl<'a> Parse<'a> for StraightnessTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct StringDefinedFunction_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -19652,6 +20606,7 @@ impl<'a> Parse<'a> for StringDefinedFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct StringExpression_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -19663,6 +20618,7 @@ impl<'a> Parse<'a> for StringExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct StringLiteral_<'a> { // entity
     pub the_value: &'a str,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19677,6 +20633,7 @@ impl<'a> Parse<'a> for StringLiteral_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct StringVariable_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -19688,6 +20645,7 @@ impl<'a> Parse<'a> for StringVariable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct StructuredDimensionCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -19705,6 +20663,7 @@ impl<'a> Parse<'a> for StructuredDimensionCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum StyleContextSelect<'a> { // select
     Group(Group<'a>),
     PresentationLayerAssignment(PresentationLayerAssignment<'a>),
@@ -19726,6 +20685,7 @@ impl<'a> Parse<'a> for StyleContextSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct StyledItem_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -19746,6 +20706,7 @@ impl<'a> Parse<'a> for StyledItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Subedge_<'a> { // entity
     pub name: Label<'a>,
     pub edge_start: Vertex<'a>,
@@ -19769,6 +20730,7 @@ impl<'a> Parse<'a> for Subedge_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Subface_<'a> { // entity
     pub name: Label<'a>,
     pub bounds: Vec<FaceBound<'a>>,
@@ -19789,6 +20751,7 @@ impl<'a> Parse<'a> for Subface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SubstringExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19803,6 +20766,7 @@ impl<'a> Parse<'a> for SubstringExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SupportedItem<'a> { // select
     ActionDirective(ActionDirective<'a>),
     Action(Action<'a>),
@@ -19818,6 +20782,7 @@ impl<'a> Parse<'a> for SupportedItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct Surface_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -19832,6 +20797,7 @@ impl<'a> Parse<'a> for Surface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceConditionCallout_<'a> { // entity
     pub name: Label<'a>,
     pub contents: Vec<DraughtingCalloutElement<'a>>,
@@ -19849,6 +20815,7 @@ impl<'a> Parse<'a> for SurfaceConditionCallout_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceCurve_<'a> { // entity
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
@@ -19872,6 +20839,7 @@ impl<'a> Parse<'a> for SurfaceCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceCurveSweptAreaSolid_<'a> { // entity
     pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
@@ -19901,6 +20869,7 @@ impl<'a> Parse<'a> for SurfaceCurveSweptAreaSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceOfLinearExtrusion_<'a> { // entity
     pub name: Label<'a>,
     pub swept_curve: Curve<'a>,
@@ -19921,6 +20890,7 @@ impl<'a> Parse<'a> for SurfaceOfLinearExtrusion_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceOfRevolution_<'a> { // entity
     pub name: Label<'a>,
     pub swept_curve: Curve<'a>,
@@ -19941,6 +20911,7 @@ impl<'a> Parse<'a> for SurfaceOfRevolution_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfacePair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -19976,6 +20947,7 @@ impl<'a> Parse<'a> for SurfacePair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfacePairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub range_on_surface_1: RectangularTrimmedSurface<'a>,
@@ -20002,6 +20974,7 @@ impl<'a> Parse<'a> for SurfacePairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfacePatch_<'a> { // entity
     pub parent_surface: BoundedSurface<'a>,
     pub u_transition: TransitionCode<'a>,
@@ -20028,6 +21001,7 @@ impl<'a> Parse<'a> for SurfacePatch_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceProfileTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -20051,6 +21025,7 @@ impl<'a> Parse<'a> for SurfaceProfileTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceRenderingProperties_<'a> { // entity
     pub rendered_colour: Colour<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20065,6 +21040,7 @@ impl<'a> Parse<'a> for SurfaceRenderingProperties_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceReplica_<'a> { // entity
     pub name: Label<'a>,
     pub parent_surface: Surface<'a>,
@@ -20085,6 +21061,7 @@ impl<'a> Parse<'a> for SurfaceReplica_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SurfaceSide<'a> { // enum
     Positive,
     Negative,
@@ -20101,6 +21078,7 @@ impl<'a> Parse<'a> for SurfaceSide<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct SurfaceSideStyle_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<SurfaceStyleElementSelect<'a>>,
@@ -20118,6 +21096,7 @@ impl<'a> Parse<'a> for SurfaceSideStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SurfaceSideStyleSelect<'a> { // select
     SurfaceSideStyle(SurfaceSideStyle<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -20127,6 +21106,7 @@ impl<'a> Parse<'a> for SurfaceSideStyleSelect<'a> {
         map(<SurfaceSideStyle<'a>>::parse, |r| SurfaceSideStyleSelect::SurfaceSideStyle(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleBoundary_<'a> { // entity
     pub style_of_boundary: CurveOrRender<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20141,6 +21121,7 @@ impl<'a> Parse<'a> for SurfaceStyleBoundary_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleControlGrid_<'a> { // entity
     pub style_of_control_grid: CurveOrRender<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20155,6 +21136,7 @@ impl<'a> Parse<'a> for SurfaceStyleControlGrid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SurfaceStyleElementSelect<'a> { // select
     SurfaceStyleFillArea(SurfaceStyleFillArea<'a>),
     SurfaceStyleBoundary(SurfaceStyleBoundary<'a>),
@@ -20178,6 +21160,7 @@ impl<'a> Parse<'a> for SurfaceStyleElementSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleFillArea_<'a> { // entity
     pub fill_area: FillAreaStyle<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20192,6 +21175,7 @@ impl<'a> Parse<'a> for SurfaceStyleFillArea_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleParameterLine_<'a> { // entity
     pub style_of_parameter_lines: CurveOrRender<'a>,
     pub direction_counts: Vec<DirectionCountSelect<'a>>,
@@ -20209,6 +21193,7 @@ impl<'a> Parse<'a> for SurfaceStyleParameterLine_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleReflectanceAmbient_<'a> { // entity
     pub ambient_reflectance: f64,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20223,6 +21208,7 @@ impl<'a> Parse<'a> for SurfaceStyleReflectanceAmbient_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleReflectanceAmbientDiffuse_<'a> { // entity
     pub ambient_reflectance: f64,
     pub diffuse_reflectance: f64,
@@ -20240,6 +21226,7 @@ impl<'a> Parse<'a> for SurfaceStyleReflectanceAmbientDiffuse_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleReflectanceAmbientDiffuseSpecular_<'a> { // entity
     pub ambient_reflectance: f64,
     pub diffuse_reflectance: f64,
@@ -20266,6 +21253,7 @@ impl<'a> Parse<'a> for SurfaceStyleReflectanceAmbientDiffuseSpecular_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleRendering_<'a> { // entity
     pub rendering_method: ShadingSurfaceMethod<'a>,
     pub surface_colour: Colour<'a>,
@@ -20283,6 +21271,7 @@ impl<'a> Parse<'a> for SurfaceStyleRendering_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleRenderingWithProperties_<'a> { // entity
     pub rendering_method: ShadingSurfaceMethod<'a>,
     pub surface_colour: Colour<'a>,
@@ -20303,6 +21292,7 @@ impl<'a> Parse<'a> for SurfaceStyleRenderingWithProperties_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleSegmentationCurve_<'a> { // entity
     pub style_of_segmentation_curve: CurveOrRender<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20317,6 +21307,7 @@ impl<'a> Parse<'a> for SurfaceStyleSegmentationCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleSilhouette_<'a> { // entity
     pub style_of_silhouette: CurveOrRender<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20331,6 +21322,7 @@ impl<'a> Parse<'a> for SurfaceStyleSilhouette_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleTransparent_<'a> { // entity
     pub transparency: f64,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20345,6 +21337,7 @@ impl<'a> Parse<'a> for SurfaceStyleTransparent_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceStyleUsage_<'a> { // entity
     pub side: SurfaceSide<'a>,
     pub style: SurfaceSideStyleSelect<'a>,
@@ -20362,6 +21355,7 @@ impl<'a> Parse<'a> for SurfaceStyleUsage_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SurfaceTextureRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -20383,6 +21377,7 @@ impl<'a> Parse<'a> for SurfaceTextureRepresentation_<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct SurfaceToleranceDeviation<'a>(pub PositiveLengthMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for SurfaceToleranceDeviation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -20394,6 +21389,7 @@ impl<'a> SurfaceToleranceDeviation<'a> {
         map(PositiveLengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct SurfaceToleranceParameter<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for SurfaceToleranceParameter<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -20405,6 +21401,7 @@ impl<'a> SurfaceToleranceParameter<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct SweptAreaSolid_<'a> { // entity
     pub name: Label<'a>,
     pub swept_area: CurveBoundedSurface<'a>,
@@ -20422,6 +21419,7 @@ impl<'a> Parse<'a> for SweptAreaSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SweptDiskSolid_<'a> { // entity
     pub name: Label<'a>,
     pub directrix: Curve<'a>,
@@ -20451,6 +21449,7 @@ impl<'a> Parse<'a> for SweptDiskSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SweptFaceSolid_<'a> { // entity
     pub name: Label<'a>,
     pub swept_face: FaceSurface<'a>,
@@ -20468,6 +21467,7 @@ impl<'a> Parse<'a> for SweptFaceSolid_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SweptSurface_<'a> { // entity
     pub name: Label<'a>,
     pub swept_curve: Curve<'a>,
@@ -20485,6 +21485,7 @@ impl<'a> Parse<'a> for SweptSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SymbolColour_<'a> { // entity
     pub colour_of_symbol: Colour<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20499,6 +21500,7 @@ impl<'a> Parse<'a> for SymbolColour_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SymbolRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -20519,6 +21521,7 @@ impl<'a> Parse<'a> for SymbolRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SymbolRepresentationMap_<'a> { // entity
     pub mapping_origin: RepresentationItem<'a>,
     pub mapped_representation: Representation<'a>,
@@ -20536,6 +21539,7 @@ impl<'a> Parse<'a> for SymbolRepresentationMap_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SymbolStyle_<'a> { // entity
     pub name: Label<'a>,
     pub style_of_symbol: SymbolStyleSelect<'a>,
@@ -20553,6 +21557,7 @@ impl<'a> Parse<'a> for SymbolStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum SymbolStyleSelect<'a> { // select
     SymbolColour(SymbolColour<'a>),
     _Unused(std::marker::PhantomData<&'a ()>)
@@ -20562,6 +21567,7 @@ impl<'a> Parse<'a> for SymbolStyleSelect<'a> {
         map(<SymbolColour<'a>>::parse, |r| SymbolStyleSelect::SymbolColour(r))(s)
     }
 }
+#[derive(Debug)]
 pub struct SymbolTarget_<'a> { // entity
     pub name: Label<'a>,
     pub placement: Axis2Placement<'a>,
@@ -20585,6 +21591,7 @@ impl<'a> Parse<'a> for SymbolTarget_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SymmetricShapeAspect_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -20608,6 +21615,7 @@ impl<'a> Parse<'a> for SymmetricShapeAspect_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct SymmetryTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -20634,6 +21642,7 @@ impl<'a> Parse<'a> for SymmetryTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TactileAppearanceRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -20654,6 +21663,7 @@ impl<'a> Parse<'a> for TactileAppearanceRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TanFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -20668,6 +21678,7 @@ impl<'a> Parse<'a> for TanFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Tangent_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -20691,6 +21702,7 @@ impl<'a> Parse<'a> for Tangent_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Taper_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -20714,6 +21726,7 @@ impl<'a> Parse<'a> for Taper_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TeeProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -20737,6 +21750,7 @@ impl<'a> Parse<'a> for TeeProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TerminatorSymbol_<'a> { // entity
     pub name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
@@ -20760,6 +21774,7 @@ impl<'a> Parse<'a> for TerminatorSymbol_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Text<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for Text<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -20772,6 +21787,7 @@ impl<'a> Text<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct TextAlignment<'a>(pub Label<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for TextAlignment<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -20784,6 +21800,7 @@ impl<'a> TextAlignment<'a> {
     }
 }
 
+#[derive(Debug)]
 pub struct TextDelineation<'a>(pub Label<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for TextDelineation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -20795,6 +21812,7 @@ impl<'a> TextDelineation<'a> {
         map(Label::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct TextLiteral_<'a> { // entity
     pub name: Label<'a>,
     pub literal: PresentableText<'a>,
@@ -20824,6 +21842,7 @@ impl<'a> Parse<'a> for TextLiteral_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TextLiteralWithAssociatedCurves_<'a> { // entity
     pub name: Label<'a>,
     pub literal: PresentableText<'a>,
@@ -20856,6 +21875,7 @@ impl<'a> Parse<'a> for TextLiteralWithAssociatedCurves_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TextLiteralWithBlankingBox_<'a> { // entity
     pub name: Label<'a>,
     pub literal: PresentableText<'a>,
@@ -20888,6 +21908,7 @@ impl<'a> Parse<'a> for TextLiteralWithBlankingBox_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TextLiteralWithDelineation_<'a> { // entity
     pub name: Label<'a>,
     pub literal: PresentableText<'a>,
@@ -20920,6 +21941,7 @@ impl<'a> Parse<'a> for TextLiteralWithDelineation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TextLiteralWithExtent_<'a> { // entity
     pub name: Label<'a>,
     pub literal: PresentableText<'a>,
@@ -20952,6 +21974,7 @@ impl<'a> Parse<'a> for TextLiteralWithExtent_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum TextOrCharacter<'a> { // select
     AnnotationText(AnnotationText<'a>),
     AnnotationTextCharacter(AnnotationTextCharacter<'a>),
@@ -20971,6 +21994,7 @@ impl<'a> Parse<'a> for TextOrCharacter<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum TextPath<'a> { // enum
     Left,
     Right,
@@ -20989,6 +22013,7 @@ impl<'a> Parse<'a> for TextPath<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct TextStringRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -21009,6 +22034,7 @@ impl<'a> Parse<'a> for TextStringRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum TextStringRepresentationItem<'a> { // select
     TextLiteral(TextLiteral<'a>),
     AnnotationText(AnnotationText<'a>),
@@ -21030,6 +22056,7 @@ impl<'a> Parse<'a> for TextStringRepresentationItem<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct TextStyle_<'a> { // entity
     pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
@@ -21047,6 +22074,7 @@ impl<'a> Parse<'a> for TextStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TextStyleForDefinedFont_<'a> { // entity
     pub text_colour: Colour<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21061,6 +22089,7 @@ impl<'a> Parse<'a> for TextStyleForDefinedFont_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TextStyleWithBoxCharacteristics_<'a> { // entity
     pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
@@ -21081,6 +22110,7 @@ impl<'a> Parse<'a> for TextStyleWithBoxCharacteristics_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TextStyleWithMirror_<'a> { // entity
     pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
@@ -21101,6 +22131,7 @@ impl<'a> Parse<'a> for TextStyleWithMirror_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TextStyleWithSpacing_<'a> { // entity
     pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
@@ -21121,6 +22152,7 @@ impl<'a> Parse<'a> for TextStyleWithSpacing_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ThermodynamicTemperatureMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for ThermodynamicTemperatureMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -21132,6 +22164,7 @@ impl<'a> ThermodynamicTemperatureMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct ThermodynamicTemperatureMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -21149,6 +22182,7 @@ impl<'a> Parse<'a> for ThermodynamicTemperatureMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ThermodynamicTemperatureUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21163,6 +22197,7 @@ impl<'a> Parse<'a> for ThermodynamicTemperatureUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Thread_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -21180,6 +22215,7 @@ impl<'a> Parse<'a> for Thread_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TimeInterval_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -21200,6 +22236,7 @@ impl<'a> Parse<'a> for TimeInterval_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TimeIntervalAssignment_<'a> { // entity
     pub assigned_time_interval: TimeInterval<'a>,
     pub role: TimeIntervalRole<'a>,
@@ -21217,6 +22254,7 @@ impl<'a> Parse<'a> for TimeIntervalAssignment_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TimeIntervalBasedEffectivity_<'a> { // entity
     pub id: Identifier<'a>,
     pub effectivity_period: TimeInterval<'a>,
@@ -21234,6 +22272,7 @@ impl<'a> Parse<'a> for TimeIntervalBasedEffectivity_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum TimeIntervalItem<'a> { // select
     Action(Action<'a>),
     ActionDirective(ActionDirective<'a>),
@@ -21343,6 +22382,7 @@ impl<'a> Parse<'a> for TimeIntervalItem<'a> {
         ))))))(s)
     }
 }
+#[derive(Debug)]
 pub struct TimeIntervalRole_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -21360,6 +22400,7 @@ impl<'a> Parse<'a> for TimeIntervalRole_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TimeIntervalWithBounds_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -21389,6 +22430,7 @@ impl<'a> Parse<'a> for TimeIntervalWithBounds_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TimeMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for TimeMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -21400,6 +22442,7 @@ impl<'a> TimeMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct TimeMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -21417,6 +22460,7 @@ impl<'a> Parse<'a> for TimeMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TimeUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21431,6 +22475,7 @@ impl<'a> Parse<'a> for TimeUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ToleranceDeviationSelect<'a> { // select
     CurveToleranceDeviation(CurveToleranceDeviation<'a>),
     SurfaceToleranceDeviation(SurfaceToleranceDeviation<'a>),
@@ -21444,6 +22489,7 @@ impl<'a> Parse<'a> for ToleranceDeviationSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum ToleranceMethodDefinition<'a> { // select
     ToleranceValue(ToleranceValue<'a>),
     LimitsAndFits(LimitsAndFits<'a>),
@@ -21457,6 +22503,7 @@ impl<'a> Parse<'a> for ToleranceMethodDefinition<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum ToleranceParameterSelect<'a> { // select
     CurveToleranceParameter(CurveToleranceParameter<'a>),
     SurfaceToleranceParameter(SurfaceToleranceParameter<'a>),
@@ -21470,6 +22517,7 @@ impl<'a> Parse<'a> for ToleranceParameterSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum ToleranceSelect<'a> { // select
     ApproximationToleranceDeviation(ApproximationToleranceDeviation<'a>),
     ApproximationToleranceParameter(ApproximationToleranceParameter<'a>),
@@ -21483,6 +22531,7 @@ impl<'a> Parse<'a> for ToleranceSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ToleranceValue_<'a> { // entity
     pub lower_bound: MeasureWithUnit<'a>,
     pub upper_bound: MeasureWithUnit<'a>,
@@ -21500,6 +22549,7 @@ impl<'a> Parse<'a> for ToleranceValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ToleranceZone_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -21529,6 +22579,7 @@ impl<'a> Parse<'a> for ToleranceZone_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ToleranceZoneDefinition_<'a> { // entity
     pub zone: ToleranceZone<'a>,
     pub boundaries: Vec<ShapeAspect<'a>>,
@@ -21546,6 +22597,7 @@ impl<'a> Parse<'a> for ToleranceZoneDefinition_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ToleranceZoneForm_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21560,6 +22612,7 @@ impl<'a> Parse<'a> for ToleranceZoneForm_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TopologicalRepresentationItem_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21574,6 +22627,7 @@ impl<'a> Parse<'a> for TopologicalRepresentationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ToroidalSurface_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis2Placement3d<'a>,
@@ -21597,6 +22651,7 @@ impl<'a> Parse<'a> for ToroidalSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Torus_<'a> { // entity
     pub name: Label<'a>,
     pub position: Axis1Placement<'a>,
@@ -21620,6 +22675,7 @@ impl<'a> Parse<'a> for Torus_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TotalRunoutTolerance_<'a> { // entity
     pub name: Label<'a>,
     pub description: Text<'a>,
@@ -21646,6 +22702,7 @@ impl<'a> Parse<'a> for TotalRunoutTolerance_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum Transformation<'a> { // select
     ItemDefinedTransformation(ItemDefinedTransformation<'a>),
     FunctionallyDefinedTransformation(FunctionallyDefinedTransformation<'a>),
@@ -21659,6 +22716,7 @@ impl<'a> Parse<'a> for Transformation<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum TransitionCode<'a> { // enum
     Discontinuous,
     Continuous,
@@ -21677,6 +22735,7 @@ impl<'a> Parse<'a> for TransitionCode<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct TransitionFeature_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -21700,6 +22759,7 @@ impl<'a> Parse<'a> for TransitionFeature_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum TranslationalRangeMeasure<'a> { // select
     LengthMeasure(LengthMeasure<'a>),
     UnlimitedRange(UnlimitedRange<'a>),
@@ -21713,6 +22773,7 @@ impl<'a> Parse<'a> for TranslationalRangeMeasure<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct TrimmedCurve_<'a> { // entity
     pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
@@ -21742,6 +22803,7 @@ impl<'a> Parse<'a> for TrimmedCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum TrimmingPreference<'a> { // enum
     Cartesian,
     Parameter,
@@ -21758,6 +22820,7 @@ impl<'a> Parse<'a> for TrimmingPreference<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub enum TrimmingSelect<'a> { // select
     CartesianPoint(CartesianPoint<'a>),
     ParameterValue(ParameterValue<'a>),
@@ -21771,6 +22834,7 @@ impl<'a> Parse<'a> for TrimmingSelect<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct TwoDirectionRepeatFactor_<'a> { // entity
     pub name: Label<'a>,
     pub repeat_factor: Vector<'a>,
@@ -21791,6 +22855,7 @@ impl<'a> Parse<'a> for TwoDirectionRepeatFactor_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct TypeQualifier_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21805,6 +22870,7 @@ impl<'a> Parse<'a> for TypeQualifier_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UDirectionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for UDirectionCount<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -21816,6 +22882,7 @@ impl<'a> UDirectionCount<'a> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct UnaryBooleanExpression_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21830,6 +22897,7 @@ impl<'a> Parse<'a> for UnaryBooleanExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UnaryFunctionCall_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21844,6 +22912,7 @@ impl<'a> Parse<'a> for UnaryFunctionCall_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UnaryGenericExpression_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21858,6 +22927,7 @@ impl<'a> Parse<'a> for UnaryGenericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UnaryNumericExpression_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21872,6 +22942,7 @@ impl<'a> Parse<'a> for UnaryNumericExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UncertaintyAssignedRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -21895,6 +22966,7 @@ impl<'a> Parse<'a> for UncertaintyAssignedRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UncertaintyMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -21918,6 +22990,7 @@ impl<'a> Parse<'a> for UncertaintyMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UncertaintyQualifier_<'a> { // entity
     pub measure_name: Label<'a>,
     pub description: Text<'a>,
@@ -21935,6 +23008,7 @@ impl<'a> Parse<'a> for UncertaintyQualifier_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UnconstrainedPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -21961,6 +23035,7 @@ impl<'a> Parse<'a> for UnconstrainedPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UnconstrainedPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub actual_placement: Axis2Placement3d<'a>,
@@ -21978,6 +23053,7 @@ impl<'a> Parse<'a> for UnconstrainedPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UniformCurve_<'a> { // entity
     pub name: Label<'a>,
     pub degree: i64,
@@ -22007,6 +23083,7 @@ impl<'a> Parse<'a> for UniformCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UniformSurface_<'a> { // entity
     pub name: Label<'a>,
     pub u_degree: i64,
@@ -22042,6 +23119,7 @@ impl<'a> Parse<'a> for UniformSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum Unit<'a> { // select
     DerivedUnit(DerivedUnit<'a>),
     NamedUnit(NamedUnit<'a>),
@@ -22055,6 +23133,7 @@ impl<'a> Parse<'a> for Unit<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct UniversalPair_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -22084,6 +23163,7 @@ impl<'a> Parse<'a> for UniversalPair_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UniversalPairRange_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub lower_limit_first_rotation: RotationalRangeMeasure<'a>,
@@ -22110,6 +23190,7 @@ impl<'a> Parse<'a> for UniversalPairRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct UniversalPairValue_<'a> { // entity
     pub applies_to_pair: KinematicPair<'a>,
     pub first_rotation_angle: PlaneAngleMeasure<'a>,
@@ -22130,6 +23211,7 @@ impl<'a> Parse<'a> for UniversalPairValue_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum UnlimitedRange<'a> { // enum
     Unlimited,
     _Unused(std::marker::PhantomData<&'a ()>),
@@ -22140,6 +23222,7 @@ impl<'a> Parse<'a> for UnlimitedRange<'a> {
         map(tag(".UNLIMITED."), |_| Unlimited)(s)
     }
 }
+#[derive(Debug)]
 pub struct VDirectionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for VDirectionCount<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -22151,6 +23234,7 @@ impl<'a> VDirectionCount<'a> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct ValueFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -22165,6 +23249,7 @@ impl<'a> Parse<'a> for ValueFunction_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum ValueQualifier<'a> { // select
     PrecisionQualifier(PrecisionQualifier<'a>),
     TypeQualifier(TypeQualifier<'a>),
@@ -22180,6 +23265,7 @@ impl<'a> Parse<'a> for ValueQualifier<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct ValueRange_<'a> { // entity
     pub name: Label<'a>,
     pub item_element: CompoundItemDefinition<'a>,
@@ -22197,6 +23283,7 @@ impl<'a> Parse<'a> for ValueRange_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ValueRepresentationItem_<'a> { // entity
     pub name: Label<'a>,
     pub value_component: MeasureValue<'a>,
@@ -22214,6 +23301,7 @@ impl<'a> Parse<'a> for ValueRepresentationItem_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Variable_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -22225,6 +23313,7 @@ impl<'a> Parse<'a> for Variable_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VariableSemantics_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -22236,6 +23325,7 @@ impl<'a> Parse<'a> for VariableSemantics_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Vector_<'a> { // entity
     pub name: Label<'a>,
     pub orientation: Direction<'a>,
@@ -22256,6 +23346,7 @@ impl<'a> Parse<'a> for Vector_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub enum VectorOrDirection<'a> { // select
     Vector(Vector<'a>),
     Direction(Direction<'a>),
@@ -22270,6 +23361,7 @@ impl<'a> Parse<'a> for VectorOrDirection<'a> {
     }
 }
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct VectorStyle_<'a> { // entity
     pub name: Label<'a>,
     pub curve_style__name: Label<'a>,
@@ -22297,6 +23389,7 @@ impl<'a> Parse<'a> for VectorStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VeeProfile_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
@@ -22320,6 +23413,7 @@ impl<'a> Parse<'a> for VeeProfile_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VersionedActionRequest_<'a> { // entity
     pub id: Identifier<'a>,
     pub version: Label<'a>,
@@ -22343,6 +23437,7 @@ impl<'a> Parse<'a> for VersionedActionRequest_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VersionedActionRequestRelationship_<'a> { // entity
     pub id: Identifier<'a>,
     pub name: Label<'a>,
@@ -22369,6 +23464,7 @@ impl<'a> Parse<'a> for VersionedActionRequestRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct Vertex_<'a> { // entity
     pub name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -22383,6 +23479,7 @@ impl<'a> Parse<'a> for Vertex_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VertexLoop_<'a> { // entity
     pub name: Label<'a>,
     pub loop_vertex: Vertex<'a>,
@@ -22400,6 +23497,7 @@ impl<'a> Parse<'a> for VertexLoop_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VertexPoint_<'a> { // entity
     pub name: Label<'a>,
     pub vertex_geometry: Point<'a>,
@@ -22417,6 +23515,7 @@ impl<'a> Parse<'a> for VertexPoint_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct ViewVolume_<'a> { // entity
     pub projection_type: CentralOrParallel<'a>,
     pub projection_point: CartesianPoint<'a>,
@@ -22455,6 +23554,7 @@ impl<'a> Parse<'a> for ViewVolume_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VisualAppearanceRepresentation_<'a> { // entity
     pub name: Label<'a>,
     pub items: Vec<RepresentationItem<'a>>,
@@ -22475,6 +23575,7 @@ impl<'a> Parse<'a> for VisualAppearanceRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VolumeMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for VolumeMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -22486,6 +23587,7 @@ impl<'a> VolumeMeasure<'a> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub struct VolumeMeasureWithUnit_<'a> { // entity
     pub value_component: MeasureValue<'a>,
     pub unit_component: Unit<'a>,
@@ -22503,6 +23605,7 @@ impl<'a> Parse<'a> for VolumeMeasureWithUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct VolumeUnit_<'a> { // entity
     pub elements: Vec<DerivedUnitElement<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -22517,6 +23620,7 @@ impl<'a> Parse<'a> for VolumeUnit_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct XorExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -22531,6 +23635,7 @@ impl<'a> Parse<'a> for XorExpression_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[derive(Debug)]
 pub struct YearNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for YearNumber<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
@@ -22542,6 +23647,7 @@ impl<'a> YearNumber<'a> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub enum YprEnumeration<'a> { // enum
     Yaw,
     Pitch,
@@ -22558,12 +23664,14 @@ impl<'a> Parse<'a> for YprEnumeration<'a> {
         ))(s)
     }
 }
+#[derive(Debug)]
 pub struct YprRotation<'a>(pub Vec<PlaneAngleMeasure<'a>>, std::marker::PhantomData<&'a ()>); // aggregation
 impl<'a> Parse<'a> for YprRotation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         map(many0(<PlaneAngleMeasure<'a>>::parse), |r| Self(r, std::marker::PhantomData))(s)
     }
 }
+#[derive(Debug)]
 pub enum Entity<'a> {
     AbsFunction(AbsFunction<'a>),
     AcosFunction(AcosFunction<'a>),
