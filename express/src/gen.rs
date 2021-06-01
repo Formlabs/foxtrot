@@ -241,7 +241,38 @@ impl<'a> Parse<'a> for {0}<'a> {{
                 }
                 writeln!(buf, r#"    _marker: std::marker::PhantomData<&'a ()>,
 }}
-pub type {0}<'a> = Id<{0}_<'a>>;"#, camel_name)?;
+pub type {0}<'a> = Id<{0}_<'a>>;
+impl<'a> Parse<'a> for {0}_<'a> {{
+    fn parse(s: &'a str) -> IResult<'a, Self> {{"#, camel_name)?;
+                for a in attrs {
+                    if a.dupe {
+                        writeln!(buf, "        #[allow(non_snake_case)]")?;
+                        write!(buf, "        let (s, {}__{}) = ",
+                               a.from.unwrap(), a.name)?;
+                    } else {
+                        write!(buf, "        let (s, {}) = ", a.name)?;
+                    }
+                    if a.optional {
+                        writeln!(buf, "alt((
+            map(char('?'), |_| None),
+            map(<{}>::parse, |v| Some(v))))(s)?;", a.type_)?;
+                    } else {
+                        writeln!(buf, "<{}>::parse(s)?;", a.type_)?;
+                    }
+                }
+                writeln!(buf, "        Ok((s, Self {{")?;
+                for a in attrs {
+                    if a.dupe {
+                        // TODO make this a function on `a`
+                        writeln!(buf, "            {}__{},",
+                                 a.from.unwrap(), a.name)?;
+                    } else {
+                        writeln!(buf, "            {},", a.name)?;
+                    }
+                }
+                writeln!(buf, "            _marker: std::marker::PhantomData}}))
+    }}
+}}")?;
             },
             Type::Primitive(_) => (),
         };

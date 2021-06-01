@@ -1,7 +1,8 @@
 use nom::{
-    bytes::complete::{is_not},
+    branch::{alt},
+    bytes::complete::{tag, is_not},
     character::complete::{char, digit1},
-    combinator::{map_res, opt},
+    combinator::{map, map_res, opt},
     error::*,
     sequence::{delimited, preceded, tuple},
     multi::{many0},
@@ -29,12 +30,10 @@ fn build_err<'a, U>(s: &'a str, msg: &'static str) -> IResult<'a, U> {
 ////////////////////////////////////////////////////////////////////////////////
 
 pub trait ParseInner<'a> {
-    type Out;
-    fn parse_inner(s: &'a str) -> IResult<'a, Self::Out>;
+    fn parse_inner(s: &'a str) -> IResult<'a, Self> where Self: Sized;
 }
 
 impl ParseInner<'_> for f64 {
-    type Out = Self;
     fn parse_inner(s: &str) -> IResult<Self> {
         match fast_float::parse_partial::<f64, _>(s) {
             Err(_) => build_err(s, "Could not parse float"),
@@ -44,7 +43,6 @@ impl ParseInner<'_> for f64 {
 }
 
 impl ParseInner<'_> for i64 {
-    type Out = Self;
     fn parse_inner(s: &str) -> IResult<Self> {
         map_res(tuple((opt(char('-')), digit1)),
             |(sign, digits)| -> Result<i64, <i64 as std::str::FromStr>::Err> {
@@ -59,7 +57,6 @@ impl ParseInner<'_> for i64 {
 }
 
 impl<'a> ParseInner<'a> for &'a str {
-    type Out = Self;
     fn parse_inner(s: &'a str) -> IResult<'a, &'a str> {
         delimited(char('"'), is_not("'"), char('"'))(s)
     }
@@ -70,8 +67,34 @@ impl<'a> ParseInner<'a> for &'a str {
 pub trait Parse<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> where Self: Sized;
 }
+
+// Blanket implementation
+impl<'a, T: ParseInner<'a>> Parse<'a> for T {
+    fn parse(s: &'a str) -> IResult<'a, Self> {
+        T::parse_inner(s)
+    }
+}
+
 impl<'a, T: Parse<'a>> Parse<'a> for Vec<T> {
     fn parse(s: &'a str) -> IResult<'a, Vec<T>> {
+        // TODO: probably need delimiters and separators
         many0(T::parse)(s)
+    }
+}
+impl<'a> Parse<'a> for Option<bool> {
+    fn parse(s: &'a str) -> IResult<'a, Self> {
+        alt((
+            map(tag(".TRUE."), |_| Some(true)),
+            map(tag(".FALSE."), |_| Some(false)),
+            map(tag(".UNKNOWN."), |_| None),
+        ))(s)
+    }
+}
+impl<'a> Parse<'a> for bool {
+    fn parse(s: &'a str) -> IResult<'a, Self> {
+        alt((
+            map(tag(".TRUE."), |_| true),
+            map(tag(".FALSE."), |_| false),
+        ))(s)
     }
 }
