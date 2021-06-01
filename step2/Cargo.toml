@@ -8,6 +8,7 @@ edition = "2018"
 fast-float = "0.2"
 memchr = "2.4.0"
 nom = "6.0"
+rayon = "1.5"
 
 [dev-dependencies]
 clap = "2.33"

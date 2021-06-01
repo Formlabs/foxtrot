@@ -31,6 +31,14 @@ impl <'a> TypeMap<'a> {
         }
         self.to_rtype(s)
     }
+    fn is_entity(&self, s: &str) -> bool {
+        let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
+        match &t {
+            Type::Entity{..} => true,
+            Type::Select(v) => v.iter().all(|s| self.is_entity(s)),
+            _ => false,
+        }
+    }
     fn to_rtype(&self, s: &str) -> String {
         let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
         match &t {
@@ -118,27 +126,16 @@ impl<'a> Type<'a> {
 pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for {0}<'a> {{
     fn parse(s: &'a str) -> IResult<'a, Self> {{
-        delimited(tag("{2}("), Self::parse_inner, char(')'))(s)
-    }}
-}}
-impl<'a> {0}<'a> {{
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {{
-        map({3}::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map({2}::parse, |r| Self(r, std::marker::PhantomData))(s)
     }}
 }}"#,
-                camel_name, type_map.to_rtype(c),
-                capitalize(&name), to_camel(c))?;
+                camel_name, type_map.to_rtype(c), to_camel(c))?;
             },
             Type::RedeclaredPrimitive(c) => {
                 writeln!(buf, r#"#[derive(Debug)]
 pub struct {0}<'a>(pub {1}, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for {0}<'a> {{
     fn parse(s: &'a str) -> IResult<'a, Self> {{
-        Self::parse_inner(s)
-    }}
-}}
-impl<'a> {0}<'a> {{
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {{
         map(<{2}>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }}
 }}"#,
@@ -204,10 +201,19 @@ impl<'a> Parse<'a> for {}<'a> {{
     fn parse(s: &'a str) -> IResult<'a, Self> {{"#, camel_name)?;
 
                 // Same logic as above
-                if c.len() == 1 {
-                    write!(buf,
+                let to_parse_str = |v| if !type_map.is_entity(v) {
+                    format!(
+                        r#"        map(delimited(tag("{}("), <{}>::parse, char(')')), |r| {}::{}(r))"#,
+                        capitalize(v), type_map.to_rtype(v),
+                        camel_name, to_camel(v))
+                } else {
+                    format!(
                         r#"        map(<{}>::parse, |r| {}::{}(r))"#,
-                        type_map.to_rtype(c[0]), camel_name, to_camel(c[0]))?;
+                        type_map.to_rtype(v), camel_name, to_camel(v))
+                };
+
+                if c.len() == 1 {
+                    write!(buf, "{}", to_parse_str(c[0]))?;
                 } else {
                     const NOM_MAX_ALT: usize = 21;
                     let mut offset = 0;
@@ -216,9 +222,7 @@ impl<'a> Parse<'a> for {}<'a> {{
                         let mut i = 0;
                         while i < NOM_MAX_ALT - 2 && i + offset < c.len() {
                             let v = c[i + offset];
-                            writeln!(buf,
-                                "            map(<{}>::parse, |r| {}::{}(r)),",
-                                type_map.to_rtype(v), camel_name, to_camel(v))?;
+                            writeln!(buf, "    {},", to_parse_str(v))?;
                             i += 1;
                         }
                         offset += NOM_MAX_ALT - 2;
@@ -371,7 +375,7 @@ use crate::parse::{{Id, IResult, Logical, Parse, param}};
 use nom::{{
     branch::{{alt}},
     bytes::complete::{{tag}},
-    character::complete::{{alpha1, alphanumeric1, char}},
+    character::complete::{{alpha0, alphanumeric1, char}},
     combinator::{{map, recognize}},
     multi::{{many0}},
     sequence::{{delimited, pair}},
@@ -385,18 +389,20 @@ pub enum Entity<'a> {{")?;
     for k in &keys {
         type_map.0[k].enum_variant(k, &mut buf)?;
     }
-    writeln!(&mut buf, r#"}}
+    writeln!(&mut buf, r#"  _ComplexMapping,
+}}
 impl<'a> Parse<'a> for Entity<'a> {{
     fn parse(s: &'a str) -> IResult<'a, Self> {{
         let (_, r) = recognize(pair(
-            alt((alpha1, tag("_"))),
+            alt((alpha0, tag("_"))),
             many0(alt((alphanumeric1, tag("_")))),
         ))(s)?;
         match r {{"#)?;
     for k in &keys {
         type_map.0[k].enum_match(k, &mut buf)?;
     }
-    writeln!(&mut buf, r#"            _ => panic!("Invalid case"),
+    writeln!(&mut buf, r#"            "" => Ok((s, Entity::_ComplexMapping)),
+            _ => panic!("Invalid case"),
         }}
     }}
 }}"#)?;
@@ -655,18 +661,19 @@ impl<'a> EntityDecl<'a> {
                 attrs.extend(type_map
                     .attributes(sub.0)
                     .into_iter()
-                    .map(|a|
+                    .map(|mut a| {
                         if a.from.is_none() {
-                            AttributeData {
-                                from: Some(sub.0),
-                                dupe: inherited_names.contains(a.name),
-                                derived: derived.contains(&(sub.0, a.name)),
-                                ..a
-                            }
-                        } else {
-                            a
+                            a.from = Some(sub.0);
                         }
-                    )
+                        // TODO: this falsely marks names as dupes if they've
+                        // got a match with another attr that's _derived_
+                        // (which wouldn't actually be stored in the struct)
+                        AttributeData {
+                            dupe: inherited_names.contains(a.name),
+                            derived: derived.contains(&(a.from.unwrap(), a.name)),
+                            ..a
+                        }
+                    })
                     // Skip values that have already been seen (if we have
                     // multiple inheritance from a common base class)
                     .filter(|a| seen.insert((a.from.unwrap(), a.name))));

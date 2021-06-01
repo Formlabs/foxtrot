@@ -3,7 +3,7 @@ use crate::parse::{Id, IResult, Logical, Parse, param};
 use nom::{
     branch::{alt},
     bytes::complete::{tag},
-    character::complete::{alpha1, alphanumeric1, char},
+    character::complete::{alpha0, alphanumeric1, char},
     combinator::{map, recognize},
     multi::{many0},
     sequence::{delimited, pair},
@@ -678,11 +678,6 @@ impl<'a> Parse<'a> for AlternateProductRelationship_<'a> {
 pub struct AmountOfSubstanceMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for AmountOfSubstanceMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> AmountOfSubstanceMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -976,9 +971,10 @@ impl<'a> Parse<'a> for AnnotationOccurrenceRelationship_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct AnnotationPlane_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub styles: Vec<PresentationStyleAssignment<'a>>,
     pub item: RepresentationItem<'a>,
     pub elements: Option<Vec<AnnotationPlaneElement<'a>>>,
@@ -988,12 +984,13 @@ pub type AnnotationPlane<'a> = Id<AnnotationPlane_<'a>>;
 impl<'a> Parse<'a> for AnnotationPlane_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("ANNOTATION_PLANE(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, styles) = param::<Vec<PresentationStyleAssignment<'a>>>(false, s)?;
         let (s, item) = param::<RepresentationItem<'a>>(false, s)?;
         let (s, elements) = param::<Option<Vec<AnnotationPlaneElement<'a>>>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             styles,
             item,
             elements,
@@ -2057,11 +2054,6 @@ impl<'a> Parse<'a> for AreaInSet_<'a> {
 pub struct AreaMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for AreaMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> AreaMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -2403,8 +2395,8 @@ pub enum AttributeType<'a> { // select
 impl<'a> Parse<'a> for AttributeType<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<Label<'a>>::parse, |r| AttributeType::Label(r)),
-            map(<Text<'a>>::parse, |r| AttributeType::Text(r)),
+            map(delimited(tag("LABEL("), <Label<'a>>::parse, char(')')), |r| AttributeType::Label(r)),
+            map(delimited(tag("TEXT("), <Text<'a>>::parse, char(')')), |r| AttributeType::Text(r)),
         ))(s)
     }
 }
@@ -3155,9 +3147,10 @@ impl<'a> Parse<'a> for BoundedCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct BoundedPcurve_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub basis_surface: Surface<'a>,
     pub reference_to_curve: DefinitionalRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -3166,11 +3159,12 @@ pub type BoundedPcurve<'a> = Id<BoundedPcurve_<'a>>;
 impl<'a> Parse<'a> for BoundedPcurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("BOUNDED_PCURVE(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, basis_surface) = param::<Surface<'a>>(false, s)?;
         let (s, reference_to_curve) = param::<DefinitionalRepresentation<'a>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             basis_surface,
             reference_to_curve,
             _marker: std::marker::PhantomData}))
@@ -3191,9 +3185,10 @@ impl<'a> Parse<'a> for BoundedSurface_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct BoundedSurfaceCurve_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub curve_3d: Curve<'a>,
     pub associated_geometry: Vec<PcurveOrSurface<'a>>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
@@ -3203,12 +3198,13 @@ pub type BoundedSurfaceCurve<'a> = Id<BoundedSurfaceCurve_<'a>>;
 impl<'a> Parse<'a> for BoundedSurfaceCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("BOUNDED_SURFACE_CURVE(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, curve_3d) = param::<Curve<'a>>(false, s)?;
         let (s, associated_geometry) = param::<Vec<PcurveOrSurface<'a>>>(false, s)?;
         let (s, master_representation) = param::<PreferredSurfaceCurveRepresentation<'a>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             curve_3d,
             associated_geometry,
             master_representation,
@@ -3226,10 +3222,10 @@ pub enum BoxCharacteristicSelect<'a> { // select
 impl<'a> Parse<'a> for BoxCharacteristicSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<BoxHeight<'a>>::parse, |r| BoxCharacteristicSelect::BoxHeight(r)),
-            map(<BoxWidth<'a>>::parse, |r| BoxCharacteristicSelect::BoxWidth(r)),
-            map(<BoxSlantAngle<'a>>::parse, |r| BoxCharacteristicSelect::BoxSlantAngle(r)),
-            map(<BoxRotateAngle<'a>>::parse, |r| BoxCharacteristicSelect::BoxRotateAngle(r)),
+            map(delimited(tag("BOX_HEIGHT("), <BoxHeight<'a>>::parse, char(')')), |r| BoxCharacteristicSelect::BoxHeight(r)),
+            map(delimited(tag("BOX_WIDTH("), <BoxWidth<'a>>::parse, char(')')), |r| BoxCharacteristicSelect::BoxWidth(r)),
+            map(delimited(tag("BOX_SLANT_ANGLE("), <BoxSlantAngle<'a>>::parse, char(')')), |r| BoxCharacteristicSelect::BoxSlantAngle(r)),
+            map(delimited(tag("BOX_ROTATE_ANGLE("), <BoxRotateAngle<'a>>::parse, char(')')), |r| BoxCharacteristicSelect::BoxRotateAngle(r)),
         ))(s)
     }
 }
@@ -3262,12 +3258,7 @@ impl<'a> Parse<'a> for BoxDomain_<'a> {
 pub struct BoxHeight<'a>(pub PositiveRatioMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for BoxHeight<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("BOX_HEIGHT("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> BoxHeight<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(PositiveRatioMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(PositiveRatioMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 
@@ -3275,12 +3266,7 @@ impl<'a> BoxHeight<'a> {
 pub struct BoxRotateAngle<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for BoxRotateAngle<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("BOX_ROTATE_ANGLE("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> BoxRotateAngle<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(PlaneAngleMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(PlaneAngleMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 
@@ -3288,12 +3274,7 @@ impl<'a> BoxRotateAngle<'a> {
 pub struct BoxSlantAngle<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for BoxSlantAngle<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("BOX_SLANT_ANGLE("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> BoxSlantAngle<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(PlaneAngleMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(PlaneAngleMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 
@@ -3301,12 +3282,7 @@ impl<'a> BoxSlantAngle<'a> {
 pub struct BoxWidth<'a>(pub PositiveRatioMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for BoxWidth<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("BOX_WIDTH("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> BoxWidth<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(PositiveRatioMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(PositiveRatioMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 #[derive(Debug)]
@@ -3558,7 +3534,7 @@ impl<'a> Parse<'a> for CartesianPoint_<'a> {
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct CartesianTransformationOperator_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub functionally_defined_transformation__name: Label<'a>,
     pub description: Option<Text<'a>>,
     pub axis1: Option<Direction<'a>>,
@@ -3571,7 +3547,8 @@ pub type CartesianTransformationOperator<'a> = Id<CartesianTransformationOperato
 impl<'a> Parse<'a> for CartesianTransformationOperator_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("CARTESIAN_TRANSFORMATION_OPERATOR(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, functionally_defined_transformation__name) = param::<Label<'a>>(false, s)?;
         let (s, description) = param::<Option<Text<'a>>>(false, s)?;
@@ -3580,7 +3557,7 @@ impl<'a> Parse<'a> for CartesianTransformationOperator_<'a> {
         let (s, local_origin) = param::<CartesianPoint<'a>>(false, s)?;
         let (s, scale) = param::<Option<f64>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             functionally_defined_transformation__name,
             description,
             axis1,
@@ -3593,7 +3570,7 @@ impl<'a> Parse<'a> for CartesianTransformationOperator_<'a> {
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct CartesianTransformationOperator2d_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub functionally_defined_transformation__name: Label<'a>,
     pub description: Option<Text<'a>>,
     pub axis1: Option<Direction<'a>>,
@@ -3606,7 +3583,8 @@ pub type CartesianTransformationOperator2d<'a> = Id<CartesianTransformationOpera
 impl<'a> Parse<'a> for CartesianTransformationOperator2d_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("CARTESIAN_TRANSFORMATION_OPERATOR_2D(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, functionally_defined_transformation__name) = param::<Label<'a>>(false, s)?;
         let (s, description) = param::<Option<Text<'a>>>(false, s)?;
@@ -3615,7 +3593,7 @@ impl<'a> Parse<'a> for CartesianTransformationOperator2d_<'a> {
         let (s, local_origin) = param::<CartesianPoint<'a>>(false, s)?;
         let (s, scale) = param::<Option<f64>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             functionally_defined_transformation__name,
             description,
             axis1,
@@ -3628,7 +3606,7 @@ impl<'a> Parse<'a> for CartesianTransformationOperator2d_<'a> {
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct CartesianTransformationOperator3d_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub functionally_defined_transformation__name: Label<'a>,
     pub description: Option<Text<'a>>,
     pub axis1: Option<Direction<'a>>,
@@ -3642,7 +3620,8 @@ pub type CartesianTransformationOperator3d<'a> = Id<CartesianTransformationOpera
 impl<'a> Parse<'a> for CartesianTransformationOperator3d_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("CARTESIAN_TRANSFORMATION_OPERATOR_3D(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, functionally_defined_transformation__name) = param::<Label<'a>>(false, s)?;
         let (s, description) = param::<Option<Text<'a>>>(false, s)?;
@@ -3652,7 +3631,7 @@ impl<'a> Parse<'a> for CartesianTransformationOperator3d_<'a> {
         let (s, scale) = param::<Option<f64>>(false, s)?;
         let (s, axis3) = param::<Option<Direction<'a>>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             functionally_defined_transformation__name,
             description,
             axis1,
@@ -3677,11 +3656,6 @@ impl<'a> Parse<'a> for CategoryUsageItem<'a> {
 pub struct CelsiusTemperatureMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for CelsiusTemperatureMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> CelsiusTemperatureMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -3897,10 +3871,10 @@ pub enum CharacterSpacingSelect<'a> { // select
 impl<'a> Parse<'a> for CharacterSpacingSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<LengthMeasure<'a>>::parse, |r| CharacterSpacingSelect::LengthMeasure(r)),
-            map(<RatioMeasure<'a>>::parse, |r| CharacterSpacingSelect::RatioMeasure(r)),
+            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), |r| CharacterSpacingSelect::LengthMeasure(r)),
+            map(delimited(tag("RATIO_MEASURE("), <RatioMeasure<'a>>::parse, char(')')), |r| CharacterSpacingSelect::RatioMeasure(r)),
             map(<MeasureWithUnit<'a>>::parse, |r| CharacterSpacingSelect::MeasureWithUnit(r)),
-            map(<DescriptiveMeasure<'a>>::parse, |r| CharacterSpacingSelect::DescriptiveMeasure(r)),
+            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), |r| CharacterSpacingSelect::DescriptiveMeasure(r)),
         ))(s)
     }
 }
@@ -3937,8 +3911,8 @@ impl<'a> Parse<'a> for CharacterizedActionDefinition<'a> {
 pub struct CharacterizedClass_<'a> { // entity
     pub characterized_object__name: Label<'a>,
     pub characterized_object__description: Option<Text<'a>>,
-    pub name: Label<'a>,
-    pub description: Option<Text<'a>>,
+    pub group__name: Label<'a>,
+    pub group__description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CharacterizedClass<'a> = Id<CharacterizedClass_<'a>>;
@@ -3949,13 +3923,15 @@ impl<'a> Parse<'a> for CharacterizedClass_<'a> {
         let (s, characterized_object__name) = param::<Label<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__description) = param::<Option<Text<'a>>>(false, s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
-        let (s, description) = param::<Option<Text<'a>>>(true, s)?;
+        #[allow(non_snake_case)]
+        let (s, group__name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, group__description) = param::<Option<Text<'a>>>(true, s)?;
         Ok((s, Self {
             characterized_object__name,
             characterized_object__description,
-            name,
-            description,
+            group__name,
+            group__description,
             _marker: std::marker::PhantomData}))
     }
 }
@@ -4421,12 +4397,13 @@ impl<'a> Parse<'a> for ColourSpecification_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct CommonDatum_<'a> { // entity
-    pub name: Label<'a>,
-    pub description: Option<Text<'a>>,
-    pub of_shape: ProductDefinitionShape<'a>,
-    pub product_definitional: Logical,
+    pub shape_aspect__name: Label<'a>,
+    pub shape_aspect__description: Option<Text<'a>>,
+    pub shape_aspect__of_shape: ProductDefinitionShape<'a>,
+    pub shape_aspect__product_definitional: Logical,
     pub identification: Identifier<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4434,16 +4411,20 @@ pub type CommonDatum<'a> = Id<CommonDatum_<'a>>;
 impl<'a> Parse<'a> for CommonDatum_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("COMMON_DATUM(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
-        let (s, description) = param::<Option<Text<'a>>>(false, s)?;
-        let (s, of_shape) = param::<ProductDefinitionShape<'a>>(false, s)?;
-        let (s, product_definitional) = param::<Logical>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, shape_aspect__name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, shape_aspect__description) = param::<Option<Text<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, shape_aspect__of_shape) = param::<ProductDefinitionShape<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, shape_aspect__product_definitional) = param::<Logical>(false, s)?;
         let (s, identification) = param::<Identifier<'a>>(true, s)?;
         Ok((s, Self {
-            name,
-            description,
-            of_shape,
-            product_definitional,
+            shape_aspect__name,
+            shape_aspect__description,
+            shape_aspect__of_shape,
+            shape_aspect__product_definitional,
             identification,
             _marker: std::marker::PhantomData}))
     }
@@ -4766,8 +4747,8 @@ pub enum CompoundItemDefinition<'a> { // select
 impl<'a> Parse<'a> for CompoundItemDefinition<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<Vec<RepresentationItem<'a>>>::parse, |r| CompoundItemDefinition::ListRepresentationItem(r)),
-            map(<Vec<RepresentationItem<'a>>>::parse, |r| CompoundItemDefinition::SetRepresentationItem(r)),
+            map(delimited(tag("LIST_REPRESENTATION_ITEM("), <Vec<RepresentationItem<'a>>>::parse, char(')')), |r| CompoundItemDefinition::ListRepresentationItem(r)),
+            map(delimited(tag("SET_REPRESENTATION_ITEM("), <Vec<RepresentationItem<'a>>>::parse, char(')')), |r| CompoundItemDefinition::SetRepresentationItem(r)),
         ))(s)
     }
 }
@@ -5348,11 +5329,6 @@ impl<'a> Parse<'a> for ContextDependentInvisibility_<'a> {
 pub struct ContextDependentMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for ContextDependentMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> ContextDependentMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -5545,11 +5521,6 @@ impl<'a> Parse<'a> for CosFunction_<'a> {
 pub struct CountMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for CountMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> CountMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -5866,23 +5837,13 @@ impl<'a> Parse<'a> for CurveSweptSolidShapeRepresentation_<'a> {
 pub struct CurveToleranceDeviation<'a>(pub PositiveLengthMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for CurveToleranceDeviation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("CURVE_TOLERANCE_DEVIATION("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> CurveToleranceDeviation<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(PositiveLengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(PositiveLengthMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 #[derive(Debug)]
 pub struct CurveToleranceParameter<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for CurveToleranceParameter<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> CurveToleranceParameter<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -6545,11 +6506,6 @@ impl<'a> Parse<'a> for DatumTargetCallout_<'a> {
 pub struct DayInMonthNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for DayInMonthNumber<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> DayInMonthNumber<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -6887,11 +6843,6 @@ impl<'a> Parse<'a> for DescriptionAttributeSelect<'a> {
 pub struct DescriptiveMeasure<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for DescriptiveMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> DescriptiveMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -7001,11 +6952,6 @@ impl<'a> Parse<'a> for DimensionCalloutRelationship_<'a> {
 pub struct DimensionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for DimensionCount<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> DimensionCount<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -7132,9 +7078,10 @@ impl<'a> Parse<'a> for DimensionRelatedToleranceZoneElement_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct DimensionTextAssociativity_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub literal: PresentableText<'a>,
     pub placement: Axis2Placement<'a>,
     pub alignment: TextAlignment<'a>,
@@ -7148,7 +7095,8 @@ pub type DimensionTextAssociativity<'a> = Id<DimensionTextAssociativity_<'a>>;
 impl<'a> Parse<'a> for DimensionTextAssociativity_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("DIMENSION_TEXT_ASSOCIATIVITY(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, literal) = param::<PresentableText<'a>>(false, s)?;
         let (s, placement) = param::<Axis2Placement<'a>>(false, s)?;
         let (s, alignment) = param::<TextAlignment<'a>>(false, s)?;
@@ -7157,7 +7105,7 @@ impl<'a> Parse<'a> for DimensionTextAssociativity_<'a> {
         let (s, mapping_source) = param::<RepresentationMap<'a>>(false, s)?;
         let (s, mapping_target) = param::<RepresentationItem<'a>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             literal,
             placement,
             alignment,
@@ -7422,8 +7370,8 @@ pub enum DirectionCountSelect<'a> { // select
 impl<'a> Parse<'a> for DirectionCountSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<UDirectionCount<'a>>::parse, |r| DirectionCountSelect::UDirectionCount(r)),
-            map(<VDirectionCount<'a>>::parse, |r| DirectionCountSelect::VDirectionCount(r)),
+            map(delimited(tag("U_DIRECTION_COUNT("), <UDirectionCount<'a>>::parse, char(')')), |r| DirectionCountSelect::UDirectionCount(r)),
+            map(delimited(tag("V_DIRECTION_COUNT("), <VDirectionCount<'a>>::parse, char(')')), |r| DirectionCountSelect::VDirectionCount(r)),
         ))(s)
     }
 }
@@ -8314,9 +8262,10 @@ impl<'a> Parse<'a> for EdgeBasedWireframeShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct EdgeCurve_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub edge_start: Vertex<'a>,
     pub edge_end: Vertex<'a>,
     pub edge_geometry: Curve<'a>,
@@ -8327,13 +8276,14 @@ pub type EdgeCurve<'a> = Id<EdgeCurve_<'a>>;
 impl<'a> Parse<'a> for EdgeCurve_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("EDGE_CURVE(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, edge_start) = param::<Vertex<'a>>(false, s)?;
         let (s, edge_end) = param::<Vertex<'a>>(false, s)?;
         let (s, edge_geometry) = param::<Curve<'a>>(false, s)?;
         let (s, same_sense) = param::<bool>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             edge_start,
             edge_end,
             edge_geometry,
@@ -8341,9 +8291,10 @@ impl<'a> Parse<'a> for EdgeCurve_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct EdgeLoop_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub edge_list: Vec<OrientedEdge<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -8351,10 +8302,11 @@ pub type EdgeLoop<'a> = Id<EdgeLoop_<'a>>;
 impl<'a> Parse<'a> for EdgeLoop_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("EDGE_LOOP(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, edge_list) = param::<Vec<OrientedEdge<'a>>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             edge_list,
             _marker: std::marker::PhantomData}))
     }
@@ -8558,11 +8510,6 @@ impl<'a> Parse<'a> for EffectivityRelationship_<'a> {
 pub struct ElectricCurrentMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for ElectricCurrentMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> ElectricCurrentMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -9504,9 +9451,10 @@ impl<'a> Parse<'a> for FaceShapeRepresentation_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct FaceSurface_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub bounds: Vec<FaceBound<'a>>,
     pub face_geometry: Surface<'a>,
     pub same_sense: bool,
@@ -9516,12 +9464,13 @@ pub type FaceSurface<'a> = Id<FaceSurface_<'a>>;
 impl<'a> Parse<'a> for FaceSurface_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("FACE_SURFACE(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, bounds) = param::<Vec<FaceBound<'a>>>(false, s)?;
         let (s, face_geometry) = param::<Surface<'a>>(false, s)?;
         let (s, same_sense) = param::<bool>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             bounds,
             face_geometry,
             same_sense,
@@ -10849,11 +10798,6 @@ impl<'a> Parse<'a> for HomokineticPair_<'a> {
 pub struct HourInDay<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for HourInDay<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> HourInDay<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -11048,11 +10992,6 @@ impl<'a> Parse<'a> for IdentificationRole_<'a> {
 pub struct Identifier<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for Identifier<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> Identifier<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -11120,8 +11059,8 @@ pub struct InstancedFeature_<'a> { // entity
     pub shape_aspect__description: Option<Text<'a>>,
     pub of_shape: ProductDefinitionShape<'a>,
     pub product_definitional: Logical,
-    pub name: Label<'a>,
-    pub description: Option<Text<'a>>,
+    pub characterized_object__name: Label<'a>,
+    pub characterized_object__description: Option<Text<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type InstancedFeature<'a> = Id<InstancedFeature_<'a>>;
@@ -11134,15 +11073,17 @@ impl<'a> Parse<'a> for InstancedFeature_<'a> {
         let (s, shape_aspect__description) = param::<Option<Text<'a>>>(false, s)?;
         let (s, of_shape) = param::<ProductDefinitionShape<'a>>(false, s)?;
         let (s, product_definitional) = param::<Logical>(false, s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
-        let (s, description) = param::<Option<Text<'a>>>(true, s)?;
+        #[allow(non_snake_case)]
+        let (s, characterized_object__name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, characterized_object__description) = param::<Option<Text<'a>>>(true, s)?;
         Ok((s, Self {
             shape_aspect__name,
             shape_aspect__description,
             of_shape,
             product_definitional,
-            name,
-            description,
+            characterized_object__name,
+            characterized_object__description,
             _marker: std::marker::PhantomData}))
     }
 }
@@ -11542,7 +11483,7 @@ impl<'a> Parse<'a> for KinematicFrameBackgroundRepresentationAssociation_<'a> {
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct KinematicFrameBasedTransformation_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub functionally_defined_transformation__name: Label<'a>,
     pub description: Option<Text<'a>>,
     pub transformator: RigidPlacement<'a>,
@@ -11552,13 +11493,14 @@ pub type KinematicFrameBasedTransformation<'a> = Id<KinematicFrameBasedTransform
 impl<'a> Parse<'a> for KinematicFrameBasedTransformation_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("KINEMATIC_FRAME_BASED_TRANSFORMATION(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, functionally_defined_transformation__name) = param::<Label<'a>>(false, s)?;
         let (s, description) = param::<Option<Text<'a>>>(false, s)?;
         let (s, transformator) = param::<RigidPlacement<'a>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             functionally_defined_transformation__name,
             description,
             transformator,
@@ -11833,11 +11775,6 @@ impl<'a> Parse<'a> for KnownSource_<'a> {
 pub struct Label<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for Label<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> Label<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -12004,11 +11941,6 @@ impl<'a> Parse<'a> for LengthFunction_<'a> {
 pub struct LengthMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for LengthMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> LengthMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -12461,11 +12393,6 @@ impl<'a> Parse<'a> for LotEffectivity_<'a> {
 pub struct LuminousIntensityMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for LuminousIntensityMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> LuminousIntensityMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -12628,7 +12555,7 @@ pub enum MarkerSelect<'a> { // select
 impl<'a> Parse<'a> for MarkerSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<MarkerType<'a>>::parse, |r| MarkerSelect::MarkerType(r)),
+            map(delimited(tag("MARKER_TYPE("), <MarkerType<'a>>::parse, char(')')), |r| MarkerSelect::MarkerType(r)),
             map(<PreDefinedMarker<'a>>::parse, |r| MarkerSelect::PreDefinedMarker(r)),
         ))(s)
     }
@@ -12662,11 +12589,6 @@ impl<'a> Parse<'a> for MarkerType<'a> {
 pub struct MassMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for MassMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> MassMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -12876,29 +12798,29 @@ pub enum MeasureValue<'a> { // select
 impl<'a> Parse<'a> for MeasureValue<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<AmountOfSubstanceMeasure<'a>>::parse, |r| MeasureValue::AmountOfSubstanceMeasure(r)),
-            map(<AreaMeasure<'a>>::parse, |r| MeasureValue::AreaMeasure(r)),
-            map(<CelsiusTemperatureMeasure<'a>>::parse, |r| MeasureValue::CelsiusTemperatureMeasure(r)),
-            map(<ContextDependentMeasure<'a>>::parse, |r| MeasureValue::ContextDependentMeasure(r)),
-            map(<CountMeasure<'a>>::parse, |r| MeasureValue::CountMeasure(r)),
-            map(<DescriptiveMeasure<'a>>::parse, |r| MeasureValue::DescriptiveMeasure(r)),
-            map(<ElectricCurrentMeasure<'a>>::parse, |r| MeasureValue::ElectricCurrentMeasure(r)),
-            map(<LengthMeasure<'a>>::parse, |r| MeasureValue::LengthMeasure(r)),
-            map(<LuminousIntensityMeasure<'a>>::parse, |r| MeasureValue::LuminousIntensityMeasure(r)),
-            map(<MassMeasure<'a>>::parse, |r| MeasureValue::MassMeasure(r)),
-            map(<NumericMeasure<'a>>::parse, |r| MeasureValue::NumericMeasure(r)),
-            map(<NonNegativeLengthMeasure<'a>>::parse, |r| MeasureValue::NonNegativeLengthMeasure(r)),
-            map(<ParameterValue<'a>>::parse, |r| MeasureValue::ParameterValue(r)),
-            map(<PlaneAngleMeasure<'a>>::parse, |r| MeasureValue::PlaneAngleMeasure(r)),
-            map(<PositiveLengthMeasure<'a>>::parse, |r| MeasureValue::PositiveLengthMeasure(r)),
-            map(<PositivePlaneAngleMeasure<'a>>::parse, |r| MeasureValue::PositivePlaneAngleMeasure(r)),
-            map(<PositiveRatioMeasure<'a>>::parse, |r| MeasureValue::PositiveRatioMeasure(r)),
-            map(<RatioMeasure<'a>>::parse, |r| MeasureValue::RatioMeasure(r)),
-            map(<SolidAngleMeasure<'a>>::parse, |r| MeasureValue::SolidAngleMeasure(r)),
+            map(delimited(tag("AMOUNT_OF_SUBSTANCE_MEASURE("), <AmountOfSubstanceMeasure<'a>>::parse, char(')')), |r| MeasureValue::AmountOfSubstanceMeasure(r)),
+            map(delimited(tag("AREA_MEASURE("), <AreaMeasure<'a>>::parse, char(')')), |r| MeasureValue::AreaMeasure(r)),
+            map(delimited(tag("CELSIUS_TEMPERATURE_MEASURE("), <CelsiusTemperatureMeasure<'a>>::parse, char(')')), |r| MeasureValue::CelsiusTemperatureMeasure(r)),
+            map(delimited(tag("CONTEXT_DEPENDENT_MEASURE("), <ContextDependentMeasure<'a>>::parse, char(')')), |r| MeasureValue::ContextDependentMeasure(r)),
+            map(delimited(tag("COUNT_MEASURE("), <CountMeasure<'a>>::parse, char(')')), |r| MeasureValue::CountMeasure(r)),
+            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), |r| MeasureValue::DescriptiveMeasure(r)),
+            map(delimited(tag("ELECTRIC_CURRENT_MEASURE("), <ElectricCurrentMeasure<'a>>::parse, char(')')), |r| MeasureValue::ElectricCurrentMeasure(r)),
+            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), |r| MeasureValue::LengthMeasure(r)),
+            map(delimited(tag("LUMINOUS_INTENSITY_MEASURE("), <LuminousIntensityMeasure<'a>>::parse, char(')')), |r| MeasureValue::LuminousIntensityMeasure(r)),
+            map(delimited(tag("MASS_MEASURE("), <MassMeasure<'a>>::parse, char(')')), |r| MeasureValue::MassMeasure(r)),
+            map(delimited(tag("NUMERIC_MEASURE("), <NumericMeasure<'a>>::parse, char(')')), |r| MeasureValue::NumericMeasure(r)),
+            map(delimited(tag("NON_NEGATIVE_LENGTH_MEASURE("), <NonNegativeLengthMeasure<'a>>::parse, char(')')), |r| MeasureValue::NonNegativeLengthMeasure(r)),
+            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), |r| MeasureValue::ParameterValue(r)),
+            map(delimited(tag("PLANE_ANGLE_MEASURE("), <PlaneAngleMeasure<'a>>::parse, char(')')), |r| MeasureValue::PlaneAngleMeasure(r)),
+            map(delimited(tag("POSITIVE_LENGTH_MEASURE("), <PositiveLengthMeasure<'a>>::parse, char(')')), |r| MeasureValue::PositiveLengthMeasure(r)),
+            map(delimited(tag("POSITIVE_PLANE_ANGLE_MEASURE("), <PositivePlaneAngleMeasure<'a>>::parse, char(')')), |r| MeasureValue::PositivePlaneAngleMeasure(r)),
+            map(delimited(tag("POSITIVE_RATIO_MEASURE("), <PositiveRatioMeasure<'a>>::parse, char(')')), |r| MeasureValue::PositiveRatioMeasure(r)),
+            map(delimited(tag("RATIO_MEASURE("), <RatioMeasure<'a>>::parse, char(')')), |r| MeasureValue::RatioMeasure(r)),
+            map(delimited(tag("SOLID_ANGLE_MEASURE("), <SolidAngleMeasure<'a>>::parse, char(')')), |r| MeasureValue::SolidAngleMeasure(r)),
         alt((
-            map(<ThermodynamicTemperatureMeasure<'a>>::parse, |r| MeasureValue::ThermodynamicTemperatureMeasure(r)),
-            map(<TimeMeasure<'a>>::parse, |r| MeasureValue::TimeMeasure(r)),
-            map(<VolumeMeasure<'a>>::parse, |r| MeasureValue::VolumeMeasure(r)),
+            map(delimited(tag("THERMODYNAMIC_TEMPERATURE_MEASURE("), <ThermodynamicTemperatureMeasure<'a>>::parse, char(')')), |r| MeasureValue::ThermodynamicTemperatureMeasure(r)),
+            map(delimited(tag("TIME_MEASURE("), <TimeMeasure<'a>>::parse, char(')')), |r| MeasureValue::TimeMeasure(r)),
+            map(delimited(tag("VOLUME_MEASURE("), <VolumeMeasure<'a>>::parse, char(')')), |r| MeasureValue::VolumeMeasure(r)),
         ))))(s)
     }
 }
@@ -12988,7 +12910,6 @@ pub struct MechanismBasePlacement_<'a> { // entity
     pub name: Label<'a>,
     pub description: Option<Text<'a>>,
     pub rep_1: Representation<'a>,
-    pub rep_2: Representation<'a>,
     pub transformation_operator: Transformation<'a>,
     pub base_of_mechanism: Mechanism<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -13000,14 +12921,13 @@ impl<'a> Parse<'a> for MechanismBasePlacement_<'a> {
         let (s, name) = param::<Label<'a>>(false, s)?;
         let (s, description) = param::<Option<Text<'a>>>(false, s)?;
         let (s, rep_1) = param::<Representation<'a>>(false, s)?;
-        let (s, rep_2) = param::<Representation<'a>>(false, s)?;
+        let (s, _) = tag("*,")(s)?;
         let (s, transformation_operator) = param::<Transformation<'a>>(false, s)?;
         let (s, base_of_mechanism) = param::<Mechanism<'a>>(true, s)?;
         Ok((s, Self {
             name,
             description,
             rep_1,
-            rep_2,
             transformation_operator,
             base_of_mechanism,
             _marker: std::marker::PhantomData}))
@@ -13062,11 +12982,6 @@ impl<'a> Parse<'a> for MinusFunction_<'a> {
 pub struct MinuteInHour<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for MinuteInHour<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> MinuteInHour<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -13155,11 +13070,6 @@ impl<'a> Parse<'a> for MomentsOfInertiaRepresentation_<'a> {
 pub struct MonthInYearNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for MonthInYearNumber<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> MonthInYearNumber<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -13199,7 +13109,7 @@ pub enum MotionParameterMeasure<'a> { // select
 impl<'a> Parse<'a> for MotionParameterMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<ParameterValue<'a>>::parse, |r| MotionParameterMeasure::ParameterValue(r)),
+            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), |r| MotionParameterMeasure::ParameterValue(r)),
             map(<MeasureWithUnit<'a>>::parse, |r| MotionParameterMeasure::MeasureWithUnit(r)),
         ))(s)
     }
@@ -13643,12 +13553,7 @@ impl<'a> Parse<'a> for NonManifoldSurfaceShapeRepresentation_<'a> {
 pub struct NonNegativeLengthMeasure<'a>(pub LengthMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for NonNegativeLengthMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("NON_NEGATIVE_LENGTH_MEASURE("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> NonNegativeLengthMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(LengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(LengthMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 #[derive(Debug)]
@@ -13705,11 +13610,6 @@ impl<'a> Parse<'a> for NumericExpression_<'a> {
 pub struct NumericMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for NumericMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> NumericMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -14290,7 +14190,6 @@ impl<'a> Parse<'a> for OrganizationalProjectRole_<'a> {
 #[derive(Debug)]
 pub struct OrientedClosedShell_<'a> { // entity
     pub name: Label<'a>,
-    pub cfs_faces: Vec<Face<'a>>,
     pub closed_shell_element: ClosedShell<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -14300,12 +14199,11 @@ impl<'a> Parse<'a> for OrientedClosedShell_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("ORIENTED_CLOSED_SHELL(")(s)?;
         let (s, name) = param::<Label<'a>>(false, s)?;
-        let (s, cfs_faces) = param::<Vec<Face<'a>>>(false, s)?;
+        let (s, _) = tag("*,")(s)?;
         let (s, closed_shell_element) = param::<ClosedShell<'a>>(false, s)?;
         let (s, orientation) = param::<bool>(true, s)?;
         Ok((s, Self {
             name,
-            cfs_faces,
             closed_shell_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -14359,7 +14257,6 @@ impl<'a> Parse<'a> for OrientedFace_<'a> {
 #[derive(Debug)]
 pub struct OrientedOpenShell_<'a> { // entity
     pub name: Label<'a>,
-    pub cfs_faces: Vec<Face<'a>>,
     pub open_shell_element: OpenShell<'a>,
     pub orientation: bool,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -14369,12 +14266,11 @@ impl<'a> Parse<'a> for OrientedOpenShell_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("ORIENTED_OPEN_SHELL(")(s)?;
         let (s, name) = param::<Label<'a>>(false, s)?;
-        let (s, cfs_faces) = param::<Vec<Face<'a>>>(false, s)?;
+        let (s, _) = tag("*,")(s)?;
         let (s, open_shell_element) = param::<OpenShell<'a>>(false, s)?;
         let (s, orientation) = param::<bool>(true, s)?;
         Ok((s, Self {
             name,
-            cfs_faces,
             open_shell_element,
             orientation,
             _marker: std::marker::PhantomData}))
@@ -14598,11 +14494,6 @@ impl<'a> Parse<'a> for ParallelismTolerance_<'a> {
 pub struct ParameterValue<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for ParameterValue<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> ParameterValue<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -14896,18 +14787,18 @@ impl<'a> Parse<'a> for PersonAndOrganization_<'a> {
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct PersonAndOrganizationAddress_<'a> { // entity
-    pub internal_location: Option<Label<'a>>,
-    pub street_number: Option<Label<'a>>,
-    pub street: Option<Label<'a>>,
-    pub postal_box: Option<Label<'a>>,
-    pub town: Option<Label<'a>>,
-    pub region: Option<Label<'a>>,
-    pub postal_code: Option<Label<'a>>,
-    pub country: Option<Label<'a>>,
-    pub facsimile_number: Option<Label<'a>>,
-    pub telephone_number: Option<Label<'a>>,
-    pub electronic_mail_address: Option<Label<'a>>,
-    pub telex_number: Option<Label<'a>>,
+    pub address__internal_location: Option<Label<'a>>,
+    pub address__street_number: Option<Label<'a>>,
+    pub address__street: Option<Label<'a>>,
+    pub address__postal_box: Option<Label<'a>>,
+    pub address__town: Option<Label<'a>>,
+    pub address__region: Option<Label<'a>>,
+    pub address__postal_code: Option<Label<'a>>,
+    pub address__country: Option<Label<'a>>,
+    pub address__facsimile_number: Option<Label<'a>>,
+    pub address__telephone_number: Option<Label<'a>>,
+    pub address__electronic_mail_address: Option<Label<'a>>,
+    pub address__telex_number: Option<Label<'a>>,
     pub organizations: Vec<Organization<'a>>,
     pub organizational_address__description: Option<Text<'a>>,
     pub people: Vec<Person<'a>>,
@@ -14918,18 +14809,30 @@ pub type PersonAndOrganizationAddress<'a> = Id<PersonAndOrganizationAddress_<'a>
 impl<'a> Parse<'a> for PersonAndOrganizationAddress_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("PERSON_AND_ORGANIZATION_ADDRESS(")(s)?;
-        let (s, internal_location) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, street_number) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, street) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, postal_box) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, town) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, region) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, postal_code) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, country) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, facsimile_number) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, telephone_number) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, electronic_mail_address) = param::<Option<Label<'a>>>(false, s)?;
-        let (s, telex_number) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__internal_location) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__street_number) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__street) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__postal_box) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__town) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__region) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__postal_code) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__country) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__facsimile_number) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__telephone_number) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__electronic_mail_address) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, address__telex_number) = param::<Option<Label<'a>>>(false, s)?;
         let (s, organizations) = param::<Vec<Organization<'a>>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, organizational_address__description) = param::<Option<Text<'a>>>(false, s)?;
@@ -14937,18 +14840,18 @@ impl<'a> Parse<'a> for PersonAndOrganizationAddress_<'a> {
         #[allow(non_snake_case)]
         let (s, personal_address__description) = param::<Option<Text<'a>>>(true, s)?;
         Ok((s, Self {
-            internal_location,
-            street_number,
-            street,
-            postal_box,
-            town,
-            region,
-            postal_code,
-            country,
-            facsimile_number,
-            telephone_number,
-            electronic_mail_address,
-            telex_number,
+            address__internal_location,
+            address__street_number,
+            address__street,
+            address__postal_box,
+            address__town,
+            address__region,
+            address__postal_code,
+            address__country,
+            address__facsimile_number,
+            address__telephone_number,
+            address__electronic_mail_address,
+            address__telex_number,
             organizations,
             organizational_address__description,
             people,
@@ -15502,11 +15405,6 @@ impl<'a> Parse<'a> for Plane_<'a> {
 pub struct PlaneAngleMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for PlaneAngleMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> PlaneAngleMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -15935,9 +15833,10 @@ impl<'a> Parse<'a> for PointStyle_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct PolyLoop_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub polygon: Vec<CartesianPoint<'a>>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -15945,10 +15844,11 @@ pub type PolyLoop<'a> = Id<PolyLoop_<'a>>;
 impl<'a> Parse<'a> for PolyLoop_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("POLY_LOOP(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, polygon) = param::<Vec<CartesianPoint<'a>>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             polygon,
             _marker: std::marker::PhantomData}))
     }
@@ -16000,12 +15900,7 @@ impl<'a> Parse<'a> for PositionTolerance_<'a> {
 pub struct PositiveLengthMeasure<'a>(pub NonNegativeLengthMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for PositiveLengthMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("POSITIVE_LENGTH_MEASURE("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> PositiveLengthMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(NonNegativeLengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(NonNegativeLengthMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 
@@ -16013,12 +15908,7 @@ impl<'a> PositiveLengthMeasure<'a> {
 pub struct PositivePlaneAngleMeasure<'a>(pub PlaneAngleMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for PositivePlaneAngleMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("POSITIVE_PLANE_ANGLE_MEASURE("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> PositivePlaneAngleMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(PlaneAngleMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(PlaneAngleMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 
@@ -16026,12 +15916,7 @@ impl<'a> PositivePlaneAngleMeasure<'a> {
 pub struct PositiveRatioMeasure<'a>(pub RatioMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for PositiveRatioMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("POSITIVE_RATIO_MEASURE("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> PositiveRatioMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(RatioMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(RatioMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 #[derive(Debug)]
@@ -16139,18 +16024,20 @@ impl<'a> Parse<'a> for PreDefinedMarker_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct PreDefinedPointMarkerSymbol_<'a> { // entity
-    pub name: Label<'a>,
+    pub pre_defined_item__name: Label<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PreDefinedPointMarkerSymbol<'a> = Id<PreDefinedPointMarkerSymbol_<'a>>;
 impl<'a> Parse<'a> for PreDefinedPointMarkerSymbol_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("PRE_DEFINED_POINT_MARKER_SYMBOL(")(s)?;
-        let (s, name) = param::<Label<'a>>(true, s)?;
+        #[allow(non_snake_case)]
+        let (s, pre_defined_item__name) = param::<Label<'a>>(true, s)?;
         Ok((s, Self {
-            name,
+            pre_defined_item__name,
             _marker: std::marker::PhantomData}))
     }
 }
@@ -16265,11 +16152,6 @@ impl<'a> Parse<'a> for PreferredSurfaceCurveRepresentation<'a> {
 pub struct PresentableText<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for PresentableText<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> PresentableText<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -16455,7 +16337,7 @@ impl<'a> Parse<'a> for PresentationStyleSelect<'a> {
             map(<TextStyle<'a>>::parse, |r| PresentationStyleSelect::TextStyle(r)),
             map(<ApproximationTolerance<'a>>::parse, |r| PresentationStyleSelect::ApproximationTolerance(r)),
             map(<ExternallyDefinedStyle<'a>>::parse, |r| PresentationStyleSelect::ExternallyDefinedStyle(r)),
-            map(<NullStyle<'a>>::parse, |r| PresentationStyleSelect::NullStyle(r)),
+            map(delimited(tag("NULL_STYLE("), <NullStyle<'a>>::parse, char(')')), |r| PresentationStyleSelect::NullStyle(r)),
         ))(s)
     }
 }
@@ -17470,11 +17352,11 @@ impl<'a> Parse<'a> for ProductRelatedProductCategory_<'a> {
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct ProductSpecification_<'a> { // entity
-    pub id: Identifier<'a>,
+    pub configuration_item__id: Identifier<'a>,
     pub configuration_item__name: Label<'a>,
     pub configuration_item__description: Option<Text<'a>>,
-    pub item_concept: ProductConcept<'a>,
-    pub purpose: Option<Label<'a>>,
+    pub configuration_item__item_concept: ProductConcept<'a>,
+    pub configuration_item__purpose: Option<Label<'a>>,
     pub characterized_object__name: Label<'a>,
     pub characterized_object__description: Option<Text<'a>>,
     pub item_concept_feature: Vec<ProductConceptFeatureAssociation<'a>>,
@@ -17484,24 +17366,27 @@ pub type ProductSpecification<'a> = Id<ProductSpecification_<'a>>;
 impl<'a> Parse<'a> for ProductSpecification_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("PRODUCT_SPECIFICATION(")(s)?;
-        let (s, id) = param::<Identifier<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, configuration_item__id) = param::<Identifier<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, configuration_item__name) = param::<Label<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, configuration_item__description) = param::<Option<Text<'a>>>(false, s)?;
-        let (s, item_concept) = param::<ProductConcept<'a>>(false, s)?;
-        let (s, purpose) = param::<Option<Label<'a>>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, configuration_item__item_concept) = param::<ProductConcept<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, configuration_item__purpose) = param::<Option<Label<'a>>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__name) = param::<Label<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, characterized_object__description) = param::<Option<Text<'a>>>(false, s)?;
         let (s, item_concept_feature) = param::<Vec<ProductConceptFeatureAssociation<'a>>>(true, s)?;
         Ok((s, Self {
-            id,
+            configuration_item__id,
             configuration_item__name,
             configuration_item__description,
-            item_concept,
-            purpose,
+            configuration_item__item_concept,
+            configuration_item__purpose,
             characterized_object__name,
             characterized_object__description,
             item_concept_feature,
@@ -17931,11 +17816,6 @@ impl<'a> Parse<'a> for RadiusDimension_<'a> {
 pub struct RatioMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for RatioMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> RatioMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -18602,8 +18482,8 @@ impl<'a> Parse<'a> for ReversibleTopology<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
             map(<ReversibleTopologyItem<'a>>::parse, |r| ReversibleTopology::ReversibleTopologyItem(r)),
-            map(<Vec<ReversibleTopologyItem<'a>>>::parse, |r| ReversibleTopology::ListOfReversibleTopologyItem(r)),
-            map(<Vec<ReversibleTopologyItem<'a>>>::parse, |r| ReversibleTopology::SetOfReversibleTopologyItem(r)),
+            map(delimited(tag("LIST_OF_REVERSIBLE_TOPOLOGY_ITEM("), <Vec<ReversibleTopologyItem<'a>>>::parse, char(')')), |r| ReversibleTopology::ListOfReversibleTopologyItem(r)),
+            map(delimited(tag("SET_OF_REVERSIBLE_TOPOLOGY_ITEM("), <Vec<ReversibleTopologyItem<'a>>>::parse, char(')')), |r| ReversibleTopology::SetOfReversibleTopologyItem(r)),
         ))(s)
     }
 }
@@ -19040,8 +18920,8 @@ pub enum RotationalRangeMeasure<'a> { // select
 impl<'a> Parse<'a> for RotationalRangeMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<PlaneAngleMeasure<'a>>::parse, |r| RotationalRangeMeasure::PlaneAngleMeasure(r)),
-            map(<UnlimitedRange<'a>>::parse, |r| RotationalRangeMeasure::UnlimitedRange(r)),
+            map(delimited(tag("PLANE_ANGLE_MEASURE("), <PlaneAngleMeasure<'a>>::parse, char(')')), |r| RotationalRangeMeasure::PlaneAngleMeasure(r)),
+            map(delimited(tag("UNLIMITED_RANGE("), <UnlimitedRange<'a>>::parse, char(')')), |r| RotationalRangeMeasure::UnlimitedRange(r)),
         ))(s)
     }
 }
@@ -19291,6 +19171,8 @@ impl<'a> Parse<'a> for SeamCurve_<'a> {
 #[derive(Debug)]
 pub struct SeamEdge_<'a> { // entity
     pub name: Label<'a>,
+    pub edge_start: Vertex<'a>,
+    pub edge_end: Vertex<'a>,
     pub edge_element: Edge<'a>,
     pub orientation: bool,
     pub pcurve_reference: Pcurve<'a>,
@@ -19301,13 +19183,15 @@ impl<'a> Parse<'a> for SeamEdge_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("SEAM_EDGE(")(s)?;
         let (s, name) = param::<Label<'a>>(false, s)?;
-        let (s, _) = tag("*,")(s)?;
-        let (s, _) = tag("*,")(s)?;
+        let (s, edge_start) = param::<Vertex<'a>>(false, s)?;
+        let (s, edge_end) = param::<Vertex<'a>>(false, s)?;
         let (s, edge_element) = param::<Edge<'a>>(false, s)?;
         let (s, orientation) = param::<bool>(false, s)?;
         let (s, pcurve_reference) = param::<Pcurve<'a>>(true, s)?;
         Ok((s, Self {
             name,
+            edge_start,
+            edge_end,
             edge_element,
             orientation,
             pcurve_reference,
@@ -19318,11 +19202,6 @@ impl<'a> Parse<'a> for SeamEdge_<'a> {
 pub struct SecondInMinute<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for SecondInMinute<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> SecondInMinute<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -20030,9 +19909,9 @@ pub enum SizeSelect<'a> { // select
 impl<'a> Parse<'a> for SizeSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<PositiveLengthMeasure<'a>>::parse, |r| SizeSelect::PositiveLengthMeasure(r)),
+            map(delimited(tag("POSITIVE_LENGTH_MEASURE("), <PositiveLengthMeasure<'a>>::parse, char(')')), |r| SizeSelect::PositiveLengthMeasure(r)),
             map(<MeasureWithUnit<'a>>::parse, |r| SizeSelect::MeasureWithUnit(r)),
-            map(<DescriptiveMeasure<'a>>::parse, |r| SizeSelect::DescriptiveMeasure(r)),
+            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), |r| SizeSelect::DescriptiveMeasure(r)),
         ))(s)
     }
 }
@@ -20214,11 +20093,6 @@ impl<'a> Parse<'a> for SlotEnd_<'a> {
 pub struct SolidAngleMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for SolidAngleMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> SolidAngleMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -20315,7 +20189,7 @@ pub enum SourceItem<'a> { // select
 }
 impl<'a> Parse<'a> for SourceItem<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<Identifier<'a>>::parse, |r| SourceItem::Identifier(r))(s)
+        map(delimited(tag("IDENTIFIER("), <Identifier<'a>>::parse, char(')')), |r| SourceItem::Identifier(r))(s)
     }
 }
 #[derive(Debug)]
@@ -20327,7 +20201,7 @@ pub enum SpatialRotation<'a> { // select
 impl<'a> Parse<'a> for SpatialRotation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<Vec<PlaneAngleMeasure<'a>>>::parse, |r| SpatialRotation::YprRotation(r)),
+            map(delimited(tag("YPR_ROTATION("), <Vec<PlaneAngleMeasure<'a>>>::parse, char(')')), |r| SpatialRotation::YprRotation(r)),
             map(<RotationAboutDirection<'a>>::parse, |r| SpatialRotation::RotationAboutDirection(r)),
         ))(s)
     }
@@ -21381,23 +21255,13 @@ impl<'a> Parse<'a> for SurfaceTextureRepresentation_<'a> {
 pub struct SurfaceToleranceDeviation<'a>(pub PositiveLengthMeasure<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for SurfaceToleranceDeviation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("SURFACE_TOLERANCE_DEVIATION("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> SurfaceToleranceDeviation<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(PositiveLengthMeasure::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(PositiveLengthMeasure::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 #[derive(Debug)]
 pub struct SurfaceToleranceParameter<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for SurfaceToleranceParameter<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> SurfaceToleranceParameter<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -21778,11 +21642,6 @@ impl<'a> Parse<'a> for TerminatorSymbol_<'a> {
 pub struct Text<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for Text<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> Text<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<&str>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -21791,12 +21650,7 @@ impl<'a> Text<'a> {
 pub struct TextAlignment<'a>(pub Label<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for TextAlignment<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("TEXT_ALIGNMENT("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> TextAlignment<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(Label::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(Label::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 
@@ -21804,12 +21658,7 @@ impl<'a> TextAlignment<'a> {
 pub struct TextDelineation<'a>(pub Label<'a>, std::marker::PhantomData<&'a ()>); // redeclared
 impl<'a> Parse<'a> for TextDelineation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        delimited(tag("TEXT_DELINEATION("), Self::parse_inner, char(')'))(s)
-    }
-}
-impl<'a> TextDelineation<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
-        map(Label::parse_inner, |r| Self(r, std::marker::PhantomData))(s)
+        map(Label::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
 #[derive(Debug)]
@@ -22156,11 +22005,6 @@ impl<'a> Parse<'a> for TextStyleWithSpacing_<'a> {
 pub struct ThermodynamicTemperatureMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for ThermodynamicTemperatureMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> ThermodynamicTemperatureMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -22434,11 +22278,6 @@ impl<'a> Parse<'a> for TimeIntervalWithBounds_<'a> {
 pub struct TimeMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for TimeMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> TimeMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -22484,8 +22323,8 @@ pub enum ToleranceDeviationSelect<'a> { // select
 impl<'a> Parse<'a> for ToleranceDeviationSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<CurveToleranceDeviation<'a>>::parse, |r| ToleranceDeviationSelect::CurveToleranceDeviation(r)),
-            map(<SurfaceToleranceDeviation<'a>>::parse, |r| ToleranceDeviationSelect::SurfaceToleranceDeviation(r)),
+            map(delimited(tag("CURVE_TOLERANCE_DEVIATION("), <CurveToleranceDeviation<'a>>::parse, char(')')), |r| ToleranceDeviationSelect::CurveToleranceDeviation(r)),
+            map(delimited(tag("SURFACE_TOLERANCE_DEVIATION("), <SurfaceToleranceDeviation<'a>>::parse, char(')')), |r| ToleranceDeviationSelect::SurfaceToleranceDeviation(r)),
         ))(s)
     }
 }
@@ -22512,8 +22351,8 @@ pub enum ToleranceParameterSelect<'a> { // select
 impl<'a> Parse<'a> for ToleranceParameterSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<CurveToleranceParameter<'a>>::parse, |r| ToleranceParameterSelect::CurveToleranceParameter(r)),
-            map(<SurfaceToleranceParameter<'a>>::parse, |r| ToleranceParameterSelect::SurfaceToleranceParameter(r)),
+            map(delimited(tag("CURVE_TOLERANCE_PARAMETER("), <CurveToleranceParameter<'a>>::parse, char(')')), |r| ToleranceParameterSelect::CurveToleranceParameter(r)),
+            map(delimited(tag("SURFACE_TOLERANCE_PARAMETER("), <SurfaceToleranceParameter<'a>>::parse, char(')')), |r| ToleranceParameterSelect::SurfaceToleranceParameter(r)),
         ))(s)
     }
 }
@@ -22768,8 +22607,8 @@ pub enum TranslationalRangeMeasure<'a> { // select
 impl<'a> Parse<'a> for TranslationalRangeMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<LengthMeasure<'a>>::parse, |r| TranslationalRangeMeasure::LengthMeasure(r)),
-            map(<UnlimitedRange<'a>>::parse, |r| TranslationalRangeMeasure::UnlimitedRange(r)),
+            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), |r| TranslationalRangeMeasure::LengthMeasure(r)),
+            map(delimited(tag("UNLIMITED_RANGE("), <UnlimitedRange<'a>>::parse, char(')')), |r| TranslationalRangeMeasure::UnlimitedRange(r)),
         ))(s)
     }
 }
@@ -22830,7 +22669,7 @@ impl<'a> Parse<'a> for TrimmingSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
             map(<CartesianPoint<'a>>::parse, |r| TrimmingSelect::CartesianPoint(r)),
-            map(<ParameterValue<'a>>::parse, |r| TrimmingSelect::ParameterValue(r)),
+            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), |r| TrimmingSelect::ParameterValue(r)),
         ))(s)
     }
 }
@@ -22874,11 +22713,6 @@ impl<'a> Parse<'a> for TypeQualifier_<'a> {
 pub struct UDirectionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for UDirectionCount<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> UDirectionCount<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -23226,11 +23060,6 @@ impl<'a> Parse<'a> for UnlimitedRange<'a> {
 pub struct VDirectionCount<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for VDirectionCount<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> VDirectionCount<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -23363,7 +23192,7 @@ impl<'a> Parse<'a> for VectorOrDirection<'a> {
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct VectorStyle_<'a> { // entity
-    pub name: Label<'a>,
+    pub pre_defined_item__name: Label<'a>,
     pub curve_style__name: Label<'a>,
     pub curve_font: CurveFontOrScaledCurveFontSelect<'a>,
     pub curve_width: SizeSelect<'a>,
@@ -23374,14 +23203,15 @@ pub type VectorStyle<'a> = Id<VectorStyle_<'a>>;
 impl<'a> Parse<'a> for VectorStyle_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("VECTOR_STYLE(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, pre_defined_item__name) = param::<Label<'a>>(false, s)?;
         #[allow(non_snake_case)]
         let (s, curve_style__name) = param::<Label<'a>>(false, s)?;
         let (s, curve_font) = param::<CurveFontOrScaledCurveFontSelect<'a>>(false, s)?;
         let (s, curve_width) = param::<SizeSelect<'a>>(false, s)?;
         let (s, curve_colour) = param::<Colour<'a>>(true, s)?;
         Ok((s, Self {
-            name,
+            pre_defined_item__name,
             curve_style__name,
             curve_font,
             curve_width,
@@ -23497,9 +23327,10 @@ impl<'a> Parse<'a> for VertexLoop_<'a> {
             _marker: std::marker::PhantomData}))
     }
 }
+#[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct VertexPoint_<'a> { // entity
-    pub name: Label<'a>,
+    pub representation_item__name: Label<'a>,
     pub vertex_geometry: Point<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -23507,10 +23338,11 @@ pub type VertexPoint<'a> = Id<VertexPoint_<'a>>;
 impl<'a> Parse<'a> for VertexPoint_<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (s, _) = tag("VERTEX_POINT(")(s)?;
-        let (s, name) = param::<Label<'a>>(false, s)?;
+        #[allow(non_snake_case)]
+        let (s, representation_item__name) = param::<Label<'a>>(false, s)?;
         let (s, vertex_geometry) = param::<Point<'a>>(true, s)?;
         Ok((s, Self {
-            name,
+            representation_item__name,
             vertex_geometry,
             _marker: std::marker::PhantomData}))
     }
@@ -23579,11 +23411,6 @@ impl<'a> Parse<'a> for VisualAppearanceRepresentation_<'a> {
 pub struct VolumeMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for VolumeMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> VolumeMeasure<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<f64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -23639,11 +23466,6 @@ impl<'a> Parse<'a> for XorExpression_<'a> {
 pub struct YearNumber<'a>(pub i64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for YearNumber<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        Self::parse_inner(s)
-    }
-}
-impl<'a> YearNumber<'a> {
-    pub fn parse_inner(s: &'a str) -> IResult<'a, Self> {
         map(<i64>::parse, |r| Self(r, std::marker::PhantomData))(s)
     }
 }
@@ -24588,11 +24410,12 @@ pub enum Entity<'a> {
     VolumeMeasureWithUnit(VolumeMeasureWithUnit_<'a>),
     VolumeUnit(VolumeUnit_<'a>),
     XorExpression(XorExpression_<'a>),
+  _ComplexMapping,
 }
 impl<'a> Parse<'a> for Entity<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         let (_, r) = recognize(pair(
-            alt((alpha1, tag("_"))),
+            alt((alpha0, tag("_"))),
             many0(alt((alphanumeric1, tag("_")))),
         ))(s)?;
         match r {
@@ -25511,6 +25334,7 @@ impl<'a> Parse<'a> for Entity<'a> {
             "VOLUME_MEASURE_WITH_UNIT" => map(VolumeMeasureWithUnit_::parse, Entity::VolumeMeasureWithUnit)(s),
             "VOLUME_UNIT" => map(VolumeUnit_::parse, Entity::VolumeUnit)(s),
             "XOR_EXPRESSION" => map(XorExpression_::parse, Entity::XorExpression)(s),
+            "" => Ok((s, Entity::_ComplexMapping)),
             _ => panic!("Invalid case"),
         }
     }
