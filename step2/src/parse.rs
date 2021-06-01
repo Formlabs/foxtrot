@@ -4,7 +4,7 @@ use nom::{
     character::complete::{char, digit1},
     combinator::{map, map_res, opt},
     error::*,
-    sequence::{delimited, preceded, tuple},
+    sequence::{delimited, preceded, terminated, tuple},
     multi::{many0},
 };
 
@@ -26,6 +26,9 @@ fn build_err<'a, U>(s: &'a str, msg: &'static str) -> IResult<'a, U> {
             errors: vec![(s, VerboseErrorKind::Context(msg))]
         }))
 }
+
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub struct Logical(pub Option<bool>);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +58,6 @@ impl Parse<'_> for i64 {
             })(s)
     }
 }
-
 impl<'a> Parse<'a> for &'a str {
     fn parse(s: &'a str) -> IResult<'a, &'a str> {
         delimited(char('"'), is_not("'"), char('"'))(s)
@@ -68,12 +70,19 @@ impl<'a, T: Parse<'a>> Parse<'a> for Vec<T> {
         many0(T::parse)(s)
     }
 }
-impl<'a> Parse<'a> for Option<bool> {
+impl<'a, T: Parse<'a>> Parse<'a> for Option<T> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(tag(".TRUE."), |_| Some(true)),
-            map(tag(".FALSE."), |_| Some(false)),
-            map(tag(".UNKNOWN."), |_| None),
+            map(char('$'), |_| None),
+            map(T::parse, |v| Some(v))))(s)
+    }
+}
+impl<'a> Parse<'a> for Logical {
+    fn parse(s: &'a str) -> IResult<'a, Self> {
+        alt((
+            map(tag(".TRUE."), |_| Logical(Some(true))),
+            map(tag(".FALSE."), |_| Logical(Some(false))),
+            map(tag(".UNKNOWN."), |_| Logical(None)),
         ))(s)
     }
 }
@@ -84,4 +93,10 @@ impl<'a> Parse<'a> for bool {
             map(tag(".FALSE."), |_| false),
         ))(s)
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+pub fn param<'a, T: Parse<'a>>(last: bool, s: &'a str) -> IResult<'a, T> {
+    terminated(T::parse, char(if last { ')'} else { ',' }))(s)
 }
