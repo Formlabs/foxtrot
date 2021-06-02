@@ -6,8 +6,9 @@ edition = "2018"
 
 [dependencies]
 cdt = { path = "../cdt" }
-nalgebra-glm = "0.3"
 nurbs = { path = "../nurbs" }
+step2 = { path = "../step2" }
+nalgebra-glm = "0.3"
 rayon = "1.5"
 
 [dev-dependencies]

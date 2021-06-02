@@ -14,3 +14,4 @@ pub struct Triangle {
 pub mod mesh;
 pub mod stats;
 pub mod surface;
+pub mod triangulate;
