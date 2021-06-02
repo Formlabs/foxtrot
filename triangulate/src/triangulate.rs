@@ -44,7 +44,8 @@ fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                 Entity::RepresentationRelationshipWithTransformation(r) => {
                     assert!(r.rep_2.0 == id);
                     let t = &r.transformation_operator;
-                    let next_mat = if let Transformation::ItemDefinedTransformation(i) = t {
+                    use Transformation::ItemDefinedTransformation;
+                    let next_mat = if let ItemDefinedTransformation(i) = t {
                         item_defined_transformation(s, *i)
                     } else {
                         panic!("Invalid transformation {:?}", t);
