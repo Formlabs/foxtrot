@@ -3,7 +3,7 @@ use rayon::prelude::*;
 
 use crate::{
     ap214::Entity,
-    parse::parse_entity_decl,
+    parse::{parse_entity_decl, parse_entity_fallback},
 };
 
 #[derive(Debug)]
@@ -21,10 +21,29 @@ impl<'a> StepFile<'a> {
             .position(|b| b == b"ENDSEC;")
             .unwrap_or(0) + data_start;
 
-        Self(blocks[data_start..data_end]
+        // Parse every block, accumulating a Vec of Results
+        let parsed: Vec<(usize, Entity)> = blocks[data_start..data_end]
             .par_iter()
-            .map(|b| parse_entity_decl(*b).unwrap().1.1)
-            .collect())
+            .filter_map(|b| parse_entity_decl(*b)
+                .or_else(|e| {
+                    eprintln!("Failed to parse {:?}", e);
+                    parse_entity_fallback(*b)
+                })
+                .ok())
+            .map(|b| b.1)
+            .collect();
+
+        // Awkward construction because `Entity` is not `Clone`
+        let max_id = parsed.iter().map(|b| b.0).max().unwrap_or(0);
+        let mut out: Vec<Entity> = (0..=max_id)
+            .map(|_| Entity::_EmptySlot)
+            .collect();
+
+        for p in parsed.into_iter() {
+            out[p.0] = p.1;
+        }
+
+        Self(out)
     }
 
     /// Flattens a STEP file, removing comments and whitespace
