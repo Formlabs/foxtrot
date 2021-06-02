@@ -11,5 +11,6 @@ pub struct Triangle {
     pub verts: U32Vec3,
 }
 
-pub mod triangulation;
+pub mod mesh;
+pub mod stats;
 pub mod surface;

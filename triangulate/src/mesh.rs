@@ -13,16 +13,12 @@ pub struct Triangle {
 }
 
 #[derive(Default)]
-pub struct Triangulation {
+pub struct Mesh {
     verts: Vec<Vertex>,
     triangles: Vec<Triangle>,
-    num_shells: usize,
-    num_faces: usize,
-    num_errors: usize,
-    num_panics: usize,
 }
 
-impl Triangulation {
+impl Mesh {
     // Combine two triangulations with an associative binary operator
     // (why yes, this _is_ a monoid)
     pub fn combine(mut a: Self, b: Self) -> Self {
@@ -30,10 +26,6 @@ impl Triangulation {
         a.verts.extend(b.verts);
         a.triangles.extend(b.triangles.into_iter()
             .map(|t| Triangle { verts: t.verts.add_scalar(dv) }));
-        a.num_shells += b.num_shells;
-        a.num_faces += b.num_faces;
-        a.num_errors += b.num_errors;
-        a.num_panics += b.num_panics;
         a
     }
 
