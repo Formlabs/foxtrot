@@ -9,4 +9,5 @@ members = [
     "step2",
     "gui",
     "nurbs",
+    "triangulate",
 ]

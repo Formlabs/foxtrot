@@ -4,9 +4,10 @@ _A fast STEP file viewer_
 ## Subsystems
 - `cdt`: Constrained Delaunay triangulation (standalone)
 - `express`: Parser for EXPRESS schemas files and a matching code generation
-  system (unused as of yet)
+  system
 - `step`: STEP file parsing and triangulation
-- `step2`: Unfinished auto-generated STEP file parser
+- `step2`: Auto-generated STEP file parser.  This take a _very_ long time to
+  compile, so it is isolated into this crate.
 - `gui`: GUI for rendering STEP files
 
 ## Code generation

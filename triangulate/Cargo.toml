@@ -1,16 +1,12 @@
 [package]
-name = "step"
+name = "triangulate"
 version = "0.1.0"
 authors = ["Matt Keeter <matt.j.keeter@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-ambassador = "0.2"
 cdt = { path = "../cdt" }
-fast-float = "0.2.0"
-memchr = "2.4.0"
 nalgebra-glm = "0.3"
-nom = "6.0"
 nurbs = { path = "../nurbs" }
 rayon = "1.5"
 
