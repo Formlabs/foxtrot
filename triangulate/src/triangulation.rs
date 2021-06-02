@@ -15,7 +15,7 @@ pub struct Triangle {
 #[derive(Default)]
 pub struct Triangulation {
     verts: Vec<Vertex>,
-    index: Vec<Triangle>,
+    triangles: Vec<Triangle>,
     num_shells: usize,
     num_faces: usize,
     num_errors: usize,
@@ -28,12 +28,34 @@ impl Triangulation {
     pub fn combine(mut a: Self, b: Self) -> Self {
         let dv = a.verts.len().try_into().expect("too many triangles");
         a.verts.extend(b.verts);
-        a.index.extend(b.index.into_iter()
+        a.triangles.extend(b.triangles.into_iter()
             .map(|t| Triangle { verts: t.verts.add_scalar(dv) }));
         a.num_shells += b.num_shells;
         a.num_faces += b.num_faces;
         a.num_errors += b.num_errors;
         a.num_panics += b.num_panics;
         a
+    }
+
+    /// Writes the triangulation to a STL, for debugging
+    pub fn save_stl(&self, filename: &str) -> std::io::Result<()> {
+        let mut out: Vec<u8> = Vec::new();
+        for _ in 0..80 { // header
+            out.push('x' as u8);
+        }
+        let u: u32 = self.triangles.len().try_into()
+            .expect("Too many triangles");
+        out.extend(&u.to_le_bytes());
+        for t in self.triangles.iter() {
+            out.extend(std::iter::repeat(0).take(12)); // normal
+            for v in t.verts.iter() {
+                let v = self.verts[*v as usize];
+                out.extend(&(v.pos.x as f32).to_le_bytes());
+                out.extend(&(v.pos.y as f32).to_le_bytes());
+                out.extend(&(v.pos.z as f32).to_le_bytes());
+            }
+            out.extend(std::iter::repeat(0).take(2)); // attributes
+        }
+        std::fs::write(filename, out)
     }
 }
