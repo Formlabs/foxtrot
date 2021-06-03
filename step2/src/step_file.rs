@@ -61,6 +61,7 @@ impl<'a> StepFile<'a> {
                         }
                     }
                 }
+                // TODO: don't skip whitespace inside of strings
                 c if c.is_ascii_whitespace() => (),
                 c => out.push(c),
             }

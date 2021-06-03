@@ -8,6 +8,9 @@ _A fast STEP file viewer_
 - `step`: STEP file parsing and triangulation
 - `step2`: Auto-generated STEP file parser.  This take a _very_ long time to
   compile, so it is isolated into this crate.
+- `triangulate`: Converts a file loaded by `step2` into a triangle mesh, using
+  `cdt` as its core
+- `nurbs`: A handful of NURBS / B-spline algorithms used by `triangulate`
 - `gui`: GUI for rendering STEP files
 
 ## Code generation
@@ -41,3 +44,6 @@ dual licensed as above, without any additional terms or conditions.
 ### Disclaimer
 This isn't an official Formlabs project (experimental or otherwise),
 it is just code that happens to be owned by Formlabs.
+
+## References
+[STEP Integrated Definitions](https://www.steptools.com/stds/stp_expg/aim.html)

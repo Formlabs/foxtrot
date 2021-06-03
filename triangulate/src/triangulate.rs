@@ -121,6 +121,7 @@ fn shape_representation(s: &StepFile, b: Representation) -> (Mesh, Stats) {
     let items = match &s.0[b.0] {
         Entity::AdvancedBrepShapeRepresentation(b) => &b.items,
         Entity::ShapeRepresentation(b) => &b.items,
+        Entity::ManifoldSurfaceShapeRepresentation(b) => &b.items,
         e => panic!("Cannot get shape from {:?}", e),
     };
 
@@ -142,6 +143,7 @@ fn closed_shell(s: &StepFile, c: ClosedShell, mesh: &mut Mesh, stats: &mut Stats
     for face in &cs.cfs_faces {
         advanced_face(s, face.cast(), mesh, stats);
     }
+    stats.num_shells += 1;
 }
 
 fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Stats) {
@@ -153,6 +155,9 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
         Some(s) => s,
         None => return,
     };
+
+    // This is the starting point at which we insert new vertices
+    let offset = mesh.verts.len();
 
     // For each contour, project from 3D down to the surface, then
     // start collecting them as constrained edges for triangulation
@@ -213,7 +218,6 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
             }
         }
     }
-    // TODO: pack into these arrays
 
     let result = std::panic::catch_unwind(move || {
         let mut t = cdt::Triangulation::new_with_edges(&pts, &edges)
@@ -229,7 +233,6 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
     });
     match result {
         Ok(Ok(t)) => {
-            let offset = mesh.verts.len();
             for (a, b, c) in t.triangles() {
                 let a = (a + offset) as u32;
                 let b = (b + offset) as u32;
@@ -310,9 +313,13 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Option<Surface> {
     }
 }
 
+fn control_points_1d(s: &StepFile, row: &Vec<CartesianPoint>) -> Vec<DVec3> {
+    row.iter().map(|p| cartesian_point(s, *p)).collect()
+}
+
 fn control_points_2d(s: &StepFile, rows: &Vec<Vec<CartesianPoint>>) -> Vec<Vec<DVec3>> {
     rows.iter()
-        .map(|row| row.iter().map(|p| cartesian_point(s, *p)).collect())
+        .map(|row| control_points_1d(s, row))
         .collect()
 }
 
@@ -372,6 +379,28 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Vec<DVec3> {
                                edge_curve.edge_start == edge_curve.edge_end,
                                edge_curve.same_sense ^ !orientation)
         },
+        Entity::BSplineCurveWithKnots(c) => {
+            assert!(c.closed_curve.0.unwrap() == false);
+            assert!(c.self_intersect.0.unwrap()== false);
+
+            let control_points_list = control_points_1d(
+                s, &c.control_points_list);
+
+            let knots: Vec<f64> = c.knots.iter().map(|k| k.0).collect();
+            let multiplicities: Vec<usize> = c.knot_multiplicities.iter()
+                .map(|&k| k.try_into().expect("Got negative multiplicity"))
+                .collect();
+            let knot_vec = KnotVector::from_multiplicities(
+                c.degree.try_into().expect("Got negative degree"),
+                &knots, &multiplicities);
+
+            let curve = nurbs::BSplineCurve::new(
+                c.closed_curve.0.unwrap() == false,
+                knot_vec,
+                control_points_list,
+            );
+            Curve::new_bspline_with_knots(curve)
+        },
         // The Line type ignores pnt / dir and just uses u and v
         Entity::Line(_) => Curve::new_line(),
         e => {
@@ -379,8 +408,13 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Vec<DVec3> {
             return vec![]
         },
     };
-    let u = vertex_point(s, edge_curve.edge_start);
-    let v = vertex_point(s, edge_curve.edge_end);
+    let (start, end) = if orientation {
+        (edge_curve.edge_start, edge_curve.edge_end)
+    } else {
+        (edge_curve.edge_end, edge_curve.edge_start)
+    };
+    let u = vertex_point(s, start);
+    let v = vertex_point(s, end);
     curve.build(u, v)
 }
 
