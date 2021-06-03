@@ -8,7 +8,7 @@ use rayon::prelude::*;
 use step2::{step_file::StepFile, id::Id, ap214::Entity, ap214, ap214::*};
 use crate::{
     curve::Curve,
-    mesh::{Mesh, Triangle},
+    mesh, mesh::{Mesh, Triangle},
     stats::Stats,
     surface::Surface
 };
@@ -121,7 +121,7 @@ fn shape_representation(s: &StepFile, b: Representation) -> (Mesh, Stats) {
     let items = match &s.0[b.0] {
         Entity::AdvancedBrepShapeRepresentation(b) => &b.items,
         Entity::ShapeRepresentation(b) => &b.items,
-        e => panic!("Cannot get shape from {:?}", s),
+        e => panic!("Cannot get shape from {:?}", e),
     };
 
     let mut mesh = Mesh::default();
@@ -160,6 +160,58 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
     let mut edges = Vec::new();
     for b in &face.bounds {
         let bound_contours = face_bound(s, *b);
+
+        match bound_contours.len() {
+            // If we don't know how to build an edge for a subtype,
+            // then we returned an empty vector, and skip the whole face
+            // here
+            0 => return,
+
+            // Special case for a single-vertex point, which shows up in
+            // cones: we push it as a Steiner point, but without any
+            // associated contours.
+            1 => {
+                // Project to the 2D subspace for triangulation
+                let proj = surf.lower(bound_contours[0]);
+                pts.push((proj.x, proj.y));
+
+                mesh.verts.push(mesh::Vertex {
+                    pos: bound_contours[0],
+                    norm: surf.normal(bound_contours[0], proj),
+                    color: DVec3::new(0.0, 0.0, 0.0),
+                });
+            },
+
+            // Default for lists of contour points
+            _ => {
+                // Record the initial point to close the loop
+                let start = pts.len();
+                for pt in bound_contours {
+                    // The contour marches forward!
+                    edges.push((pts.len(), pts.len() + 1));
+
+                    // Project to the 2D subspace for triangulation
+                    let proj = surf.lower(pt);
+                    pts.push((proj.x, proj.y));
+
+                    // Also store this vertex in the 3D triangulation
+                    mesh.verts.push(mesh::Vertex {
+                        pos: pt,
+                        norm: surf.normal(pt, proj),
+                        color: DVec3::new(0.0, 0.0, 0.0),
+                    });
+                }
+                // The last point is a duplicate, because it closes the
+                // contours, so we skip it here and reattach the contour to
+                // the start.
+                pts.pop();
+                mesh.verts.pop();
+
+                // Close the loop by returning to the starting point
+                edges.pop();
+                edges.last_mut().unwrap().1 = start;
+            }
+        }
     }
     // TODO: pack into these arrays
 
