@@ -1,9 +1,9 @@
 #[derive(Default)]
 pub struct Stats {
-    num_shells: usize,
-    num_faces: usize,
-    num_errors: usize,
-    num_panics: usize,
+    pub num_shells: usize,
+    pub num_faces: usize,
+    pub num_errors: usize,
+    pub num_panics: usize,
 }
 
 impl Stats {

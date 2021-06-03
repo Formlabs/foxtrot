@@ -14,8 +14,8 @@ pub struct Triangle {
 
 #[derive(Default)]
 pub struct Mesh {
-    verts: Vec<Vertex>,
-    triangles: Vec<Triangle>,
+    pub verts: Vec<Vertex>,
+    pub triangles: Vec<Triangle>,
 }
 
 impl Mesh {

@@ -5,7 +5,7 @@ use nurbs::BSplineSurface;
 // Represents a surface in 3D space, with a function to project a 3D point
 // on the surface down to a 2D space.
 #[derive(Debug, Clone)]
-enum Surface {
+pub enum Surface {
     Cylinder {
         location: DVec3,
         axis: DVec3,
@@ -45,7 +45,7 @@ impl Surface {
         Surface::BSpline {surf }
     }
 
-    fn make_affine_transform(z_world: DVec3, x_world: DVec3, y_world: DVec3, origin_world: DVec3) -> DMat4 {
+    pub fn make_affine_transform(z_world: DVec3, x_world: DVec3, y_world: DVec3, origin_world: DVec3) -> DMat4 {
         let mut mat = DMat4::identity();
         mat.set_column(0, &glm::vec3_to_vec4(&x_world));
         mat.set_column(1, &glm::vec3_to_vec4(&y_world));

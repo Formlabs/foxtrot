@@ -3,6 +3,7 @@ use rayon::prelude::*;
 
 use crate::{
     ap214::Entity,
+    id::Id,
     parse::{parse_entity_decl, parse_entity_fallback},
 };
 
@@ -90,4 +91,12 @@ impl<'a> StepFile<'a> {
         }
         blocks
     }
+
+    pub fn entity<T: FromEntity<'a>>(&'a self, i: Id<T>) -> Option<&'a T> {
+        T::try_from_entity(&self.0[i.0])
+    }
+}
+
+pub trait FromEntity<'a> {
+    fn try_from_entity(e: &'a Entity<'a>) -> Option<&'a Self>;
 }
