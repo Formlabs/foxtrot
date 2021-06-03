@@ -131,6 +131,11 @@ pub(crate) fn parse_entity_fallback(s: &[u8]) -> IResult<(usize, Entity)> {
     map(Id::<()>::parse, |i| (i.0, Entity::_FailedToParse))(s)
 }
 
+pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
+    // TODO
+    Ok((s, Entity::_ComplexMapping))
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
