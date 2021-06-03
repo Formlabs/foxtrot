@@ -188,6 +188,25 @@ impl<'a> Parse<'a> for {0}<'a> {{
             },
 
             Type::Select(c) => {
+                let num_entities = c.iter()
+                    .filter(|v| type_map.is_entity(v))
+                    .count();
+                // If every member of this SELECT statement is an entity, then
+                // we're just going to parse it to an Id anyways (since we
+                // can't disambiguate in the single pass of the parser)
+                if num_entities == c.len() {
+                    writeln!(buf, "#[derive(Debug)]
+pub struct {0}_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type {0}<'a> = Id<{0}_<'a>>;
+", camel_name)?;
+                    return Ok(());
+                } else if num_entities > 1 {
+                    // Print a warning here (TODO: handle better)
+                    eprintln!(
+                        "Ambiguous SELECT for {} (contains multiple entities)",
+                        camel_name);
+                }
+
                 writeln!(buf, "#[derive(Debug)]
 pub enum {}<'a> {{ // select", camel_name)?;
                 for v in c {

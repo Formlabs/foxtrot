@@ -146,117 +146,9 @@ impl<'a> Parse<'a> for ActionDirective_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ActionItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AppliedClassificationAssignment(AppliedClassificationAssignment<'a>),
-    AppliedPersonAndOrganizationAssignment(AppliedPersonAndOrganizationAssignment<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationEffectivity(ConfigurationEffectivity<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    Contract(Contract<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ActionItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| ActionItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| ActionItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| ActionItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| ActionItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| ActionItem::ActionRelationship(r)),
-            map(<ActionRequestSolution<'a>>::parse, |r| ActionItem::ActionRequestSolution(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| ActionItem::AlternateProductRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| ActionItem::AppliedActionAssignment(r)),
-            map(<AppliedClassificationAssignment<'a>>::parse, |r| ActionItem::AppliedClassificationAssignment(r)),
-            map(<AppliedPersonAndOrganizationAssignment<'a>>::parse, |r| ActionItem::AppliedPersonAndOrganizationAssignment(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| ActionItem::ApprovalStatus(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| ActionItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| ActionItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| ActionItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| ActionItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| ActionItem::ConfigurationDesign(r)),
-            map(<ConfigurationEffectivity<'a>>::parse, |r| ActionItem::ConfigurationEffectivity(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| ActionItem::ConfigurationItem(r)),
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| ActionItem::ConfiguredEffectivityAssignment(r)),
-        alt((
-            map(<Contract<'a>>::parse, |r| ActionItem::Contract(r)),
-            map(<DocumentFile<'a>>::parse, |r| ActionItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| ActionItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| ActionItem::DrawingRevision(r)),
-            map(<ExecutedAction<'a>>::parse, |r| ActionItem::ExecutedAction(r)),
-            map(<GeneralProperty<'a>>::parse, |r| ActionItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| ActionItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| ActionItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| ActionItem::OrganizationRelationship(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| ActionItem::OrganizationalProject(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| ActionItem::PersonAndOrganization(r)),
-            map(<PresentationArea<'a>>::parse, |r| ActionItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| ActionItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| ActionItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| ActionItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| ActionItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| ActionItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| ActionItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| ActionItem::ProductDefinition(r)),
-        alt((
-            map(<ProductDefinitionFormation<'a>>::parse, |r| ActionItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| ActionItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| ActionItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| ActionItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| ActionItem::PropertyDefinition(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| ActionItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| ActionItem::ResourceProperty(r)),
-            map(<SecurityClassification<'a>>::parse, |r| ActionItem::SecurityClassification(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| ActionItem::SecurityClassificationLevel(r)),
-            map(<ShapeAspect<'a>>::parse, |r| ActionItem::ShapeAspect(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| ActionItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| ActionItem::VersionedActionRequest(r)),
-        ))))))(s)
-    }
-}
+pub struct ActionItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ActionItem<'a> = Id<ActionItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ActionMethod_<'a> { // entity
     pub name: Label<'a>,
@@ -438,80 +330,9 @@ impl<'a> Parse<'a> for ActionRequestAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ActionRequestItem<'a> { // select
-    Action(Action<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationEffectivity(ConfigurationEffectivity<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ActionRequestItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| ActionRequestItem::Action(r)),
-            map(<ActionMethod<'a>>::parse, |r| ActionRequestItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| ActionRequestItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| ActionRequestItem::ActionRelationship(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| ActionRequestItem::AlternateProductRelationship(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| ActionRequestItem::AssemblyComponentUsageSubstitute(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| ActionRequestItem::ConfigurationDesign(r)),
-            map(<ConfigurationEffectivity<'a>>::parse, |r| ActionRequestItem::ConfigurationEffectivity(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| ActionRequestItem::ConfigurationItem(r)),
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| ActionRequestItem::ConfiguredEffectivityAssignment(r)),
-            map(<DocumentFile<'a>>::parse, |r| ActionRequestItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| ActionRequestItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| ActionRequestItem::DrawingRevision(r)),
-            map(<GeneralProperty<'a>>::parse, |r| ActionRequestItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| ActionRequestItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| ActionRequestItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| ActionRequestItem::OrganizationalProject(r)),
-            map(<PresentationArea<'a>>::parse, |r| ActionRequestItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| ActionRequestItem::Product(r)),
-        alt((
-            map(<ProductConcept<'a>>::parse, |r| ActionRequestItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| ActionRequestItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| ActionRequestItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| ActionRequestItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| ActionRequestItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| ActionRequestItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| ActionRequestItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| ActionRequestItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| ActionRequestItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| ActionRequestItem::PropertyDefinition(r)),
-            map(<ResourceProperty<'a>>::parse, |r| ActionRequestItem::ResourceProperty(r)),
-            map(<ShapeAspect<'a>>::parse, |r| ActionRequestItem::ShapeAspect(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| ActionRequestItem::ShapeRepresentation(r)),
-        ))))(s)
-    }
-}
+pub struct ActionRequestItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ActionRequestItem<'a> = Id<ActionRequestItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ActionRequestSolution_<'a> { // entity
     pub method: ActionMethod<'a>,
@@ -1282,19 +1103,9 @@ impl<'a> Parse<'a> for AnnotationPlane_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum AnnotationPlaneElement<'a> { // select
-    DraughtingCallout(DraughtingCallout<'a>),
-    StyledItem(StyledItem<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for AnnotationPlaneElement<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<DraughtingCallout<'a>>::parse, |r| AnnotationPlaneElement::DraughtingCallout(r)),
-            map(<StyledItem<'a>>::parse, |r| AnnotationPlaneElement::StyledItem(r)),
-        ))(s)
-    }
-}
+pub struct AnnotationPlaneElement_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type AnnotationPlaneElement<'a> = Id<AnnotationPlaneElement_<'a>>;
+
 #[derive(Debug)]
 pub struct AnnotationSubfigureOccurrence_<'a> { // entity
     pub name: Label<'a>,
@@ -1383,19 +1194,9 @@ impl<'a> Parse<'a> for AnnotationSymbolOccurrence_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum AnnotationSymbolOccurrenceItem<'a> { // select
-    AnnotationSymbol(AnnotationSymbol<'a>),
-    DefinedSymbol(DefinedSymbol<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for AnnotationSymbolOccurrenceItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<AnnotationSymbol<'a>>::parse, |r| AnnotationSymbolOccurrenceItem::AnnotationSymbol(r)),
-            map(<DefinedSymbol<'a>>::parse, |r| AnnotationSymbolOccurrenceItem::DefinedSymbol(r)),
-        ))(s)
-    }
-}
+pub struct AnnotationSymbolOccurrenceItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type AnnotationSymbolOccurrenceItem<'a> = Id<AnnotationSymbolOccurrenceItem_<'a>>;
+
 #[derive(Debug)]
 pub struct AnnotationText_<'a> { // entity
     pub name: Label<'a>,
@@ -1487,25 +1288,9 @@ impl<'a> Parse<'a> for AnnotationTextOccurrence_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum AnnotationTextOccurrenceItem<'a> { // select
-    TextLiteral(TextLiteral<'a>),
-    AnnotationText(AnnotationText<'a>),
-    AnnotationTextCharacter(AnnotationTextCharacter<'a>),
-    DefinedCharacterGlyph(DefinedCharacterGlyph<'a>),
-    CompositeText(CompositeText<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for AnnotationTextOccurrenceItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<TextLiteral<'a>>::parse, |r| AnnotationTextOccurrenceItem::TextLiteral(r)),
-            map(<AnnotationText<'a>>::parse, |r| AnnotationTextOccurrenceItem::AnnotationText(r)),
-            map(<AnnotationTextCharacter<'a>>::parse, |r| AnnotationTextOccurrenceItem::AnnotationTextCharacter(r)),
-            map(<DefinedCharacterGlyph<'a>>::parse, |r| AnnotationTextOccurrenceItem::DefinedCharacterGlyph(r)),
-            map(<CompositeText<'a>>::parse, |r| AnnotationTextOccurrenceItem::CompositeText(r)),
-        ))(s)
-    }
-}
+pub struct AnnotationTextOccurrenceItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type AnnotationTextOccurrenceItem<'a> = Id<AnnotationTextOccurrenceItem_<'a>>;
+
 #[derive(Debug)]
 pub struct Apex_<'a> { // entity
     pub name: Label<'a>,
@@ -2393,92 +2178,9 @@ impl<'a> Parse<'a> for ApprovalDateTime_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ApprovalItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AppliedClassificationAssignment(AppliedClassificationAssignment<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationEffectivity(ConfigurationEffectivity<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    Contract(Contract<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ApprovalItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| ApprovalItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| ApprovalItem::ActionDirective(r)),
-            map(<ActionProperty<'a>>::parse, |r| ApprovalItem::ActionProperty(r)),
-            map(<ActionRequestSolution<'a>>::parse, |r| ApprovalItem::ActionRequestSolution(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| ApprovalItem::AlternateProductRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| ApprovalItem::AppliedActionAssignment(r)),
-            map(<AppliedClassificationAssignment<'a>>::parse, |r| ApprovalItem::AppliedClassificationAssignment(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| ApprovalItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| ApprovalItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| ApprovalItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| ApprovalItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| ApprovalItem::ConfigurationDesign(r)),
-            map(<ConfigurationEffectivity<'a>>::parse, |r| ApprovalItem::ConfigurationEffectivity(r)),
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| ApprovalItem::ConfiguredEffectivityAssignment(r)),
-            map(<Contract<'a>>::parse, |r| ApprovalItem::Contract(r)),
-            map(<DocumentFile<'a>>::parse, |r| ApprovalItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| ApprovalItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| ApprovalItem::DrawingRevision(r)),
-            map(<ExecutedAction<'a>>::parse, |r| ApprovalItem::ExecutedAction(r)),
-        alt((
-            map(<GeneralProperty<'a>>::parse, |r| ApprovalItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| ApprovalItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| ApprovalItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| ApprovalItem::OrganizationalProject(r)),
-            map(<PresentationArea<'a>>::parse, |r| ApprovalItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| ApprovalItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| ApprovalItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| ApprovalItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| ApprovalItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| ApprovalItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| ApprovalItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| ApprovalItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| ApprovalItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| ApprovalItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| ApprovalItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| ApprovalItem::PropertyDefinition(r)),
-            map(<ResourceProperty<'a>>::parse, |r| ApprovalItem::ResourceProperty(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| ApprovalItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| ApprovalItem::VersionedActionRequest(r)),
-        ))))(s)
-    }
-}
+pub struct ApprovalItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ApprovalItem<'a> = Id<ApprovalItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ApprovalPersonOrganization_<'a> { // entity
     pub person_organization: PersonOrganizationSelect<'a>,
@@ -2736,19 +2438,9 @@ impl<'a> Parse<'a> for AreaMeasureWithUnit_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum AreaOrView<'a> { // select
-    PresentationArea(PresentationArea<'a>),
-    PresentationView(PresentationView<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for AreaOrView<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PresentationArea<'a>>::parse, |r| AreaOrView::PresentationArea(r)),
-            map(<PresentationView<'a>>::parse, |r| AreaOrView::PresentationView(r)),
-        ))(s)
-    }
-}
+pub struct AreaOrView_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type AreaOrView<'a> = Id<AreaOrView_<'a>>;
+
 #[derive(Debug)]
 pub struct AreaUnit_<'a> { // entity
     pub elements: Vec<DerivedUnitElement<'a>>,
@@ -2950,158 +2642,9 @@ impl<'a> Parse<'a> for AttributeLanguageAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum AttributeLanguageItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    ApplicationContext(ApplicationContext<'a>),
-    ApprovalRelationship(ApprovalRelationship<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    AttributeValueAssignment(AttributeValueAssignment<'a>),
-    Certification(Certification<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    Contract(Contract<'a>),
-    DataEnvironment(DataEnvironment<'a>),
-    DateRole(DateRole<'a>),
-    DateTimeRole(DateTimeRole<'a>),
-    DescriptiveRepresentationItem(DescriptiveRepresentationItem<'a>),
-    DocumentRelationship(DocumentRelationship<'a>),
-    DraughtingTitle(DraughtingTitle<'a>),
-    Effectivity(Effectivity<'a>),
-    EffectivityRelationship(EffectivityRelationship<'a>),
-    EventOccurrence(EventOccurrence<'a>),
-    ExternalSource(ExternalSource<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    GeneralPropertyRelationship(GeneralPropertyRelationship<'a>),
-    GeometricRepresentationItem(GeometricRepresentationItem<'a>),
-    GeometricTolerance(GeometricTolerance<'a>),
-    Group(Group<'a>),
-    GroupRelationship(GroupRelationship<'a>),
-    IdentificationRole(IdentificationRole<'a>),
-    KinematicPair(KinematicPair<'a>),
-    MappedItem(MappedItem<'a>),
-    NameAssignment(NameAssignment<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationRole(OrganizationRole<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    OrganizationalProjectRelationship(OrganizationalProjectRelationship<'a>),
-    PairActuator(PairActuator<'a>),
-    PersonAndOrganizationRole(PersonAndOrganizationRole<'a>),
-    PresentationLayerAssignment(PresentationLayerAssignment<'a>),
-    ProcessProductAssociation(ProcessProductAssociation<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptRelationship(ProductConceptRelationship<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    ProductRelatedProductCategory(ProductRelatedProductCategory<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    PropertyDefinitionRelationship(PropertyDefinitionRelationship<'a>),
-    Representation(Representation<'a>),
-    RepresentationRelationship(RepresentationRelationship<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    ResourceRequirementType(ResourceRequirementType<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeAspectRelationship(ShapeAspectRelationship<'a>),
-    StyledItem(StyledItem<'a>),
-    TimeIntervalRole(TimeIntervalRole<'a>),
-    TopologicalRepresentationItem(TopologicalRepresentationItem<'a>),
-    UncertaintyMeasureWithUnit(UncertaintyMeasureWithUnit<'a>),
-    UncertaintyQualifier(UncertaintyQualifier<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    VersionedActionRequestRelationship(VersionedActionRequestRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for AttributeLanguageItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| AttributeLanguageItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| AttributeLanguageItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| AttributeLanguageItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| AttributeLanguageItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| AttributeLanguageItem::ActionRelationship(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| AttributeLanguageItem::AlternateProductRelationship(r)),
-            map(<ApplicationContext<'a>>::parse, |r| AttributeLanguageItem::ApplicationContext(r)),
-            map(<ApprovalRelationship<'a>>::parse, |r| AttributeLanguageItem::ApprovalRelationship(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| AttributeLanguageItem::AssemblyComponentUsageSubstitute(r)),
-            map(<AttributeValueAssignment<'a>>::parse, |r| AttributeLanguageItem::AttributeValueAssignment(r)),
-            map(<Certification<'a>>::parse, |r| AttributeLanguageItem::Certification(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| AttributeLanguageItem::ConfigurationDesign(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| AttributeLanguageItem::ConfigurationItem(r)),
-            map(<Contract<'a>>::parse, |r| AttributeLanguageItem::Contract(r)),
-            map(<DataEnvironment<'a>>::parse, |r| AttributeLanguageItem::DataEnvironment(r)),
-            map(<DateRole<'a>>::parse, |r| AttributeLanguageItem::DateRole(r)),
-            map(<DateTimeRole<'a>>::parse, |r| AttributeLanguageItem::DateTimeRole(r)),
-            map(<DescriptiveRepresentationItem<'a>>::parse, |r| AttributeLanguageItem::DescriptiveRepresentationItem(r)),
-            map(<DocumentRelationship<'a>>::parse, |r| AttributeLanguageItem::DocumentRelationship(r)),
-        alt((
-            map(<DraughtingTitle<'a>>::parse, |r| AttributeLanguageItem::DraughtingTitle(r)),
-            map(<Effectivity<'a>>::parse, |r| AttributeLanguageItem::Effectivity(r)),
-            map(<EffectivityRelationship<'a>>::parse, |r| AttributeLanguageItem::EffectivityRelationship(r)),
-            map(<EventOccurrence<'a>>::parse, |r| AttributeLanguageItem::EventOccurrence(r)),
-            map(<ExternalSource<'a>>::parse, |r| AttributeLanguageItem::ExternalSource(r)),
-            map(<GeneralProperty<'a>>::parse, |r| AttributeLanguageItem::GeneralProperty(r)),
-            map(<GeneralPropertyRelationship<'a>>::parse, |r| AttributeLanguageItem::GeneralPropertyRelationship(r)),
-            map(<GeometricRepresentationItem<'a>>::parse, |r| AttributeLanguageItem::GeometricRepresentationItem(r)),
-            map(<GeometricTolerance<'a>>::parse, |r| AttributeLanguageItem::GeometricTolerance(r)),
-            map(<Group<'a>>::parse, |r| AttributeLanguageItem::Group(r)),
-            map(<GroupRelationship<'a>>::parse, |r| AttributeLanguageItem::GroupRelationship(r)),
-            map(<IdentificationRole<'a>>::parse, |r| AttributeLanguageItem::IdentificationRole(r)),
-            map(<KinematicPair<'a>>::parse, |r| AttributeLanguageItem::KinematicPair(r)),
-            map(<MappedItem<'a>>::parse, |r| AttributeLanguageItem::MappedItem(r)),
-            map(<NameAssignment<'a>>::parse, |r| AttributeLanguageItem::NameAssignment(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| AttributeLanguageItem::OrganizationRelationship(r)),
-            map(<OrganizationRole<'a>>::parse, |r| AttributeLanguageItem::OrganizationRole(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| AttributeLanguageItem::OrganizationalProject(r)),
-            map(<OrganizationalProjectRelationship<'a>>::parse, |r| AttributeLanguageItem::OrganizationalProjectRelationship(r)),
-        alt((
-            map(<PairActuator<'a>>::parse, |r| AttributeLanguageItem::PairActuator(r)),
-            map(<PersonAndOrganizationRole<'a>>::parse, |r| AttributeLanguageItem::PersonAndOrganizationRole(r)),
-            map(<PresentationLayerAssignment<'a>>::parse, |r| AttributeLanguageItem::PresentationLayerAssignment(r)),
-            map(<ProcessProductAssociation<'a>>::parse, |r| AttributeLanguageItem::ProcessProductAssociation(r)),
-            map(<Product<'a>>::parse, |r| AttributeLanguageItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| AttributeLanguageItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| AttributeLanguageItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| AttributeLanguageItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptRelationship<'a>>::parse, |r| AttributeLanguageItem::ProductConceptRelationship(r)),
-            map(<ProductDefinition<'a>>::parse, |r| AttributeLanguageItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| AttributeLanguageItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| AttributeLanguageItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| AttributeLanguageItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| AttributeLanguageItem::ProductDefinitionSubstitute(r)),
-            map(<ProductRelatedProductCategory<'a>>::parse, |r| AttributeLanguageItem::ProductRelatedProductCategory(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| AttributeLanguageItem::PropertyDefinition(r)),
-            map(<PropertyDefinitionRelationship<'a>>::parse, |r| AttributeLanguageItem::PropertyDefinitionRelationship(r)),
-            map(<Representation<'a>>::parse, |r| AttributeLanguageItem::Representation(r)),
-            map(<RepresentationRelationship<'a>>::parse, |r| AttributeLanguageItem::RepresentationRelationship(r)),
-        alt((
-            map(<RequirementForActionResource<'a>>::parse, |r| AttributeLanguageItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| AttributeLanguageItem::ResourceProperty(r)),
-            map(<ResourceRequirementType<'a>>::parse, |r| AttributeLanguageItem::ResourceRequirementType(r)),
-            map(<SecurityClassification<'a>>::parse, |r| AttributeLanguageItem::SecurityClassification(r)),
-            map(<ShapeAspect<'a>>::parse, |r| AttributeLanguageItem::ShapeAspect(r)),
-            map(<ShapeAspectRelationship<'a>>::parse, |r| AttributeLanguageItem::ShapeAspectRelationship(r)),
-            map(<StyledItem<'a>>::parse, |r| AttributeLanguageItem::StyledItem(r)),
-            map(<TimeIntervalRole<'a>>::parse, |r| AttributeLanguageItem::TimeIntervalRole(r)),
-            map(<TopologicalRepresentationItem<'a>>::parse, |r| AttributeLanguageItem::TopologicalRepresentationItem(r)),
-            map(<UncertaintyMeasureWithUnit<'a>>::parse, |r| AttributeLanguageItem::UncertaintyMeasureWithUnit(r)),
-            map(<UncertaintyQualifier<'a>>::parse, |r| AttributeLanguageItem::UncertaintyQualifier(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| AttributeLanguageItem::VersionedActionRequest(r)),
-            map(<VersionedActionRequestRelationship<'a>>::parse, |r| AttributeLanguageItem::VersionedActionRequestRelationship(r)),
-        ))))))))(s)
-    }
-}
+pub struct AttributeLanguageItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type AttributeLanguageItem<'a> = Id<AttributeLanguageItem_<'a>>;
+
 #[derive(Debug)]
 pub enum AttributeType<'a> { // select
     Label(Label<'a>),
@@ -3201,19 +2744,9 @@ impl<'a> Parse<'a> for Axis1Placement_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum Axis2Placement<'a> { // select
-    Axis2Placement2d(Axis2Placement2d<'a>),
-    Axis2Placement3d(Axis2Placement3d<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for Axis2Placement<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Axis2Placement2d<'a>>::parse, |r| Axis2Placement::Axis2Placement2d(r)),
-            map(<Axis2Placement3d<'a>>::parse, |r| Axis2Placement::Axis2Placement3d(r)),
-        ))(s)
-    }
-}
+pub struct Axis2Placement_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type Axis2Placement<'a> = Id<Axis2Placement_<'a>>;
+
 #[derive(Debug)]
 pub struct Axis2Placement2d_<'a> { // entity
     pub name: Label<'a>,
@@ -3899,23 +3432,9 @@ impl<'a> Parse<'a> for BooleanLiteral_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum BooleanOperand<'a> { // select
-    SolidModel(SolidModel<'a>),
-    HalfSpaceSolid(HalfSpaceSolid<'a>),
-    CsgPrimitive(CsgPrimitive<'a>),
-    BooleanResult(BooleanResult<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for BooleanOperand<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<SolidModel<'a>>::parse, |r| BooleanOperand::SolidModel(r)),
-            map(<HalfSpaceSolid<'a>>::parse, |r| BooleanOperand::HalfSpaceSolid(r)),
-            map(<CsgPrimitive<'a>>::parse, |r| BooleanOperand::CsgPrimitive(r)),
-            map(<BooleanResult<'a>>::parse, |r| BooleanOperand::BooleanResult(r)),
-        ))(s)
-    }
-}
+pub struct BooleanOperand_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type BooleanOperand<'a> = Id<BooleanOperand_<'a>>;
+
 #[derive(Debug)]
 pub enum BooleanOperator<'a> { // enum
     Union,
@@ -4743,15 +4262,9 @@ impl<'a> Parse<'a> for CartesianTransformationOperator3d_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum CategoryUsageItem<'a> { // select
-    ProductClass(ProductClass<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CategoryUsageItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<ProductClass<'a>>::parse, |r| CategoryUsageItem::ProductClass(r))(s)
-    }
-}
+pub struct CategoryUsageItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CategoryUsageItem<'a> = Id<CategoryUsageItem_<'a>>;
+
 #[derive(Debug)]
 pub struct CelsiusTemperatureMeasure<'a>(pub f64, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for CelsiusTemperatureMeasure<'a> {
@@ -4885,23 +4398,9 @@ impl<'a> Parse<'a> for CertificationAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum CertificationItem<'a> { // select
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CertificationItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ProductDefinition<'a>>::parse, |r| CertificationItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| CertificationItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| CertificationItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| CertificationItem::ProductDefinitionRelationship(r)),
-        ))(s)
-    }
-}
+pub struct CertificationItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CertificationItem<'a> = Id<CertificationItem_<'a>>;
+
 #[derive(Debug)]
 pub struct CertificationType_<'a> { // entity
     pub description: Label<'a>,
@@ -5043,33 +4542,13 @@ impl<'a> Parse<'a> for CharacterSpacingSelect<'a> {
     }
 }
 #[derive(Debug)]
-pub enum CharacterStyleSelect<'a> { // select
-    TextStyleForDefinedFont(TextStyleForDefinedFont<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CharacterStyleSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<TextStyleForDefinedFont<'a>>::parse, |r| CharacterStyleSelect::TextStyleForDefinedFont(r))(s)
-    }
-}
+pub struct CharacterStyleSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CharacterStyleSelect<'a> = Id<CharacterStyleSelect_<'a>>;
+
 #[derive(Debug)]
-pub enum CharacterizedActionDefinition<'a> { // select
-    Action(Action<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionMethodRelationship(ActionMethodRelationship<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CharacterizedActionDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| CharacterizedActionDefinition::Action(r)),
-            map(<ActionMethod<'a>>::parse, |r| CharacterizedActionDefinition::ActionMethod(r)),
-            map(<ActionMethodRelationship<'a>>::parse, |r| CharacterizedActionDefinition::ActionMethodRelationship(r)),
-            map(<ActionRelationship<'a>>::parse, |r| CharacterizedActionDefinition::ActionRelationship(r)),
-        ))(s)
-    }
-}
+pub struct CharacterizedActionDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CharacterizedActionDefinition<'a> = Id<CharacterizedActionDefinition_<'a>>;
+
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct CharacterizedClass_<'a> { // entity
@@ -5108,31 +4587,13 @@ impl<'a> Parse<'a> for CharacterizedClass_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum CharacterizedDefinition<'a> { // select
-    CharacterizedObject(CharacterizedObject<'a>),
-    CharacterizedProductDefinition(CharacterizedProductDefinition<'a>),
-    ShapeDefinition(ShapeDefinition<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CharacterizedDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<CharacterizedObject<'a>>::parse, |r| CharacterizedDefinition::CharacterizedObject(r)),
-            map(<CharacterizedProductDefinition<'a>>::parse, |r| CharacterizedDefinition::CharacterizedProductDefinition(r)),
-            map(<ShapeDefinition<'a>>::parse, |r| CharacterizedDefinition::ShapeDefinition(r)),
-        ))(s)
-    }
-}
+pub struct CharacterizedDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CharacterizedDefinition<'a> = Id<CharacterizedDefinition_<'a>>;
+
 #[derive(Debug)]
-pub enum CharacterizedMaterialProperty<'a> { // select
-    MaterialPropertyRepresentation(MaterialPropertyRepresentation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CharacterizedMaterialProperty<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<MaterialPropertyRepresentation<'a>>::parse, |r| CharacterizedMaterialProperty::MaterialPropertyRepresentation(r))(s)
-    }
-}
+pub struct CharacterizedMaterialProperty_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CharacterizedMaterialProperty<'a> = Id<CharacterizedMaterialProperty_<'a>>;
+
 #[derive(Debug)]
 pub struct CharacterizedObject_<'a> { // entity
     pub name: Label<'a>,
@@ -5160,33 +4621,13 @@ impl<'a> Parse<'a> for CharacterizedObject_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum CharacterizedProductDefinition<'a> { // select
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CharacterizedProductDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ProductDefinition<'a>>::parse, |r| CharacterizedProductDefinition::ProductDefinition(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| CharacterizedProductDefinition::ProductDefinitionRelationship(r)),
-        ))(s)
-    }
-}
+pub struct CharacterizedProductDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CharacterizedProductDefinition<'a> = Id<CharacterizedProductDefinition_<'a>>;
+
 #[derive(Debug)]
-pub enum CharacterizedResourceDefinition<'a> { // select
-    ActionResource(ActionResource<'a>),
-    ActionResourceRequirement(ActionResourceRequirement<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CharacterizedResourceDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ActionResource<'a>>::parse, |r| CharacterizedResourceDefinition::ActionResource(r)),
-            map(<ActionResourceRequirement<'a>>::parse, |r| CharacterizedResourceDefinition::ActionResourceRequirement(r)),
-        ))(s)
-    }
-}
+pub struct CharacterizedResourceDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CharacterizedResourceDefinition<'a> = Id<CharacterizedResourceDefinition_<'a>>;
+
 #[derive(Debug)]
 pub struct Circle_<'a> { // entity
     pub name: Label<'a>,
@@ -5391,15 +4832,9 @@ impl<'a> Parse<'a> for ClassUsageEffectivityContextAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ClassUsageEffectivityContextItem<'a> { // select
-    ProductDefinition(ProductDefinition<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ClassUsageEffectivityContextItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<ProductDefinition<'a>>::parse, |r| ClassUsageEffectivityContextItem::ProductDefinition(r))(s)
-    }
-}
+pub struct ClassUsageEffectivityContextItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ClassUsageEffectivityContextItem<'a> = Id<ClassUsageEffectivityContextItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ClassificationAssignment_<'a> { // entity
     pub assigned_class: Group<'a>,
@@ -5427,82 +4862,9 @@ impl<'a> Parse<'a> for ClassificationAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ClassificationItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    Class(Class<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    Contract(Contract<'a>),
-    DescriptiveRepresentationItem(DescriptiveRepresentationItem<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DocumentType(DocumentType<'a>),
-    Effectivity(Effectivity<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    FeatureDefinition(FeatureDefinition<'a>),
-    GeneralFeature(GeneralFeature<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PlusMinusTolerance(PlusMinusTolerance<'a>),
-    ProcessOperation(ProcessOperation<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ClassificationItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| ClassificationItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| ClassificationItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| ClassificationItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| ClassificationItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| ClassificationItem::ActionRelationship(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| ClassificationItem::ApprovalStatus(r)),
-            map(<Class<'a>>::parse, |r| ClassificationItem::Class(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| ClassificationItem::ConfigurationItem(r)),
-            map(<Contract<'a>>::parse, |r| ClassificationItem::Contract(r)),
-            map(<DescriptiveRepresentationItem<'a>>::parse, |r| ClassificationItem::DescriptiveRepresentationItem(r)),
-            map(<DocumentFile<'a>>::parse, |r| ClassificationItem::DocumentFile(r)),
-            map(<DocumentType<'a>>::parse, |r| ClassificationItem::DocumentType(r)),
-            map(<Effectivity<'a>>::parse, |r| ClassificationItem::Effectivity(r)),
-            map(<ExecutedAction<'a>>::parse, |r| ClassificationItem::ExecutedAction(r)),
-            map(<FeatureDefinition<'a>>::parse, |r| ClassificationItem::FeatureDefinition(r)),
-            map(<GeneralFeature<'a>>::parse, |r| ClassificationItem::GeneralFeature(r)),
-            map(<GeneralProperty<'a>>::parse, |r| ClassificationItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| ClassificationItem::MaterialDesignation(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| ClassificationItem::OrganizationalProject(r)),
-        alt((
-            map(<PlusMinusTolerance<'a>>::parse, |r| ClassificationItem::PlusMinusTolerance(r)),
-            map(<ProcessOperation<'a>>::parse, |r| ClassificationItem::ProcessOperation(r)),
-            map(<Product<'a>>::parse, |r| ClassificationItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| ClassificationItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| ClassificationItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| ClassificationItem::ProductConceptFeatureCategory(r)),
-            map(<ProductDefinition<'a>>::parse, |r| ClassificationItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| ClassificationItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| ClassificationItem::ProductDefinitionRelationship(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| ClassificationItem::PropertyDefinition(r)),
-            map(<ResourceProperty<'a>>::parse, |r| ClassificationItem::ResourceProperty(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| ClassificationItem::SecurityClassificationLevel(r)),
-            map(<ShapeAspect<'a>>::parse, |r| ClassificationItem::ShapeAspect(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| ClassificationItem::VersionedActionRequest(r)),
-        ))))(s)
-    }
-}
+pub struct ClassificationItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ClassificationItem<'a> = Id<ClassificationItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ClassificationRole_<'a> { // entity
     pub name: Label<'a>,
@@ -6525,19 +5887,9 @@ impl<'a> Parse<'a> for ConfigurationDesign_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ConfigurationDesignItem<'a> { // select
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ConfigurationDesignItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ProductDefinition<'a>>::parse, |r| ConfigurationDesignItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| ConfigurationDesignItem::ProductDefinitionFormation(r)),
-        ))(s)
-    }
-}
+pub struct ConfigurationDesignItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ConfigurationDesignItem<'a> = Id<ConfigurationDesignItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ConfigurationEffectivity_<'a> { // entity
     pub id: Identifier<'a>,
@@ -6687,33 +6039,13 @@ impl<'a> Parse<'a> for ConfiguredEffectivityContextAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ConfiguredEffectivityContextItem<'a> { // select
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ConfiguredEffectivityContextItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<ProductConceptFeatureAssociation<'a>>::parse, |r| ConfiguredEffectivityContextItem::ProductConceptFeatureAssociation(r))(s)
-    }
-}
+pub struct ConfiguredEffectivityContextItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ConfiguredEffectivityContextItem<'a> = Id<ConfiguredEffectivityContextItem_<'a>>;
+
 #[derive(Debug)]
-pub enum ConfiguredEffectivityItem<'a> { // select
-    ActionRelationship(ActionRelationship<'a>),
-    ProcessPlan(ProcessPlan<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductProcessPlan(ProductProcessPlan<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ConfiguredEffectivityItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ActionRelationship<'a>>::parse, |r| ConfiguredEffectivityItem::ActionRelationship(r)),
-            map(<ProcessPlan<'a>>::parse, |r| ConfiguredEffectivityItem::ProcessPlan(r)),
-            map(<ProductDefinition<'a>>::parse, |r| ConfiguredEffectivityItem::ProductDefinition(r)),
-            map(<ProductProcessPlan<'a>>::parse, |r| ConfiguredEffectivityItem::ProductProcessPlan(r)),
-        ))(s)
-    }
-}
+pub struct ConfiguredEffectivityItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ConfiguredEffectivityItem<'a> = Id<ConfiguredEffectivityItem_<'a>>;
+
 #[derive(Debug)]
 pub struct Conic_<'a> { // entity
     pub name: Label<'a>,
@@ -7116,21 +6448,9 @@ impl<'a> Parse<'a> for ContractAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ContractItem<'a> { // select
-    DrawingRevision(DrawingRevision<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ContractItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<DrawingRevision<'a>>::parse, |r| ContractItem::DrawingRevision(r)),
-            map(<ExecutedAction<'a>>::parse, |r| ContractItem::ExecutedAction(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| ContractItem::ProductDefinitionFormation(r)),
-        ))(s)
-    }
-}
+pub struct ContractItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ContractItem<'a> = Id<ContractItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ContractType_<'a> { // entity
     pub description: Label<'a>,
@@ -7241,41 +6561,13 @@ impl<'a> Parse<'a> for CountMeasure<'a> {
     }
 }
 #[derive(Debug)]
-pub enum CsgPrimitive<'a> { // select
-    Sphere(Sphere<'a>),
-    Block(Block<'a>),
-    RightAngularWedge(RightAngularWedge<'a>),
-    Torus(Torus<'a>),
-    RightCircularCone(RightCircularCone<'a>),
-    RightCircularCylinder(RightCircularCylinder<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CsgPrimitive<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Sphere<'a>>::parse, |r| CsgPrimitive::Sphere(r)),
-            map(<Block<'a>>::parse, |r| CsgPrimitive::Block(r)),
-            map(<RightAngularWedge<'a>>::parse, |r| CsgPrimitive::RightAngularWedge(r)),
-            map(<Torus<'a>>::parse, |r| CsgPrimitive::Torus(r)),
-            map(<RightCircularCone<'a>>::parse, |r| CsgPrimitive::RightCircularCone(r)),
-            map(<RightCircularCylinder<'a>>::parse, |r| CsgPrimitive::RightCircularCylinder(r)),
-        ))(s)
-    }
-}
+pub struct CsgPrimitive_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CsgPrimitive<'a> = Id<CsgPrimitive_<'a>>;
+
 #[derive(Debug)]
-pub enum CsgSelect<'a> { // select
-    BooleanResult(BooleanResult<'a>),
-    CsgPrimitive(CsgPrimitive<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CsgSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<BooleanResult<'a>>::parse, |r| CsgSelect::BooleanResult(r)),
-            map(<CsgPrimitive<'a>>::parse, |r| CsgSelect::CsgPrimitive(r)),
-        ))(s)
-    }
-}
+pub struct CsgSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CsgSelect<'a> = Id<CsgSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct CsgShapeRepresentation_<'a> { // entity
     pub name: Label<'a>,
@@ -7413,45 +6705,17 @@ impl<'a> Parse<'a> for CurveDimension_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum CurveFontOrScaledCurveFontSelect<'a> { // select
-    CurveStyleFontSelect(CurveStyleFontSelect<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CurveFontOrScaledCurveFontSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<CurveStyleFontSelect<'a>>::parse, |r| CurveFontOrScaledCurveFontSelect::CurveStyleFontSelect(r))(s)
-    }
-}
+pub struct CurveFontOrScaledCurveFontSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CurveFontOrScaledCurveFontSelect<'a> = Id<CurveFontOrScaledCurveFontSelect_<'a>>;
+
 #[derive(Debug)]
-pub enum CurveOnSurface<'a> { // select
-    Pcurve(Pcurve<'a>),
-    SurfaceCurve(SurfaceCurve<'a>),
-    CompositeCurveOnSurface(CompositeCurveOnSurface<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CurveOnSurface<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Pcurve<'a>>::parse, |r| CurveOnSurface::Pcurve(r)),
-            map(<SurfaceCurve<'a>>::parse, |r| CurveOnSurface::SurfaceCurve(r)),
-            map(<CompositeCurveOnSurface<'a>>::parse, |r| CurveOnSurface::CompositeCurveOnSurface(r)),
-        ))(s)
-    }
-}
+pub struct CurveOnSurface_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CurveOnSurface<'a> = Id<CurveOnSurface_<'a>>;
+
 #[derive(Debug)]
-pub enum CurveOrRender<'a> { // select
-    CurveStyle(CurveStyle<'a>),
-    CurveStyleRendering(CurveStyleRendering<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CurveOrRender<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<CurveStyle<'a>>::parse, |r| CurveOrRender::CurveStyle(r)),
-            map(<CurveStyleRendering<'a>>::parse, |r| CurveOrRender::CurveStyleRendering(r)),
-        ))(s)
-    }
-}
+pub struct CurveOrRender_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CurveOrRender<'a> = Id<CurveOrRender_<'a>>;
+
 #[derive(Debug)]
 pub struct CurveReplica_<'a> { // entity
     pub name: Label<'a>,
@@ -7566,21 +6830,9 @@ impl<'a> Parse<'a> for CurveStyleFontPattern_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum CurveStyleFontSelect<'a> { // select
-    CurveStyleFont(CurveStyleFont<'a>),
-    PreDefinedCurveFont(PreDefinedCurveFont<'a>),
-    ExternallyDefinedCurveFont(ExternallyDefinedCurveFont<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for CurveStyleFontSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<CurveStyleFont<'a>>::parse, |r| CurveStyleFontSelect::CurveStyleFont(r)),
-            map(<PreDefinedCurveFont<'a>>::parse, |r| CurveStyleFontSelect::PreDefinedCurveFont(r)),
-            map(<ExternallyDefinedCurveFont<'a>>::parse, |r| CurveStyleFontSelect::ExternallyDefinedCurveFont(r)),
-        ))(s)
-    }
-}
+pub struct CurveStyleFontSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type CurveStyleFontSelect<'a> = Id<CurveStyleFontSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct CurveStyleRendering_<'a> { // entity
     pub rendering_method: ShadingCurveMethod<'a>,
@@ -7916,121 +7168,9 @@ impl<'a> Parse<'a> for DateAndTimeAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DateAndTimeItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AppliedClassificationAssignment(AppliedClassificationAssignment<'a>),
-    AppliedOrganizationAssignment(AppliedOrganizationAssignment<'a>),
-    AppliedPersonAndOrganizationAssignment(AppliedPersonAndOrganizationAssignment<'a>),
-    ApprovalPersonOrganization(ApprovalPersonOrganization<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    Contract(Contract<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    Effectivity(Effectivity<'a>),
-    EventOccurrence(EventOccurrence<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DateAndTimeItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| DateAndTimeItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| DateAndTimeItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| DateAndTimeItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| DateAndTimeItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| DateAndTimeItem::ActionRelationship(r)),
-            map(<ActionRequestSolution<'a>>::parse, |r| DateAndTimeItem::ActionRequestSolution(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| DateAndTimeItem::AlternateProductRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| DateAndTimeItem::AppliedActionAssignment(r)),
-            map(<AppliedClassificationAssignment<'a>>::parse, |r| DateAndTimeItem::AppliedClassificationAssignment(r)),
-            map(<AppliedOrganizationAssignment<'a>>::parse, |r| DateAndTimeItem::AppliedOrganizationAssignment(r)),
-            map(<AppliedPersonAndOrganizationAssignment<'a>>::parse, |r| DateAndTimeItem::AppliedPersonAndOrganizationAssignment(r)),
-            map(<ApprovalPersonOrganization<'a>>::parse, |r| DateAndTimeItem::ApprovalPersonOrganization(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| DateAndTimeItem::ApprovalStatus(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| DateAndTimeItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| DateAndTimeItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| DateAndTimeItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| DateAndTimeItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| DateAndTimeItem::ConfigurationDesign(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| DateAndTimeItem::ConfigurationItem(r)),
-        alt((
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| DateAndTimeItem::ConfiguredEffectivityAssignment(r)),
-            map(<Contract<'a>>::parse, |r| DateAndTimeItem::Contract(r)),
-            map(<DocumentFile<'a>>::parse, |r| DateAndTimeItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| DateAndTimeItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| DateAndTimeItem::DrawingRevision(r)),
-            map(<Effectivity<'a>>::parse, |r| DateAndTimeItem::Effectivity(r)),
-            map(<EventOccurrence<'a>>::parse, |r| DateAndTimeItem::EventOccurrence(r)),
-            map(<ExecutedAction<'a>>::parse, |r| DateAndTimeItem::ExecutedAction(r)),
-            map(<GeneralProperty<'a>>::parse, |r| DateAndTimeItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| DateAndTimeItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| DateAndTimeItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| DateAndTimeItem::OrganizationRelationship(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| DateAndTimeItem::OrganizationalProject(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| DateAndTimeItem::PersonAndOrganization(r)),
-            map(<PresentationArea<'a>>::parse, |r| DateAndTimeItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| DateAndTimeItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| DateAndTimeItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| DateAndTimeItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| DateAndTimeItem::ProductConceptFeatureAssociation(r)),
-        alt((
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| DateAndTimeItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| DateAndTimeItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| DateAndTimeItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| DateAndTimeItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| DateAndTimeItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| DateAndTimeItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| DateAndTimeItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| DateAndTimeItem::PropertyDefinition(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| DateAndTimeItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| DateAndTimeItem::ResourceProperty(r)),
-            map(<SecurityClassification<'a>>::parse, |r| DateAndTimeItem::SecurityClassification(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| DateAndTimeItem::SecurityClassificationLevel(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| DateAndTimeItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| DateAndTimeItem::VersionedActionRequest(r)),
-        ))))))(s)
-    }
-}
+pub struct DateAndTimeItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DateAndTimeItem<'a> = Id<DateAndTimeItem_<'a>>;
+
 #[derive(Debug)]
 pub struct DateAssignment_<'a> { // entity
     pub assigned_date: Date<'a>,
@@ -8058,121 +7198,9 @@ impl<'a> Parse<'a> for DateAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DateItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AppliedClassificationAssignment(AppliedClassificationAssignment<'a>),
-    AppliedOrganizationAssignment(AppliedOrganizationAssignment<'a>),
-    AppliedPersonAndOrganizationAssignment(AppliedPersonAndOrganizationAssignment<'a>),
-    ApprovalPersonOrganization(ApprovalPersonOrganization<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    Contract(Contract<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    Effectivity(Effectivity<'a>),
-    EventOccurrence(EventOccurrence<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DateItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| DateItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| DateItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| DateItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| DateItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| DateItem::ActionRelationship(r)),
-            map(<ActionRequestSolution<'a>>::parse, |r| DateItem::ActionRequestSolution(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| DateItem::AlternateProductRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| DateItem::AppliedActionAssignment(r)),
-            map(<AppliedClassificationAssignment<'a>>::parse, |r| DateItem::AppliedClassificationAssignment(r)),
-            map(<AppliedOrganizationAssignment<'a>>::parse, |r| DateItem::AppliedOrganizationAssignment(r)),
-            map(<AppliedPersonAndOrganizationAssignment<'a>>::parse, |r| DateItem::AppliedPersonAndOrganizationAssignment(r)),
-            map(<ApprovalPersonOrganization<'a>>::parse, |r| DateItem::ApprovalPersonOrganization(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| DateItem::ApprovalStatus(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| DateItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| DateItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| DateItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| DateItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| DateItem::ConfigurationDesign(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| DateItem::ConfigurationItem(r)),
-        alt((
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| DateItem::ConfiguredEffectivityAssignment(r)),
-            map(<Contract<'a>>::parse, |r| DateItem::Contract(r)),
-            map(<DocumentFile<'a>>::parse, |r| DateItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| DateItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| DateItem::DrawingRevision(r)),
-            map(<Effectivity<'a>>::parse, |r| DateItem::Effectivity(r)),
-            map(<EventOccurrence<'a>>::parse, |r| DateItem::EventOccurrence(r)),
-            map(<ExecutedAction<'a>>::parse, |r| DateItem::ExecutedAction(r)),
-            map(<GeneralProperty<'a>>::parse, |r| DateItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| DateItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| DateItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| DateItem::OrganizationRelationship(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| DateItem::OrganizationalProject(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| DateItem::PersonAndOrganization(r)),
-            map(<PresentationArea<'a>>::parse, |r| DateItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| DateItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| DateItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| DateItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| DateItem::ProductConceptFeatureAssociation(r)),
-        alt((
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| DateItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| DateItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| DateItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| DateItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| DateItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| DateItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| DateItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| DateItem::PropertyDefinition(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| DateItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| DateItem::ResourceProperty(r)),
-            map(<SecurityClassification<'a>>::parse, |r| DateItem::SecurityClassification(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| DateItem::SecurityClassificationLevel(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| DateItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| DateItem::VersionedActionRequest(r)),
-        ))))))(s)
-    }
-}
+pub struct DateItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DateItem<'a> = Id<DateItem_<'a>>;
+
 #[derive(Debug)]
 pub struct DateRole_<'a> { // entity
     pub name: Label<'a>,
@@ -8197,19 +7225,9 @@ impl<'a> Parse<'a> for DateRole_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DateTimeOrEventOccurrence<'a> { // select
-    DateTimeSelect(DateTimeSelect<'a>),
-    EventOccurrence(EventOccurrence<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DateTimeOrEventOccurrence<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<DateTimeSelect<'a>>::parse, |r| DateTimeOrEventOccurrence::DateTimeSelect(r)),
-            map(<EventOccurrence<'a>>::parse, |r| DateTimeOrEventOccurrence::EventOccurrence(r)),
-        ))(s)
-    }
-}
+pub struct DateTimeOrEventOccurrence_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DateTimeOrEventOccurrence<'a> = Id<DateTimeOrEventOccurrence_<'a>>;
+
 #[derive(Debug)]
 pub struct DateTimeRole_<'a> { // entity
     pub name: Label<'a>,
@@ -8234,21 +7252,9 @@ impl<'a> Parse<'a> for DateTimeRole_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DateTimeSelect<'a> { // select
-    Date(Date<'a>),
-    DateAndTime(DateAndTime<'a>),
-    LocalTime(LocalTime<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DateTimeSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Date<'a>>::parse, |r| DateTimeSelect::Date(r)),
-            map(<DateAndTime<'a>>::parse, |r| DateTimeSelect::DateAndTime(r)),
-            map(<LocalTime<'a>>::parse, |r| DateTimeSelect::LocalTime(r)),
-        ))(s)
-    }
-}
+pub struct DateTimeSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DateTimeSelect<'a> = Id<DateTimeSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct DatedEffectivity_<'a> { // entity
     pub id: Identifier<'a>,
@@ -8570,15 +7576,9 @@ impl<'a> Parse<'a> for DefinedFunction_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DefinedGlyphSelect<'a> { // select
-    ExternallyDefinedCharacterGlyph(ExternallyDefinedCharacterGlyph<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DefinedGlyphSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<ExternallyDefinedCharacterGlyph<'a>>::parse, |r| DefinedGlyphSelect::ExternallyDefinedCharacterGlyph(r))(s)
-    }
-}
+pub struct DefinedGlyphSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DefinedGlyphSelect<'a> = Id<DefinedGlyphSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct DefinedSymbol_<'a> { // entity
     pub name: Label<'a>,
@@ -8609,19 +7609,9 @@ impl<'a> Parse<'a> for DefinedSymbol_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DefinedSymbolSelect<'a> { // select
-    PreDefinedSymbol(PreDefinedSymbol<'a>),
-    ExternallyDefinedSymbol(ExternallyDefinedSymbol<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DefinedSymbolSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PreDefinedSymbol<'a>>::parse, |r| DefinedSymbolSelect::PreDefinedSymbol(r)),
-            map(<ExternallyDefinedSymbol<'a>>::parse, |r| DefinedSymbolSelect::ExternallyDefinedSymbol(r)),
-        ))(s)
-    }
-}
+pub struct DefinedSymbolSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DefinedSymbolSelect<'a> = Id<DefinedSymbolSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct DefinitionalRepresentation_<'a> { // entity
     pub name: Label<'a>,
@@ -8716,21 +7706,9 @@ impl<'a> Parse<'a> for DegenerateToroidalSurface_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DerivedPropertySelect<'a> { // select
-    PropertyDefinition(PropertyDefinition<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DerivedPropertySelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PropertyDefinition<'a>>::parse, |r| DerivedPropertySelect::PropertyDefinition(r)),
-            map(<ActionProperty<'a>>::parse, |r| DerivedPropertySelect::ActionProperty(r)),
-            map(<ResourceProperty<'a>>::parse, |r| DerivedPropertySelect::ResourceProperty(r)),
-        ))(s)
-    }
-}
+pub struct DerivedPropertySelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DerivedPropertySelect<'a> = Id<DerivedPropertySelect_<'a>>;
+
 #[derive(Debug)]
 pub struct DerivedShapeAspect_<'a> { // entity
     pub name: Label<'a>,
@@ -8862,43 +7840,9 @@ impl<'a> Parse<'a> for DescriptionAttribute_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DescriptionAttributeSelect<'a> { // select
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    ApplicationContext(ApplicationContext<'a>),
-    ApprovalRole(ApprovalRole<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    DateRole(DateRole<'a>),
-    DateTimeRole(DateTimeRole<'a>),
-    ContextDependentShapeRepresentation(ContextDependentShapeRepresentation<'a>),
-    Effectivity(Effectivity<'a>),
-    ExternalSource(ExternalSource<'a>),
-    OrganizationRole(OrganizationRole<'a>),
-    PersonAndOrganizationRole(PersonAndOrganizationRole<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PropertyDefinitionRepresentation(PropertyDefinitionRepresentation<'a>),
-    Representation(Representation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DescriptionAttributeSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ActionRequestSolution<'a>>::parse, |r| DescriptionAttributeSelect::ActionRequestSolution(r)),
-            map(<ApplicationContext<'a>>::parse, |r| DescriptionAttributeSelect::ApplicationContext(r)),
-            map(<ApprovalRole<'a>>::parse, |r| DescriptionAttributeSelect::ApprovalRole(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| DescriptionAttributeSelect::ConfigurationDesign(r)),
-            map(<DateRole<'a>>::parse, |r| DescriptionAttributeSelect::DateRole(r)),
-            map(<DateTimeRole<'a>>::parse, |r| DescriptionAttributeSelect::DateTimeRole(r)),
-            map(<ContextDependentShapeRepresentation<'a>>::parse, |r| DescriptionAttributeSelect::ContextDependentShapeRepresentation(r)),
-            map(<Effectivity<'a>>::parse, |r| DescriptionAttributeSelect::Effectivity(r)),
-            map(<ExternalSource<'a>>::parse, |r| DescriptionAttributeSelect::ExternalSource(r)),
-            map(<OrganizationRole<'a>>::parse, |r| DescriptionAttributeSelect::OrganizationRole(r)),
-            map(<PersonAndOrganizationRole<'a>>::parse, |r| DescriptionAttributeSelect::PersonAndOrganizationRole(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| DescriptionAttributeSelect::PersonAndOrganization(r)),
-            map(<PropertyDefinitionRepresentation<'a>>::parse, |r| DescriptionAttributeSelect::PropertyDefinitionRepresentation(r)),
-            map(<Representation<'a>>::parse, |r| DescriptionAttributeSelect::Representation(r)),
-        ))(s)
-    }
-}
+pub struct DescriptionAttributeSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DescriptionAttributeSelect<'a> = Id<DescriptionAttributeSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct DescriptiveMeasure<'a>(pub &'a str, std::marker::PhantomData<&'a ()>); // primitive
 impl<'a> Parse<'a> for DescriptiveMeasure<'a> {
@@ -9265,19 +8209,9 @@ impl<'a> Parse<'a> for DimensionTextAssociativity_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DimensionalCharacteristic<'a> { // select
-    DimensionalLocation(DimensionalLocation<'a>),
-    DimensionalSize(DimensionalSize<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DimensionalCharacteristic<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<DimensionalLocation<'a>>::parse, |r| DimensionalCharacteristic::DimensionalLocation(r)),
-            map(<DimensionalSize<'a>>::parse, |r| DimensionalCharacteristic::DimensionalSize(r)),
-        ))(s)
-    }
-}
+pub struct DimensionalCharacteristic_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DimensionalCharacteristic<'a> = Id<DimensionalCharacteristic_<'a>>;
+
 #[derive(Debug)]
 pub struct DimensionalCharacteristicRepresentation_<'a> { // entity
     pub dimension: DimensionalCharacteristic<'a>,
@@ -9821,99 +8755,9 @@ impl<'a> Parse<'a> for DocumentReference_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DocumentReferenceItem<'a> { // select
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    Approval(Approval<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    Contract(Contract<'a>),
-    DescriptiveRepresentationItem(DescriptiveRepresentationItem<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    ExternallyDefinedDimensionDefinition(ExternallyDefinedDimensionDefinition<'a>),
-    FeatureDefinition(FeatureDefinition<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    Organization(Organization<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    Person(Person<'a>),
-    PresentationArea(PresentationArea<'a>),
-    ProcessPlan(ProcessPlan<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionProcess(ProductDefinitionProcess<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    ProductRelatedProductCategory(ProductRelatedProductCategory<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    Representation(Representation<'a>),
-    ResourceRequirementType(ResourceRequirementType<'a>),
-    Retention(Retention<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeAspectRelationship(ShapeAspectRelationship<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DocumentReferenceItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ActionDirective<'a>>::parse, |r| DocumentReferenceItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| DocumentReferenceItem::ActionMethod(r)),
-            map(<ActionRelationship<'a>>::parse, |r| DocumentReferenceItem::ActionRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| DocumentReferenceItem::AppliedActionAssignment(r)),
-            map(<Approval<'a>>::parse, |r| DocumentReferenceItem::Approval(r)),
-            map(<Certification<'a>>::parse, |r| DocumentReferenceItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| DocumentReferenceItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| DocumentReferenceItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| DocumentReferenceItem::ConfigurationDesign(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| DocumentReferenceItem::ConfigurationItem(r)),
-            map(<Contract<'a>>::parse, |r| DocumentReferenceItem::Contract(r)),
-            map(<DescriptiveRepresentationItem<'a>>::parse, |r| DocumentReferenceItem::DescriptiveRepresentationItem(r)),
-            map(<ExecutedAction<'a>>::parse, |r| DocumentReferenceItem::ExecutedAction(r)),
-            map(<ExternallyDefinedDimensionDefinition<'a>>::parse, |r| DocumentReferenceItem::ExternallyDefinedDimensionDefinition(r)),
-            map(<FeatureDefinition<'a>>::parse, |r| DocumentReferenceItem::FeatureDefinition(r)),
-            map(<GeneralProperty<'a>>::parse, |r| DocumentReferenceItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| DocumentReferenceItem::MaterialDesignation(r)),
-            map(<Organization<'a>>::parse, |r| DocumentReferenceItem::Organization(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| DocumentReferenceItem::OrganizationalProject(r)),
-        alt((
-            map(<Person<'a>>::parse, |r| DocumentReferenceItem::Person(r)),
-            map(<PresentationArea<'a>>::parse, |r| DocumentReferenceItem::PresentationArea(r)),
-            map(<ProcessPlan<'a>>::parse, |r| DocumentReferenceItem::ProcessPlan(r)),
-            map(<Product<'a>>::parse, |r| DocumentReferenceItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| DocumentReferenceItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| DocumentReferenceItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| DocumentReferenceItem::ProductConceptFeatureCategory(r)),
-            map(<ProductDefinition<'a>>::parse, |r| DocumentReferenceItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| DocumentReferenceItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| DocumentReferenceItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionProcess<'a>>::parse, |r| DocumentReferenceItem::ProductDefinitionProcess(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| DocumentReferenceItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| DocumentReferenceItem::ProductDefinitionSubstitute(r)),
-            map(<ProductRelatedProductCategory<'a>>::parse, |r| DocumentReferenceItem::ProductRelatedProductCategory(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| DocumentReferenceItem::PropertyDefinition(r)),
-            map(<Representation<'a>>::parse, |r| DocumentReferenceItem::Representation(r)),
-            map(<ResourceRequirementType<'a>>::parse, |r| DocumentReferenceItem::ResourceRequirementType(r)),
-            map(<Retention<'a>>::parse, |r| DocumentReferenceItem::Retention(r)),
-            map(<SecurityClassification<'a>>::parse, |r| DocumentReferenceItem::SecurityClassification(r)),
-        alt((
-            map(<ShapeAspect<'a>>::parse, |r| DocumentReferenceItem::ShapeAspect(r)),
-            map(<ShapeAspectRelationship<'a>>::parse, |r| DocumentReferenceItem::ShapeAspectRelationship(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| DocumentReferenceItem::VersionedActionRequest(r)),
-        ))))))(s)
-    }
-}
+pub struct DocumentReferenceItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DocumentReferenceItem<'a> = Id<DocumentReferenceItem_<'a>>;
+
 #[derive(Debug)]
 pub struct DocumentRelationship_<'a> { // entity
     pub name: Label<'a>,
@@ -10132,21 +8976,9 @@ impl<'a> Parse<'a> for DraughtingCallout_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DraughtingCalloutElement<'a> { // select
-    AnnotationTextOccurrence(AnnotationTextOccurrence<'a>),
-    AnnotationSymbolOccurrence(AnnotationSymbolOccurrence<'a>),
-    AnnotationCurveOccurrence(AnnotationCurveOccurrence<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DraughtingCalloutElement<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<AnnotationTextOccurrence<'a>>::parse, |r| DraughtingCalloutElement::AnnotationTextOccurrence(r)),
-            map(<AnnotationSymbolOccurrence<'a>>::parse, |r| DraughtingCalloutElement::AnnotationSymbolOccurrence(r)),
-            map(<AnnotationCurveOccurrence<'a>>::parse, |r| DraughtingCalloutElement::AnnotationCurveOccurrence(r)),
-        ))(s)
-    }
-}
+pub struct DraughtingCalloutElement_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DraughtingCalloutElement<'a> = Id<DraughtingCalloutElement_<'a>>;
+
 #[derive(Debug)]
 pub struct DraughtingCalloutRelationship_<'a> { // entity
     pub name: Label<'a>,
@@ -10270,19 +9102,9 @@ impl<'a> Parse<'a> for DraughtingModelItemAssociation_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DraughtingModelItemAssociationSelect<'a> { // select
-    AnnotationOccurrence(AnnotationOccurrence<'a>),
-    DraughtingCallout(DraughtingCallout<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DraughtingModelItemAssociationSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<AnnotationOccurrence<'a>>::parse, |r| DraughtingModelItemAssociationSelect::AnnotationOccurrence(r)),
-            map(<DraughtingCallout<'a>>::parse, |r| DraughtingModelItemAssociationSelect::DraughtingCallout(r)),
-        ))(s)
-    }
-}
+pub struct DraughtingModelItemAssociationSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DraughtingModelItemAssociationSelect<'a> = Id<DraughtingModelItemAssociationSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct DraughtingPreDefinedColour_<'a> { // entity
     pub name: Label<'a>,
@@ -10510,19 +9332,9 @@ impl<'a> Parse<'a> for DraughtingTitle_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum DraughtingTitledItem<'a> { // select
-    DrawingRevision(DrawingRevision<'a>),
-    DrawingSheetRevision(DrawingSheetRevision<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for DraughtingTitledItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<DrawingRevision<'a>>::parse, |r| DraughtingTitledItem::DrawingRevision(r)),
-            map(<DrawingSheetRevision<'a>>::parse, |r| DraughtingTitledItem::DrawingSheetRevision(r)),
-        ))(s)
-    }
-}
+pub struct DraughtingTitledItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type DraughtingTitledItem<'a> = Id<DraughtingTitledItem_<'a>>;
+
 #[derive(Debug)]
 pub struct DrawingDefinition_<'a> { // entity
     pub drawing_number: Identifier<'a>,
@@ -10974,86 +9786,9 @@ impl<'a> Parse<'a> for EffectivityContextRole_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum EffectivityItem<'a> { // select
-    Action(Action<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionMethodRelationship(ActionMethodRelationship<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for EffectivityItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| EffectivityItem::Action(r)),
-            map(<ActionMethod<'a>>::parse, |r| EffectivityItem::ActionMethod(r)),
-            map(<ActionMethodRelationship<'a>>::parse, |r| EffectivityItem::ActionMethodRelationship(r)),
-            map(<ActionProperty<'a>>::parse, |r| EffectivityItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| EffectivityItem::ActionRelationship(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| EffectivityItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Class<'a>>::parse, |r| EffectivityItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| EffectivityItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| EffectivityItem::ConfigurationDesign(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| EffectivityItem::ConfigurationItem(r)),
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| EffectivityItem::ConfiguredEffectivityAssignment(r)),
-            map(<DocumentFile<'a>>::parse, |r| EffectivityItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| EffectivityItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| EffectivityItem::DrawingRevision(r)),
-            map(<GeneralProperty<'a>>::parse, |r| EffectivityItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| EffectivityItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| EffectivityItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<PresentationArea<'a>>::parse, |r| EffectivityItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| EffectivityItem::Product(r)),
-        alt((
-            map(<ProductConcept<'a>>::parse, |r| EffectivityItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| EffectivityItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| EffectivityItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| EffectivityItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| EffectivityItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| EffectivityItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| EffectivityItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| EffectivityItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| EffectivityItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| EffectivityItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| EffectivityItem::PropertyDefinition(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| EffectivityItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| EffectivityItem::ResourceProperty(r)),
-            map(<SecurityClassification<'a>>::parse, |r| EffectivityItem::SecurityClassification(r)),
-            map(<ShapeAspect<'a>>::parse, |r| EffectivityItem::ShapeAspect(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| EffectivityItem::ShapeRepresentation(r)),
-        ))))(s)
-    }
-}
+pub struct EffectivityItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type EffectivityItem<'a> = Id<EffectivityItem_<'a>>;
+
 #[derive(Debug)]
 pub struct EffectivityRelationship_<'a> { // entity
     pub name: Label<'a>,
@@ -11418,115 +10153,9 @@ impl<'a> Parse<'a> for EventOccurrenceContextRole_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum EventOccurrenceItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AppliedClassificationAssignment(AppliedClassificationAssignment<'a>),
-    AppliedPersonAndOrganizationAssignment(AppliedPersonAndOrganizationAssignment<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationEffectivity(ConfigurationEffectivity<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    Contract(Contract<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for EventOccurrenceItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| EventOccurrenceItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| EventOccurrenceItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| EventOccurrenceItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| EventOccurrenceItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| EventOccurrenceItem::ActionRelationship(r)),
-            map(<ActionRequestSolution<'a>>::parse, |r| EventOccurrenceItem::ActionRequestSolution(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| EventOccurrenceItem::AlternateProductRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| EventOccurrenceItem::AppliedActionAssignment(r)),
-            map(<AppliedClassificationAssignment<'a>>::parse, |r| EventOccurrenceItem::AppliedClassificationAssignment(r)),
-            map(<AppliedPersonAndOrganizationAssignment<'a>>::parse, |r| EventOccurrenceItem::AppliedPersonAndOrganizationAssignment(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| EventOccurrenceItem::ApprovalStatus(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| EventOccurrenceItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| EventOccurrenceItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| EventOccurrenceItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| EventOccurrenceItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| EventOccurrenceItem::ConfigurationDesign(r)),
-            map(<ConfigurationEffectivity<'a>>::parse, |r| EventOccurrenceItem::ConfigurationEffectivity(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| EventOccurrenceItem::ConfigurationItem(r)),
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| EventOccurrenceItem::ConfiguredEffectivityAssignment(r)),
-        alt((
-            map(<Contract<'a>>::parse, |r| EventOccurrenceItem::Contract(r)),
-            map(<DocumentFile<'a>>::parse, |r| EventOccurrenceItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| EventOccurrenceItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| EventOccurrenceItem::DrawingRevision(r)),
-            map(<ExecutedAction<'a>>::parse, |r| EventOccurrenceItem::ExecutedAction(r)),
-            map(<GeneralProperty<'a>>::parse, |r| EventOccurrenceItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| EventOccurrenceItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| EventOccurrenceItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| EventOccurrenceItem::OrganizationRelationship(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| EventOccurrenceItem::OrganizationalProject(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| EventOccurrenceItem::PersonAndOrganization(r)),
-            map(<PresentationArea<'a>>::parse, |r| EventOccurrenceItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| EventOccurrenceItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| EventOccurrenceItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| EventOccurrenceItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| EventOccurrenceItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| EventOccurrenceItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| EventOccurrenceItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| EventOccurrenceItem::ProductDefinition(r)),
-        alt((
-            map(<ProductDefinitionFormation<'a>>::parse, |r| EventOccurrenceItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| EventOccurrenceItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| EventOccurrenceItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| EventOccurrenceItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| EventOccurrenceItem::PropertyDefinition(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| EventOccurrenceItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| EventOccurrenceItem::ResourceProperty(r)),
-            map(<SecurityClassification<'a>>::parse, |r| EventOccurrenceItem::SecurityClassification(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| EventOccurrenceItem::SecurityClassificationLevel(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| EventOccurrenceItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| EventOccurrenceItem::VersionedActionRequest(r)),
-        ))))))(s)
-    }
-}
+pub struct EventOccurrenceItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type EventOccurrenceItem<'a> = Id<EventOccurrenceItem_<'a>>;
+
 #[derive(Debug)]
 pub struct EventOccurrenceRole_<'a> { // entity
     pub name: Label<'a>,
@@ -11739,23 +10368,9 @@ impl<'a> Parse<'a> for ExternalIdentificationAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ExternalIdentificationItem<'a> { // select
-    DocumentFile(DocumentFile<'a>),
-    ExternallyDefinedClass(ExternallyDefinedClass<'a>),
-    ExternallyDefinedGeneralProperty(ExternallyDefinedGeneralProperty<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ExternalIdentificationItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<DocumentFile<'a>>::parse, |r| ExternalIdentificationItem::DocumentFile(r)),
-            map(<ExternallyDefinedClass<'a>>::parse, |r| ExternalIdentificationItem::ExternallyDefinedClass(r)),
-            map(<ExternallyDefinedGeneralProperty<'a>>::parse, |r| ExternalIdentificationItem::ExternallyDefinedGeneralProperty(r)),
-            map(<ProductDefinition<'a>>::parse, |r| ExternalIdentificationItem::ProductDefinition(r)),
-        ))(s)
-    }
-}
+pub struct ExternalIdentificationItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ExternalIdentificationItem<'a> = Id<ExternalIdentificationItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ExternalSource_<'a> { // entity
     pub source_id: SourceItem<'a>,
@@ -12704,15 +11319,9 @@ impl<'a> Parse<'a> for FillAreaStyleHatching_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum FillAreaStyleTileShapeSelect<'a> { // select
-    FillAreaStyleTileSymbolWithStyle(FillAreaStyleTileSymbolWithStyle<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for FillAreaStyleTileShapeSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<FillAreaStyleTileSymbolWithStyle<'a>>::parse, |r| FillAreaStyleTileShapeSelect::FillAreaStyleTileSymbolWithStyle(r))(s)
-    }
-}
+pub struct FillAreaStyleTileShapeSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type FillAreaStyleTileShapeSelect<'a> = Id<FillAreaStyleTileShapeSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct FillAreaStyleTileSymbolWithStyle_<'a> { // entity
     pub name: Label<'a>,
@@ -12772,25 +11381,9 @@ impl<'a> Parse<'a> for FillAreaStyleTiles_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum FillStyleSelect<'a> { // select
-    FillAreaStyleColour(FillAreaStyleColour<'a>),
-    ExternallyDefinedTileStyle(ExternallyDefinedTileStyle<'a>),
-    FillAreaStyleTiles(FillAreaStyleTiles<'a>),
-    ExternallyDefinedHatchStyle(ExternallyDefinedHatchStyle<'a>),
-    FillAreaStyleHatching(FillAreaStyleHatching<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for FillStyleSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<FillAreaStyleColour<'a>>::parse, |r| FillStyleSelect::FillAreaStyleColour(r)),
-            map(<ExternallyDefinedTileStyle<'a>>::parse, |r| FillStyleSelect::ExternallyDefinedTileStyle(r)),
-            map(<FillAreaStyleTiles<'a>>::parse, |r| FillStyleSelect::FillAreaStyleTiles(r)),
-            map(<ExternallyDefinedHatchStyle<'a>>::parse, |r| FillStyleSelect::ExternallyDefinedHatchStyle(r)),
-            map(<FillAreaStyleHatching<'a>>::parse, |r| FillStyleSelect::FillAreaStyleHatching(r)),
-        ))(s)
-    }
-}
+pub struct FillStyleSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type FillStyleSelect<'a> = Id<FillStyleSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct Fillet_<'a> { // entity
     pub name: Label<'a>,
@@ -12856,19 +11449,9 @@ impl<'a> Parse<'a> for FlatnessTolerance_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum FontSelect<'a> { // select
-    PreDefinedTextFont(PreDefinedTextFont<'a>),
-    ExternallyDefinedTextFont(ExternallyDefinedTextFont<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for FontSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PreDefinedTextFont<'a>>::parse, |r| FontSelect::PreDefinedTextFont(r)),
-            map(<ExternallyDefinedTextFont<'a>>::parse, |r| FontSelect::ExternallyDefinedTextFont(r)),
-        ))(s)
-    }
-}
+pub struct FontSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type FontSelect<'a> = Id<FontSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct FormatFunction_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
@@ -12913,19 +11496,9 @@ impl<'a> Parse<'a> for FoundedItem_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum FoundedItemSelect<'a> { // select
-    FoundedItem(FoundedItem<'a>),
-    RepresentationItem(RepresentationItem<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for FoundedItemSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<FoundedItem<'a>>::parse, |r| FoundedItemSelect::FoundedItem(r)),
-            map(<RepresentationItem<'a>>::parse, |r| FoundedItemSelect::RepresentationItem(r)),
-        ))(s)
-    }
-}
+pub struct FoundedItemSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type FoundedItemSelect<'a> = Id<FoundedItemSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct FoundedKinematicPath_<'a> { // entity
     pub name: Label<'a>,
@@ -13562,21 +12135,9 @@ impl<'a> Parse<'a> for GeometricSet_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum GeometricSetSelect<'a> { // select
-    Point(Point<'a>),
-    Curve(Curve<'a>),
-    Surface(Surface<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for GeometricSetSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Point<'a>>::parse, |r| GeometricSetSelect::Point(r)),
-            map(<Curve<'a>>::parse, |r| GeometricSetSelect::Curve(r)),
-            map(<Surface<'a>>::parse, |r| GeometricSetSelect::Surface(r)),
-        ))(s)
-    }
-}
+pub struct GeometricSetSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type GeometricSetSelect<'a> = Id<GeometricSetSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct GeometricTolerance_<'a> { // entity
     pub name: Label<'a>,
@@ -13932,27 +12493,9 @@ impl<'a> Parse<'a> for GroupAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum GroupItem<'a> { // select
-    GeometricRepresentationItem(GeometricRepresentationItem<'a>),
-    MappedItem(MappedItem<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    StyledItem(StyledItem<'a>),
-    TopologicalRepresentationItem(TopologicalRepresentationItem<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for GroupItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<GeometricRepresentationItem<'a>>::parse, |r| GroupItem::GeometricRepresentationItem(r)),
-            map(<MappedItem<'a>>::parse, |r| GroupItem::MappedItem(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| GroupItem::ProductConceptFeature(r)),
-            map(<ShapeAspect<'a>>::parse, |r| GroupItem::ShapeAspect(r)),
-            map(<StyledItem<'a>>::parse, |r| GroupItem::StyledItem(r)),
-            map(<TopologicalRepresentationItem<'a>>::parse, |r| GroupItem::TopologicalRepresentationItem(r)),
-        ))(s)
-    }
-}
+pub struct GroupItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type GroupItem<'a> = Id<GroupItem_<'a>>;
+
 #[derive(Debug)]
 pub struct GroupRelationship_<'a> { // entity
     pub name: Label<'a>,
@@ -14240,35 +12783,9 @@ impl<'a> Parse<'a> for IdAttribute_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum IdAttributeSelect<'a> { // select
-    Action(Action<'a>),
-    Address(Address<'a>),
-    ProductCategory(ProductCategory<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeAspectRelationship(ShapeAspectRelationship<'a>),
-    ApplicationContext(ApplicationContext<'a>),
-    Group(Group<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    Representation(Representation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for IdAttributeSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| IdAttributeSelect::Action(r)),
-            map(<Address<'a>>::parse, |r| IdAttributeSelect::Address(r)),
-            map(<ProductCategory<'a>>::parse, |r| IdAttributeSelect::ProductCategory(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| IdAttributeSelect::PropertyDefinition(r)),
-            map(<ShapeAspect<'a>>::parse, |r| IdAttributeSelect::ShapeAspect(r)),
-            map(<ShapeAspectRelationship<'a>>::parse, |r| IdAttributeSelect::ShapeAspectRelationship(r)),
-            map(<ApplicationContext<'a>>::parse, |r| IdAttributeSelect::ApplicationContext(r)),
-            map(<Group<'a>>::parse, |r| IdAttributeSelect::Group(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| IdAttributeSelect::OrganizationalProject(r)),
-            map(<Representation<'a>>::parse, |r| IdAttributeSelect::Representation(r)),
-        ))(s)
-    }
-}
+pub struct IdAttributeSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type IdAttributeSelect<'a> = Id<IdAttributeSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct IdentificationAssignment_<'a> { // entity
     pub assigned_id: Identifier<'a>,
@@ -14296,84 +12813,9 @@ impl<'a> Parse<'a> for IdentificationAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum IdentificationItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    AppliedIdentificationAssignment(AppliedIdentificationAssignment<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    DimensionalSize(DimensionalSize<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DocumentType(DocumentType<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    Effectivity(Effectivity<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MeasureRepresentationItem(MeasureRepresentationItem<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    Organization(Organization<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    PropertyDefinitionRelationship(PropertyDefinitionRelationship<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeAspectRelationship(ShapeAspectRelationship<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for IdentificationItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| IdentificationItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| IdentificationItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| IdentificationItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| IdentificationItem::ActionProperty(r)),
-            map(<AppliedIdentificationAssignment<'a>>::parse, |r| IdentificationItem::AppliedIdentificationAssignment(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| IdentificationItem::ApprovalStatus(r)),
-            map(<Class<'a>>::parse, |r| IdentificationItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| IdentificationItem::ClassSystem(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| IdentificationItem::ConfigurationItem(r)),
-            map(<DimensionalSize<'a>>::parse, |r| IdentificationItem::DimensionalSize(r)),
-            map(<DocumentFile<'a>>::parse, |r| IdentificationItem::DocumentFile(r)),
-            map(<DocumentType<'a>>::parse, |r| IdentificationItem::DocumentType(r)),
-            map(<DraughtingModel<'a>>::parse, |r| IdentificationItem::DraughtingModel(r)),
-            map(<Effectivity<'a>>::parse, |r| IdentificationItem::Effectivity(r)),
-            map(<GeneralProperty<'a>>::parse, |r| IdentificationItem::GeneralProperty(r)),
-            map(<MeasureRepresentationItem<'a>>::parse, |r| IdentificationItem::MeasureRepresentationItem(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| IdentificationItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<Organization<'a>>::parse, |r| IdentificationItem::Organization(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| IdentificationItem::OrganizationalProject(r)),
-        alt((
-            map(<PersonAndOrganization<'a>>::parse, |r| IdentificationItem::PersonAndOrganization(r)),
-            map(<PresentationArea<'a>>::parse, |r| IdentificationItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| IdentificationItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| IdentificationItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| IdentificationItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| IdentificationItem::ProductConceptFeatureCategory(r)),
-            map(<ProductDefinition<'a>>::parse, |r| IdentificationItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| IdentificationItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| IdentificationItem::ProductDefinitionRelationship(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| IdentificationItem::PropertyDefinition(r)),
-            map(<PropertyDefinitionRelationship<'a>>::parse, |r| IdentificationItem::PropertyDefinitionRelationship(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| IdentificationItem::SecurityClassificationLevel(r)),
-            map(<ShapeAspectRelationship<'a>>::parse, |r| IdentificationItem::ShapeAspectRelationship(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| IdentificationItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| IdentificationItem::VersionedActionRequest(r)),
-        ))))(s)
-    }
-}
+pub struct IdentificationItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type IdentificationItem<'a> = Id<IdentificationItem_<'a>>;
+
 #[derive(Debug)]
 pub struct IdentificationRole_<'a> { // entity
     pub name: Label<'a>,
@@ -14736,37 +13178,13 @@ impl<'a> Parse<'a> for Invisibility_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum InvisibilityContext<'a> { // select
-    PresentationRepresentation(PresentationRepresentation<'a>),
-    PresentationSet(PresentationSet<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for InvisibilityContext<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PresentationRepresentation<'a>>::parse, |r| InvisibilityContext::PresentationRepresentation(r)),
-            map(<PresentationSet<'a>>::parse, |r| InvisibilityContext::PresentationSet(r)),
-        ))(s)
-    }
-}
+pub struct InvisibilityContext_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type InvisibilityContext<'a> = Id<InvisibilityContext_<'a>>;
+
 #[derive(Debug)]
-pub enum InvisibleItem<'a> { // select
-    DraughtingCallout(DraughtingCallout<'a>),
-    PresentationLayerAssignment(PresentationLayerAssignment<'a>),
-    Representation(Representation<'a>),
-    StyledItem(StyledItem<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for InvisibleItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<DraughtingCallout<'a>>::parse, |r| InvisibleItem::DraughtingCallout(r)),
-            map(<PresentationLayerAssignment<'a>>::parse, |r| InvisibleItem::PresentationLayerAssignment(r)),
-            map(<Representation<'a>>::parse, |r| InvisibleItem::Representation(r)),
-            map(<StyledItem<'a>>::parse, |r| InvisibleItem::StyledItem(r)),
-        ))(s)
-    }
-}
+pub struct InvisibleItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type InvisibleItem<'a> = Id<InvisibleItem_<'a>>;
+
 #[derive(Debug)]
 pub struct ItemDefinedTransformation_<'a> { // entity
     pub name: Label<'a>,
@@ -14919,15 +13337,9 @@ impl<'a> Parse<'a> for KinematicAnalysisConsistency_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum KinematicAnalysisDefinition<'a> { // select
-    InterpolatedConfigurationSequence(InterpolatedConfigurationSequence<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for KinematicAnalysisDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<InterpolatedConfigurationSequence<'a>>::parse, |r| KinematicAnalysisDefinition::InterpolatedConfigurationSequence(r))(s)
-    }
-}
+pub struct KinematicAnalysisDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type KinematicAnalysisDefinition<'a> = Id<KinematicAnalysisDefinition_<'a>>;
+
 #[derive(Debug)]
 pub struct KinematicAnalysisResult_<'a> { // entity
     pub analysed_mechanism: Mechanism<'a>,
@@ -14981,21 +13393,9 @@ impl<'a> Parse<'a> for KinematicControl_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum KinematicFrameBackground<'a> { // select
-    Point(Point<'a>),
-    Curve(Curve<'a>),
-    Surface(Surface<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for KinematicFrameBackground<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Point<'a>>::parse, |r| KinematicFrameBackground::Point(r)),
-            map(<Curve<'a>>::parse, |r| KinematicFrameBackground::Curve(r)),
-            map(<Surface<'a>>::parse, |r| KinematicFrameBackground::Surface(r)),
-        ))(s)
-    }
-}
+pub struct KinematicFrameBackground_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type KinematicFrameBackground<'a> = Id<KinematicFrameBackground_<'a>>;
+
 #[derive(Debug)]
 pub struct KinematicFrameBackgroundRepresentation_<'a> { // entity
     pub name: Label<'a>,
@@ -15374,19 +13774,9 @@ impl<'a> Parse<'a> for KinematicPropertyRepresentationRelation_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum KinematicResult<'a> { // select
-    InterpolatedConfigurationSequence(InterpolatedConfigurationSequence<'a>),
-    ResultingPath(ResultingPath<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for KinematicResult<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<InterpolatedConfigurationSequence<'a>>::parse, |r| KinematicResult::InterpolatedConfigurationSequence(r)),
-            map(<ResultingPath<'a>>::parse, |r| KinematicResult::ResultingPath(r)),
-        ))(s)
-    }
-}
+pub struct KinematicResult_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type KinematicResult<'a> = Id<KinematicResult_<'a>>;
+
 #[derive(Debug)]
 pub struct KinematicStructure_<'a> { // entity
     pub joints: Vec<KinematicJoint<'a>>,
@@ -15518,29 +13908,13 @@ impl<'a> Parse<'a> for LanguageAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum LanguageItem<'a> { // select
-    Representation(Representation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for LanguageItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<Representation<'a>>::parse, |r| LanguageItem::Representation(r))(s)
-    }
-}
+pub struct LanguageItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type LanguageItem<'a> = Id<LanguageItem_<'a>>;
+
 #[derive(Debug)]
-pub enum LayeredItem<'a> { // select
-    PresentationRepresentation(PresentationRepresentation<'a>),
-    RepresentationItem(RepresentationItem<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for LayeredItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PresentationRepresentation<'a>>::parse, |r| LayeredItem::PresentationRepresentation(r)),
-            map(<RepresentationItem<'a>>::parse, |r| LayeredItem::RepresentationItem(r)),
-        ))(s)
-    }
-}
+pub struct LayeredItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type LayeredItem<'a> = Id<LayeredItem_<'a>>;
+
 #[derive(Debug)]
 pub struct LeaderCurve_<'a> { // entity
     pub name: Label<'a>,
@@ -17310,156 +15684,9 @@ impl<'a> Parse<'a> for MultiLanguageAttributeAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum MultiLanguageAttributeItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    ApplicationContext(ApplicationContext<'a>),
-    ApprovalRelationship(ApprovalRelationship<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    Contract(Contract<'a>),
-    DataEnvironment(DataEnvironment<'a>),
-    DateRole(DateRole<'a>),
-    DateTimeRole(DateTimeRole<'a>),
-    DescriptiveRepresentationItem(DescriptiveRepresentationItem<'a>),
-    DocumentRelationship(DocumentRelationship<'a>),
-    DraughtingTitle(DraughtingTitle<'a>),
-    Effectivity(Effectivity<'a>),
-    EffectivityRelationship(EffectivityRelationship<'a>),
-    EventOccurrence(EventOccurrence<'a>),
-    ExternalSource(ExternalSource<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    GeneralPropertyRelationship(GeneralPropertyRelationship<'a>),
-    GeometricRepresentationItem(GeometricRepresentationItem<'a>),
-    GeometricTolerance(GeometricTolerance<'a>),
-    Group(Group<'a>),
-    GroupRelationship(GroupRelationship<'a>),
-    IdentificationRole(IdentificationRole<'a>),
-    KinematicPair(KinematicPair<'a>),
-    MappedItem(MappedItem<'a>),
-    NameAssignment(NameAssignment<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationRole(OrganizationRole<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    OrganizationalProjectRelationship(OrganizationalProjectRelationship<'a>),
-    PairActuator(PairActuator<'a>),
-    PersonAndOrganizationRole(PersonAndOrganizationRole<'a>),
-    PresentationLayerAssignment(PresentationLayerAssignment<'a>),
-    ProcessProductAssociation(ProcessProductAssociation<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptRelationship(ProductConceptRelationship<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    ProductRelatedProductCategory(ProductRelatedProductCategory<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    PropertyDefinitionRelationship(PropertyDefinitionRelationship<'a>),
-    Representation(Representation<'a>),
-    RepresentationRelationship(RepresentationRelationship<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    ResourceRequirementType(ResourceRequirementType<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeAspectRelationship(ShapeAspectRelationship<'a>),
-    StyledItem(StyledItem<'a>),
-    TimeIntervalRole(TimeIntervalRole<'a>),
-    TopologicalRepresentationItem(TopologicalRepresentationItem<'a>),
-    UncertaintyMeasureWithUnit(UncertaintyMeasureWithUnit<'a>),
-    UncertaintyQualifier(UncertaintyQualifier<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    VersionedActionRequestRelationship(VersionedActionRequestRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for MultiLanguageAttributeItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| MultiLanguageAttributeItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| MultiLanguageAttributeItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| MultiLanguageAttributeItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| MultiLanguageAttributeItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::ActionRelationship(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::AlternateProductRelationship(r)),
-            map(<ApplicationContext<'a>>::parse, |r| MultiLanguageAttributeItem::ApplicationContext(r)),
-            map(<ApprovalRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::ApprovalRelationship(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| MultiLanguageAttributeItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| MultiLanguageAttributeItem::Certification(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| MultiLanguageAttributeItem::ConfigurationDesign(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| MultiLanguageAttributeItem::ConfigurationItem(r)),
-            map(<Contract<'a>>::parse, |r| MultiLanguageAttributeItem::Contract(r)),
-            map(<DataEnvironment<'a>>::parse, |r| MultiLanguageAttributeItem::DataEnvironment(r)),
-            map(<DateRole<'a>>::parse, |r| MultiLanguageAttributeItem::DateRole(r)),
-            map(<DateTimeRole<'a>>::parse, |r| MultiLanguageAttributeItem::DateTimeRole(r)),
-            map(<DescriptiveRepresentationItem<'a>>::parse, |r| MultiLanguageAttributeItem::DescriptiveRepresentationItem(r)),
-            map(<DocumentRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::DocumentRelationship(r)),
-            map(<DraughtingTitle<'a>>::parse, |r| MultiLanguageAttributeItem::DraughtingTitle(r)),
-        alt((
-            map(<Effectivity<'a>>::parse, |r| MultiLanguageAttributeItem::Effectivity(r)),
-            map(<EffectivityRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::EffectivityRelationship(r)),
-            map(<EventOccurrence<'a>>::parse, |r| MultiLanguageAttributeItem::EventOccurrence(r)),
-            map(<ExternalSource<'a>>::parse, |r| MultiLanguageAttributeItem::ExternalSource(r)),
-            map(<GeneralProperty<'a>>::parse, |r| MultiLanguageAttributeItem::GeneralProperty(r)),
-            map(<GeneralPropertyRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::GeneralPropertyRelationship(r)),
-            map(<GeometricRepresentationItem<'a>>::parse, |r| MultiLanguageAttributeItem::GeometricRepresentationItem(r)),
-            map(<GeometricTolerance<'a>>::parse, |r| MultiLanguageAttributeItem::GeometricTolerance(r)),
-            map(<Group<'a>>::parse, |r| MultiLanguageAttributeItem::Group(r)),
-            map(<GroupRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::GroupRelationship(r)),
-            map(<IdentificationRole<'a>>::parse, |r| MultiLanguageAttributeItem::IdentificationRole(r)),
-            map(<KinematicPair<'a>>::parse, |r| MultiLanguageAttributeItem::KinematicPair(r)),
-            map(<MappedItem<'a>>::parse, |r| MultiLanguageAttributeItem::MappedItem(r)),
-            map(<NameAssignment<'a>>::parse, |r| MultiLanguageAttributeItem::NameAssignment(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::OrganizationRelationship(r)),
-            map(<OrganizationRole<'a>>::parse, |r| MultiLanguageAttributeItem::OrganizationRole(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| MultiLanguageAttributeItem::OrganizationalProject(r)),
-            map(<OrganizationalProjectRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::OrganizationalProjectRelationship(r)),
-            map(<PairActuator<'a>>::parse, |r| MultiLanguageAttributeItem::PairActuator(r)),
-        alt((
-            map(<PersonAndOrganizationRole<'a>>::parse, |r| MultiLanguageAttributeItem::PersonAndOrganizationRole(r)),
-            map(<PresentationLayerAssignment<'a>>::parse, |r| MultiLanguageAttributeItem::PresentationLayerAssignment(r)),
-            map(<ProcessProductAssociation<'a>>::parse, |r| MultiLanguageAttributeItem::ProcessProductAssociation(r)),
-            map(<Product<'a>>::parse, |r| MultiLanguageAttributeItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| MultiLanguageAttributeItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| MultiLanguageAttributeItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| MultiLanguageAttributeItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::ProductConceptRelationship(r)),
-            map(<ProductDefinition<'a>>::parse, |r| MultiLanguageAttributeItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| MultiLanguageAttributeItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| MultiLanguageAttributeItem::ProductDefinitionSubstitute(r)),
-            map(<ProductRelatedProductCategory<'a>>::parse, |r| MultiLanguageAttributeItem::ProductRelatedProductCategory(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| MultiLanguageAttributeItem::PropertyDefinition(r)),
-            map(<PropertyDefinitionRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::PropertyDefinitionRelationship(r)),
-            map(<Representation<'a>>::parse, |r| MultiLanguageAttributeItem::Representation(r)),
-            map(<RepresentationRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::RepresentationRelationship(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| MultiLanguageAttributeItem::RequirementForActionResource(r)),
-        alt((
-            map(<ResourceProperty<'a>>::parse, |r| MultiLanguageAttributeItem::ResourceProperty(r)),
-            map(<ResourceRequirementType<'a>>::parse, |r| MultiLanguageAttributeItem::ResourceRequirementType(r)),
-            map(<SecurityClassification<'a>>::parse, |r| MultiLanguageAttributeItem::SecurityClassification(r)),
-            map(<ShapeAspect<'a>>::parse, |r| MultiLanguageAttributeItem::ShapeAspect(r)),
-            map(<ShapeAspectRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::ShapeAspectRelationship(r)),
-            map(<StyledItem<'a>>::parse, |r| MultiLanguageAttributeItem::StyledItem(r)),
-            map(<TimeIntervalRole<'a>>::parse, |r| MultiLanguageAttributeItem::TimeIntervalRole(r)),
-            map(<TopologicalRepresentationItem<'a>>::parse, |r| MultiLanguageAttributeItem::TopologicalRepresentationItem(r)),
-            map(<UncertaintyMeasureWithUnit<'a>>::parse, |r| MultiLanguageAttributeItem::UncertaintyMeasureWithUnit(r)),
-            map(<UncertaintyQualifier<'a>>::parse, |r| MultiLanguageAttributeItem::UncertaintyQualifier(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| MultiLanguageAttributeItem::VersionedActionRequest(r)),
-            map(<VersionedActionRequestRelationship<'a>>::parse, |r| MultiLanguageAttributeItem::VersionedActionRequestRelationship(r)),
-        ))))))))(s)
-    }
-}
+pub struct MultiLanguageAttributeItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type MultiLanguageAttributeItem<'a> = Id<MultiLanguageAttributeItem_<'a>>;
+
 #[derive(Debug)]
 pub struct MultipleArityBooleanExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
@@ -17602,51 +15829,13 @@ impl<'a> Parse<'a> for NameAttribute_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum NameAttributeSelect<'a> { // select
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    Address(Address<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ContextDependentShapeRepresentation(ContextDependentShapeRepresentation<'a>),
-    DerivedUnit(DerivedUnit<'a>),
-    Effectivity(Effectivity<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinitionRepresentation(PropertyDefinitionRepresentation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for NameAttributeSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ActionRequestSolution<'a>>::parse, |r| NameAttributeSelect::ActionRequestSolution(r)),
-            map(<Address<'a>>::parse, |r| NameAttributeSelect::Address(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| NameAttributeSelect::ConfigurationDesign(r)),
-            map(<ContextDependentShapeRepresentation<'a>>::parse, |r| NameAttributeSelect::ContextDependentShapeRepresentation(r)),
-            map(<DerivedUnit<'a>>::parse, |r| NameAttributeSelect::DerivedUnit(r)),
-            map(<Effectivity<'a>>::parse, |r| NameAttributeSelect::Effectivity(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| NameAttributeSelect::PersonAndOrganization(r)),
-            map(<ProductDefinition<'a>>::parse, |r| NameAttributeSelect::ProductDefinition(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| NameAttributeSelect::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinitionRepresentation<'a>>::parse, |r| NameAttributeSelect::PropertyDefinitionRepresentation(r)),
-        ))(s)
-    }
-}
+pub struct NameAttributeSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type NameAttributeSelect<'a> = Id<NameAttributeSelect_<'a>>;
+
 #[derive(Debug)]
-pub enum NameItem<'a> { // select
-    KinematicJoint(KinematicJoint<'a>),
-    KinematicLink(KinematicLink<'a>),
-    KinematicStructure(KinematicStructure<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for NameItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<KinematicJoint<'a>>::parse, |r| NameItem::KinematicJoint(r)),
-            map(<KinematicLink<'a>>::parse, |r| NameItem::KinematicLink(r)),
-            map(<KinematicStructure<'a>>::parse, |r| NameItem::KinematicStructure(r)),
-        ))(s)
-    }
-}
+pub struct NameItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type NameItem<'a> = Id<NameItem_<'a>>;
+
 #[derive(Debug)]
 pub struct NamedUnit_<'a> { // entity
     pub dimensions: DimensionalExponents<'a>,
@@ -18238,129 +16427,9 @@ impl<'a> Parse<'a> for OrganizationAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum OrganizationItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AppliedClassificationAssignment(AppliedClassificationAssignment<'a>),
-    AppliedIdentificationAssignment(AppliedIdentificationAssignment<'a>),
-    AppliedOrganizationAssignment(AppliedOrganizationAssignment<'a>),
-    AppliedPersonAndOrganizationAssignment(AppliedPersonAndOrganizationAssignment<'a>),
-    Approval(Approval<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationEffectivity(ConfigurationEffectivity<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    Contract(Contract<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DocumentType(DocumentType<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    Effectivity(Effectivity<'a>),
-    EventOccurrence(EventOccurrence<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    Organization(Organization<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for OrganizationItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| OrganizationItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| OrganizationItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| OrganizationItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| OrganizationItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| OrganizationItem::ActionRelationship(r)),
-            map(<ActionRequestSolution<'a>>::parse, |r| OrganizationItem::ActionRequestSolution(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| OrganizationItem::AlternateProductRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| OrganizationItem::AppliedActionAssignment(r)),
-            map(<AppliedClassificationAssignment<'a>>::parse, |r| OrganizationItem::AppliedClassificationAssignment(r)),
-            map(<AppliedIdentificationAssignment<'a>>::parse, |r| OrganizationItem::AppliedIdentificationAssignment(r)),
-            map(<AppliedOrganizationAssignment<'a>>::parse, |r| OrganizationItem::AppliedOrganizationAssignment(r)),
-            map(<AppliedPersonAndOrganizationAssignment<'a>>::parse, |r| OrganizationItem::AppliedPersonAndOrganizationAssignment(r)),
-            map(<Approval<'a>>::parse, |r| OrganizationItem::Approval(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| OrganizationItem::ApprovalStatus(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| OrganizationItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| OrganizationItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| OrganizationItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| OrganizationItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| OrganizationItem::ConfigurationDesign(r)),
-        alt((
-            map(<ConfigurationEffectivity<'a>>::parse, |r| OrganizationItem::ConfigurationEffectivity(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| OrganizationItem::ConfigurationItem(r)),
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| OrganizationItem::ConfiguredEffectivityAssignment(r)),
-            map(<Contract<'a>>::parse, |r| OrganizationItem::Contract(r)),
-            map(<DocumentFile<'a>>::parse, |r| OrganizationItem::DocumentFile(r)),
-            map(<DocumentType<'a>>::parse, |r| OrganizationItem::DocumentType(r)),
-            map(<DraughtingModel<'a>>::parse, |r| OrganizationItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| OrganizationItem::DrawingRevision(r)),
-            map(<Effectivity<'a>>::parse, |r| OrganizationItem::Effectivity(r)),
-            map(<EventOccurrence<'a>>::parse, |r| OrganizationItem::EventOccurrence(r)),
-            map(<ExecutedAction<'a>>::parse, |r| OrganizationItem::ExecutedAction(r)),
-            map(<GeneralProperty<'a>>::parse, |r| OrganizationItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| OrganizationItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| OrganizationItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<Organization<'a>>::parse, |r| OrganizationItem::Organization(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| OrganizationItem::OrganizationRelationship(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| OrganizationItem::OrganizationalProject(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| OrganizationItem::PersonAndOrganization(r)),
-            map(<PresentationArea<'a>>::parse, |r| OrganizationItem::PresentationArea(r)),
-        alt((
-            map(<Product<'a>>::parse, |r| OrganizationItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| OrganizationItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| OrganizationItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| OrganizationItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| OrganizationItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| OrganizationItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| OrganizationItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| OrganizationItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| OrganizationItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| OrganizationItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| OrganizationItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| OrganizationItem::PropertyDefinition(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| OrganizationItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| OrganizationItem::ResourceProperty(r)),
-            map(<SecurityClassification<'a>>::parse, |r| OrganizationItem::SecurityClassification(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| OrganizationItem::SecurityClassificationLevel(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| OrganizationItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| OrganizationItem::VersionedActionRequest(r)),
-        ))))))(s)
-    }
-}
+pub struct OrganizationItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type OrganizationItem<'a> = Id<OrganizationItem_<'a>>;
+
 #[derive(Debug)]
 pub struct OrganizationRelationship_<'a> { // entity
     pub name: Label<'a>,
@@ -18534,29 +16603,9 @@ impl<'a> Parse<'a> for OrganizationalProjectAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum OrganizationalProjectItem<'a> { // select
-    AssemblyComponentUsage(AssemblyComponentUsage<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for OrganizationalProjectItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<AssemblyComponentUsage<'a>>::parse, |r| OrganizationalProjectItem::AssemblyComponentUsage(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| OrganizationalProjectItem::ConfigurationItem(r)),
-            map(<ExecutedAction<'a>>::parse, |r| OrganizationalProjectItem::ExecutedAction(r)),
-            map(<Product<'a>>::parse, |r| OrganizationalProjectItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| OrganizationalProjectItem::ProductConcept(r)),
-            map(<ProductDefinition<'a>>::parse, |r| OrganizationalProjectItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| OrganizationalProjectItem::ProductDefinitionFormation(r)),
-        ))(s)
-    }
-}
+pub struct OrganizationalProjectItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type OrganizationalProjectItem<'a> = Id<OrganizationalProjectItem_<'a>>;
+
 #[derive(Debug)]
 pub struct OrganizationalProjectRelationship_<'a> { // entity
     pub name: Label<'a>,
@@ -19276,19 +17325,9 @@ impl<'a> Parse<'a> for Pcurve_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum PcurveOrSurface<'a> { // select
-    Pcurve(Pcurve<'a>),
-    Surface(Surface<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for PcurveOrSurface<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Pcurve<'a>>::parse, |r| PcurveOrSurface::Pcurve(r)),
-            map(<Surface<'a>>::parse, |r| PcurveOrSurface::Surface(r)),
-        ))(s)
-    }
-}
+pub struct PcurveOrSurface_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type PcurveOrSurface<'a> = Id<PcurveOrSurface_<'a>>;
+
 #[derive(Debug)]
 pub struct PerpendicularTo_<'a> { // entity
     pub name: Label<'a>,
@@ -19530,123 +17569,9 @@ impl<'a> Parse<'a> for PersonAndOrganizationAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum PersonAndOrganizationItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AppliedClassificationAssignment(AppliedClassificationAssignment<'a>),
-    AppliedOrganizationAssignment(AppliedOrganizationAssignment<'a>),
-    AppliedPersonAndOrganizationAssignment(AppliedPersonAndOrganizationAssignment<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationEffectivity(ConfigurationEffectivity<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    Contract(Contract<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DocumentType(DocumentType<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    EventOccurrence(EventOccurrence<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    Organization(Organization<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for PersonAndOrganizationItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| PersonAndOrganizationItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| PersonAndOrganizationItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| PersonAndOrganizationItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| PersonAndOrganizationItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| PersonAndOrganizationItem::ActionRelationship(r)),
-            map(<ActionRequestSolution<'a>>::parse, |r| PersonAndOrganizationItem::ActionRequestSolution(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| PersonAndOrganizationItem::AlternateProductRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| PersonAndOrganizationItem::AppliedActionAssignment(r)),
-            map(<AppliedClassificationAssignment<'a>>::parse, |r| PersonAndOrganizationItem::AppliedClassificationAssignment(r)),
-            map(<AppliedOrganizationAssignment<'a>>::parse, |r| PersonAndOrganizationItem::AppliedOrganizationAssignment(r)),
-            map(<AppliedPersonAndOrganizationAssignment<'a>>::parse, |r| PersonAndOrganizationItem::AppliedPersonAndOrganizationAssignment(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| PersonAndOrganizationItem::ApprovalStatus(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| PersonAndOrganizationItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| PersonAndOrganizationItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| PersonAndOrganizationItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| PersonAndOrganizationItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| PersonAndOrganizationItem::ConfigurationDesign(r)),
-            map(<ConfigurationEffectivity<'a>>::parse, |r| PersonAndOrganizationItem::ConfigurationEffectivity(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| PersonAndOrganizationItem::ConfigurationItem(r)),
-        alt((
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| PersonAndOrganizationItem::ConfiguredEffectivityAssignment(r)),
-            map(<Contract<'a>>::parse, |r| PersonAndOrganizationItem::Contract(r)),
-            map(<DocumentFile<'a>>::parse, |r| PersonAndOrganizationItem::DocumentFile(r)),
-            map(<DocumentType<'a>>::parse, |r| PersonAndOrganizationItem::DocumentType(r)),
-            map(<DraughtingModel<'a>>::parse, |r| PersonAndOrganizationItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| PersonAndOrganizationItem::DrawingRevision(r)),
-            map(<EventOccurrence<'a>>::parse, |r| PersonAndOrganizationItem::EventOccurrence(r)),
-            map(<ExecutedAction<'a>>::parse, |r| PersonAndOrganizationItem::ExecutedAction(r)),
-            map(<GeneralProperty<'a>>::parse, |r| PersonAndOrganizationItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| PersonAndOrganizationItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| PersonAndOrganizationItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<Organization<'a>>::parse, |r| PersonAndOrganizationItem::Organization(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| PersonAndOrganizationItem::OrganizationRelationship(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| PersonAndOrganizationItem::OrganizationalProject(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| PersonAndOrganizationItem::PersonAndOrganization(r)),
-            map(<PresentationArea<'a>>::parse, |r| PersonAndOrganizationItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| PersonAndOrganizationItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| PersonAndOrganizationItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| PersonAndOrganizationItem::ProductConceptFeature(r)),
-        alt((
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| PersonAndOrganizationItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| PersonAndOrganizationItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| PersonAndOrganizationItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| PersonAndOrganizationItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| PersonAndOrganizationItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| PersonAndOrganizationItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| PersonAndOrganizationItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| PersonAndOrganizationItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| PersonAndOrganizationItem::PropertyDefinition(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| PersonAndOrganizationItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| PersonAndOrganizationItem::ResourceProperty(r)),
-            map(<SecurityClassification<'a>>::parse, |r| PersonAndOrganizationItem::SecurityClassification(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| PersonAndOrganizationItem::SecurityClassificationLevel(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| PersonAndOrganizationItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| PersonAndOrganizationItem::VersionedActionRequest(r)),
-        ))))))(s)
-    }
-}
+pub struct PersonAndOrganizationItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type PersonAndOrganizationItem<'a> = Id<PersonAndOrganizationItem_<'a>>;
+
 #[derive(Debug)]
 pub struct PersonAndOrganizationRole_<'a> { // entity
     pub name: Label<'a>,
@@ -19671,21 +17596,9 @@ impl<'a> Parse<'a> for PersonAndOrganizationRole_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum PersonOrganizationSelect<'a> { // select
-    Person(Person<'a>),
-    Organization(Organization<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for PersonOrganizationSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Person<'a>>::parse, |r| PersonOrganizationSelect::Person(r)),
-            map(<Organization<'a>>::parse, |r| PersonOrganizationSelect::Organization(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| PersonOrganizationSelect::PersonAndOrganization(r)),
-        ))(s)
-    }
-}
+pub struct PersonOrganizationSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type PersonOrganizationSelect<'a> = Id<PersonOrganizationSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct PersonalAddress_<'a> { // entity
     pub internal_location: Option<Label<'a>>,
@@ -20230,19 +18143,9 @@ impl<'a> Parse<'a> for PlaneAngleUnit_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum PlaneOrPlanarBox<'a> { // select
-    Plane(Plane<'a>),
-    PlanarBox(PlanarBox<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for PlaneOrPlanarBox<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Plane<'a>>::parse, |r| PlaneOrPlanarBox::Plane(r)),
-            map(<PlanarBox<'a>>::parse, |r| PlaneOrPlanarBox::PlanarBox(r)),
-        ))(s)
-    }
-}
+pub struct PlaneOrPlanarBox_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type PlaneOrPlanarBox<'a> = Id<PlaneOrPlanarBox_<'a>>;
+
 #[derive(Debug)]
 pub struct PlusExpression_<'a> { // entity
     pub operands: Vec<GenericExpression<'a>>,
@@ -21295,19 +19198,9 @@ impl<'a> Parse<'a> for PresentationRepresentation_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum PresentationRepresentationSelect<'a> { // select
-    PresentationRepresentation(PresentationRepresentation<'a>),
-    PresentationSet(PresentationSet<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for PresentationRepresentationSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PresentationRepresentation<'a>>::parse, |r| PresentationRepresentationSelect::PresentationRepresentation(r)),
-            map(<PresentationSet<'a>>::parse, |r| PresentationRepresentationSelect::PresentationSet(r)),
-        ))(s)
-    }
-}
+pub struct PresentationRepresentationSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type PresentationRepresentationSelect<'a> = Id<PresentationRepresentationSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct PresentationSet_<'a> { // entity
     _marker: std::marker::PhantomData<&'a ()>,
@@ -21355,21 +19248,9 @@ impl<'a> Parse<'a> for PresentationSize_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum PresentationSizeAssignmentSelect<'a> { // select
-    PresentationView(PresentationView<'a>),
-    PresentationArea(PresentationArea<'a>),
-    AreaInSet(AreaInSet<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for PresentationSizeAssignmentSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PresentationView<'a>>::parse, |r| PresentationSizeAssignmentSelect::PresentationView(r)),
-            map(<PresentationArea<'a>>::parse, |r| PresentationSizeAssignmentSelect::PresentationArea(r)),
-            map(<AreaInSet<'a>>::parse, |r| PresentationSizeAssignmentSelect::AreaInSet(r)),
-        ))(s)
-    }
-}
+pub struct PresentationSizeAssignmentSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type PresentationSizeAssignmentSelect<'a> = Id<PresentationSizeAssignmentSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct PresentationStyleAssignment_<'a> { // entity
     pub styles: Vec<PresentationStyleSelect<'a>>,
@@ -21525,33 +19406,9 @@ impl<'a> Parse<'a> for PresentedItemRepresentation_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum PresentedItemSelect<'a> { // select
-    Action(Action<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for PresentedItemSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| PresentedItemSelect::Action(r)),
-            map(<ActionMethod<'a>>::parse, |r| PresentedItemSelect::ActionMethod(r)),
-            map(<ActionRelationship<'a>>::parse, |r| PresentedItemSelect::ActionRelationship(r)),
-            map(<ProductConcept<'a>>::parse, |r| PresentedItemSelect::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| PresentedItemSelect::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| PresentedItemSelect::ProductConceptFeatureCategory(r)),
-            map(<ProductDefinition<'a>>::parse, |r| PresentedItemSelect::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| PresentedItemSelect::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| PresentedItemSelect::ProductDefinitionRelationship(r)),
-        ))(s)
-    }
-}
+pub struct PresentedItemSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type PresentedItemSelect<'a> = Id<PresentedItemSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct PrismaticPair_<'a> { // entity
     pub name: Label<'a>,
@@ -22694,21 +20551,9 @@ impl<'a> Parse<'a> for ProductIdentification_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ProductOrFormationOrDefinition<'a> { // select
-    Product(Product<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ProductOrFormationOrDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Product<'a>>::parse, |r| ProductOrFormationOrDefinition::Product(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| ProductOrFormationOrDefinition::ProductDefinitionFormation(r)),
-            map(<ProductDefinition<'a>>::parse, |r| ProductOrFormationOrDefinition::ProductDefinition(r)),
-        ))(s)
-    }
-}
+pub struct ProductOrFormationOrDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ProductOrFormationOrDefinition<'a> = Id<ProductOrFormationOrDefinition_<'a>>;
+
 #[derive(Debug)]
 pub enum ProductOrPresentationSpace<'a> { // enum
     ProductShapeSpace,
@@ -23050,19 +20895,9 @@ impl<'a> Parse<'a> for PropertyDefinitionRepresentation_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum PropertyOrShapeSelect<'a> { // select
-    PropertyDefinition(PropertyDefinition<'a>),
-    ShapeDefinition(ShapeDefinition<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for PropertyOrShapeSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PropertyDefinition<'a>>::parse, |r| PropertyOrShapeSelect::PropertyDefinition(r)),
-            map(<ShapeDefinition<'a>>::parse, |r| PropertyOrShapeSelect::ShapeDefinition(r)),
-        ))(s)
-    }
-}
+pub struct PropertyOrShapeSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type PropertyOrShapeSelect<'a> = Id<PropertyOrShapeSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct PropertyProcess_<'a> { // entity
     pub name: Label<'a>,
@@ -23792,19 +21627,9 @@ impl<'a> Parse<'a> for RelativeEventOccurrence_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum RenderingPropertiesSelect<'a> { // select
-    SurfaceStyleReflectanceAmbient(SurfaceStyleReflectanceAmbient<'a>),
-    SurfaceStyleTransparent(SurfaceStyleTransparent<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for RenderingPropertiesSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<SurfaceStyleReflectanceAmbient<'a>>::parse, |r| RenderingPropertiesSelect::SurfaceStyleReflectanceAmbient(r)),
-            map(<SurfaceStyleTransparent<'a>>::parse, |r| RenderingPropertiesSelect::SurfaceStyleTransparent(r)),
-        ))(s)
-    }
-}
+pub struct RenderingPropertiesSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type RenderingPropertiesSelect<'a> = Id<RenderingPropertiesSelect_<'a>>;
+
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct RepItemGroup_<'a> { // entity
@@ -24067,25 +21892,9 @@ impl<'a> Parse<'a> for RepresentationRelationshipWithTransformation_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum RepresentedDefinition<'a> { // select
-    GeneralProperty(GeneralProperty<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    PropertyDefinitionRelationship(PropertyDefinitionRelationship<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeAspectRelationship(ShapeAspectRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for RepresentedDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<GeneralProperty<'a>>::parse, |r| RepresentedDefinition::GeneralProperty(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| RepresentedDefinition::PropertyDefinition(r)),
-            map(<PropertyDefinitionRelationship<'a>>::parse, |r| RepresentedDefinition::PropertyDefinitionRelationship(r)),
-            map(<ShapeAspect<'a>>::parse, |r| RepresentedDefinition::ShapeAspect(r)),
-            map(<ShapeAspectRelationship<'a>>::parse, |r| RepresentedDefinition::ShapeAspectRelationship(r)),
-        ))(s)
-    }
-}
+pub struct RepresentedDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type RepresentedDefinition<'a> = Id<RepresentedDefinition_<'a>>;
+
 #[derive(Debug)]
 pub struct RequirementForActionResource_<'a> { // entity
     pub name: Label<'a>,
@@ -24292,27 +22101,9 @@ impl<'a> Parse<'a> for ReversibleTopology<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ReversibleTopologyItem<'a> { // select
-    Edge(Edge<'a>),
-    Path(Path<'a>),
-    Face(Face<'a>),
-    FaceBound(FaceBound<'a>),
-    ClosedShell(ClosedShell<'a>),
-    OpenShell(OpenShell<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ReversibleTopologyItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Edge<'a>>::parse, |r| ReversibleTopologyItem::Edge(r)),
-            map(<Path<'a>>::parse, |r| ReversibleTopologyItem::Path(r)),
-            map(<Face<'a>>::parse, |r| ReversibleTopologyItem::Face(r)),
-            map(<FaceBound<'a>>::parse, |r| ReversibleTopologyItem::FaceBound(r)),
-            map(<ClosedShell<'a>>::parse, |r| ReversibleTopologyItem::ClosedShell(r)),
-            map(<OpenShell<'a>>::parse, |r| ReversibleTopologyItem::OpenShell(r)),
-        ))(s)
-    }
-}
+pub struct ReversibleTopologyItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ReversibleTopologyItem<'a> = Id<ReversibleTopologyItem_<'a>>;
+
 #[derive(Debug)]
 pub struct RevolutePair_<'a> { // entity
     pub name: Label<'a>,
@@ -24599,15 +22390,9 @@ impl<'a> Parse<'a> for RightCircularCylinder_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum RigidPlacement<'a> { // select
-    Axis2Placement3d(Axis2Placement3d<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for RigidPlacement<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<Axis2Placement3d<'a>>::parse, |r| RigidPlacement::Axis2Placement3d(r))(s)
-    }
-}
+pub struct RigidPlacement_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type RigidPlacement<'a> = Id<RigidPlacement_<'a>>;
+
 #[derive(Debug)]
 pub struct RoleAssociation_<'a> { // entity
     pub role: ObjectRole<'a>,
@@ -24635,37 +22420,9 @@ impl<'a> Parse<'a> for RoleAssociation_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum RoleSelect<'a> { // select
-    ActionAssignment(ActionAssignment<'a>),
-    ActionRequestAssignment(ActionRequestAssignment<'a>),
-    ApprovalAssignment(ApprovalAssignment<'a>),
-    ApprovalDateTime(ApprovalDateTime<'a>),
-    CertificationAssignment(CertificationAssignment<'a>),
-    ContractAssignment(ContractAssignment<'a>),
-    DocumentReference(DocumentReference<'a>),
-    EffectivityAssignment(EffectivityAssignment<'a>),
-    GroupAssignment(GroupAssignment<'a>),
-    NameAssignment(NameAssignment<'a>),
-    SecurityClassificationAssignment(SecurityClassificationAssignment<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for RoleSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ActionAssignment<'a>>::parse, |r| RoleSelect::ActionAssignment(r)),
-            map(<ActionRequestAssignment<'a>>::parse, |r| RoleSelect::ActionRequestAssignment(r)),
-            map(<ApprovalAssignment<'a>>::parse, |r| RoleSelect::ApprovalAssignment(r)),
-            map(<ApprovalDateTime<'a>>::parse, |r| RoleSelect::ApprovalDateTime(r)),
-            map(<CertificationAssignment<'a>>::parse, |r| RoleSelect::CertificationAssignment(r)),
-            map(<ContractAssignment<'a>>::parse, |r| RoleSelect::ContractAssignment(r)),
-            map(<DocumentReference<'a>>::parse, |r| RoleSelect::DocumentReference(r)),
-            map(<EffectivityAssignment<'a>>::parse, |r| RoleSelect::EffectivityAssignment(r)),
-            map(<GroupAssignment<'a>>::parse, |r| RoleSelect::GroupAssignment(r)),
-            map(<NameAssignment<'a>>::parse, |r| RoleSelect::NameAssignment(r)),
-            map(<SecurityClassificationAssignment<'a>>::parse, |r| RoleSelect::SecurityClassificationAssignment(r)),
-        ))(s)
-    }
-}
+pub struct RoleSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type RoleSelect<'a> = Id<RoleSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct RollingCurvePair_<'a> { // entity
     pub name: Label<'a>,
@@ -25278,74 +23035,9 @@ impl<'a> Parse<'a> for SecurityClassificationAssignment_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum SecurityClassificationItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionProperty(ActionProperty<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationEffectivity(ConfigurationEffectivity<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for SecurityClassificationItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| SecurityClassificationItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| SecurityClassificationItem::ActionDirective(r)),
-            map(<ActionProperty<'a>>::parse, |r| SecurityClassificationItem::ActionProperty(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| SecurityClassificationItem::AppliedActionAssignment(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| SecurityClassificationItem::AssemblyComponentUsageSubstitute(r)),
-            map(<ClassSystem<'a>>::parse, |r| SecurityClassificationItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| SecurityClassificationItem::ConfigurationDesign(r)),
-            map(<ConfigurationEffectivity<'a>>::parse, |r| SecurityClassificationItem::ConfigurationEffectivity(r)),
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| SecurityClassificationItem::ConfiguredEffectivityAssignment(r)),
-            map(<DocumentFile<'a>>::parse, |r| SecurityClassificationItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| SecurityClassificationItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| SecurityClassificationItem::DrawingRevision(r)),
-            map(<ExecutedAction<'a>>::parse, |r| SecurityClassificationItem::ExecutedAction(r)),
-            map(<GeneralProperty<'a>>::parse, |r| SecurityClassificationItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| SecurityClassificationItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| SecurityClassificationItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| SecurityClassificationItem::OrganizationalProject(r)),
-            map(<PresentationArea<'a>>::parse, |r| SecurityClassificationItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| SecurityClassificationItem::Product(r)),
-        alt((
-            map(<ProductConcept<'a>>::parse, |r| SecurityClassificationItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| SecurityClassificationItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| SecurityClassificationItem::ProductConceptFeatureCategory(r)),
-            map(<ProductDefinition<'a>>::parse, |r| SecurityClassificationItem::ProductDefinition(r)),
-            map(<ProductDefinitionFormation<'a>>::parse, |r| SecurityClassificationItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| SecurityClassificationItem::ProductDefinitionRelationship(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| SecurityClassificationItem::PropertyDefinition(r)),
-            map(<ResourceProperty<'a>>::parse, |r| SecurityClassificationItem::ResourceProperty(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| SecurityClassificationItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| SecurityClassificationItem::VersionedActionRequest(r)),
-        ))))(s)
-    }
-}
+pub struct SecurityClassificationItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type SecurityClassificationItem<'a> = Id<SecurityClassificationItem_<'a>>;
+
 #[derive(Debug)]
 pub struct SecurityClassificationLevel_<'a> { // entity
     pub name: Label<'a>,
@@ -25639,21 +23331,9 @@ impl<'a> Parse<'a> for ShapeDefiningRelationship_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ShapeDefinition<'a> { // select
-    ProductDefinitionShape(ProductDefinitionShape<'a>),
-    ShapeAspect(ShapeAspect<'a>),
-    ShapeAspectRelationship(ShapeAspectRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ShapeDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ProductDefinitionShape<'a>>::parse, |r| ShapeDefinition::ProductDefinitionShape(r)),
-            map(<ShapeAspect<'a>>::parse, |r| ShapeDefinition::ShapeAspect(r)),
-            map(<ShapeAspectRelationship<'a>>::parse, |r| ShapeDefinition::ShapeAspectRelationship(r)),
-        ))(s)
-    }
-}
+pub struct ShapeDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ShapeDefinition<'a> = Id<ShapeDefinition_<'a>>;
+
 #[derive(Debug)]
 pub struct ShapeDefinitionRepresentation_<'a> { // entity
     pub definition: RepresentedDefinition<'a>,
@@ -25800,19 +23480,9 @@ impl<'a> Parse<'a> for ShapeRepresentationWithParameters_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum Shell<'a> { // select
-    OpenShell(OpenShell<'a>),
-    ClosedShell(ClosedShell<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for Shell<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<OpenShell<'a>>::parse, |r| Shell::OpenShell(r)),
-            map(<ClosedShell<'a>>::parse, |r| Shell::ClosedShell(r)),
-        ))(s)
-    }
-}
+pub struct Shell_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type Shell<'a> = Id<Shell_<'a>>;
+
 #[derive(Debug)]
 pub struct ShellBasedSurfaceModel_<'a> { // entity
     pub name: Label<'a>,
@@ -26543,15 +24213,9 @@ impl<'a> Parse<'a> for SpecifiedHigherUsageOccurrence_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum SpecifiedItem<'a> { // select
-    DrawingRevision(DrawingRevision<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for SpecifiedItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<DrawingRevision<'a>>::parse, |r| SpecifiedItem::DrawingRevision(r))(s)
-    }
-}
+pub struct SpecifiedItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type SpecifiedItem<'a> = Id<SpecifiedItem_<'a>>;
+
 #[derive(Debug)]
 pub struct Sphere_<'a> { // entity
     pub name: Label<'a>,
@@ -26958,27 +24622,9 @@ impl<'a> Parse<'a> for StructuredDimensionCallout_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum StyleContextSelect<'a> { // select
-    Group(Group<'a>),
-    PresentationLayerAssignment(PresentationLayerAssignment<'a>),
-    PresentationSet(PresentationSet<'a>),
-    Representation(Representation<'a>),
-    RepresentationItem(RepresentationItem<'a>),
-    ShapeRepresentationRelationship(ShapeRepresentationRelationship<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for StyleContextSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Group<'a>>::parse, |r| StyleContextSelect::Group(r)),
-            map(<PresentationLayerAssignment<'a>>::parse, |r| StyleContextSelect::PresentationLayerAssignment(r)),
-            map(<PresentationSet<'a>>::parse, |r| StyleContextSelect::PresentationSet(r)),
-            map(<Representation<'a>>::parse, |r| StyleContextSelect::Representation(r)),
-            map(<RepresentationItem<'a>>::parse, |r| StyleContextSelect::RepresentationItem(r)),
-            map(<ShapeRepresentationRelationship<'a>>::parse, |r| StyleContextSelect::ShapeRepresentationRelationship(r)),
-        ))(s)
-    }
-}
+pub struct StyleContextSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type StyleContextSelect<'a> = Id<StyleContextSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct StyledItem_<'a> { // entity
     pub name: Label<'a>,
@@ -27093,21 +24739,9 @@ impl<'a> Parse<'a> for SubstringExpression_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum SupportedItem<'a> { // select
-    ActionDirective(ActionDirective<'a>),
-    Action(Action<'a>),
-    ActionMethod(ActionMethod<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for SupportedItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ActionDirective<'a>>::parse, |r| SupportedItem::ActionDirective(r)),
-            map(<Action<'a>>::parse, |r| SupportedItem::Action(r)),
-            map(<ActionMethod<'a>>::parse, |r| SupportedItem::ActionMethod(r)),
-        ))(s)
-    }
-}
+pub struct SupportedItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type SupportedItem<'a> = Id<SupportedItem_<'a>>;
+
 #[derive(Debug)]
 pub struct Surface_<'a> { // entity
     pub name: Label<'a>,
@@ -27527,15 +25161,9 @@ impl<'a> Parse<'a> for SurfaceSideStyle_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum SurfaceSideStyleSelect<'a> { // select
-    SurfaceSideStyle(SurfaceSideStyle<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for SurfaceSideStyleSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<SurfaceSideStyle<'a>>::parse, |r| SurfaceSideStyleSelect::SurfaceSideStyle(r))(s)
-    }
-}
+pub struct SurfaceSideStyleSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type SurfaceSideStyleSelect<'a> = Id<SurfaceSideStyleSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct SurfaceStyleBoundary_<'a> { // entity
     pub style_of_boundary: CurveOrRender<'a>,
@@ -27583,29 +25211,9 @@ impl<'a> Parse<'a> for SurfaceStyleControlGrid_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum SurfaceStyleElementSelect<'a> { // select
-    SurfaceStyleFillArea(SurfaceStyleFillArea<'a>),
-    SurfaceStyleBoundary(SurfaceStyleBoundary<'a>),
-    SurfaceStyleSilhouette(SurfaceStyleSilhouette<'a>),
-    SurfaceStyleSegmentationCurve(SurfaceStyleSegmentationCurve<'a>),
-    SurfaceStyleControlGrid(SurfaceStyleControlGrid<'a>),
-    SurfaceStyleParameterLine(SurfaceStyleParameterLine<'a>),
-    SurfaceStyleRendering(SurfaceStyleRendering<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for SurfaceStyleElementSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<SurfaceStyleFillArea<'a>>::parse, |r| SurfaceStyleElementSelect::SurfaceStyleFillArea(r)),
-            map(<SurfaceStyleBoundary<'a>>::parse, |r| SurfaceStyleElementSelect::SurfaceStyleBoundary(r)),
-            map(<SurfaceStyleSilhouette<'a>>::parse, |r| SurfaceStyleElementSelect::SurfaceStyleSilhouette(r)),
-            map(<SurfaceStyleSegmentationCurve<'a>>::parse, |r| SurfaceStyleElementSelect::SurfaceStyleSegmentationCurve(r)),
-            map(<SurfaceStyleControlGrid<'a>>::parse, |r| SurfaceStyleElementSelect::SurfaceStyleControlGrid(r)),
-            map(<SurfaceStyleParameterLine<'a>>::parse, |r| SurfaceStyleElementSelect::SurfaceStyleParameterLine(r)),
-            map(<SurfaceStyleRendering<'a>>::parse, |r| SurfaceStyleElementSelect::SurfaceStyleRendering(r)),
-        ))(s)
-    }
-}
+pub struct SurfaceStyleElementSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type SurfaceStyleElementSelect<'a> = Id<SurfaceStyleElementSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct SurfaceStyleFillArea_<'a> { // entity
     pub fill_area: FillAreaStyle<'a>,
@@ -28154,15 +25762,9 @@ impl<'a> Parse<'a> for SymbolStyle_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum SymbolStyleSelect<'a> { // select
-    SymbolColour(SymbolColour<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for SymbolStyleSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(<SymbolColour<'a>>::parse, |r| SymbolStyleSelect::SymbolColour(r))(s)
-    }
-}
+pub struct SymbolStyleSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type SymbolStyleSelect<'a> = Id<SymbolStyleSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct SymbolTarget_<'a> { // entity
     pub name: Label<'a>,
@@ -28668,25 +26270,9 @@ impl<'a> Parse<'a> for TextLiteralWithExtent_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum TextOrCharacter<'a> { // select
-    AnnotationText(AnnotationText<'a>),
-    AnnotationTextCharacter(AnnotationTextCharacter<'a>),
-    DefinedCharacterGlyph(DefinedCharacterGlyph<'a>),
-    CompositeText(CompositeText<'a>),
-    TextLiteral(TextLiteral<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for TextOrCharacter<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<AnnotationText<'a>>::parse, |r| TextOrCharacter::AnnotationText(r)),
-            map(<AnnotationTextCharacter<'a>>::parse, |r| TextOrCharacter::AnnotationTextCharacter(r)),
-            map(<DefinedCharacterGlyph<'a>>::parse, |r| TextOrCharacter::DefinedCharacterGlyph(r)),
-            map(<CompositeText<'a>>::parse, |r| TextOrCharacter::CompositeText(r)),
-            map(<TextLiteral<'a>>::parse, |r| TextOrCharacter::TextLiteral(r)),
-        ))(s)
-    }
-}
+pub struct TextOrCharacter_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type TextOrCharacter<'a> = Id<TextOrCharacter_<'a>>;
+
 #[derive(Debug)]
 pub enum TextPath<'a> { // enum
     Left,
@@ -28736,27 +26322,9 @@ impl<'a> Parse<'a> for TextStringRepresentation_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum TextStringRepresentationItem<'a> { // select
-    TextLiteral(TextLiteral<'a>),
-    AnnotationText(AnnotationText<'a>),
-    AnnotationTextCharacter(AnnotationTextCharacter<'a>),
-    DefinedCharacterGlyph(DefinedCharacterGlyph<'a>),
-    CompositeText(CompositeText<'a>),
-    Axis2Placement(Axis2Placement<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for TextStringRepresentationItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<TextLiteral<'a>>::parse, |r| TextStringRepresentationItem::TextLiteral(r)),
-            map(<AnnotationText<'a>>::parse, |r| TextStringRepresentationItem::AnnotationText(r)),
-            map(<AnnotationTextCharacter<'a>>::parse, |r| TextStringRepresentationItem::AnnotationTextCharacter(r)),
-            map(<DefinedCharacterGlyph<'a>>::parse, |r| TextStringRepresentationItem::DefinedCharacterGlyph(r)),
-            map(<CompositeText<'a>>::parse, |r| TextStringRepresentationItem::CompositeText(r)),
-            map(<Axis2Placement<'a>>::parse, |r| TextStringRepresentationItem::Axis2Placement(r)),
-        ))(s)
-    }
-}
+pub struct TextStringRepresentationItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type TextStringRepresentationItem<'a> = Id<TextStringRepresentationItem_<'a>>;
+
 #[derive(Debug)]
 pub struct TextStyle_<'a> { // entity
     pub name: Label<'a>,
@@ -29057,115 +26625,9 @@ impl<'a> Parse<'a> for TimeIntervalBasedEffectivity_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum TimeIntervalItem<'a> { // select
-    Action(Action<'a>),
-    ActionDirective(ActionDirective<'a>),
-    ActionMethod(ActionMethod<'a>),
-    ActionProperty(ActionProperty<'a>),
-    ActionRelationship(ActionRelationship<'a>),
-    ActionRequestSolution(ActionRequestSolution<'a>),
-    AlternateProductRelationship(AlternateProductRelationship<'a>),
-    AppliedActionAssignment(AppliedActionAssignment<'a>),
-    AppliedClassificationAssignment(AppliedClassificationAssignment<'a>),
-    AppliedPersonAndOrganizationAssignment(AppliedPersonAndOrganizationAssignment<'a>),
-    ApprovalStatus(ApprovalStatus<'a>),
-    AssemblyComponentUsageSubstitute(AssemblyComponentUsageSubstitute<'a>),
-    Certification(Certification<'a>),
-    Class(Class<'a>),
-    ClassSystem(ClassSystem<'a>),
-    ConfigurationDesign(ConfigurationDesign<'a>),
-    ConfigurationEffectivity(ConfigurationEffectivity<'a>),
-    ConfigurationItem(ConfigurationItem<'a>),
-    ConfiguredEffectivityAssignment(ConfiguredEffectivityAssignment<'a>),
-    Contract(Contract<'a>),
-    DocumentFile(DocumentFile<'a>),
-    DraughtingModel(DraughtingModel<'a>),
-    DrawingRevision(DrawingRevision<'a>),
-    ExecutedAction(ExecutedAction<'a>),
-    GeneralProperty(GeneralProperty<'a>),
-    MaterialDesignation(MaterialDesignation<'a>),
-    MechanicalDesignGeometricPresentationRepresentation(MechanicalDesignGeometricPresentationRepresentation<'a>),
-    OrganizationRelationship(OrganizationRelationship<'a>),
-    OrganizationalProject(OrganizationalProject<'a>),
-    PersonAndOrganization(PersonAndOrganization<'a>),
-    PresentationArea(PresentationArea<'a>),
-    Product(Product<'a>),
-    ProductConcept(ProductConcept<'a>),
-    ProductConceptFeature(ProductConceptFeature<'a>),
-    ProductConceptFeatureAssociation(ProductConceptFeatureAssociation<'a>),
-    ProductConceptFeatureCategory(ProductConceptFeatureCategory<'a>),
-    ProductConceptFeatureCategoryUsage(ProductConceptFeatureCategoryUsage<'a>),
-    ProductDefinition(ProductDefinition<'a>),
-    ProductDefinitionFormation(ProductDefinitionFormation<'a>),
-    ProductDefinitionFormationRelationship(ProductDefinitionFormationRelationship<'a>),
-    ProductDefinitionRelationship(ProductDefinitionRelationship<'a>),
-    ProductDefinitionSubstitute(ProductDefinitionSubstitute<'a>),
-    PropertyDefinition(PropertyDefinition<'a>),
-    RequirementForActionResource(RequirementForActionResource<'a>),
-    ResourceProperty(ResourceProperty<'a>),
-    SecurityClassification(SecurityClassification<'a>),
-    SecurityClassificationLevel(SecurityClassificationLevel<'a>),
-    ShapeRepresentation(ShapeRepresentation<'a>),
-    VersionedActionRequest(VersionedActionRequest<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for TimeIntervalItem<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Action<'a>>::parse, |r| TimeIntervalItem::Action(r)),
-            map(<ActionDirective<'a>>::parse, |r| TimeIntervalItem::ActionDirective(r)),
-            map(<ActionMethod<'a>>::parse, |r| TimeIntervalItem::ActionMethod(r)),
-            map(<ActionProperty<'a>>::parse, |r| TimeIntervalItem::ActionProperty(r)),
-            map(<ActionRelationship<'a>>::parse, |r| TimeIntervalItem::ActionRelationship(r)),
-            map(<ActionRequestSolution<'a>>::parse, |r| TimeIntervalItem::ActionRequestSolution(r)),
-            map(<AlternateProductRelationship<'a>>::parse, |r| TimeIntervalItem::AlternateProductRelationship(r)),
-            map(<AppliedActionAssignment<'a>>::parse, |r| TimeIntervalItem::AppliedActionAssignment(r)),
-            map(<AppliedClassificationAssignment<'a>>::parse, |r| TimeIntervalItem::AppliedClassificationAssignment(r)),
-            map(<AppliedPersonAndOrganizationAssignment<'a>>::parse, |r| TimeIntervalItem::AppliedPersonAndOrganizationAssignment(r)),
-            map(<ApprovalStatus<'a>>::parse, |r| TimeIntervalItem::ApprovalStatus(r)),
-            map(<AssemblyComponentUsageSubstitute<'a>>::parse, |r| TimeIntervalItem::AssemblyComponentUsageSubstitute(r)),
-            map(<Certification<'a>>::parse, |r| TimeIntervalItem::Certification(r)),
-            map(<Class<'a>>::parse, |r| TimeIntervalItem::Class(r)),
-            map(<ClassSystem<'a>>::parse, |r| TimeIntervalItem::ClassSystem(r)),
-            map(<ConfigurationDesign<'a>>::parse, |r| TimeIntervalItem::ConfigurationDesign(r)),
-            map(<ConfigurationEffectivity<'a>>::parse, |r| TimeIntervalItem::ConfigurationEffectivity(r)),
-            map(<ConfigurationItem<'a>>::parse, |r| TimeIntervalItem::ConfigurationItem(r)),
-            map(<ConfiguredEffectivityAssignment<'a>>::parse, |r| TimeIntervalItem::ConfiguredEffectivityAssignment(r)),
-        alt((
-            map(<Contract<'a>>::parse, |r| TimeIntervalItem::Contract(r)),
-            map(<DocumentFile<'a>>::parse, |r| TimeIntervalItem::DocumentFile(r)),
-            map(<DraughtingModel<'a>>::parse, |r| TimeIntervalItem::DraughtingModel(r)),
-            map(<DrawingRevision<'a>>::parse, |r| TimeIntervalItem::DrawingRevision(r)),
-            map(<ExecutedAction<'a>>::parse, |r| TimeIntervalItem::ExecutedAction(r)),
-            map(<GeneralProperty<'a>>::parse, |r| TimeIntervalItem::GeneralProperty(r)),
-            map(<MaterialDesignation<'a>>::parse, |r| TimeIntervalItem::MaterialDesignation(r)),
-            map(<MechanicalDesignGeometricPresentationRepresentation<'a>>::parse, |r| TimeIntervalItem::MechanicalDesignGeometricPresentationRepresentation(r)),
-            map(<OrganizationRelationship<'a>>::parse, |r| TimeIntervalItem::OrganizationRelationship(r)),
-            map(<OrganizationalProject<'a>>::parse, |r| TimeIntervalItem::OrganizationalProject(r)),
-            map(<PersonAndOrganization<'a>>::parse, |r| TimeIntervalItem::PersonAndOrganization(r)),
-            map(<PresentationArea<'a>>::parse, |r| TimeIntervalItem::PresentationArea(r)),
-            map(<Product<'a>>::parse, |r| TimeIntervalItem::Product(r)),
-            map(<ProductConcept<'a>>::parse, |r| TimeIntervalItem::ProductConcept(r)),
-            map(<ProductConceptFeature<'a>>::parse, |r| TimeIntervalItem::ProductConceptFeature(r)),
-            map(<ProductConceptFeatureAssociation<'a>>::parse, |r| TimeIntervalItem::ProductConceptFeatureAssociation(r)),
-            map(<ProductConceptFeatureCategory<'a>>::parse, |r| TimeIntervalItem::ProductConceptFeatureCategory(r)),
-            map(<ProductConceptFeatureCategoryUsage<'a>>::parse, |r| TimeIntervalItem::ProductConceptFeatureCategoryUsage(r)),
-            map(<ProductDefinition<'a>>::parse, |r| TimeIntervalItem::ProductDefinition(r)),
-        alt((
-            map(<ProductDefinitionFormation<'a>>::parse, |r| TimeIntervalItem::ProductDefinitionFormation(r)),
-            map(<ProductDefinitionFormationRelationship<'a>>::parse, |r| TimeIntervalItem::ProductDefinitionFormationRelationship(r)),
-            map(<ProductDefinitionRelationship<'a>>::parse, |r| TimeIntervalItem::ProductDefinitionRelationship(r)),
-            map(<ProductDefinitionSubstitute<'a>>::parse, |r| TimeIntervalItem::ProductDefinitionSubstitute(r)),
-            map(<PropertyDefinition<'a>>::parse, |r| TimeIntervalItem::PropertyDefinition(r)),
-            map(<RequirementForActionResource<'a>>::parse, |r| TimeIntervalItem::RequirementForActionResource(r)),
-            map(<ResourceProperty<'a>>::parse, |r| TimeIntervalItem::ResourceProperty(r)),
-            map(<SecurityClassification<'a>>::parse, |r| TimeIntervalItem::SecurityClassification(r)),
-            map(<SecurityClassificationLevel<'a>>::parse, |r| TimeIntervalItem::SecurityClassificationLevel(r)),
-            map(<ShapeRepresentation<'a>>::parse, |r| TimeIntervalItem::ShapeRepresentation(r)),
-            map(<VersionedActionRequest<'a>>::parse, |r| TimeIntervalItem::VersionedActionRequest(r)),
-        ))))))(s)
-    }
-}
+pub struct TimeIntervalItem_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type TimeIntervalItem<'a> = Id<TimeIntervalItem_<'a>>;
+
 #[derive(Debug)]
 pub struct TimeIntervalRole_<'a> { // entity
     pub name: Label<'a>,
@@ -29301,19 +26763,9 @@ impl<'a> Parse<'a> for ToleranceDeviationSelect<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ToleranceMethodDefinition<'a> { // select
-    ToleranceValue(ToleranceValue<'a>),
-    LimitsAndFits(LimitsAndFits<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ToleranceMethodDefinition<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ToleranceValue<'a>>::parse, |r| ToleranceMethodDefinition::ToleranceValue(r)),
-            map(<LimitsAndFits<'a>>::parse, |r| ToleranceMethodDefinition::LimitsAndFits(r)),
-        ))(s)
-    }
-}
+pub struct ToleranceMethodDefinition_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ToleranceMethodDefinition<'a> = Id<ToleranceMethodDefinition_<'a>>;
+
 #[derive(Debug)]
 pub enum ToleranceParameterSelect<'a> { // select
     CurveToleranceParameter(CurveToleranceParameter<'a>),
@@ -29329,19 +26781,9 @@ impl<'a> Parse<'a> for ToleranceParameterSelect<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ToleranceSelect<'a> { // select
-    ApproximationToleranceDeviation(ApproximationToleranceDeviation<'a>),
-    ApproximationToleranceParameter(ApproximationToleranceParameter<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ToleranceSelect<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ApproximationToleranceDeviation<'a>>::parse, |r| ToleranceSelect::ApproximationToleranceDeviation(r)),
-            map(<ApproximationToleranceParameter<'a>>::parse, |r| ToleranceSelect::ApproximationToleranceParameter(r)),
-        ))(s)
-    }
-}
+pub struct ToleranceSelect_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ToleranceSelect<'a> = Id<ToleranceSelect_<'a>>;
+
 #[derive(Debug)]
 pub struct ToleranceValue_<'a> { // entity
     pub lower_bound: MeasureWithUnit<'a>,
@@ -29578,19 +27020,9 @@ impl<'a> Parse<'a> for TotalRunoutTolerance_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum Transformation<'a> { // select
-    ItemDefinedTransformation(ItemDefinedTransformation<'a>),
-    FunctionallyDefinedTransformation(FunctionallyDefinedTransformation<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for Transformation<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<ItemDefinedTransformation<'a>>::parse, |r| Transformation::ItemDefinedTransformation(r)),
-            map(<FunctionallyDefinedTransformation<'a>>::parse, |r| Transformation::FunctionallyDefinedTransformation(r)),
-        ))(s)
-    }
-}
+pub struct Transformation_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type Transformation<'a> = Id<Transformation_<'a>>;
+
 #[derive(Debug)]
 pub enum TransitionCode<'a> { // enum
     Discontinuous,
@@ -30110,19 +27542,9 @@ impl<'a> Parse<'a> for UniformSurface_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum Unit<'a> { // select
-    DerivedUnit(DerivedUnit<'a>),
-    NamedUnit(NamedUnit<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for Unit<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<DerivedUnit<'a>>::parse, |r| Unit::DerivedUnit(r)),
-            map(<NamedUnit<'a>>::parse, |r| Unit::NamedUnit(r)),
-        ))(s)
-    }
-}
+pub struct Unit_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type Unit<'a> = Id<Unit_<'a>>;
+
 #[derive(Debug)]
 pub struct UniversalPair_<'a> { // entity
     pub name: Label<'a>,
@@ -30267,21 +27689,9 @@ impl<'a> Parse<'a> for ValueFunction_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum ValueQualifier<'a> { // select
-    PrecisionQualifier(PrecisionQualifier<'a>),
-    TypeQualifier(TypeQualifier<'a>),
-    UncertaintyQualifier(UncertaintyQualifier<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for ValueQualifier<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<PrecisionQualifier<'a>>::parse, |r| ValueQualifier::PrecisionQualifier(r)),
-            map(<TypeQualifier<'a>>::parse, |r| ValueQualifier::TypeQualifier(r)),
-            map(<UncertaintyQualifier<'a>>::parse, |r| ValueQualifier::UncertaintyQualifier(r)),
-        ))(s)
-    }
-}
+pub struct ValueQualifier_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type ValueQualifier<'a> = Id<ValueQualifier_<'a>>;
+
 #[derive(Debug)]
 pub struct ValueRange_<'a> { // entity
     pub name: Label<'a>,
@@ -30404,19 +27814,9 @@ impl<'a> Parse<'a> for Vector_<'a> {
     }
 }
 #[derive(Debug)]
-pub enum VectorOrDirection<'a> { // select
-    Vector(Vector<'a>),
-    Direction(Direction<'a>),
-    _Unused(std::marker::PhantomData<&'a ()>)
-}
-impl<'a> Parse<'a> for VectorOrDirection<'a> {
-    fn parse(s: &'a str) -> IResult<'a, Self> {
-        alt((
-            map(<Vector<'a>>::parse, |r| VectorOrDirection::Vector(r)),
-            map(<Direction<'a>>::parse, |r| VectorOrDirection::Direction(r)),
-        ))(s)
-    }
-}
+pub struct VectorOrDirection_<'a>(std::marker::PhantomData<&'a ()>); // ambiguous select
+pub type VectorOrDirection<'a> = Id<VectorOrDirection_<'a>>;
+
 #[allow(non_snake_case)]
 #[derive(Debug)]
 pub struct VectorStyle_<'a> { // entity

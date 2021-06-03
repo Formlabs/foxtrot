@@ -48,13 +48,7 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
             match &s.0[*v] {
                 Entity::RepresentationRelationshipWithTransformation(r) => {
                     assert!(r.rep_2 == id);
-                    let t = &r.transformation_operator;
-                    use Transformation::ItemDefinedTransformation;
-                    let next_mat = if let ItemDefinedTransformation(i) = t {
-                        item_defined_transformation(s, *i)
-                    } else {
-                        panic!("Invalid transformation {:?}", t);
-                    };
+                    let next_mat = item_defined_transformation(s, r.transformation_operator.cast());
                     if roots.contains(&r.rep_1) {
                         todo.push((r.rep_1, mat * next_mat));
                     } else {
@@ -364,27 +358,15 @@ fn edge_loop(s: &StepFile, edge_list: &[OrientedEdge]) -> Vec<DVec3> {
 
 fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Vec<DVec3> {
     let edge_curve = s.entity(e).expect("Could not get EdgeCurve");
-    use Axis2Placement::Axis2Placement3d;
     let curve = match &s.0[edge_curve.edge_geometry.0] {
         Entity::Circle(c) => {
-            // TODO: better way of getting this
-            let p = if let Axis2Placement3d(p) = c.position {
-                p
-            } else {
-                panic!("Invalid placement {:?}", c.position);
-            };
-            let (location, axis, ref_direction) = axis2_placement_3d(s, p);
+            let (location, axis, ref_direction) = axis2_placement_3d(s, c.position.cast());
             Curve::new_circle(location, axis, ref_direction, c.radius.0.0.0,
                               edge_curve.edge_start == edge_curve.edge_end,
                               edge_curve.same_sense ^ !orientation)
         },
         Entity::Ellipse(c) => {
-            let p = if let Axis2Placement3d(p) = c.position {
-                p
-            } else {
-                panic!("Invalid placement");
-            };
-            let (location, axis, ref_direction) = axis2_placement_3d(s, p);
+            let (location, axis, ref_direction) = axis2_placement_3d(s, c.position.cast());
             Curve::new_ellipse(location, axis, ref_direction,
                                c.semi_axis_1.0.0.0, c.semi_axis_2.0.0.0,
                                edge_curve.edge_start == edge_curve.edge_end,
