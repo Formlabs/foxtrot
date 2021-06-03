@@ -108,12 +108,18 @@ fn cartesian_point(s: &StepFile, a: Id<CartesianPoint_>) -> DVec3 {
     DVec3::new(p.coordinates[0].0, p.coordinates[1].0, p.coordinates[2].0)
 }
 
+fn direction(s: &StepFile, a: Direction) -> DVec3 {
+    let p = s.entity(a).expect("Could not get cartesian point");
+    DVec3::new(p.direction_ratios[0],
+               p.direction_ratios[1],
+               p.direction_ratios[2])
+}
+
 fn axis2_placement_3d(s: &StepFile, t: Id<Axis2Placement3d_>) -> (DVec3, DVec3, DVec3) {
     let a = s.entity(t).expect("Could not get Axis2Placement3d");
     let location = cartesian_point(s, a.location);
-    let axis = cartesian_point(s, a.axis.expect("Missing axis").cast());
-    let ref_direction = cartesian_point(s,
-        a.ref_direction.expect("Missing ref_direction").cast());
+    let axis = direction(s, a.axis.expect("Missing axis"));
+    let ref_direction = direction(s, a.ref_direction.expect("Missing ref_direction"));
     (location, axis, ref_direction)
 }
 
@@ -318,7 +324,7 @@ fn control_points_2d(s: &StepFile, rows: &Vec<Vec<CartesianPoint>>) -> Vec<Vec<D
 
 fn face_bound(s: &StepFile, b: FaceBound) -> Vec<DVec3> {
     let bound = s.entity(b).expect("Could not get FaceBound");
-    match &s.0[b.0] {
+    match &s.0[bound.bound.0] {
         Entity::EdgeLoop(e) => {
             let mut d = edge_loop(s, &e.edge_list);
             if !bound.orientation {
@@ -365,7 +371,7 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Vec<DVec3> {
             let p = if let Axis2Placement3d(p) = c.position {
                 p
             } else {
-                panic!("Invalid placement");
+                panic!("Invalid placement {:?}", c.position);
             };
             let (location, axis, ref_direction) = axis2_placement_3d(s, p);
             Curve::new_circle(location, axis, ref_direction, c.radius.0.0.0,
