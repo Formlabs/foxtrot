@@ -9,6 +9,7 @@ enum Type<'a> {
     Entity {
         // In order, with parent attributes first
         attrs: Vec<AttributeData<'a>>,
+        supertypes: Vec<&'a str>,
     },
     // These are all TYPE in EXPRESS, but we unpack them here
     Redeclared(&'a str),
@@ -87,7 +88,7 @@ impl <'a> TypeMap<'a> {
             self.build(s);
         }
         let t = self.0.get(s).expect(&format!("Could not get {:?}", s));
-        if let Type::Entity { attrs } = &t {
+        if let Type::Entity { attrs, .. } = &t {
             attrs.clone()
         } else {
             panic!("Cannot get attributes of a non-entity");
@@ -96,7 +97,7 @@ impl <'a> TypeMap<'a> {
 }
 
 impl<'a> Type<'a> {
-    fn enum_variant<W>(&self, name: &str, buf: &mut W) -> std::fmt::Result
+    fn write_enum_variant<W>(&self, name: &str, buf: &mut W) -> std::fmt::Result
         where W: std::fmt::Write
     {
         match self {
@@ -105,7 +106,7 @@ impl<'a> Type<'a> {
             _ => Ok(()),
         }
     }
-    fn enum_match<W>(&self, name: &str, buf: &mut W) -> std::fmt::Result
+    fn write_enum_match<W>(&self, name: &str, buf: &mut W) -> std::fmt::Result
         where W: std::fmt::Write
     {
         match self {
@@ -115,7 +116,26 @@ impl<'a> Type<'a> {
             _ => Ok(()),
         }
     }
-    fn gen<W>(&self, name: &str, buf: &mut W, type_map: &TypeMap) -> std::fmt::Result
+
+    fn write_supertypes<W>(&self, name: &str, buf: &mut W) -> std::fmt::Result
+        where W: std::fmt::Write
+    {
+        match self {
+            Type::Entity{supertypes, ..} => if !supertypes.is_empty() {
+                write!(buf, r#"        "{}" => &["#, name)?;
+                for (i, s) in supertypes.iter().enumerate() {
+                    if i == supertypes.len() - 1 {
+                        writeln!(buf, r#""{}"],"#, s)?;
+                    } else {
+                        write!(buf, r#""{}", "#, s)?;
+                    }
+                }
+            },
+            _ => (),
+        }
+        Ok(())
+    }
+    fn write_type<W>(&self, name: &str, buf: &mut W, type_map: &TypeMap) -> std::fmt::Result
         where W: std::fmt::Write
     {
         let camel_name = to_camel(name);
@@ -269,7 +289,7 @@ impl<'a> Parse<'a> for {0}<'a> {{
                     type_map.to_inner_rtype(&*type_))?;
             }
 
-            Type::Entity { attrs } => {
+            Type::Entity { attrs, .. } => {
                 if attrs.iter().any(|a| a.dupe) {
                     writeln!(buf, "#[allow(non_snake_case)]")?;
                 }
@@ -413,12 +433,12 @@ use nom::{{
 }};")?;
 
     for k in &keys {
-        type_map.0[k].gen(k, &mut buf, &type_map)?;
+        type_map.0[k].write_type(k, &mut buf, &type_map)?;
     }
     writeln!(&mut buf, "#[derive(Debug)]
 pub enum Entity<'a> {{")?;
     for k in &keys {
-        type_map.0[k].enum_variant(k, &mut buf)?;
+        type_map.0[k].write_enum_variant(k, &mut buf)?;
     }
     writeln!(&mut buf, r#"  _ComplexMapping,
     _FailedToParse,
@@ -432,13 +452,23 @@ impl<'a> Parse<'a> for Entity<'a> {{
         ))(s)?;
         match r {{"#)?;
     for k in &keys {
-        type_map.0[k].enum_match(k, &mut buf)?;
+        type_map.0[k].write_enum_match(k, &mut buf)?;
     }
     writeln!(&mut buf, r#"            "" => parse_complex_mapping(s),
             _ => panic!("Invalid case"),
         }}
     }}
-}}"#)?;
+}}
+
+fn superclasses_of(s: &str) -> &[&str] {{
+    match s {{"#)?;
+    for k in &keys {
+        type_map.0[k].write_supertypes(k, &mut buf)?;
+    }
+    writeln!(&mut buf, "        _ => &[],
+    }}
+}}")?;
+
     Ok(buf)
 }
 
@@ -687,8 +717,12 @@ impl<'a> EntityDecl<'a> {
             .collect();
 
         let mut attrs = Vec::new();
+        let mut supertypes = Vec::new();
         if let Some(subs) = &subsuper.1 {
             for sub in subs.0.iter() {
+                // Record the supertype name
+                supertypes.push(sub.0);
+
                 // Import attributes from parent classes, patching the
                 // `from` field to indicate that it's from a superclass
                 attrs.extend(type_map
@@ -730,7 +764,7 @@ impl<'a> EntityDecl<'a> {
                 });
             }
         }
-        Type::Entity { attrs }
+        Type::Entity { attrs, supertypes }
     }
 }
 impl<'a> AttributeDecl<'a> {
