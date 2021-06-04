@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use nom::{
     branch::{alt},
     bytes::complete::{tag, is_not},
@@ -7,6 +8,7 @@ use nom::{
     sequence::{delimited, preceded, terminated, tuple},
     multi::{separated_list0},
 };
+use memchr::{memchr, memchr3};
 
 use crate::{id::Id, ap214::Entity};
 
@@ -132,7 +134,54 @@ pub(crate) fn parse_entity_fallback(s: &[u8]) -> IResult<(usize, Entity)> {
 }
 
 pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
-    // TODO
+    // We'll maintain a map from sub-entity name to its argument string, then
+    // use this map to figure out the tree and construct it.
+    let mut subentities: HashMap<&str, &str> = HashMap::new();
+    let bstr = s.as_bytes();
+    let mut depth = 0;
+    let mut index = 0;
+    let mut args_start = 0;
+    let mut name: &str = "";
+    loop {
+        let next = match memchr3(b'(', b')', b'\'', &bstr[index..]) {
+            Some(i) => i,
+            None => return nom_err(s, "Invalid complex mapping"),
+        };
+        match bstr[index + next] {
+            b'(' => {
+                if depth == 1 {
+                    let name_slice = &bstr[index..(index + next)];
+                    name = std::str::from_utf8(name_slice)
+                        .expect("Could not convert back to name");
+                    args_start = index + next + 1;
+                }
+                depth += 1;
+            },
+            b')' => {
+                depth -= 1;
+                if depth == 1 {
+                    let arg_slice = &bstr[args_start..(index + next)];
+                    let args = std::str::from_utf8(arg_slice)
+                        .expect("Could not convert args");
+                    subentities.insert(name, args);
+                } else if depth == 0 {
+                    break;
+                }
+            },
+            b'\'' => {
+                // TODO: handle escaped quotes
+                let j = match memchr(b'\'', &bstr[(index + next + 1)..]) {
+                    Some(j) => j,
+                    None => return nom_err(s, "Open quote in complex mapping"),
+                };
+                index += j + 1;
+            }
+            c => panic!("Invalid char: {}", c),
+        }
+        index += next + 1;
+    }
+    // TODO: find leafs of the inheritance graph and build an appropriate
+    // Entity if there's a single leaf
     Ok((s, Entity::_ComplexMapping))
 }
 
