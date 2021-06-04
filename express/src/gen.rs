@@ -122,12 +122,12 @@ impl<'a> Type<'a> {
     {
         match self {
             Type::Entity{supertypes, ..} => if !supertypes.is_empty() {
-                write!(buf, r#"        "{}" => &["#, name)?;
+                write!(buf, r#"        "{}" => &["#, capitalize(name))?;
                 for (i, s) in supertypes.iter().enumerate() {
                     if i == supertypes.len() - 1 {
-                        writeln!(buf, r#""{}"],"#, s)?;
+                        writeln!(buf, r#""{}"],"#, capitalize(s))?;
                     } else {
-                        write!(buf, r#""{}", "#, s)?;
+                        write!(buf, r#""{}", "#, capitalize(s))?;
                     }
                 }
             },
@@ -460,7 +460,7 @@ impl<'a> Parse<'a> for Entity<'a> {{
     }}
 }}
 
-fn superclasses_of(s: &str) -> &[&str] {{
+pub fn superclasses_of(s: &str) -> &[&str] {{
     match s {{"#)?;
     for k in &keys {
         type_map.0[k].write_supertypes(k, &mut buf)?;

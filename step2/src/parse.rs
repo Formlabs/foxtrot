@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashSet, HashMap};
 use nom::{
     branch::{alt},
     bytes::complete::{tag, is_not},
@@ -10,7 +10,7 @@ use nom::{
 };
 use memchr::{memchr, memchr3};
 
-use crate::{id::Id, ap214::Entity};
+use crate::{id::Id, ap214::{Entity, superclasses_of}};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -180,6 +180,24 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
         }
         index += next + 1;
     }
+    // Filter out the list of subclasses to those which aren't a parent of
+    // another item in the set; these are our potential leafs.
+    let mut potential_leafs: HashSet<&str> = subentities.keys()
+        .map(|i| *i)
+        .collect();
+    for k in subentities.keys() {
+        for sup in superclasses_of(k) {
+            potential_leafs.remove(sup);
+        }
+    }
+    // Eliminate any leaf with no arguments, since they're just addding
+    // bonus constraints (which we don't handle anyways)
+    potential_leafs.retain(|k| subentities[k] != "");
+
+    // At this point, _hopefully_, we've got a single leaf type, and we can
+    // build it by splicing together an argument string by hand then parsing
+
+    println!("{}\n{:#?}", s, potential_leafs);
     // TODO: find leafs of the inheritance graph and build an appropriate
     // Entity if there's a single leaf
     Ok((s, Entity::_ComplexMapping))
