@@ -196,11 +196,29 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
 
     // At this point, _hopefully_, we've got a single leaf type, and we can
     // build it by splicing together an argument string by hand then parsing
-
-    println!("{}\n{:#?}", s, potential_leafs);
-    // TODO: find leafs of the inheritance graph and build an appropriate
-    // Entity if there's a single leaf
-    Ok((s, Entity::_ComplexMapping))
+    if potential_leafs.len() == 1 {
+        let leaf = potential_leafs.into_iter().next().unwrap();
+        let mut chain = vec![leaf];
+        loop {
+            let sup = superclasses_of(chain.last().unwrap());
+            match sup.len() {
+                0 => break,
+                1 => chain.push(sup[0]),
+                _ => return nom_err(s,
+                    "complex entity with multiple superclasses"),
+            }
+        }
+        let mut new_decl = format!("{}(", leaf);
+        for c in chain.iter().rev() {
+            new_decl += subentities[c];
+            new_decl.push(if *c == leaf { ')' } else { ',' });
+        }
+        // TODO: we can't actually parse new_decl here, because it's owned by
+        // this function and has too short a lifetime.  What to do?
+        Ok((s, Entity::_ComplexMapping))
+    } else {
+        nom_err(s, "complex entity with multiple leaf types")
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
