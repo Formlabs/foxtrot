@@ -8,6 +8,8 @@ use crate::model::Model;
 use crate::backdrop::Backdrop;
 
 pub struct App {
+    start_time: std::time::SystemTime,
+
     surface: wgpu::Surface,
     device: wgpu::Device,
     swapchain_format: wgpu::TextureFormat,
@@ -34,9 +36,10 @@ pub enum Reply {
 }
 
 impl App {
-    pub fn new(size: PhysicalSize<u32>, adapter: wgpu::Adapter,
-               surface: wgpu::Surface, device: wgpu::Device,
-               loader: std::thread::JoinHandle<Mesh>) -> Self
+    pub fn new(start_time: std::time::SystemTime, size: PhysicalSize<u32>,
+               adapter: wgpu::Adapter, surface: wgpu::Surface,
+               device: wgpu::Device, loader: std::thread::JoinHandle<Mesh>)
+        -> Self
     {
         let swapchain_format = adapter.get_swap_chain_preferred_format(&surface).unwrap();
 
@@ -46,6 +49,8 @@ impl App {
         let backdrop = Backdrop::new(&device, swapchain_format);
 
         Self {
+            start_time,
+
             swapchain,
             depth,
             backdrop,
@@ -179,6 +184,13 @@ impl App {
         let drew_model = self.model.is_some();
         queue.submit(Some(encoder.finish()));
 
+        if drew_model && self.first_frame {
+            let end = std::time::SystemTime::now();
+            let dt = end.duration_since(self.start_time).expect("dt < 0??");
+            println!("First redraw at {:?}", dt);
+            self.first_frame = false;
+        }
+
         // This is very awkward, but WebGPU doesn't actually do the GPU work
         // until after a queue is submitted, so we don't wait to wait for
         // the model until the _second_ frame.
@@ -192,8 +204,10 @@ impl App {
                                        &mesh.verts, &mesh.triangles);
             model.set_aspect(self.size.width as f32 / self.size.height as f32);
             self.model = Some(model);
+            self.first_frame = true;
+        } else {
+            self.first_frame = false;
         }
-        self.first_frame = false;
 
         !drew_model
     }

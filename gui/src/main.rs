@@ -43,8 +43,7 @@ async fn run(start: SystemTime, event_loop: EventLoop<()>, window: Window,
         .await
         .expect("Failed to create device");
 
-    let mut app = App::new(size, adapter, surface, device, loader);
-    let mut first = true;
+    let mut app = App::new(start, size, adapter, surface, device, loader);
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
@@ -57,15 +56,8 @@ async fn run(start: SystemTime, event_loop: EventLoop<()>, window: Window,
                     window.request_redraw();
                 },
             },
-            Event::RedrawRequested(_) => {
-                if app.redraw(&queue) {
-                    window.request_redraw();
-                } else {
-                    let end = SystemTime::now();
-                    let dt = end.duration_since(start).expect("dt < 0??");
-                    println!("First redraw at {:?}", dt);
-                    first = false;
-                }
+            Event::RedrawRequested(_) => if app.redraw(&queue) {
+                window.request_redraw();
             },
             _ => {}
         }
