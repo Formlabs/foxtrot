@@ -24,6 +24,14 @@ fn nom_err<'a, U>(s: &'a str, msg: &'static str) -> IResult<'a, U> {
         }))
 }
 
+/// Helper function to generate a `nom` error result with the `Alt` tag
+pub fn nom_alt_err<'a, U>(s: &'a str) -> IResult<'a, U> {
+    Err(nom::Err::Error(
+        VerboseError {
+            errors: vec![(s, VerboseErrorKind::Nom(ErrorKind::Alt))]
+        }))
+}
+
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct Logical(pub Option<bool>);
 
@@ -154,7 +162,7 @@ pub(crate) fn param_from_chunks<'a, T: Parse<'a>>(
     Ok((check_str(s, i, strs), out))
 }
 
-pub(crate) fn parse_enum(s: &str) -> IResult<&str> {
+pub(crate) fn parse_enum_tag(s: &str) -> IResult<&str> {
     delimited(char('.'),
               nom::bytes::complete::take_while(
                   |c: char| c == '_' ||
