@@ -45,7 +45,7 @@ impl App {
         let depth = Self::rebuild_depth_(size, &device);
         let backdrop = Backdrop::new(&device, swapchain_format);
 
-        let mut out = Self {
+        Self {
             swapchain,
             depth,
             backdrop,
@@ -62,8 +62,7 @@ impl App {
             right_mouse_down: false,
 
             first_frame: true,
-        };
-        out
+        }
     }
 
     pub fn window_event(&mut self, e: WindowEvent) -> Reply {

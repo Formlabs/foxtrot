@@ -5,7 +5,8 @@ _A fast STEP file viewer_
 - `cdt`: Constrained Delaunay triangulation (standalone)
 - `express`: Parser for EXPRESS schemas files and a matching code generation
   system
-- `step`: STEP file parsing and triangulation
+- `step`: STEP file parsing and triangulation (deprecated)
+- `experiments`: Experiments with trait systems (unused)
 - `step2`: Auto-generated STEP file parser.  This take a _very_ long time to
   compile, so it is isolated into this crate.
 - `triangulate`: Converts a file loaded by `step2` into a triangle mesh, using
