@@ -154,6 +154,15 @@ pub(crate) fn param_from_chunks<'a, T: Parse<'a>>(
     Ok((check_str(s, i, strs), out))
 }
 
+pub(crate) fn parse_enum(s: &str) -> IResult<&str> {
+    delimited(char('.'),
+              nom::bytes::complete::take_while(
+                  |c: char| c == '_' ||
+                            c.is_ascii_uppercase() ||
+                            c.is_ascii_digit()),
+              char('.'))(s)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 pub(crate) fn parse_entity_decl(s: &[u8]) -> IResult<(usize, Entity)> {
