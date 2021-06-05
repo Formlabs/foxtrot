@@ -6,7 +6,7 @@ use nalgebra_glm as glm;
 use glm::{Vec3, Vec4, Mat4};
 use wgpu::util::DeviceExt;
 
-use step::triangulate::{Vertex, Triangle};
+use triangulate::mesh::{Vertex, Triangle};
 
 #[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable)]

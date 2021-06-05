@@ -15,6 +15,8 @@ use crate::{
 };
 use nurbs::{BSplineSurface, KnotVector};
 
+const SAVE_DEBUG_SVGS: bool = false;
+
 pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
     // Build the tree of transforms, from the root up
     let mut roots = HashSet::new();
@@ -133,7 +135,7 @@ fn shape_representation(s: &StepFile, b: Representation) -> (Mesh, Stats) {
             Entity::ManifoldSolidBrep(b) =>
                 closed_shell(s, b.outer, &mut mesh, &mut stats),
             Entity::Axis2Placement3d(..) => (), // continue silently
-            e => eprintln!("Skipping {:?} (not a ManifoldSolidBrep)", e),
+            e => warn!("Skipping {:?} (not a ManifoldSolidBrep)", e),
         }
     }
     (mesh, stats)
@@ -226,8 +228,11 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
         match t.run() {
             Ok(()) => Ok(t),
             Err(e) => {
-                t.save_debug_svg(&format!("out{}.svg", face.face_geometry.0))
-                    .expect("Could not save debug SVG");
+                if SAVE_DEBUG_SVGS {
+                    let filename = format!("out{}.svg", face.face_geometry.0);
+                    t.save_debug_svg(&filename)
+                        .expect("Could not save debug SVG");
+                }
                 Err(e)
             },
         }
@@ -248,11 +253,11 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
             }
         },
         Ok(Err(e)) => {
-            eprintln!("Got error while triangulating: {:?}", e);
+            warn!("Got error while triangulating: {:?}", e);
             stats.num_errors += 1;
         },
         Err(e) => {
-            eprintln!("Got panic while triangulating: {:?}", e);
+            warn!("Got panic while triangulating: {:?}", e);
             stats.num_panics += 1;
         }
     }

@@ -5,6 +5,8 @@ use winit::{
 
 use crate::model::Model;
 use crate::backdrop::Backdrop;
+use step2::step_file::StepFile;
+use triangulate::triangulate::triangulate;
 
 pub struct App {
     surface: wgpu::Surface,
@@ -38,16 +40,17 @@ impl App {
         args.next();
         let filename = args.next().expect("Could not get filename from first argument");
         println!("opening {}", filename);
-        let data = step::parse::striped_string_from_path(&filename);
-        let step = step::parse::parse_entities_from_striped_file(&data);
-        let (verts, tris) = step::triangulate::triangulate(&step);
+        let data = std::fs::read(filename).expect("Could not open file");
+        let flat = StepFile::strip_flatten(&data);
+        let step = StepFile::parse(&flat);
+        let (mesh, _stats) = triangulate(&step);
 
         let mut out = Self {
             swapchain_format,
             swapchain: Self::rebuild_swapchain_(
                 size, swapchain_format, &surface, &device),
             depth: Self::rebuild_depth_(size, &device),
-            model: Model::new(&device, swapchain_format, &verts, &tris),
+            model: Model::new(&device, swapchain_format, &mesh.verts, &mesh.triangles),
             backdrop: Backdrop::new(&device, swapchain_format),
             surface,
             device,

@@ -10,6 +10,7 @@ env_logger = "0.8.3"
 itertools = "0.10.0"
 nalgebra-glm = "0.3"
 pollster = "0.2.4"
-step = { path = "../step" }
+step2 = { path = "../step2" }
+triangulate = { path = "../triangulate" }
 wgpu = "0.8.1"
 winit = "0.24.0"
