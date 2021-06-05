@@ -9,6 +9,7 @@ fast-float = "0.2"
 memchr = "2.4.0"
 nom = "6.0"
 rayon = "1.5"
+paste = "1.0"
 
 [dev-dependencies]
 clap = "2.33"

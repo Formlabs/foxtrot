@@ -120,6 +120,7 @@ impl<'a, T: ParseFromChunks<'a>> Parse<'a> for T {
 
 // Simple struct so we can use param_from_chunks::<Derived> to parse a '*'
 // optionally followed by a comma
+#[derive(Debug)]
 pub struct Derived;
 impl<'a> Parse<'a> for Derived {
     fn parse(s: &str) -> IResult<Self> {
@@ -264,6 +265,48 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
         Entity::parse_chunks(&new_decl)
     } else {
         nom_err(s, "complex entity with multiple leaf types")
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// TODO: why do we need to use macro_export here?
+#[macro_export]
+macro_rules! declare_entity {
+    ($ent:ident, $($name:ident: $ty:ty,)*) => {
+        paste! {
+            #[derive(Debug)]
+            pub struct [<$ent _>]<'a> { // entity
+                $( pub $name: $ty, )*
+                _marker: std::marker::PhantomData<&'a ()>,
+            }
+            pub type $ent<'a> = Id<[<$ent _>]<'a>>;
+            impl<'a> FromEntity<'a> for [<$ent _>]<'a> {
+                fn try_from_entity(e: &'a Entity<'a>) -> Option<&'a Self> {
+                    match e {
+                        Entity::$ent(v) => Some(v),
+                        _ => None,
+                    }
+                }
+            }
+            impl<'a> ParseFromChunks<'a> for [<$ent _>]<'a> {
+                fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
+                    let (s, _) = tag(stringify!([<$ent:snake:upper>]))(strs[0])?;
+                    let (s, _) = char('(')(s)?;
+                    let mut _i = 0;
+                    const _ENTITY_COUNT: usize = ["", $(stringify!($name),)*].len() - 1;
+                    let mut _j = 0;
+                    $(
+                    _j += 1;
+                    let (s, $name) = param_from_chunks::<$ty>(_j == _ENTITY_COUNT, s, &mut _i, strs)?;
+                    )*
+                    Ok((s, Self {
+                        $($name,)*
+                        _marker: std::marker::PhantomData
+                    }))
+                }
+            }
+        }
     }
 }
 
