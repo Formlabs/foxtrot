@@ -4,6 +4,7 @@ use std::convert::TryInto;
 use nalgebra_glm as glm;
 use glm::{DVec3, DVec4, DMat4, U32Vec3};
 use rayon::prelude::*;
+use log::warn;
 
 use step2::{step_file::StepFile, id::Id, ap214::Entity, ap214, ap214::*};
 use crate::{
@@ -307,7 +308,7 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Option<Surface> {
             Some(Surface::new_bspline(surf))
         },
         e => {
-            eprintln!("Could not get surface {:?}", e);
+            warn!("Could not get surface {:?}", e);
             None
         },
     }
@@ -404,7 +405,7 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Vec<DVec3> {
         // The Line type ignores pnt / dir and just uses u and v
         Entity::Line(_) => Curve::new_line(),
         e => {
-            eprintln!("Could not get edge from {:?}", e);
+            warn!("Could not get edge from {:?}", e);
             return vec![]
         },
     };

@@ -20,8 +20,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let input = matches.value_of("input")
         .expect("Could not get input file");
 
+    let start = std::time::SystemTime::now();
     let stripped_str = striped_string_from_path(input);
     let parsed = parse_entities_from_striped_file(&stripped_str);
+    let end = std::time::SystemTime::now();
+    let since_the_epoch = end.duration_since(start)
+        .expect("Time went backwards");
+    println!("Loaded + parsed in {:?}", since_the_epoch);
 
     let start = std::time::SystemTime::now();
     let tri = triangulate::Triangulator::run(&parsed);
