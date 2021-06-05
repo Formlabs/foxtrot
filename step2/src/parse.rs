@@ -242,10 +242,16 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
     // bonus constraints (which we don't handle anyways)
     potential_leafs.retain(|k| subentities[k] != "");
 
-    // At this point, _hopefully_, we've got a single leaf type, and we can
-    // build it by splicing together an argument string by hand then parsing
-    if potential_leafs.len() == 1 {
-        let leaf = potential_leafs.into_iter().next().unwrap();
+    // Sort potential leafs so that ComplexEntity is deterministic and we can
+    // match against it later
+    let mut potential_leafs: Vec<&str> = potential_leafs.into_iter().collect();
+    potential_leafs.sort();
+
+    // At this point, we'll build up argument strings by splicing together bits
+    // of arguments from the existing string (to make lifetimes happy), then
+    // parse into leaf entities.
+    let mut leaf_entities = Vec::with_capacity(potential_leafs.len());
+    for leaf in potential_leafs.into_iter() {
         let mut chain = vec![leaf];
         loop {
             let sup = superclasses_of(chain.last().unwrap());
@@ -258,12 +264,19 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
         }
         let mut new_decl: Vec<&str> = vec![name_tags.get(leaf).unwrap()];
         for c in chain.iter().rev() {
-            new_decl.push(subentities[c]);
-            new_decl.push(if *c == leaf { &")" } else { &"," });
+            if !subentities[c].is_empty() {
+                new_decl.push(subentities[c]);
+                new_decl.push(if *c == leaf { &")" } else { &"," });
+            }
         }
-        Entity::parse_chunks(&new_decl)
+        leaf_entities.push(Entity::parse_chunks(&new_decl)?.1)
+    }
+    // At this point, we assume that there's nothing left to parse, so we
+    // return an empty string for the 'remaining' text
+    if leaf_entities.len() == 1 {
+        Ok(("", leaf_entities.pop().unwrap()))
     } else {
-        nom_err(s, "complex entity with multiple leaf types")
+        Ok(("", Entity::ComplexEntity(leaf_entities)))
     }
 }
 

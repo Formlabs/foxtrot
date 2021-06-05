@@ -452,7 +452,7 @@ pub enum Entity<'a> {{")?;
     for k in &keys {
         type_map.0[k].write_enum_variant(k, &mut buf)?;
     }
-    writeln!(&mut buf, r#"    _ComplexMapping,
+    writeln!(&mut buf, r#"    ComplexEntity(Vec<Entity<'a>>),
     _FailedToParse,
     _EmptySlot,
 }}

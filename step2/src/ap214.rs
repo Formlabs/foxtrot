@@ -30020,7 +30020,7 @@ pub enum Entity<'a> {
     VolumeMeasureWithUnit(VolumeMeasureWithUnit_<'a>),
     VolumeUnit(VolumeUnit_<'a>),
     XorExpression(XorExpression_<'a>),
-    _ComplexMapping,
+    ComplexEntity(Vec<Entity<'a>>),
     _FailedToParse,
     _EmptySlot,
 }
