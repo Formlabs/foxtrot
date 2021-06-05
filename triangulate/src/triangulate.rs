@@ -68,16 +68,19 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
     }
 
     let (mesh, stats) = to_mesh.par_iter()
-        .map(|(id, mat)| {
-            let (mut mesh, stats) = shape_representation(s, *id);
-            for v in 0..mesh.verts.len() {
-                 let p = mesh.verts[v].pos;
-                 mesh.verts[v].pos = (mat * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
-                 let n = mesh.verts[v].norm;
-                 mesh.verts[v].norm = (mat * DVec4::new(n.x, n.y, n.z, 0.0)).xyz();
-             }
-            (mesh, stats)
-        })
+        .fold(
+            || (Mesh::default(), Stats::default()),
+            |(mut mesh, mut stats), (id, mat)| {
+                let vstart = mesh.verts.len();
+                shape_representation(s, *id, &mut mesh, &mut stats);
+                for v in vstart..mesh.verts.len() {
+                    let p = mesh.verts[v].pos;
+                    mesh.verts[v].pos = (mat * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
+                    let n = mesh.verts[v].norm;
+                    mesh.verts[v].norm = (mat * DVec4::new(n.x, n.y, n.z, 0.0)).xyz();
+                }
+                (mesh, stats)
+            })
         .reduce(|| (Mesh::default(), Stats::default()),
                 |a, b| (Mesh::combine(a.0, b.0), Stats::combine(a.1, b.1)));
 
@@ -120,7 +123,8 @@ fn axis2_placement_3d(s: &StepFile, t: Id<Axis2Placement3d_>) -> (DVec3, DVec3, 
     (location, axis, ref_direction)
 }
 
-fn shape_representation(s: &StepFile, b: Representation) -> (Mesh, Stats) {
+fn shape_representation(s: &StepFile, b: Representation,
+                        mesh: &mut Mesh, stats: &mut Stats) {
     let items = match &s.0[b.0] {
         Entity::AdvancedBrepShapeRepresentation(b) => &b.items,
         Entity::ShapeRepresentation(b) => &b.items,
@@ -128,17 +132,14 @@ fn shape_representation(s: &StepFile, b: Representation) -> (Mesh, Stats) {
         e => panic!("Cannot get shape from {:?}", e),
     };
 
-    let mut mesh = Mesh::default();
-    let mut stats = Stats::default();
     for i in items {
         match &s.0[i.0] {
             Entity::ManifoldSolidBrep(b) =>
-                closed_shell(s, b.outer, &mut mesh, &mut stats),
+                closed_shell(s, b.outer, mesh, stats),
             Entity::Axis2Placement3d(..) => (), // continue silently
             e => warn!("Skipping {:?} (not a ManifoldSolidBrep)", e),
         }
     }
-    (mesh, stats)
 }
 
 fn closed_shell(s: &StepFile, c: ClosedShell, mesh: &mut Mesh, stats: &mut Stats) {
