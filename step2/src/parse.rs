@@ -5,7 +5,7 @@ use nom::{
     character::complete::{char, digit1},
     combinator::{map, map_res, opt},
     error::*,
-    sequence::{delimited, preceded, terminated, tuple},
+    sequence::{delimited, preceded, tuple},
     multi::{separated_list0},
 };
 use memchr::{memchr, memchr3};
@@ -108,10 +108,50 @@ impl<'a, T> Parse<'a> for Id<T> {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+pub(crate) trait ParseFromChunks<'a> {
+    fn parse_chunks(s: &[&'a str]) -> IResult<'a, Self> where Self: Sized;
+}
+
+impl<'a, T: ParseFromChunks<'a>> Parse<'a> for T {
+    fn parse(s: &'a str) -> IResult<'a, Self> {
+        T::parse_chunks(&[s])
+    }
+}
+
+// Simple struct so we can use param_from_chunks::<Derived> to parse a '*'
+// optionally followed by a comma
+pub struct Derived;
+impl<'a> Parse<'a> for Derived {
+    fn parse(s: &str) -> IResult<Self> {
+        map(char('*'), |_| Derived)(s)
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 /// Parse a single attribute from a parameter list, consuming the trailing
 /// comma (if this is midway through the list) or close parens (at the end)
-pub(crate) fn param<'a, T: Parse<'a>>(last: bool, s: &'a str) -> IResult<'a, T> {
-    terminated(T::parse, char(if last { ')'} else { ',' }))(s)
+///
+/// The input is in the form of &str slices plus the index of the current slice,
+/// for cases where we're splicing together multiple sets of arguments to build
+/// a complete Entity.
+fn check_str<'a>(s: &'a str, i: &mut usize, strs: &[&'a str]) -> &'a str {
+    if s.is_empty() {
+        *i += 1;
+        strs.get(*i).unwrap_or(&"")
+    } else {
+        s
+    }
+}
+pub(crate) fn param_from_chunks<'a, T: Parse<'a>>(
+    last: bool, s: &'a str,
+    i: &mut usize, strs: &[&'a str]) -> IResult<'a, T>
+{
+    let s = check_str(s, i, strs);
+    let (s, out) = T::parse(s)?;
+    let s = check_str(s, i, strs);
+    let (s, _) = char(if last { ')'} else { ',' })(s)?;
+    Ok((check_str(s, i, strs), out))
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +177,10 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
     // We'll maintain a map from sub-entity name to its argument string, then
     // use this map to figure out the tree and construct it.
     let mut subentities: HashMap<&str, &str> = HashMap::new();
+
+    // Map from sub-entity name to the str slice which contains the name plus
+    // the open parens, used for parsing slices
+    let mut name_tags: HashMap<&str, &str> = HashMap::new();
     let bstr = s.as_bytes();
     let mut depth = 0;
     let mut index = 0;
@@ -154,6 +198,10 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
                     name = std::str::from_utf8(name_slice)
                         .expect("Could not convert back to name");
                     args_start = index + next + 1;
+                    let name_tag_slice = &bstr[index..(index + next + 1)];
+                    let name_tag = std::str::from_utf8(name_tag_slice)
+                        .expect("Could not convert tag back to name");
+                    name_tags.insert(name, name_tag);
                 }
                 depth += 1;
             },
@@ -208,14 +256,12 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
                     "complex entity with multiple superclasses"),
             }
         }
-        let mut new_decl = format!("{}(", leaf);
+        let mut new_decl: Vec<&str> = vec![name_tags.get(leaf).unwrap()];
         for c in chain.iter().rev() {
-            new_decl += subentities[c];
-            new_decl.push(if *c == leaf { ')' } else { ',' });
+            new_decl.push(subentities[c]);
+            new_decl.push(if *c == leaf { &")" } else { &"," });
         }
-        // TODO: we can't actually parse new_decl here, because it's owned by
-        // this function and has too short a lifetime.  What to do?
-        Ok((s, Entity::_ComplexMapping))
+        Entity::parse_chunks(&new_decl)
     } else {
         nom_err(s, "complex entity with multiple leaf types")
     }

@@ -27,7 +27,9 @@ impl<'a> StepFile<'a> {
             .par_iter()
             .filter_map(|b| parse_entity_decl(*b)
                 .or_else(|e| {
-                    eprintln!("Failed to parse {:?}", e);
+                    eprintln!("Failed to parse {}: {:?}",
+                        std::str::from_utf8(b).unwrap_or("[INVALID UTF-8]"),
+                              e);
                     parse_entity_fallback(*b)
                 })
                 .ok())
