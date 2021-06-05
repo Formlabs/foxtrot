@@ -10,8 +10,11 @@ pub(crate) mod model;
 pub(crate) mod backdrop;
 
 use crate::app::App;
+use triangulate::mesh::Mesh;
 
-async fn run(start: SystemTime, event_loop: EventLoop<()>, window: Window) {
+async fn run(start: SystemTime, event_loop: EventLoop<()>, window: Window,
+             loader: std::thread::JoinHandle<Mesh>)
+{
     let size = window.inner_size();
     let (surface, adapter) = {
         let instance = wgpu::Instance::new(wgpu::BackendBit::all());
@@ -40,7 +43,7 @@ async fn run(start: SystemTime, event_loop: EventLoop<()>, window: Window) {
         .await
         .expect("Failed to create device");
 
-    let mut app = App::new(size, adapter, surface, device);
+    let mut app = App::new(size, adapter, surface, device, loader);
     let mut first = true;
 
     event_loop.run(move |event, _, control_flow| {
@@ -50,11 +53,14 @@ async fn run(start: SystemTime, event_loop: EventLoop<()>, window: Window) {
             Event::WindowEvent { event, .. } => match app.window_event(event) {
                 Reply::Continue => (),
                 Reply::Quit => *control_flow = ControlFlow::Exit,
-                Reply::Redraw => app.redraw(&queue),
+                Reply::Redraw => if app.redraw(&queue) {
+                    window.request_redraw();
+                },
             },
             Event::RedrawRequested(_) => {
-                app.redraw(&queue);
-                if first {
+                if app.redraw(&queue) {
+                    window.request_redraw();
+                } else {
                     let end = SystemTime::now();
                     let dt = end.duration_since(start).expect("dt < 0??");
                     println!("First redraw at {:?}", dt);
@@ -68,8 +74,33 @@ async fn run(start: SystemTime, event_loop: EventLoop<()>, window: Window) {
 
 fn main() {
     let start = SystemTime::now();
+    let matches = clap::App::new("gui")
+        .author("Matt Keeter <matt@formlabs.com>")
+        .about("Renders a STEP file")
+        .arg(clap::Arg::with_name("input")
+            .takes_value(true)
+            .required(true))
+        .get_matches();
+    let input = matches.value_of("input")
+        .expect("Could not get input file")
+        .to_owned();
+
+    // Kick off the loader thread immediately, so that the STEP file is parsed
+    // and triangulated in the background while we wait for a GPU context
+    let loader = std::thread::spawn(|| {
+        println!("Loading mesh!");
+        use step2::step_file::StepFile;
+        use triangulate::triangulate::triangulate;
+
+        let data = std::fs::read(input).expect("Could not open file");
+        let flat = StepFile::strip_flatten(&data);
+        let step = StepFile::parse(&flat);
+        let (mesh, _stats) = triangulate(&step);
+        mesh
+    });
+
     let event_loop = EventLoop::new();
     let window = winit::window::Window::new(&event_loop).unwrap();
     env_logger::init();
-    pollster::block_on(run(start, event_loop, window));
+    pollster::block_on(run(start, event_loop, window, loader));
 }

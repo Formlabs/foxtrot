@@ -3,25 +3,28 @@ use winit::{
     event::{ElementState, ModifiersState, MouseButton, WindowEvent, VirtualKeyCode, MouseScrollDelta},
 };
 
+use triangulate::mesh::Mesh;
 use crate::model::Model;
 use crate::backdrop::Backdrop;
-use step2::step_file::StepFile;
-use triangulate::triangulate::triangulate;
 
 pub struct App {
     surface: wgpu::Surface,
     device: wgpu::Device,
     swapchain_format: wgpu::TextureFormat,
     swapchain: wgpu::SwapChain,
-    model: Model,
+    loader: Option<std::thread::JoinHandle<Mesh>>,
+    model: Option<Model>,
     backdrop: Backdrop,
 
     depth: (wgpu::Texture, wgpu::TextureView),
+    size: PhysicalSize<u32>,
 
     modifiers: ModifiersState,
     last_cursor: Option<PhysicalPosition<f64>>,
     left_mouse_down: bool,
     right_mouse_down: bool,
+
+    first_frame: bool,
 }
 
 pub enum Reply {
@@ -32,35 +35,34 @@ pub enum Reply {
 
 impl App {
     pub fn new(size: PhysicalSize<u32>, adapter: wgpu::Adapter,
-               surface: wgpu::Surface, device: wgpu::Device) -> Self
+               surface: wgpu::Surface, device: wgpu::Device,
+               loader: std::thread::JoinHandle<Mesh>) -> Self
     {
         let swapchain_format = adapter.get_swap_chain_preferred_format(&surface).unwrap();
 
-        let mut args = std::env::args();
-        args.next();
-        let filename = args.next().expect("Could not get filename from first argument");
-        println!("opening {}", filename);
-        let data = std::fs::read(filename).expect("Could not open file");
-        let flat = StepFile::strip_flatten(&data);
-        let step = StepFile::parse(&flat);
-        let (mesh, _stats) = triangulate(&step);
+        let swapchain = Self::rebuild_swapchain_(
+            size, swapchain_format, &surface, &device);
+        let depth = Self::rebuild_depth_(size, &device);
+        let backdrop = Backdrop::new(&device, swapchain_format);
 
         let mut out = Self {
+            swapchain,
+            depth,
+            backdrop,
             swapchain_format,
-            swapchain: Self::rebuild_swapchain_(
-                size, swapchain_format, &surface, &device),
-            depth: Self::rebuild_depth_(size, &device),
-            model: Model::new(&device, swapchain_format, &mesh.verts, &mesh.triangles),
-            backdrop: Backdrop::new(&device, swapchain_format),
+            loader: Some(loader),
+            model: None,
             surface,
             device,
+            size,
 
             modifiers: ModifiersState::empty(),
             last_cursor: None,
             left_mouse_down: false,
             right_mouse_down: false,
+
+            first_frame: true,
         };
-        out.model.set_aspect(size.width as f32 / size.height as f32);
         out
     }
 
@@ -113,12 +115,15 @@ impl App {
         }
     }
 
-    fn resize(&mut self,size: PhysicalSize<u32>) {
+    fn resize(&mut self, size: PhysicalSize<u32>) {
+        self.size = size;
         self.swapchain = Self::rebuild_swapchain_(
             size, self.swapchain_format,
             &self.surface, &self.device);
         self.depth = Self::rebuild_depth_(size, &self.device);
-        self.model.set_aspect(size.width as f32 / size.height as f32);
+        if let Some(model) = &mut self.model {
+            model.set_aspect(size.width as f32 / size.height as f32);
+        }
     }
 
     fn rebuild_depth_(size: PhysicalSize<u32>, device: &wgpu::Device)
@@ -158,7 +163,9 @@ impl App {
         device.create_swap_chain(surface, &sc_desc)
     }
 
-    pub fn redraw(&self, queue: &wgpu::Queue) {
+    // Redraw the GUI, returning true if the model was not drawn (which means
+    // that the parent loop should keep calling redraw to force model load)
+    pub fn redraw(&mut self, queue: &wgpu::Queue) -> bool {
         let frame = self.swapchain
             .get_current_frame()
             .expect("Failed to acquire next swap chain texture")
@@ -167,20 +174,46 @@ impl App {
             &wgpu::CommandEncoderDescriptor { label: None });
 
         self.backdrop.draw(&frame, &self.depth.1, &mut encoder);
-        self.model.draw(&queue, &frame, &self.depth.1, &mut encoder);
-
+        if let Some(model) = &self.model {
+            model.draw(&queue, &frame, &self.depth.1, &mut encoder);
+        }
+        let drew_model = self.model.is_some();
         queue.submit(Some(encoder.finish()));
+
+        // This is very awkward, but WebGPU doesn't actually do the GPU work
+        // until after a queue is submitted, so we don't wait to wait for
+        // the model until the _second_ frame.
+        if !self.first_frame && self.model.is_none() {
+            println!("Waiting for mesh");
+            let mesh = self.loader.take()
+                .unwrap()
+                .join()
+                .expect("Failed to load mesh");
+            let mut model = Model::new(&self.device, self.swapchain_format,
+                                       &mesh.verts, &mesh.triangles);
+            model.set_aspect(self.size.width as f32 / self.size.height as f32);
+            self.model = Some(model);
+        }
+        self.first_frame = false;
+
+        !drew_model
     }
 
     fn drag(&mut self, dx: f64, dy: f64) {
-        self.model.spin(dx as f32 / 100.0, dy as f32 / 100.0);
+        if let Some(model) = &mut self.model {
+            model.spin(dx as f32 / 100.0, dy as f32 / 100.0);
+        }
     }
 
     fn pan(&mut self, dx:f64, dy:f64){
-        self.model.translate_camera(dx as f32 / -10000.0, dy as f32 / 10000.0 );
+        if let Some(model) = &mut self.model {
+            model.translate_camera(dx as f32 / -10000.0, dy as f32 / 10000.0 );
+        }
     }
 
-    fn scale(&mut self, value: f32){
-        self.model.scale(value);
+    fn scale(&mut self, value: f32) {
+        if let Some(model) = &mut self.model {
+            model.scale(value);
+        }
     }
 }
