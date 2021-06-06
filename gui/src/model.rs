@@ -9,10 +9,11 @@ use wgpu::util::DeviceExt;
 use triangulate::mesh::{Vertex, Triangle};
 
 #[repr(C)]
-#[derive(Clone, Copy, Pod, Zeroable)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
 struct GPUVertex {
     pos: [f32; 4],
     norm: [f32; 4],
+    color: [f32; 4],
 }
 
 impl GPUVertex {
@@ -20,6 +21,7 @@ impl GPUVertex {
         Self {
             pos: [v.pos.x as f32, v.pos.y as f32, v.pos.z as f32, 1.0],
             norm: [v.norm.x as f32, v.norm.y as f32, v.norm.z as f32, 1.0],
+            color: [v.color.x as f32, v.color.y as f32, v.color.z as f32, 1.0],
         }
     }
 }
@@ -116,6 +118,12 @@ impl Model {
                     format: wgpu::VertexFormat::Float32x4,
                     offset: std::mem::size_of::<Vec4>() as wgpu::BufferAddress,
                     shader_location: 1,
+                },
+                // Colors
+                wgpu::VertexAttribute {
+                    format: wgpu::VertexFormat::Float32x4,
+                    offset: 2*std::mem::size_of::<Vec4>() as wgpu::BufferAddress,
+                    shader_location: 2,
                 },
             ],
         };

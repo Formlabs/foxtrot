@@ -1,6 +1,7 @@
 struct VertexOutput {
     [[builtin(position)]] position: vec4<f32>;
     [[location(0)]] normal: vec4<f32>;
+    [[location(1)]] color: vec4<f32>;
 };
 
 [[block]]
@@ -14,14 +15,17 @@ var r_locals: Locals;
 fn vs_main(
     [[location(0)]] position: vec4<f32>,
     [[location(1)]] normal: vec4<f32>,
+    [[location(2)]] color: vec4<f32>,
 ) -> VertexOutput {
     var out: VertexOutput;
     out.position = r_locals.transform * vec4<f32>(position.xyz, 1.0);
     out.normal = normal;
+    out.color = color;
     return out;
 }
 
 [[stage(fragment)]]
 fn fs_main(in: VertexOutput) -> [[location(0)]] vec4<f32> {
-    return vec4<f32>(abs(in.normal.xyz), 1.0);
+    var norm: vec4<f32>;
+    return vec4<f32>(in.color.xyz, 1.0);
 }

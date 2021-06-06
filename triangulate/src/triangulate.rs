@@ -20,14 +20,24 @@ use nurbs::{BSplineSurface, KnotVector};
 const SAVE_DEBUG_SVGS: bool = false;
 
 pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
-    let mut manifold_solid_breps = HashSet::new();
-    for e in s.0.iter() {
-        if let Entity::MechanicalDesignGeometricPresentationRepresentation(m) = e {
-            manifold_solid_breps.extend(m.items.iter()
-                .filter_map(|item| s.entity(item.cast::<StyledItem_>()))
-                .map(|styled| styled.item));
-        }
-    }
+    let styled_items: Vec<_> = s.0.iter()
+        .filter_map(|e| MechanicalDesignGeometricPresentationRepresentation_::try_from_entity(e))
+        .flat_map(|m| m.items.iter())
+        .filter_map(|item| s.entity(item.cast::<StyledItem_>()))
+        .collect();
+    let manifold_solid_breps: HashSet<_> = styled_items.iter()
+        .map(|styled| styled.item)
+        .collect();
+    let brep_colors: HashMap<_, DVec3> = styled_items.iter()
+        .filter_map(|styled|
+            if styled.styles.len() != 1 {
+                None
+            } else {
+                presentation_style_color(s, styled.styles[0])
+                    .map(|c| (styled.item, c))
+            })
+        .collect();
+    println!("{:?}", brep_colors);
 
     // Store a map of parent -> (child, transform)
     let mut transform_stack: HashMap<_, Vec<_>> = HashMap::new();
@@ -95,6 +105,13 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                     },
                 };
                 closed_shell(s, brep.outer, &mut mesh, &mut stats);
+
+                // Pick out a color from the color map and apply it to each
+                // newly-created vertex
+                let color = brep_colors.get(id)
+                    .map(|c| *c)
+                    .unwrap_or(DVec3::new(0.5, 0.5, 0.5));
+
                 for v in vstart..mesh.verts.len() {
                     let p = mesh.verts[v].pos;
                     let p_h = DVec4::new(p.x, p.y, p.z, 1.0);
@@ -102,6 +119,8 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
 
                     let n = mesh.verts[v].norm;
                     mesh.verts[v].norm = (mat * glm::vec3_to_vec4(&n)).xyz();
+
+                    mesh.verts[v].color = color;
                 }
                 (mesh, stats)
             })
@@ -125,6 +144,43 @@ fn item_defined_transformation(s: &StepFile, t: Id<ItemDefinedTransformation_>) 
         ref_direction,
         axis.cross(&ref_direction),
         location)
+}
+
+fn presentation_style_color(s: &StepFile, p: PresentationStyleAssignment)
+    -> Option<DVec3>
+{
+    // AAAAAHHHHH
+    s.entity(p)
+        .and_then(|p: &PresentationStyleAssignment_| {
+                let mut surf = p.styles.iter().filter_map(|y| {
+                    // This is an ambiguous parse, so we hard-code the first
+                    // Entity item in the enum
+                    use PresentationStyleSelect::PreDefinedPresentationStyle;
+                    if let PreDefinedPresentationStyle(u) = y {
+                        s.entity(u.cast::<SurfaceStyleUsage_>())
+                    } else {
+                        None
+                    }});
+                let out = surf.next();
+                out
+            })
+        .and_then(|surf: &SurfaceStyleUsage_|
+            s.entity(surf.style.cast::<SurfaceSideStyle_>()))
+        .and_then(|surf: &SurfaceSideStyle_| if surf.styles.len() != 1 {
+                None
+            } else {
+                s.entity(surf.styles[0].cast::<SurfaceStyleFillArea_>())
+            })
+        .map(|surf: &SurfaceStyleFillArea_|
+            s.entity(surf.fill_area).expect("Could not get fill_area"))
+        .and_then(|fill: &FillAreaStyle_| if fill.fill_styles.len() != 1 {
+                None
+            } else {
+                s.entity(fill.fill_styles[0].cast::<FillAreaStyleColour_>())
+            })
+        .and_then(|f: &FillAreaStyleColour_|
+            s.entity(f.fill_colour.cast::<ColourRgb_>()))
+        .map(|c| DVec3::new(c.red, c.green, c.blue))
 }
 
 fn cartesian_point(s: &StepFile, a: Id<CartesianPoint_>) -> DVec3 {
