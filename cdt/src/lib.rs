@@ -90,6 +90,10 @@ pub enum Error {
     /// Returned when the input has fewer than 3 points
     #[error("too few points")]
     TooFewPoints,
+
+    /// Returned when the input does not have a valid seed point
+    #[error("could not find initial seed")]
+    CannotInitialize,
 }
 
 ////////////////////////////////////////////////////////////////////////////////

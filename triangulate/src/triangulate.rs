@@ -284,21 +284,20 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
         }
     }
 
-    let result = std::panic::catch_unwind(|| {
-        let mut t = cdt::Triangulation::new_with_edges(&pts, &edges)
-            .expect("Could not build CDT triangulation");
-        match t.run() {
-            Ok(()) => Ok(t),
-            Err(e) => {
-                if SAVE_DEBUG_SVGS {
-                    let filename = format!("err{}.svg", face.face_geometry.0);
-                    t.save_debug_svg(&filename)
-                        .expect("Could not save debug SVG");
-                }
-                Err(e)
-            },
-        }
-    });
+    let result = std::panic::catch_unwind(||
+        cdt::Triangulation::new_with_edges(&pts, &edges).and_then(|mut t|
+            match t.run() {
+                Ok(()) => Ok(t),
+                Err(e) => {
+                    if SAVE_DEBUG_SVGS {
+                        let filename = format!("err{}.svg", face.face_geometry.0);
+                        t.save_debug_svg(&filename)
+                            .expect("Could not save debug SVG");
+                    }
+                    Err(e)
+                },
+            })
+    );
     match result {
         Ok(Ok(t)) => {
             for (a, b, c) in t.triangles() {

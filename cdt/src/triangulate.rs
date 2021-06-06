@@ -42,7 +42,7 @@ impl Triangulation {
     ///
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`], or
-    /// [`Error::DuplicatePoint`] if the input is invalid.
+    /// [`Error::CannotInitialize`] if the input is invalid.
     pub fn build(points: & [Point]) -> Result<Triangulation, Error> {
         let mut t = Self::new(points)?;
         t.run()?;
@@ -55,7 +55,7 @@ impl Triangulation {
     ///
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
-    /// [`Error::InvalidEdge`], or [`Error::DuplicatePoint`] if the input is
+    /// [`Error::InvalidEdge`], or [`Error::CannotInitialize`] if the input is
     /// invalid.
     pub fn build_with_edges<'a, E>(points: &[Point], edges: E)
         -> Result<Triangulation, Error>
@@ -72,7 +72,7 @@ impl Triangulation {
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
     /// [`Error::InvalidEdge`], [`Error::OpenContour`] or
-    /// [`Error::DuplicatePoint`] if the input is invalid.
+    /// [`Error::CannotInitialize`] if the input is invalid.
     pub fn build_from_contours<V>(points: &[Point], contours: &[V])
         -> Result<Triangulation, Error>
         where for<'b> &'b V: IntoIterator<Item=&'b usize>
@@ -113,7 +113,7 @@ impl Triangulation {
     ///
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
-    /// [`Error::InvalidEdge`], or [`Error::DuplicatePoint`] if the input is
+    /// [`Error::InvalidEdge`], or [`Error::CannotInitialize`] if the input is
     /// invalid.
     pub fn new_with_edges<'a, E>(points: &[Point], edges: E)
         -> Result<Triangulation, Error>
@@ -157,7 +157,7 @@ impl Triangulation {
         let mut pa = 0;
         let mut pb = 0;
         let mut pc = 0;
-        for _ in 0..MAX_RETRIES {
+        for retry in 0..MAX_RETRIES {
             // Re-calculate distances in the scratch buffer
             scratch.iter_mut()
                 .for_each(|p| p.1 = distance2(center, points[p.0]));
@@ -183,6 +183,9 @@ impl Triangulation {
             } else {
                 // Pick a new centroid, then retry
                 center = centroid(points[pa], points[pb], points[pc]);
+            }
+            if retry == MAX_RETRIES - 1 {
+                return Err(Error::CannotInitialize);
             }
         }
 
@@ -365,7 +368,7 @@ impl Triangulation {
     ///
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`], or
-    /// [`Error::DuplicatePoint`] if the input is invalid.
+    /// [`Error::CannotInitialize`] if the input is invalid.
     pub fn new(points: &[Point]) -> Result<Triangulation, Error> {
         let edges: [(usize, usize); 0] = [];
         Self::new_with_edges(points, &edges)
@@ -384,7 +387,7 @@ impl Triangulation {
     /// # Errors
     /// This may return [`Error::EmptyInput`], [`Error::InvalidInput`],
     /// [`Error::InvalidEdge`], [`Error::OpenContour`] or
-    /// [`Error::DuplicatePoint`] if the input is invalid.
+    /// [`Error::CannotInitialize`] if the input is invalid.
     pub fn new_from_contours<'a, V>(pts: &[Point], contours: &[V])
         -> Result<Triangulation, Error>
         where for<'b> &'b V: IntoIterator<Item=&'b usize>
