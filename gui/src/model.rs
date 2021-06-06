@@ -64,7 +64,7 @@ impl Model {
 
         let uniform_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Uniform Buffer"),
-            size: std::mem::size_of::<Mat4>() as wgpu::BufferAddress,
+            size: std::mem::size_of::<Mat4>() as wgpu::BufferAddress * 2,
             usage: wgpu::BufferUsage::UNIFORM | wgpu::BufferUsage::COPY_DST,
             mapped_at_creation: false,
         });
@@ -78,7 +78,8 @@ impl Model {
                     ty: wgpu::BindingType::Buffer {
                         ty: wgpu::BufferBindingType::Uniform,
                         has_dynamic_offset: false,
-                        min_binding_size: wgpu::BufferSize::new(64),
+                        min_binding_size: wgpu::BufferSize::new(
+                            std::mem::size_of::<Mat4>() as u64 * 2),
                     },
                     count: None,
                 },
@@ -188,17 +189,21 @@ impl Model {
         self.aspect = a;
     }
 
-    fn generate_matrix(&self) -> Mat4 {
+    /// Returns a matrix which compensates for window aspect ratio and clipping
+    fn view_matrix(&self) -> Mat4 {
         let i = Mat4::identity();
-        // The transforms below are applied bottom-to-top when thinking about
-        // the model, i.e. it's translated, then scaled, then rotated, etc.
-
         // The Z clipping range is 0-1, so push forward
         glm::translate(&i, &Vec3::new(0.0, 0.0, 0.5)) *
 
         // Scale to compensate for aspect ratio and reduce Z scale to improve
         // clipping
-        glm::scale(&i, &Vec3::new(1.0, self.aspect, 0.1)) *
+        glm::scale(&i, &Vec3::new(1.0, self.aspect, 0.1))
+    }
+
+    fn model_matrix(&self) -> Mat4 {
+        let i = Mat4::identity();
+        // The transforms below are applied bottom-to-top when thinking about
+        // the model, i.e. it's translated, then scaled, then rotated, etc.
 
         // Rotation!
         glm::rotate_x(&i, self.yaw) *
@@ -217,8 +222,13 @@ impl Model {
                 encoder: &mut wgpu::CommandEncoder)
     {
         // Update the uniform buffer with our new matrix
-        let mat = self.generate_matrix();
-        queue.write_buffer(&self.uniform_buf, 0, bytemuck::cast_slice(mat.as_slice()));
+        let view_mat = self.view_matrix();
+        let model_mat = self.model_matrix();
+        queue.write_buffer(&self.uniform_buf, 0,
+            bytemuck::cast_slice(view_mat.as_slice()));
+        queue.write_buffer(&self.uniform_buf,
+            std::mem::size_of::<Mat4>() as wgpu::BufferAddress,
+            bytemuck::cast_slice(model_mat.as_slice()));
 
         let mut rpass = encoder.begin_render_pass(
             &wgpu::RenderPassDescriptor {

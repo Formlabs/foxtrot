@@ -37,7 +37,6 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                     .map(|c| (styled.item, c))
             })
         .collect();
-    println!("{:?}", brep_colors);
 
     // Store a map of parent -> (child, transform)
     let mut transform_stack: HashMap<_, Vec<_>> = HashMap::new();
