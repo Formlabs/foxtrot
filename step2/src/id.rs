@@ -32,3 +32,38 @@ impl<T> std::hash::Hash for Id<T> {
         self.0.hash(state);
     }
 }
+
+pub(crate) trait HasId {
+    fn append_ids(&self, v: &mut Vec<usize>);
+}
+impl<T> HasId for Id<T> {
+    fn append_ids(&self, v: &mut Vec<usize>) {
+        v.push(self.0)
+    }
+}
+impl<T: HasId> HasId for Vec<T> {
+    fn append_ids(&self, v: &mut Vec<usize>) {
+        for t in self {
+            t.append_ids(v);
+        }
+    }
+}
+impl<T: HasId> HasId for Option<T> {
+    fn append_ids(&self, v: &mut Vec<usize>) {
+        if let Some(s) = self {
+            s.append_ids(v);
+        }
+    }
+}
+impl HasId for i64 {
+    fn append_ids(&self, _v: &mut Vec<usize>) { /* Nothing to do here */ }
+}
+impl HasId for f64 {
+    fn append_ids(&self, _v: &mut Vec<usize>) { /* Nothing to do here */ }
+}
+impl HasId for &str {
+    fn append_ids(&self, _v: &mut Vec<usize>) { /* Nothing to do here */ }
+}
+impl HasId for bool {
+    fn append_ids(&self, _v: &mut Vec<usize>) { /* Nothing to do here */ }
+}

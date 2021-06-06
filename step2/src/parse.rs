@@ -10,7 +10,7 @@ use nom::{
 };
 use memchr::{memchr, memchr3};
 
-use crate::{id::Id, ap214::{Entity, superclasses_of}};
+use crate::{id::{Id, HasId}, ap214::{Entity, superclasses_of}};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +34,10 @@ pub fn nom_alt_err<'a, U>(s: &'a str) -> IResult<'a, U> {
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct Logical(pub Option<bool>);
+
+impl HasId for Logical {
+    fn append_ids(&self, _v: &mut Vec<usize>) { /* Nothing to do here */ }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
