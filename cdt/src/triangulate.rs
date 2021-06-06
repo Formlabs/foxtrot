@@ -320,8 +320,8 @@ impl Triangulation {
             .map(|&(src, dst)| {
                 let src = map_forward[src];
                 let dst = map_forward[dst];
-                assert!(src != usize::MAX);
-                assert!(dst != usize::MAX);
+                assert!(src != PointIndex::empty());
+                assert!(dst != PointIndex::empty());
 
                 if src > dst { (dst, src) } else { (src, dst) }
             });
@@ -569,7 +569,9 @@ impl Triangulation {
                 Special case: if p is exactly on the line, then we split the
                 line instead of inserting a new triangle.
             */
-            assert!(!edge.fixed());
+            if edge.fixed() {
+                return Err(Error::PointOnFixedEdge);
+            }
             assert!(edge.buddy == EMPTY_EDGE);
             let edge_bc = self.half.edge(edge.next);
             let edge_ca = self.half.edge(edge.prev);

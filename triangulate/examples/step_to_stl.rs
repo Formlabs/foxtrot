@@ -4,6 +4,8 @@ use triangulate::triangulate::triangulate;
 use step::step_file::StepFile;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    env_logger::init();
+
     let matches = App::new("step_to_stl2")
         .author("Matt Keeter <matt@formlabs.com>")
         .about("Converts a STEP file to a stl file")

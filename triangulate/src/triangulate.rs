@@ -4,7 +4,7 @@ use std::convert::TryInto;
 use nalgebra_glm as glm;
 use glm::{DVec3, DVec4, DMat4, U32Vec3};
 use rayon::prelude::*;
-use log::{info, warn};
+use log::{info, warn, error};
 
 use step::{
     ap214, ap214::*, step_file::{FromEntity, StepFile}, id::Id, ap214::Entity,
@@ -18,6 +18,7 @@ use crate::{
 use nurbs::{BSplineSurface, KnotVector};
 
 const SAVE_DEBUG_SVGS: bool = false;
+const SAVE_PANIC_SVGS: bool = false;
 
 pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
     let styled_items: Vec<_> = s.0.iter()
@@ -283,14 +284,14 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
         }
     }
 
-    let result = std::panic::catch_unwind(move || {
+    let result = std::panic::catch_unwind(|| {
         let mut t = cdt::Triangulation::new_with_edges(&pts, &edges)
             .expect("Could not build CDT triangulation");
         match t.run() {
             Ok(()) => Ok(t),
             Err(e) => {
                 if SAVE_DEBUG_SVGS {
-                    let filename = format!("out{}.svg", face.face_geometry.0);
+                    let filename = format!("err{}.svg", face.face_geometry.0);
                     t.save_debug_svg(&filename)
                         .expect("Could not save debug SVG");
                 }
@@ -314,11 +315,17 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
             }
         },
         Ok(Err(e)) => {
-            warn!("Got error while triangulating: {:?}", e);
+            error!("Got error while triangulating: {:?}", e);
             stats.num_errors += 1;
         },
         Err(e) => {
-            warn!("Got panic while triangulating: {:?}", e);
+            error!("Got panic while triangulating {}: {:?}",
+                  face.face_geometry.0, e);
+            if SAVE_PANIC_SVGS {
+                let filename = format!("panic{}.svg", face.face_geometry.0);
+                cdt::save_debug_panic(&pts, &edges, &filename)
+                    .expect("Could not save debug SVG");
+            }
             stats.num_panics += 1;
         }
     }

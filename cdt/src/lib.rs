@@ -124,3 +124,36 @@ pub fn triangulate_with_edges<'a, E>(pts: &[Point], edges: E)
     let t = Triangulation::build_with_edges(&pts, edges)?;
     Ok(t.triangles().collect())
 }
+
+/// Given a set of points and edges which are known to panic, figures out the
+/// max number of save steps, then saves an SVG right before the panic occurs
+pub fn save_debug_panic<'a, E>(pts: &[Point], edges: E, filename: &str)
+    -> std::io::Result<()>
+    where E: IntoIterator<Item=&'a (usize, usize)> + Copy + Clone + std::panic::UnwindSafe
+{
+    let mut safe_steps = 0;
+    loop {
+        let result = std::panic::catch_unwind(move || {
+            let mut t = Triangulation::new_with_edges(pts, edges)
+                .expect("Could not build CDT triangulation");
+            for _ in 0..safe_steps {
+                t.step().expect("Step failed");
+            }
+            ()
+        });
+        if result.is_ok() {
+            safe_steps += 1;
+        } else {
+            safe_steps -= 1;
+            break;
+        }
+    }
+
+    // This will still panic if we can't *construct* the initial triangulation
+    let mut t = Triangulation::new_with_edges(pts, edges)
+        .expect("Could not build CDT triangulation");
+    for _ in 0..safe_steps {
+        t.step().expect("Step failed");
+    }
+    t.save_debug_svg(filename)
+}
