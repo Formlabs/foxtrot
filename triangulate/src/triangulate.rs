@@ -71,6 +71,12 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                 .map(|i| (i, mat)));
         }
     }
+    // If there are items in manifold_solid_breps that aren't attached to
+    // a transformation chain, then draw them individually
+    let seen: HashSet<_> = to_mesh.iter().map(|i| *i.0).collect();
+    to_mesh.extend(manifold_solid_breps
+        .difference(&seen)
+        .map(|i| (i, DMat4::identity())));
 
     let (mesh, stats) = to_mesh.par_iter()
         .fold(
