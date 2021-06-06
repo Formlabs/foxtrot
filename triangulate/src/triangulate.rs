@@ -4,9 +4,11 @@ use std::convert::TryInto;
 use nalgebra_glm as glm;
 use glm::{DVec3, DVec4, DMat4, U32Vec3};
 use rayon::prelude::*;
-use log::warn;
+use log::{info, warn};
 
-use step2::{step_file::StepFile, id::Id, ap214::Entity, ap214, ap214::*};
+use step2::{
+    ap214, ap214::*, step_file::{FromEntity, StepFile}, id::Id, ap214::Entity,
+};
 use crate::{
     curve::Curve,
     mesh, mesh::{Mesh, Triangle},
@@ -18,76 +20,92 @@ use nurbs::{BSplineSurface, KnotVector};
 const SAVE_DEBUG_SVGS: bool = false;
 
 pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
-    // Build the tree of transforms, from the root up
-    let mut roots = HashSet::new();
-    let mut leaves = HashSet::new();
-
-    // from root to REPRESENTATION_RELATIONSHIP id
-    let mut lookup: HashMap<Representation, Vec<usize>> = HashMap::new();
-    for (i, e) in s.0.iter().enumerate() {
-        let r = match e {
-            Entity::RepresentationRelationshipWithTransformation(r) => {
-                leaves.insert(r.rep_1);
-                r.rep_2
-            },
-            Entity::ShapeRepresentationRelationship(r) => r.rep_2,
-            Entity::ShapeDefinitionRepresentation(r) => r.used_representation,
-            _ => continue,
-        };
-        roots.insert(r);
-        lookup.entry(r).or_insert_with(Vec::new).push(i);
+    let mut manifold_solid_breps = HashSet::new();
+    for e in s.0.iter() {
+        if let Entity::MechanicalDesignGeometricPresentationRepresentation(m) = e {
+            manifold_solid_breps.extend(m.items.iter()
+                .filter_map(|item| s.entity(item.cast::<StyledItem_>()))
+                .map(|styled| styled.item));
+        }
     }
-    // Pick out the roots of the transformation DAG
-    let mut todo: Vec<_> = roots.difference(&leaves)
-        .map(|i| (*i, DMat4::identity()))
+
+    // Store a map of parent -> (child, transform)
+    let mut transform_stack: HashMap<_, Vec<_>> = HashMap::new();
+    for r in s.0.iter()
+        .filter_map(|e|
+            RepresentationRelationshipWithTransformation_::try_from_entity(e))
+    {
+        transform_stack.entry(r.rep_2)
+            .or_default()
+            .push((r.rep_1, r.transformation_operator));
+    }
+
+    let children: HashSet<_> = transform_stack
+        .values()
+        .flat_map(|v| v.iter())
+        .map(|v| v.0)
         .collect();
-
-    // We'll store leaves of the graph along with their transform here
+    let mut todo: Vec<_> = transform_stack
+        .keys()
+        .filter(|k| !children.contains(k))
+        .map(|v| (*v, DMat4::identity()))
+        .collect();
     let mut to_mesh = Vec::new();
-
-    // Iterate through the transformation DAG
     while let Some((id, mat)) = todo.pop() {
-        for v in &lookup[&id] {
-            match &s.0[*v] {
-                Entity::RepresentationRelationshipWithTransformation(r) => {
-                    assert!(r.rep_2 == id);
-                    let next_mat = item_defined_transformation(s, r.transformation_operator.cast());
-                    if roots.contains(&r.rep_1) {
-                        todo.push((r.rep_1, mat * next_mat));
-                    } else {
-                        to_mesh.push((r.rep_1, mat * next_mat));
-                    }
-                },
-                Entity::ShapeRepresentationRelationship(r) =>
-                    to_mesh.push((r.rep_2, mat)),
-                Entity::ShapeDefinitionRepresentation(r) =>
-                    to_mesh.push((r.used_representation, mat)),
-                e => panic!("Invalid entity {:?}", e),
+        if let Some(children) = transform_stack.get(&id) {
+            for (child, transform) in children {
+                let next_mat = item_defined_transformation(s, transform.cast());
+                todo.push((*child, mat * next_mat));
             }
+        } else {
+            // Bind this transform to the RepresentationItem, which is
+            // presumably a ManifoldSolidBrep
+            let items = match &s.0[id.0] {
+                Entity::AdvancedBrepShapeRepresentation(b) => &b.items,
+                Entity::ShapeRepresentation(b) => &b.items,
+                Entity::ManifoldSurfaceShapeRepresentation(b) => &b.items,
+                e => panic!("Could not get shape from {:?}", e),
+            };
+            to_mesh.extend(items.iter()
+                .filter(|i| manifold_solid_breps.contains(*i))
+                .map(|i| (i, mat)));
         }
     }
 
     let (mesh, stats) = to_mesh.par_iter()
         .fold(
+            // Empty constructor
             || (Mesh::default(), Stats::default()),
+
+            // Fold operation
             |(mut mesh, mut stats), (id, mat)| {
                 let vstart = mesh.verts.len();
-                shape_representation(s, *id, &mut mesh, &mut stats);
+                let brep: &ManifoldSolidBrep_ = match s.entity(id.cast()) {
+                    Some(b) => b,
+                    None => {
+                        warn!("Skipping {:?} (not a ManifoldSolidBrep)",
+                              s.0[id.0]);
+                        return (mesh, stats);
+                    },
+                };
+                closed_shell(s, brep.outer, &mut mesh, &mut stats);
                 for v in vstart..mesh.verts.len() {
                     let p = mesh.verts[v].pos;
-                    mesh.verts[v].pos = (mat * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
+                    let p_h = DVec4::new(p.x, p.y, p.z, 1.0);
+                    mesh.verts[v].pos = (mat * p_h).xyz();
+
                     let n = mesh.verts[v].norm;
-                    mesh.verts[v].norm = (mat * DVec4::new(n.x, n.y, n.z, 0.0)).xyz();
+                    mesh.verts[v].norm = (mat * glm::vec3_to_vec4(&n)).xyz();
                 }
                 (mesh, stats)
             })
         .reduce(|| (Mesh::default(), Stats::default()),
                 |a, b| (Mesh::combine(a.0, b.0), Stats::combine(a.1, b.1)));
 
-    println!("num_shells: {}", stats.num_shells);
-    println!("num_faces: {}", stats.num_faces);
-    println!("num_errors: {}", stats.num_errors);
-    println!("num_panics: {}", stats.num_panics);
+    info!("num_shells: {}", stats.num_shells);
+    info!("num_faces: {}", stats.num_faces);
+    info!("num_errors: {}", stats.num_errors);
+    info!("num_panics: {}", stats.num_panics);
     (mesh, stats)
 }
 
@@ -121,25 +139,6 @@ fn axis2_placement_3d(s: &StepFile, t: Id<Axis2Placement3d_>) -> (DVec3, DVec3, 
     let axis = direction(s, a.axis.expect("Missing axis"));
     let ref_direction = direction(s, a.ref_direction.expect("Missing ref_direction"));
     (location, axis, ref_direction)
-}
-
-fn shape_representation(s: &StepFile, b: Representation,
-                        mesh: &mut Mesh, stats: &mut Stats) {
-    let items = match &s.0[b.0] {
-        Entity::AdvancedBrepShapeRepresentation(b) => &b.items,
-        Entity::ShapeRepresentation(b) => &b.items,
-        Entity::ManifoldSurfaceShapeRepresentation(b) => &b.items,
-        e => panic!("Cannot get shape from {:?}", e),
-    };
-
-    for i in items {
-        match &s.0[i.0] {
-            Entity::ManifoldSolidBrep(b) =>
-                closed_shell(s, b.outer, mesh, stats),
-            Entity::Axis2Placement3d(..) => (), // continue silently
-            e => warn!("Skipping {:?} (not a ManifoldSolidBrep)", e),
-        }
-    }
 }
 
 fn closed_shell(s: &StepFile, c: ClosedShell, mesh: &mut Mesh, stats: &mut Stats) {
