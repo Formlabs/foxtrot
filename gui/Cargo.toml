@@ -5,13 +5,14 @@ authors = ["Matt Keeter <matt.j.keeter@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+step = { path = "../step" }
+triangulate = { path = "../triangulate" }
+
 bytemuck = { version = "1.5.1", features = ["derive"] }
 clap = "2.33"
 env_logger = "0.8.3"
 itertools = "0.10.0"
 nalgebra-glm = "0.3"
 pollster = "0.2.4"
-step2 = { path = "../step2" }
-triangulate = { path = "../triangulate" }
 wgpu = "0.8.1"
 winit = "0.24.0"

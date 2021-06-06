@@ -5,7 +5,7 @@ debug = true
 members = [
     "cdt",
     "express",
-    "step2",
+    "step",
     "gui",
     "nurbs",
     "triangulate",

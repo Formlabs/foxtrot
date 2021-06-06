@@ -1,6 +1,6 @@
 use std::time::SystemTime;
 use clap::{Arg, App};
-use step2::step_file::StepFile;
+use step::step_file::StepFile;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("parse_step")

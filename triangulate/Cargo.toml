@@ -7,7 +7,8 @@ edition = "2018"
 [dependencies]
 cdt = { path = "../cdt" }
 nurbs = { path = "../nurbs" }
-step2 = { path = "../step2" }
+step = { path = "../step" }
+
 log = "0.4.14"
 nalgebra-glm = "0.3"
 rayon = "1.5"

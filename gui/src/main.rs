@@ -81,7 +81,7 @@ fn main() {
     // and triangulated in the background while we wait for a GPU context
     let loader = std::thread::spawn(|| {
         println!("Loading mesh!");
-        use step2::step_file::StepFile;
+        use step::step_file::StepFile;
         use triangulate::triangulate::triangulate;
 
         let data = std::fs::read(input).expect("Could not open file");
