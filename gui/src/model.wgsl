@@ -27,6 +27,5 @@ fn vs_main(
 
 [[stage(fragment)]]
 fn fs_main(in: VertexOutput) -> [[location(0)]] vec4<f32> {
-    var norm: vec4<f32>;
     return vec4<f32>(abs(in.normal.z) * in.color.xyz, 1.0);
 }
