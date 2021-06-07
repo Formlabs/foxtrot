@@ -60,7 +60,8 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
         .filter(|k| !children.contains(k))
         .map(|v| (*v, DMat4::identity()))
         .collect();
-    let mut to_mesh = Vec::new();
+
+    let mut to_mesh: HashMap<Id<_>, Vec<_>> = HashMap::new();
     while let Some((id, mat)) = todo.pop() {
         if let Some(children) = transform_stack.get(&id) {
             for (child, transform) in children {
@@ -76,17 +77,18 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                 Entity::ManifoldSurfaceShapeRepresentation(b) => &b.items,
                 e => panic!("Could not get shape from {:?}", e),
             };
-            to_mesh.extend(items.iter()
-                .filter(|i| manifold_solid_breps.contains(*i))
-                .map(|i| (i, mat)));
+            for m in items.iter().filter(|i| manifold_solid_breps.contains(*i))
+            {
+                to_mesh.entry(*m).or_default().push(mat);
+            }
         }
     }
     // If there are items in manifold_solid_breps that aren't attached to
     // a transformation chain, then draw them individually
-    let seen: HashSet<_> = to_mesh.iter().map(|i| *i.0).collect();
-    to_mesh.extend(manifold_solid_breps
-        .difference(&seen)
-        .map(|i| (i, DMat4::identity())));
+    let seen: HashSet<Id<_>> = to_mesh.keys().map(|i| *i).collect();
+    for m in manifold_solid_breps.difference(&seen) {
+        to_mesh.entry(*m).or_default().push(DMat4::identity());
+    }
 
     let (mesh, stats) = to_mesh.par_iter()
         .fold(
@@ -94,8 +96,9 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
             || (Mesh::default(), Stats::default()),
 
             // Fold operation
-            |(mut mesh, mut stats), (id, mat)| {
-                let vstart = mesh.verts.len();
+            |(mut mesh, mut stats), (id, mats)| {
+                let v_start = mesh.verts.len();
+                let t_start = mesh.triangles.len();
                 let brep: &ManifoldSolidBrep_ = match s.entity(id.cast()) {
                     Some(b) => b,
                     None => {
@@ -112,7 +115,32 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                     .map(|c| *c)
                     .unwrap_or(DVec3::new(0.5, 0.5, 0.5));
 
-                for v in vstart..mesh.verts.len() {
+                // Build copies of the mesh by copying and applying transforms
+                let v_end = mesh.verts.len();
+                let t_end = mesh.triangles.len();
+                for mat in &mats[1..] {
+                    for v in v_start..v_end {
+                        let p = mesh.verts[v].pos;
+                        let p_h = DVec4::new(p.x, p.y, p.z, 1.0);
+                        let pos = (mat * p_h).xyz();
+
+                        let n = mesh.verts[v].norm;
+                        let norm = (mat * glm::vec3_to_vec4(&n)).xyz();
+
+                        mesh.verts.push(mesh::Vertex { pos, norm, color });
+                    }
+                    let offset = mesh.verts.len() - v_end;
+                    for t in t_start..t_end {
+                        let mut tri = mesh.triangles[t];
+                        tri.verts.add_scalar_mut(offset as u32);
+                        mesh.triangles.push(tri);
+                    }
+                }
+
+                // Now that we've built all of the other copies of the mesh,
+                // re-use the original mesh and apply the first transform
+                let mat = mats[0];
+                for v in v_start..v_end {
                     let p = mesh.verts[v].pos;
                     let p_h = DVec4::new(p.x, p.y, p.z, 1.0);
                     mesh.verts[v].pos = (mat * p_h).xyz();
