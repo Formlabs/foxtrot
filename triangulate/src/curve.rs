@@ -56,7 +56,10 @@ impl Curve {
             Self::BSplineCurveWithKnots(curve) => {
                 let t_start = curve.u_from_point(u);
                 let t_end = curve.u_from_point(v);
-                curve.as_polyline(t_start, t_end, 8)
+                let mut c = curve.as_polyline(t_start, t_end, 8);
+                c[0] = u;
+                *c.last_mut().unwrap() = v;
+                c
             },
             Self::Ellipse {
                 eplane_from_world, world_from_eplane, closed, dir
