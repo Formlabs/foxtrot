@@ -6,9 +6,6 @@ use crate::{
     predicates::{acute, orient2d, in_circle, centroid, distance2, pseudo_angle},
 };
 
-/// Used when searching for an initial center for the triangulation
-const MAX_RETRIES: usize = 100;
-
 #[derive(Debug)]
 enum Walk {
     Inside(EdgeIndex),
