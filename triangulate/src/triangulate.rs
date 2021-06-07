@@ -26,9 +26,6 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
         .flat_map(|m| m.items.iter())
         .filter_map(|item| s.entity(item.cast::<StyledItem_>()))
         .collect();
-    let manifold_solid_breps: HashSet<_> = styled_items.iter()
-        .map(|styled| styled.item)
-        .collect();
     let brep_colors: HashMap<_, DVec3> = styled_items.iter()
         .filter_map(|styled|
             if styled.styles.len() != 1 {
@@ -37,6 +34,11 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                 presentation_style_color(s, styled.styles[0])
                     .map(|c| (styled.item, c))
             })
+        .collect();
+    let manifold_solid_breps: HashSet<RepresentationItem> = s.0.iter()
+        .enumerate()
+        .filter(|(_i, e)| ManifoldSolidBrep_::try_from_entity(e).is_some())
+        .map(|(i, _e)| Id::new(i))
         .collect();
 
     // Store a map of parent -> (child, transform)
@@ -77,6 +79,7 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                 Entity::ManifoldSurfaceShapeRepresentation(b) => &b.items,
                 e => panic!("Could not get shape from {:?}", e),
             };
+
             for m in items.iter().filter(|i| manifold_solid_breps.contains(*i))
             {
                 to_mesh.entry(*m).or_default().push(mat);
