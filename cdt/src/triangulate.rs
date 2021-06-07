@@ -151,43 +151,22 @@ impl Triangulation {
         // relative to the current center.  We leave distance unpopulated
         // because it's calculated at the beginning of the loop below.
         let mut scratch: Vec<(usize, f64)> = (0..points.len())
-            .map(|j| (j, 0.0))
+            .map(|j| (j, distance2(center, points[j])))
             .collect();
 
-        let mut pa = 0;
-        let mut pb = 0;
-        let mut pc = 0;
-        for retry in 0..MAX_RETRIES {
-            // Re-calculate distances in the scratch buffer
-            scratch.iter_mut()
-                .for_each(|p| p.1 = distance2(center, points[p.0]));
+        // Find the three closest points
+        let arr = min3(&scratch, &points);
 
-            // Find the three closest points
-            let arr = min3(&scratch, &points);
-
-            // Pick out the triangle points, ensuring that they're clockwise
-            pa = arr[0];
-            pb = arr[1];
-            pc = arr[2];
-            if orient2d(points[pa], points[pb], points[pc]) < 0.0 {
-                std::mem::swap(&mut pb, &mut pc);
-            }
-
-            // If the center is contained within the triangle formed by the
-            // three closest points, then we've found a valid center.
-            if orient2d(points[pa], points[pb], center) > 0.0 &&
-               orient2d(points[pb], points[pc], center) > 0.0 &&
-               orient2d(points[pc], points[pa], center) > 0.0
-            {
-                break;
-            } else {
-                // Pick a new centroid, then retry
-                center = centroid(points[pa], points[pb], points[pc]);
-            }
-            if retry == MAX_RETRIES - 1 {
-                return Err(Error::CannotInitialize);
-            }
+        // Pick out the triangle points, ensuring that they're clockwise
+        let pa = arr[0];
+        let mut pb = arr[1];
+        let mut pc = arr[2];
+        if orient2d(points[pa], points[pb], points[pc]) < 0.0 {
+            std::mem::swap(&mut pb, &mut pc);
         }
+
+        // Pick this triangle's centroid as our starting point
+        center = centroid(points[pa], points[pb], points[pc]);
 
         // Sort with a special comparison function that puts the first
         // three keys at the start of the list, and uses partial_cmp
