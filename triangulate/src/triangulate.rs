@@ -247,7 +247,7 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
     stats.num_faces += 1;
 
     // Grab the surface, returning early if it's unimplemented
-    let surf = match get_surface(s, face.face_geometry) {
+    let mut surf = match get_surface(s, face.face_geometry) {
         Some(s) => s,
         None => return,
     };
@@ -257,8 +257,9 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
 
     // For each contour, project from 3D down to the surface, then
     // start collecting them as constrained edges for triangulation
-    let mut pts = Vec::new();
     let mut edges = Vec::new();
+    let v_start = mesh.verts.len();
+    let mut num_pts = 0;
     for b in &face.bounds {
         let bound_contours = face_bound(s, *b);
 
@@ -272,13 +273,10 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
             // cones: we push it as a Steiner point, but without any
             // associated contours.
             1 => {
-                // Project to the 2D subspace for triangulation
-                let proj = surf.lower(bound_contours[0]);
-                pts.push((proj.x, proj.y));
-
+                num_pts += 1;
                 mesh.verts.push(mesh::Vertex {
                     pos: bound_contours[0],
-                    norm: surf.normal(bound_contours[0], proj),
+                    norm: DVec3::zeros(),
                     color: DVec3::new(0.0, 0.0, 0.0),
                 });
             },
@@ -286,26 +284,23 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
             // Default for lists of contour points
             _ => {
                 // Record the initial point to close the loop
-                let start = pts.len();
+                let start = num_pts;
                 for pt in bound_contours {
                     // The contour marches forward!
-                    edges.push((pts.len(), pts.len() + 1));
-
-                    // Project to the 2D subspace for triangulation
-                    let proj = surf.lower(pt);
-                    pts.push((proj.x, proj.y));
+                    edges.push((num_pts, num_pts + 1));
 
                     // Also store this vertex in the 3D triangulation
                     mesh.verts.push(mesh::Vertex {
                         pos: pt,
-                        norm: surf.normal(pt, proj),
+                        norm: DVec3::zeros(),
                         color: DVec3::new(0.0, 0.0, 0.0),
                     });
+                    num_pts += 1;
                 }
                 // The last point is a duplicate, because it closes the
                 // contours, so we skip it here and reattach the contour to
                 // the start.
-                pts.pop();
+                num_pts -= 1;
                 mesh.verts.pop();
 
                 // Close the loop by returning to the starting point
@@ -315,6 +310,7 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
         }
     }
 
+    let pts = surf.lower_verts(&mut mesh.verts[v_start..]);
     let result = std::panic::catch_unwind(||
         cdt::Triangulation::new_with_edges(&pts, &edges).and_then(|mut t|
             match t.run() {
@@ -345,12 +341,13 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
             }
         },
         Ok(Err(e)) => {
-            error!("Got error while triangulating: {:?}", e);
+            error!("Got error while triangulating {}: {:?}",
+                   face.face_geometry.0, e);
             stats.num_errors += 1;
         },
         Err(e) => {
             error!("Got panic while triangulating {}: {:?}",
-                  face.face_geometry.0, e);
+                   face.face_geometry.0, e);
             if SAVE_PANIC_SVGS {
                 let filename = format!("panic{}.svg", face.face_geometry.0);
                 cdt::save_debug_panic(&pts, &edges, &filename)

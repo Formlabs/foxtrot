@@ -1,6 +1,7 @@
 use nalgebra_glm as glm;
 use glm::{DVec2, DVec3, DVec4, DMat4};
 use nurbs::BSplineSurface;
+use crate::mesh::Vertex;
 
 // Represents a surface in 3D space, with a function to project a 3D point
 // on the surface down to a 2D space.
@@ -11,6 +12,8 @@ pub enum Surface {
         axis: DVec3,
         mat_i: DMat4,
         radius: f64,
+        z_min: f64,
+        z_max: f64,
     },
     Plane {
         normal: DVec3,
@@ -28,6 +31,8 @@ impl Surface {
                 .try_inverse()
                 .expect("Could not invert"),
             axis, radius, location,
+            z_min: 0.0,
+            z_max: 0.0,
         }
     }
 
@@ -66,29 +71,62 @@ impl Surface {
     }
 
     /// Lowers a 3D point on a specific surface into a 2D space defined by
-    /// the surface type.
-    pub fn lower(&self, p: DVec3) -> DVec2 {
+    /// the surface type.  This should only be called from `lower_verts`,
+    /// to ensure that `prepare` is called first.
+    fn lower(&self, p: DVec3) -> DVec2 {
         let p = DVec4::new(p.x, p.y, p.z, 1.0);
         match self {
             Surface::Plane { mat_i, .. } => {
                 glm::vec4_to_vec2(&(mat_i * p))
             },
-            Surface::Cylinder { mat_i, radius, .. } => {
+            Surface::Cylinder { mat_i, z_min, z_max, .. } => {
                 let p = mat_i * p;
                 // We convert the Z coordinates to either add or subtract from
                 // the radius, so that we maintain the right topology (instead
                 // of doing something like theta-z coordinates, which wrap
                 // around awkwardly).
 
-                // Assume that Z is roughly on the same order of magnitude
-                // as the radius, and use a sigmoid function
-                let scale = 1.0 / (1.0 + (-p.z / radius).exp());
+                // Scale from radius=1 to radius=0.5 based on Z
+                let z = (p.z - z_min) / (z_max - z_min);
+                let scale = 1.0 / (1.0 + z);
                 DVec2::new(p.x * scale, p.y * scale)
             },
             Surface::BSpline {surf } => {
                 surf.uv_from_point(p.xyz())
             },
         }
+    }
+
+    fn prepare(&mut self, verts: &mut [Vertex]) {
+        match self {
+            Surface::Cylinder { mat_i, z_min, z_max, .. } => {
+                *z_min = std::f64::INFINITY;
+                *z_max = -std::f64::INFINITY;
+                for v in verts {
+                    let p = (*mat_i) * DVec4::new(v.pos.x, v.pos.y, v.pos.z, 1.0);
+                    if p.z < *z_min {
+                        *z_min = p.z;
+                    }
+                    if p.z > *z_max {
+                        *z_max = p.z;
+                    }
+                }
+            }
+            _ => (),
+        }
+    }
+
+    pub fn lower_verts(&mut self, verts: &mut [Vertex]) -> Vec<(f64, f64)> {
+        self.prepare(verts);
+        let mut pts = Vec::with_capacity(verts.len());
+        for v in verts {
+            // Project to the 2D subspace for triangulation
+            let proj = self.lower(v.pos);
+            // Update the surface normal
+            v.norm = self.normal(v.pos, proj);
+            pts.push((proj.x, proj.y));
+        }
+        pts
     }
 
     // Calculate the surface normal, using either the 3D or 2D position

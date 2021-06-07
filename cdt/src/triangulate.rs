@@ -848,7 +848,6 @@ impl Triangulation {
             let intersected_index = edge_a_src.prev;
 
             let o = self.orient2d(src, dst, a);
-            assert!(o != 0.0);
             // If we've found the intersection point, then we return the new
             // (inner) edge.  The walking loop will transition to Left or Right
             // if this edge doesn't have a buddy.
@@ -868,7 +867,7 @@ impl Triangulation {
                 // leave the triangulation and walk the hull, but we don't
                 // need to decide that right now.
                 return Ok(Walk::Inside(intersected_index));
-            } else {
+            } else if o < 0.0 {
                 /*  Sorry, Mario; your src-dst line is in another triangle
 
                           src
@@ -889,6 +888,9 @@ impl Triangulation {
                 // o_right would be < 0.0 and we wouldn't be in this branch
                 assert!(buddy != EMPTY_EDGE);
                 index_a_src = self.half.edge(buddy).prev;
+            } else {
+                // If we hit a vertex, exactly, then return an error
+                return Err(Error::PointOnFixedEdge);
             }
         }
     }
