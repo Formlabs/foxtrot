@@ -549,7 +549,7 @@ impl Triangulation {
                 line instead of inserting a new triangle.
             */
             if edge.fixed() {
-                return Err(Error::PointOnFixedEdge);
+                return Err(Error::PointOnFixedEdge(self.remap[p]));
             }
             assert!(edge.buddy == EMPTY_EDGE);
             let edge_bc = self.half.edge(edge.next);
@@ -795,8 +795,10 @@ impl Triangulation {
 
         // For now, we don't handle cases where fixed edges have coincident
         // points that are not the start/end of the fixed edge.
-        if o_left == 0.0 || o_right == 0.0 {
-            return Err(Error::PointOnFixedEdge);
+        if o_left == 0.0 {
+            return Err(Error::PointOnFixedEdge(self.remap[wedge_left]));
+        } else if o_right == 0.0 {
+            return Err(Error::PointOnFixedEdge(self.remap[wedge_right]));
         }
 
         // Walk the inside of the wedge until we find the
@@ -866,7 +868,7 @@ impl Triangulation {
                 index_a_src = self.half.edge(buddy).prev;
             } else {
                 // If we hit a vertex, exactly, then return an error
-                return Err(Error::PointOnFixedEdge);
+                return Err(Error::PointOnFixedEdge(self.remap[a]));
             }
         }
     }
@@ -1038,7 +1040,7 @@ impl Triangulation {
                 assert!(edge_ca.buddy != EMPTY_EDGE);
                 edge_ca.buddy
             } else {
-                return Err(Error::PointOnFixedEdge);
+                return Err(Error::PointOnFixedEdge(self.remap[c]));
             }
         }
         Ok(())

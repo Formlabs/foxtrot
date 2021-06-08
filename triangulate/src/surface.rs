@@ -21,10 +21,21 @@ pub enum Surface {
     },
     BSpline {
         surf: BSplineSurface,
-    }
+    },
+    Sphere {
+        location: DVec3,
+        mat_i: DMat4,
+        radius: f64,
+    },
 }
 
 impl Surface {
+    pub fn new_sphere(location: DVec3, radius: f64) -> Self {
+        Surface::Sphere {
+            mat_i: DMat4::identity(),
+            location, radius,
+        }
+    }
     pub fn new_cylinder(axis: DVec3, ref_direction: DVec3, location: DVec3, radius: f64) -> Self {
         Surface::Cylinder {
             mat_i: Self::make_rigid_transform(axis, ref_direction, location)
@@ -45,9 +56,8 @@ impl Surface {
         }
     }
 
-    pub fn new_bspline(surf: BSplineSurface) -> Self
-    {
-        Surface::BSpline {surf }
+    pub fn new_bspline(surf: BSplineSurface) -> Self {
+        Surface::BSpline { surf }
     }
 
     pub fn make_affine_transform(z_world: DVec3, x_world: DVec3, y_world: DVec3, origin_world: DVec3) -> DMat4 {
@@ -94,10 +104,24 @@ impl Surface {
             Surface::BSpline {surf } => {
                 surf.uv_from_point(p.xyz())
             },
+            Surface::Sphere { mat_i, radius, .. } => {
+                // mat_i is constructed in prepare to be a reasonable basis
+                let p = (mat_i * p).xyz();
+                let r = p.yz().norm();
+
+                // Angle from 0 to PI
+                let angle = r.atan2(p.x);
+                let yz = p.yz() / *radius;
+                if yz.norm() < std::f64::EPSILON {
+                    yz
+                } else {
+                    yz * angle / yz.norm()
+                }
+            },
         }
     }
 
-    fn prepare(&mut self, verts: &mut [Vertex]) {
+    fn prepare(&mut self, verts: &[Vertex]) {
         match self {
             Surface::Cylinder { mat_i, z_min, z_max, .. } => {
                 *z_min = std::f64::INFINITY;
@@ -111,7 +135,17 @@ impl Surface {
                         *z_max = p.z;
                     }
                 }
-            }
+            },
+            Surface::Sphere { mat_i, location, .. } => {
+                let ref_direction = (verts[0].pos - *location).normalize();
+                let d1 = (verts.last().unwrap().pos - *location).normalize();
+                let axis = ref_direction.cross(&d1);
+
+                *mat_i = Self::make_rigid_transform(
+                        axis, ref_direction, *location)
+                    .try_inverse()
+                    .expect("Could not invert");
+            },
             _ => (),
         }
     }
@@ -129,10 +163,17 @@ impl Surface {
         pts
     }
 
+    pub fn add_steiner_points(&self, pts: &mut Vec<(f64, f64)>,
+                                     verts: &mut Vec<Vertex>)
+    {
+        // TODO
+    }
+
     // Calculate the surface normal, using either the 3D or 2D position
     pub fn normal(&self, p: DVec3, uv: DVec2) -> DVec3 {
         match self {
             Surface::Plane { normal, .. } => *normal,
+            Surface::Sphere { location, .. } => (p - location).normalize(),
             Surface::Cylinder { location, axis, .. } => {
                 // Project the point onto the axis
                 let proj = (p - location).dot(axis);
@@ -157,6 +198,7 @@ impl Surface {
         // TODO: this is a hack, why are cylinders different from planes?
         match self {
             Surface::Plane {..} => false,
+            Surface::Sphere {..} => false,
             Surface::Cylinder {..} => true,
             Surface::BSpline {..} => true,
         }

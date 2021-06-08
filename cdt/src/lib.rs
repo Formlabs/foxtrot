@@ -56,9 +56,9 @@ type Point = (f64, f64);
 #[derive(thiserror::Error, Debug, Eq, PartialEq)]
 pub enum Error {
     /// Indicates that a fixed edge is perfectly intersected by a point, which
-    /// is not allowed.
+    /// is not allowed.  The variable is the index of the erroneous point.
     #[error("Point is located on a fixed edge but is not its endpoint")]
-    PointOnFixedEdge,
+    PointOnFixedEdge(usize),
 
     /// Indicates that [`Triangulation::step`] has been called after
     /// triangulation has been completed

@@ -310,21 +310,44 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
         }
     }
 
-    let pts = surf.lower_verts(&mut mesh.verts[v_start..]);
-    let result = std::panic::catch_unwind(||
-        cdt::Triangulation::new_with_edges(&pts, &edges).and_then(|mut t|
+    // We inject Stiner points based on the surface type to improve curvature,
+    // e.g. for spherical sections.  However, we don't want triagulation to
+    // _fail_ due to these points, so if that happens, we nuke the point (by
+    // assigning it to the first point in the list, which causes it to get
+    // deduplicated), then retry.
+    let mut pts = surf.lower_verts(&mut mesh.verts[v_start..]);
+    let bonus_points = pts.len();
+    surf.add_steiner_points(&mut pts, &mut mesh.verts);
+    let result = std::panic::catch_unwind(|| {
+        // TODO: this is only needed because we use pts below to save a debug
+        // SVG if this panics.  Once we're confident in never panicking, we
+        // can remove this.
+        let mut pts = pts.clone();
+        loop {
+            let mut t = match cdt::Triangulation::new_with_edges(&pts, &edges) {
+                Err(e) => break Err(e),
+                Ok(t) => t,
+            };
             match t.run() {
-                Ok(()) => Ok(t),
+                Ok(()) => break Ok(t),
+                // If triangulation failed due to a Steiner point on a fixed
+                // edge, then reassign that point to pts[0] (so it will be
+                // ignored as a duplicate)
+                Err(cdt::Error::PointOnFixedEdge(p)) if p >= bonus_points => {
+                    pts[p] = pts[0];
+                    continue;
+                },
                 Err(e) => {
                     if SAVE_DEBUG_SVGS {
                         let filename = format!("err{}.svg", face.face_geometry.0);
                         t.save_debug_svg(&filename)
                             .expect("Could not save debug SVG");
                     }
-                    Err(e)
+                    break Err(e)
                 },
-            })
-    );
+            }
+        }
+    });
     match result {
         Ok(Ok(t)) => {
             for (a, b, c) in t.triangles() {
@@ -372,6 +395,12 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Option<Surface> {
         Entity::ConicalSurface(c) => {
             let (location, axis, ref_direction) = axis2_placement_3d(s, c.position);
             Some(Surface::new_plane(axis, ref_direction, location))
+        },
+        Entity::SphericalSurface(c) => {
+            // We'll ignore axis and ref_direction in favor of building an
+            // orthonormal basis later on
+            let (location, _axis, _ref_direction) = axis2_placement_3d(s, c.position);
+            Some(Surface::new_sphere(location, c.radius.0.0.0))
         },
         Entity::BSplineSurfaceWithKnots(b) =>
         {
