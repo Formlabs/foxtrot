@@ -90,8 +90,8 @@ impl Model {
         let yb = verts.iter().map(|v| v.pos.y).minmax().into_option().unwrap();
         let zb = verts.iter().map(|v| v.pos.z).minmax().into_option().unwrap();
         let dx = xb.1 - xb.0;
-        let dy = xb.1 - xb.0;
-        let dz = xb.1 - xb.0;
+        let dy = yb.1 - yb.0;
+        let dz = zb.1 - zb.0;
         let scale = (1.0 / dx.max(dy).max(dz)) as f32;
         let center = Vec3::new((xb.0 + xb.1) as f32 / 2.0,
                                (yb.0 + yb.1) as f32 / 2.0,
