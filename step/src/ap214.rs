@@ -37963,7 +37963,7 @@ impl<'a> ParseFromChunks<'a> for Entity<'a> {
             "VOLUME_UNIT" => VolumeUnit_::parse_chunks(strs).map(|(s, v)| (s, Entity::VolumeUnit(v))),
             "XOR_EXPRESSION" => XorExpression_::parse_chunks(strs).map(|(s, v)| (s, Entity::XorExpression(v))),
             "" => parse_complex_mapping(strs[0]),
-            _ => panic!("Invalid case"),
+            r => nom_alt_err(r),
         }
     }
 }

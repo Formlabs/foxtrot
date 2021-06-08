@@ -425,11 +425,15 @@ fn control_points_2d(s: &StepFile, rows: &Vec<Vec<CartesianPoint>>) -> Vec<Vec<D
 }
 
 fn face_bound(s: &StepFile, b: FaceBound) -> Vec<DVec3> {
-    let bound = s.entity(b).expect("Could not get FaceBound");
-    match &s.0[bound.bound.0] {
+    let (bound, orientation) = match &s.0[b.0] {
+        Entity::FaceBound(b) => (b.bound, b.orientation),
+        Entity::FaceOuterBound(b) => (b.bound, b.orientation),
+        e => panic!("Could not get bound from {:?} at {:?}", e, b),
+    };
+    match &s.0[bound.0] {
         Entity::EdgeLoop(e) => {
             let mut d = edge_loop(s, &e.edge_list);
-            if !bound.orientation {
+            if !orientation {
                 d.reverse()
             }
             d

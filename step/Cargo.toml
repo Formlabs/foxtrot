@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 fast-float = "0.2"
+log = "0.4.14"
 memchr = "2.4.0"
 nom = "6.0"
 rayon = "1.5"

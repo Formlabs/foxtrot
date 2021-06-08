@@ -498,7 +498,7 @@ impl<'a> ParseFromChunks<'a> for Entity<'a> {{
         type_map.0[k].write_enum_match(k, &mut buf)?;
     }
     writeln!(&mut buf, r#"            "" => parse_complex_mapping(strs[0]),
-            _ => panic!("Invalid case"),
+            _ => nom_alt_err(r),
         }}
     }}
 }}
