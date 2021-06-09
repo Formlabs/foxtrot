@@ -24,7 +24,8 @@ pub enum Surface {
     },
     Sphere {
         location: DVec3,
-        mat_i: DMat4,
+        mat: DMat4,     // uv to world
+        mat_i: DMat4,   // world to uv
         radius: f64,
     },
 }
@@ -32,6 +33,7 @@ pub enum Surface {
 impl Surface {
     pub fn new_sphere(location: DVec3, radius: f64) -> Self {
         Surface::Sphere {
+            mat: DMat4::identity(),
             mat_i: DMat4::identity(),
             location, radius,
         }
@@ -106,12 +108,12 @@ impl Surface {
             },
             Surface::Sphere { mat_i, radius, .. } => {
                 // mat_i is constructed in prepare to be a reasonable basis
-                let p = (mat_i * p).xyz();
+                let p = (mat_i * p).xyz() / *radius;
                 let r = p.yz().norm();
 
                 // Angle from 0 to PI
                 let angle = r.atan2(p.x);
-                let yz = p.yz() / *radius;
+                let yz = p.yz();
                 if yz.norm() < std::f64::EPSILON {
                     yz
                 } else {
@@ -136,13 +138,14 @@ impl Surface {
                     }
                 }
             },
-            Surface::Sphere { mat_i, location, .. } => {
+            Surface::Sphere { mat, mat_i, location, .. } => {
                 let ref_direction = (verts[0].pos - *location).normalize();
                 let d1 = (verts.last().unwrap().pos - *location).normalize();
                 let axis = ref_direction.cross(&d1);
 
-                *mat_i = Self::make_rigid_transform(
-                        axis, ref_direction, *location)
+                *mat = Self::make_rigid_transform(
+                        axis, ref_direction, *location);
+                *mat_i = mat
                     .try_inverse()
                     .expect("Could not invert");
             },
@@ -166,7 +169,51 @@ impl Surface {
     pub fn add_steiner_points(&self, pts: &mut Vec<(f64, f64)>,
                                      verts: &mut Vec<Vertex>)
     {
-        // TODO
+        let (mut xmin, mut xmax) = (std::f64::INFINITY, -std::f64::INFINITY);
+        let (mut ymin, mut ymax) = (std::f64::INFINITY, -std::f64::INFINITY);
+        for (px, py) in pts.iter() {
+            xmin = px.min(xmin);
+            ymin = py.min(ymin);
+            xmax = px.max(xmax);
+            ymax = py.max(ymax);
+        }
+        if let Surface::Sphere { mat, radius, .. } = self {
+            const NUM_PTS: usize = 4;
+            for x in 0..NUM_PTS {
+                let x_frac = (x as f64 + 1.0) / (NUM_PTS as f64 + 1.0);
+                let u = x_frac * xmax + (1.0 - x_frac) * xmin;
+                for y in 0..NUM_PTS {
+                    let y_frac = (y as f64 + 1.0) / (NUM_PTS as f64 + 1.0);
+                    let v = y_frac * ymax + (1.0 - y_frac) * ymin;
+
+                    let p = DVec2::new(u, v);
+                    let angle = p.norm();
+                    if angle > std::f64::consts::PI {
+                        continue;
+                    }
+                    let x = angle.cos();
+
+                    // Calculate pre-transformed position
+                    let pos = (*radius) * if p.norm() < std::f64::EPSILON {
+                        DVec3::new(x, 0.0, 0.0)
+                    } else {
+                        let yz = p.normalize() * angle.sin();
+                        DVec3::new(x, yz.x, yz.y)
+                    };
+                    // Transform into world space
+                    let pos = (mat * DVec4::new(pos.x, pos.y, pos.z, 1.0))
+                        .xyz();
+
+                    // Record the point in both 2D and 3D before triangulation
+                    pts.push((p.x, p.y));
+                    verts.push(Vertex {
+                        pos,
+                        norm: self.normal(pos, p),
+                        color: DVec3::new(0.0, 0.0, 0.0),
+                    });
+                }
+            }
+        }
     }
 
     // Calculate the surface normal, using either the 3D or 2D position
