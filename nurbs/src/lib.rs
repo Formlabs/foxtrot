@@ -414,14 +414,21 @@ impl BSplineSurface {
     ///
     /// ALGORITHM A3.5
     pub fn surface_point(&self, uv: DVec2) -> DVec3 {
-        let p = self.u_knots.degree();
-        let q = self.v_knots.degree();
-
         let uspan = self.u_knots.find_span(uv.x);
         let Nu = self.u_knots.basis_funs_for_span(uspan, uv.x);
 
         let vspan = self.v_knots.find_span(uv.y);
         let Nv = self.v_knots.basis_funs_for_span(vspan, uv.y);
+
+        self.surface_point_from_basis(uspan, &Nu, vspan, &Nv)
+    }
+
+    pub fn surface_point_from_basis(&self,
+        uspan: usize, Nu: &DefaultSmallVec,
+        vspan: usize, Nv: &DefaultSmallVec) -> DVec3
+    {
+        let p = self.u_knots.degree();
+        let q = self.v_knots.degree();
 
         let uind = uspan - p;
         let mut S = DVec3::zeros();
@@ -598,11 +605,19 @@ impl BSplineSurface {
                 for u in 0..N {
                     let frac = (u as f64) / (N as f64 - 1.0);
                     let u = self.u_knots.U[i] * (1.0 - frac) + self.u_knots.U[i + 1] * frac;
+
+                    // Cache the u basis function outside the loop
+                    let u_span = self.u_knots.find_span(u);
+                    let u_basis = self.u_knots.basis_funs_for_span(u_span, u);
                     for v in 0..N {
                         let frac = (v as f64) / (N as f64 - 1.0);
                         let v = self.v_knots.U[j] * (1.0 - frac) + self.v_knots.U[j + 1] * frac;
                         let uv = DVec2::new(u, v);
-                        let q = self.surface_point(uv);
+
+                        let v_span = self.v_knots.find_span(v);
+                        let v_basis = self.v_knots.basis_funs_for_span(v_span, v);
+                        let q = self.surface_point_from_basis(
+                            u_span, &u_basis, v_span, &v_basis);
                         let score = (p - q).norm();
                         if score < best_score {
                             best_score = score;
