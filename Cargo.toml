@@ -1,5 +1,6 @@
 [profile.release]
 debug = true
+codegen-units = 1
 
 [workspace]
 members = [

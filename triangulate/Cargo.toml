@@ -10,7 +10,7 @@ nurbs = { path = "../nurbs" }
 step = { path = "../step" }
 
 log = "0.4.14"
-nalgebra-glm = "0.3"
+nalgebra-glm = "0.13.0"
 rayon = "1.5"
 thiserror = "1.0"
 

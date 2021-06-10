@@ -9,6 +9,12 @@ pub struct BSplineSurface {
     u_knots: KnotVector,
     v_knots: KnotVector,
     control_points: Vec<Vec<DVec3>>,
+
+    /// Records a sampled grid of points on the surface, or an empty vector
+    ///
+    /// This is used when converting from 3D to UV coordinates to quickly
+    /// find a reasonable starting point.
+    samples: Vec<(DVec2, DVec3)>,
 }
 
 /// Non-rational b-spline surface with 3D control points
@@ -20,13 +26,16 @@ impl BSplineSurface {
         v_knots: KnotVector,
         control_points: Vec<Vec<DVec3>>,
     ) -> Self {
-        Self {
+        let mut out = Self {
             u_open,
             v_open,
             u_knots,
             v_knots,
             control_points,
-        }
+            samples: Vec::new(),
+        };
+        out.build_samples();
+        out
     }
 
     pub fn min_u(&self) -> f64 {
@@ -220,10 +229,7 @@ impl BSplineSurface {
         }
     }
 
-    pub fn uv_from_point(&self, p: DVec3) -> Option<DVec2> {
-        let mut best_score = std::f64::INFINITY;
-        let mut best_uv = DVec2::zeros();
-
+    fn build_samples(&mut self) {
         const N: usize = 8;
         for i in 0..self.u_knots.len() - 1 {
             // Skip multiple knots
@@ -251,15 +257,18 @@ impl BSplineSurface {
                         let v_basis = self.v_knots.basis_funs_for_span(v_span, v);
                         let q = self.surface_point_from_basis(
                             u_span, &u_basis, v_span, &v_basis);
-                        let score = (p - q).norm();
-                        if score < best_score {
-                            best_score = score;
-                            best_uv = uv;
-                        }
+                        self.samples.push((uv, q));
                     }
                 }
             }
         }
+    }
+    pub fn uv_from_point(&self, p: DVec3) -> Option<DVec2> {
+        assert!(!self.samples.is_empty());
+        use ordered_float::OrderedFloat;
+        let best_uv = self.samples.iter()
+            .min_by_key(|(_uv, pos)| OrderedFloat((pos - p).norm()))
+            .unwrap().0;
         self.uv_from_point_newtons_method(p, best_uv)
     }
 }
