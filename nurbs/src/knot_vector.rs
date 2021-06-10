@@ -18,13 +18,10 @@ impl KnotVector {
     /// Constructs a new knot vector of over
     pub fn from_multiplicities(p: usize, knots: &[f64], multiplicities: &[usize]) -> Self {
         assert!(knots.len() == multiplicities.len());
-        let mut out = VecF::new();
-        for (k, m) in knots.iter().zip(multiplicities.iter()) {
-            for _ in 0..*m {
-                out.push(*k);
-            }
-        }
-        Self { p: p, U: out }
+        let U = knots.iter().zip(multiplicities.iter())
+            .flat_map(|(k, m)| std::iter::repeat(*k).take(*m))
+            .collect();
+        Self { p, U }
     }
 
     /// For basis functions of order `p + 1`, finds the span in the knot vector
