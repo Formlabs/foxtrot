@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 nalgebra-glm = "0.3"
+smallvec = "1.6"

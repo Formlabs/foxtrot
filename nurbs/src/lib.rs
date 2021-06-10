@@ -1,10 +1,13 @@
 #![allow(non_snake_case)]
 // This file is translations of algorithms from the 70s, which use awkward
 // single-character names everywhere, so we're matching their convention.
-
-use nalgebra_glm::{dot, length, length2, DMat2x2, DVec2, DVec3};
 use std::cmp::min;
 use std::mem::swap;
+
+use nalgebra_glm::{dot, length, length2, DMat2x2, DVec2, DVec3};
+use smallvec::{SmallVec, smallvec};
+
+type DefaultSmallVec = SmallVec<[f64; 8]>;
 
 fn as_usize_assert(i: i32) -> usize {
     assert!(i >= 0);
@@ -23,7 +26,7 @@ fn symmetric2x2(a: f64, b: f64, d: f64) -> DMat2x2 {
 #[derive(Debug, Clone)]
 pub struct KnotVector {
     /// Knot positions
-    U: Vec<f64>,
+    U: DefaultSmallVec,
 
     /// Degree of the knot vector
     p: usize,
@@ -33,7 +36,7 @@ impl KnotVector {
     /// Constructs a new knot vector of over
     pub fn from_multiplicities(p: usize, knots: &[f64], multiplicities: &[usize]) -> Self {
         assert!(knots.len() == multiplicities.len());
-        let mut out = Vec::new();
+        let mut out = SmallVec::new();
         for (k, m) in knots.iter().zip(multiplicities.iter()) {
             for _ in 0..*m {
                 out.push(*k);
@@ -84,24 +87,24 @@ impl KnotVector {
     /// Computes non-vanishing basis functions of order `p + 1` at point `u`.
     ///
     /// ALGORITHM A2.2
-    pub fn basis_funs(&self, u: f64) -> Vec<f64> {
+    pub fn basis_funs(&self, u: f64) -> DefaultSmallVec {
         let i = self.find_span(u);
         self.basis_funs_for_span(i, u)
     }
 
     // Inner implementation of basis_funs
-    pub fn basis_funs_for_span(&self, i: usize, u: f64) -> Vec<f64> {
-        let mut N = vec![0.0; self.p + 1];
+    pub fn basis_funs_for_span(&self, i: usize, u: f64) -> DefaultSmallVec {
+        let mut N: DefaultSmallVec = smallvec![0.0; self.p + 1];
 
-        let mut left = vec![0.0; self.p + 1];
-        let mut right = vec![0.0; self.p + 1];
+        let mut left: DefaultSmallVec = smallvec![0.0; self.p + 1];
+        let mut right: DefaultSmallVec = smallvec![0.0; self.p + 1];
         N[0] = 1.0;
         for j in 1..=self.p {
             left[j] = u - self.U[i + 1 - j];
             right[j] = self.U[i + j] - u;
             let mut saved = 0.0;
             for r in 0..j {
-                let temp = N[r] / (right[r + 1] + left[j - r]);
+                let temp: f64 = N[r] / (right[r + 1] + left[j - r]);
                 N[r] = saved + right[r + 1] * temp;
                 saved = left[j - r] * temp;
             }
