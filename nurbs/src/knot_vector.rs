@@ -3,12 +3,12 @@ use std::convert::TryInto;
 use smallvec::smallvec;
 use std::mem::swap;
 
-use crate::SmallVecF64;
+use crate::VecF;
 
 #[derive(Debug, Clone)]
 pub struct KnotVector {
     /// Knot positions
-    U: SmallVecF64,
+    U: VecF,
 
     /// Degree of the knot vector
     p: usize,
@@ -18,7 +18,7 @@ impl KnotVector {
     /// Constructs a new knot vector of over
     pub fn from_multiplicities(p: usize, knots: &[f64], multiplicities: &[usize]) -> Self {
         assert!(knots.len() == multiplicities.len());
-        let mut out = SmallVecF64::new();
+        let mut out = VecF::new();
         for (k, m) in knots.iter().zip(multiplicities.iter()) {
             for _ in 0..*m {
                 out.push(*k);
@@ -69,17 +69,17 @@ impl KnotVector {
     /// Computes non-vanishing basis functions of order `p + 1` at point `u`.
     ///
     /// ALGORITHM A2.2
-    pub fn basis_funs(&self, u: f64) -> SmallVecF64 {
+    pub fn basis_funs(&self, u: f64) -> VecF {
         let i = self.find_span(u);
         self.basis_funs_for_span(i, u)
     }
 
     // Inner implementation of basis_funs
-    pub fn basis_funs_for_span(&self, i: usize, u: f64) -> SmallVecF64 {
-        let mut N: SmallVecF64 = smallvec![0.0; self.p + 1];
+    pub fn basis_funs_for_span(&self, i: usize, u: f64) -> VecF {
+        let mut N: VecF = smallvec![0.0; self.p + 1];
 
-        let mut left: SmallVecF64 = smallvec![0.0; self.p + 1];
-        let mut right: SmallVecF64 = smallvec![0.0; self.p + 1];
+        let mut left: VecF = smallvec![0.0; self.p + 1];
+        let mut right: VecF = smallvec![0.0; self.p + 1];
         N[0] = 1.0;
         for j in 1..=self.p {
             left[j] = u - self[i + 1 - j];
@@ -182,4 +182,23 @@ impl std::ops::Index<usize> for KnotVector {
     fn index(&self, i: usize) -> &Self::Output {
         &self.U[i]
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    /*
+    #[test]
+    fn test_find_span() {
+        let k = KnotVector {
+            U: vec![0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        };
+        assert!(k.find_span(0, 0.0) == 2);
+        assert!(k.find_span(0, 0.99) == 2);
+        assert!(k.find_span(1, 0.99) == 2);
+        assert!(k.find_span(2, 0.99) == 2);
+    }
+    */
 }
