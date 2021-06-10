@@ -51,17 +51,17 @@ impl KnotVector {
     /// ALGORITHM A2.1
     pub fn find_span(&self, u: f64) -> usize {
         // U is [u_0, u_1, ... u_m]
-        let m = self.U.len() - 1;
+        let m = self.len() - 1;
         let n = m - (self.p + 1); // max basis index
 
-        if u == self.U[n + 1] {
+        if u == self[n + 1] {
             return n;
         }
         let mut low = self.p;
         let mut high = n + 1;
         let mut mid = (low + high) / 2;
-        while u < self.U[mid] || u >= self.U[mid + 1] {
-            if u < self.U[mid] {
+        while u < self[mid] || u >= self[mid + 1] {
+            if u < self[mid] {
                 high = mid;
             } else {
                 low = mid;
@@ -78,10 +78,10 @@ impl KnotVector {
         self.U.len()
     }
     pub fn min_t(&self) -> f64 {
-        self.U[self.p]
+        self[self.p]
     }
     pub fn max_t(&self) -> f64 {
-        self.U[self.U.len() - 1 - self.p]
+        self[self.len() - 1 - self.p]
     }
 
     /// Computes non-vanishing basis functions of order `p + 1` at point `u`.
@@ -100,8 +100,8 @@ impl KnotVector {
         let mut right: DefaultSmallVec = smallvec![0.0; self.p + 1];
         N[0] = 1.0;
         for j in 1..=self.p {
-            left[j] = u - self.U[i + 1 - j];
-            right[j] = self.U[i + j] - u;
+            left[j] = u - self[i + 1 - j];
+            right[j] = self[i + j] - u;
             let mut saved = 0.0;
             for r in 0..j {
                 let temp: f64 = N[r] / (right[r + 1] + left[j - r]);
@@ -134,8 +134,8 @@ impl KnotVector {
 
         ndu[0][0] = 1.0;
         for j in 1..=self.p {
-            left[j] = u - self.U[i + 1 - j];
-            right[j] = self.U[i + j] - u;
+            left[j] = u - self[i + 1 - j];
+            right[j] = self[i + j] - u;
             let mut saved = 0.0;
             for r in 0..j {
                 ndu[j][r] = right[r + 1] + left[j - r];
@@ -190,6 +190,13 @@ impl KnotVector {
             r *= self.p - k;
         }
         ders
+    }
+}
+
+impl std::ops::Index<usize> for KnotVector {
+    type Output = f64;
+    fn index(&self, i: usize) -> &Self::Output {
+        &self.U[i]
     }
 }
 
@@ -316,13 +323,13 @@ impl BSplineCurve {
         const N: usize = 8;
         for i in 0..self.knots.len() - 1 {
             // Skip multiple knots
-            if self.knots.U[i] == self.knots.U[i + 1] {
+            if self.knots[i] == self.knots[i + 1] {
                 continue;
             }
             // Iterate over a grid within this region
             for u in 0..N {
                 let frac = (u as f64) / (N as f64 - 1.0);
-                let u = self.knots.U[i] * (1.0 - frac) + self.knots.U[i + 1] * frac;
+                let u = self.knots[i] * (1.0 - frac) + self.knots[i + 1] * frac;
                 
                 let q = self.curve_point(u);
                 let score = (P - q).norm();
@@ -347,13 +354,13 @@ impl BSplineCurve {
         assert!(num_points_per_knot > 0);
         for i in 0..self.knots.len() - 1 {
             // Skip multiple knots
-            if self.knots.U[i] == self.knots.U[i + 1] {
+            if self.knots[i] == self.knots[i + 1] {
                 continue;
             }
             // Iterate over a grid within this region
             for u in 0..num_points_per_knot {
                 let frac = (u as f64) / (num_points_per_knot as f64);
-                let u = self.knots.U[i] * (1.0 - frac) + self.knots.U[i + 1] * frac;
+                let u = self.knots[i] * (1.0 - frac) + self.knots[i + 1] * frac;
                 if u > u_min && u < u_max {
                     result.push(self.curve_point(u));
                 }
@@ -594,24 +601,24 @@ impl BSplineSurface {
         const N: usize = 8;
         for i in 0..self.u_knots.len() - 1 {
             // Skip multiple knots
-            if self.u_knots.U[i] == self.u_knots.U[i + 1] {
+            if self.u_knots[i] == self.u_knots[i + 1] {
                 continue;
             }
             for j in 0..self.v_knots.len() - 1 {
-                if self.v_knots.U[j] == self.v_knots.U[j + 1] {
+                if self.v_knots[j] == self.v_knots[j + 1] {
                     continue;
                 }
                 // Iterate over a grid within this region
                 for u in 0..N {
                     let frac = (u as f64) / (N as f64 - 1.0);
-                    let u = self.u_knots.U[i] * (1.0 - frac) + self.u_knots.U[i + 1] * frac;
+                    let u = self.u_knots[i] * (1.0 - frac) + self.u_knots[i + 1] * frac;
 
                     // Cache the u basis function outside the loop
                     let u_span = self.u_knots.find_span(u);
                     let u_basis = self.u_knots.basis_funs_for_span(u_span, u);
                     for v in 0..N {
                         let frac = (v as f64) / (N as f64 - 1.0);
-                        let v = self.v_knots.U[j] * (1.0 - frac) + self.v_knots.U[j + 1] * frac;
+                        let v = self.v_knots[j] * (1.0 - frac) + self.v_knots[j + 1] * frac;
                         let uv = DVec2::new(u, v);
 
                         let v_span = self.v_knots.find_span(v);
