@@ -12,6 +12,7 @@ step = { path = "../step" }
 log = "0.4.14"
 nalgebra-glm = "0.3"
 rayon = "1.5"
+thiserror = "1.0"
 
 [dev-dependencies]
 clap = "2.33"

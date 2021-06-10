@@ -480,7 +480,7 @@ impl BSplineSurface {
     }
 
     // Section 6.1 (start middle page 232)
-    pub fn uv_from_point_newtons_method(&self, P: DVec3, uv_0: DVec2) -> DVec2 {
+    pub fn uv_from_point_newtons_method(&self, P: DVec3, uv_0: DVec2) -> Option<DVec2> {
         let eps1 = 0.01; // a Euclidean distance error bound
         let eps2 = 0.01; // a cosine error bound
 
@@ -504,7 +504,7 @@ impl BSplineSurface {
                 && dot(&r, &S_u).abs() / length(&S_u) / length(&r) < eps2
                 && dot(&r, &S_v).abs() / length(&S_v) / length(&r) < eps2
             {
-                return uv_i;
+                return Some(uv_i);
             }
 
             // Otherwise, compute uv_{i+1} by computing:
@@ -525,7 +525,10 @@ impl BSplineSurface {
                 dot(&S_u, &S_v) + dot(&r, &S_uv),
                 length2(&S_v) + dot(&r, &S_vv),
             );
-            let delta_i = J_i.try_inverse().expect("Could not invert") * K_i;
+            let delta_i = match J_i.try_inverse() {
+                None => return None,
+                Some(m) => m * K_i,
+            };
             let mut uv_ip1 = uv_i + delta_i;
 
             // clamp uv_{i+p} by doing:
@@ -569,7 +572,7 @@ impl BSplineSurface {
 
             let delta_i = uv_ip1 - uv_i;
             if length(&(delta_i.x * S_u + delta_i.y * S_v)) < eps1 {
-                return uv_ip1;
+                return Some(uv_ip1);
             }
 
             // otherwise, iterate again
@@ -577,7 +580,7 @@ impl BSplineSurface {
         }
     }
 
-    pub fn uv_from_point(&self, p: DVec3) -> DVec2 {
+    pub fn uv_from_point(&self, p: DVec3) -> Option<DVec2> {
         let mut best_score = std::f64::INFINITY;
         let mut best_uv = DVec2::zeros();
 

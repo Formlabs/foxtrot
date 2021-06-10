@@ -2,7 +2,7 @@ use nalgebra_glm as glm;
 use glm::{DVec2, DVec3, DVec4, DMat4};
 
 use nurbs::BSplineSurface;
-use crate::mesh::Vertex;
+use crate::{Error, mesh::Vertex};
 
 // Represents a surface in 3D space, with a function to project a 3D point
 // on the surface down to a 2D space.
@@ -86,11 +86,11 @@ impl Surface {
     /// Lowers a 3D point on a specific surface into a 2D space defined by
     /// the surface type.  This should only be called from `lower_verts`,
     /// to ensure that `prepare` is called first.
-    fn lower(&self, p: DVec3) -> DVec2 {
+    fn lower(&self, p: DVec3) -> Result<DVec2, Error> {
         let p = DVec4::new(p.x, p.y, p.z, 1.0);
         match self {
             Surface::Plane { mat_i, .. } => {
-                glm::vec4_to_vec2(&(mat_i * p))
+                Ok(glm::vec4_to_vec2(&(mat_i * p)))
             },
             Surface::Cylinder { mat_i, z_min, z_max, .. } => {
                 let p = mat_i * p;
@@ -102,10 +102,10 @@ impl Surface {
                 // Scale from radius=1 to radius=0.5 based on Z
                 let z = (p.z - z_min) / (z_max - z_min);
                 let scale = 1.0 / (1.0 + z);
-                DVec2::new(p.x * scale, p.y * scale)
+                Ok(DVec2::new(p.x * scale, p.y * scale))
             },
             Surface::BSpline {surf } => {
-                surf.uv_from_point(p.xyz())
+                surf.uv_from_point(p.xyz()).ok_or(Error::CouldNotLower)
             },
             Surface::Sphere { mat_i, radius, .. } => {
                 // mat_i is constructed in prepare to be a reasonable basis
@@ -115,11 +115,11 @@ impl Surface {
                 // Angle from 0 to PI
                 let angle = r.atan2(p.x);
                 let yz = p.yz();
-                if yz.norm() < std::f64::EPSILON {
+                Ok(if yz.norm() < std::f64::EPSILON {
                     yz
                 } else {
                     yz * angle / yz.norm()
-                }
+                })
             },
         }
     }
@@ -154,17 +154,19 @@ impl Surface {
         }
     }
 
-    pub fn lower_verts(&mut self, verts: &mut [Vertex]) -> Vec<(f64, f64)> {
+    pub fn lower_verts(&mut self, verts: &mut [Vertex])
+        -> Result<Vec<(f64, f64)>, Error>
+    {
         self.prepare(verts);
         let mut pts = Vec::with_capacity(verts.len());
         for v in verts {
             // Project to the 2D subspace for triangulation
-            let proj = self.lower(v.pos);
+            let proj = self.lower(v.pos)?;
             // Update the surface normal
             v.norm = self.normal(v.pos, proj);
             pts.push((proj.x, proj.y));
         }
-        pts
+        Ok(pts)
     }
 
     pub fn add_steiner_points(&self, pts: &mut Vec<(f64, f64)>,

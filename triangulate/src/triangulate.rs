@@ -10,6 +10,7 @@ use step::{
     ap214, ap214::*, step_file::{FromEntity, StepFile}, id::Id, ap214::Entity,
 };
 use crate::{
+    Error,
     curve::Curve,
     mesh, mesh::{Mesh, Triangle},
     stats::Stats,
@@ -237,20 +238,21 @@ fn axis2_placement_3d(s: &StepFile, t: Id<Axis2Placement3d_>) -> (DVec3, DVec3, 
 fn closed_shell(s: &StepFile, c: ClosedShell, mesh: &mut Mesh, stats: &mut Stats) {
     let cs = s.entity(c).expect("Could not get ClosedShell");
     for face in &cs.cfs_faces {
-        advanced_face(s, face.cast(), mesh, stats);
+        if let Err(err) = advanced_face(s, face.cast(), mesh, stats) {
+            error!("Failed to triangulate {:?}: {}", s.0[face.0], err);
+        }
     }
     stats.num_shells += 1;
 }
 
-fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Stats) {
+fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh,
+                 stats: &mut Stats) -> Result<(), Error>
+{
     let face = s.entity(f).expect("Could not get AdvancedFace");
     stats.num_faces += 1;
 
     // Grab the surface, returning early if it's unimplemented
-    let mut surf = match get_surface(s, face.face_geometry) {
-        Some(s) => s,
-        None => return,
-    };
+    let mut surf = get_surface(s, face.face_geometry)?;
 
     // This is the starting point at which we insert new vertices
     let offset = mesh.verts.len();
@@ -261,13 +263,11 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
     let v_start = mesh.verts.len();
     let mut num_pts = 0;
     for b in &face.bounds {
-        let bound_contours = face_bound(s, *b);
+        let bound_contours = face_bound(s, *b)?;
 
         match bound_contours.len() {
-            // If we don't know how to build an edge for a subtype,
-            // then we returned an empty vector, and skip the whole face
-            // here
-            0 => return,
+            // We should always have non-zero items in the contour
+            0 => panic!("Got empty contours for {:?}", face),
 
             // Special case for a single-vertex point, which shows up in
             // cones: we push it as a Steiner point, but without any
@@ -315,7 +315,7 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
     // _fail_ due to these points, so if that happens, we nuke the point (by
     // assigning it to the first point in the list, which causes it to get
     // deduplicated), then retry.
-    let mut pts = surf.lower_verts(&mut mesh.verts[v_start..]);
+    let mut pts = surf.lower_verts(&mut mesh.verts[v_start..])?;
     let bonus_points = pts.len();
     surf.add_steiner_points(&mut pts, &mut mesh.verts);
     let result = std::panic::catch_unwind(|| {
@@ -379,28 +379,29 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh, stats: &mut Sta
             stats.num_panics += 1;
         }
     }
+    Ok(())
 }
 
-fn get_surface(s: &StepFile, surf: ap214::Surface) -> Option<Surface> {
+fn get_surface(s: &StepFile, surf: ap214::Surface) -> Result<Surface, Error> {
     match &s.0[surf.0] {
         Entity::CylindricalSurface(c) => {
             let (location, axis, ref_direction) = axis2_placement_3d(s, c.position);
-            Some(Surface::new_cylinder(axis, ref_direction, location, c.radius.0.0.0))
+            Ok(Surface::new_cylinder(axis, ref_direction, location, c.radius.0.0.0))
         },
         Entity::Plane(p) => {
             let (location, axis, ref_direction) = axis2_placement_3d(s, p.position);
-            Some(Surface::new_plane(axis, ref_direction, location))
+            Ok(Surface::new_plane(axis, ref_direction, location))
         },
         // We treat cones like planes, since that's a valid mapping into 2D
         Entity::ConicalSurface(c) => {
             let (location, axis, ref_direction) = axis2_placement_3d(s, c.position);
-            Some(Surface::new_plane(axis, ref_direction, location))
+            Ok(Surface::new_plane(axis, ref_direction, location))
         },
         Entity::SphericalSurface(c) => {
             // We'll ignore axis and ref_direction in favor of building an
             // orthonormal basis later on
             let (location, _axis, _ref_direction) = axis2_placement_3d(s, c.position);
-            Some(Surface::new_sphere(location, c.radius.0.0.0))
+            Ok(Surface::new_sphere(location, c.radius.0.0.0))
         },
         Entity::BSplineSurfaceWithKnots(b) =>
         {
@@ -434,11 +435,11 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Option<Surface> {
                 v_knot_vec,
                 control_points_list,
             );
-            Some(Surface::new_bspline(surf))
+            Ok(Surface::new_bspline(surf))
         },
         e => {
-            warn!("Could not get surface {:?}", e);
-            None
+            warn!("Could not get surface from {:?}", e);
+            Err(Error::UnknownSurfaceType)
         },
     }
 }
@@ -453,7 +454,7 @@ fn control_points_2d(s: &StepFile, rows: &Vec<Vec<CartesianPoint>>) -> Vec<Vec<D
         .collect()
 }
 
-fn face_bound(s: &StepFile, b: FaceBound) -> Vec<DVec3> {
+fn face_bound(s: &StepFile, b: FaceBound) -> Result<Vec<DVec3>, Error> {
     let (bound, orientation) = match &s.0[b.0] {
         Entity::FaceBound(b) => (b.bound, b.orientation),
         Entity::FaceOuterBound(b) => (b.bound, b.orientation),
@@ -461,22 +462,24 @@ fn face_bound(s: &StepFile, b: FaceBound) -> Vec<DVec3> {
     };
     match &s.0[bound.0] {
         Entity::EdgeLoop(e) => {
-            let mut d = edge_loop(s, &e.edge_list);
+            let mut d = edge_loop(s, &e.edge_list)?;
             if !orientation {
                 d.reverse()
             }
-            d
+            Ok(d)
         },
         Entity::VertexLoop(v) => {
             // This is an "edge loop" with a single vertex, which is
             // used for cones and not really anything else.
-            vec![vertex_point(s, v.loop_vertex)]
+            Ok(vec![vertex_point(s, v.loop_vertex)])
         }
         e => panic!("{:?} is not an EdgeLoop", e),
     }
 }
 
-fn edge_loop(s: &StepFile, edge_list: &[OrientedEdge]) -> Vec<DVec3> {
+fn edge_loop(s: &StepFile, edge_list: &[OrientedEdge])
+    -> Result<Vec<DVec3>, Error>
+{
     let mut out = Vec::new();
     for (i, e) in edge_list.iter().enumerate() {
         // Remove the last item from the list, since it's the beginning
@@ -485,19 +488,13 @@ fn edge_loop(s: &StepFile, edge_list: &[OrientedEdge]) -> Vec<DVec3> {
             out.pop();
         }
         let edge = s.entity(*e).expect("Could not get OrientedEdge");
-        let o = edge_curve(s, edge.edge_element.cast(), edge.orientation);
-
-        // Special case: return an empty vector if we don't
-        // know how to triangulate any of the components.
-        if o.is_empty() {
-            return vec![];
-        }
+        let o = edge_curve(s, edge.edge_element.cast(), edge.orientation)?;
         out.extend(o.into_iter());
     }
-    out
+    Ok(out)
 }
 
-fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Vec<DVec3> {
+fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Result<Vec<DVec3>, Error> {
     let edge_curve = s.entity(e).expect("Could not get EdgeCurve");
     let curve = match &s.0[edge_curve.edge_geometry.0] {
         Entity::Circle(c) => {
@@ -539,7 +536,7 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Vec<DVec3> {
         Entity::Line(_) => Curve::new_line(),
         e => {
             warn!("Could not get edge from {:?}", e);
-            return vec![]
+            return Err(Error::UnknownCurveType);
         },
     };
     let (start, end) = if orientation {
@@ -549,7 +546,7 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Vec<DVec3> {
     };
     let u = vertex_point(s, start);
     let v = vertex_point(s, end);
-    curve.build(u, v)
+    Ok(curve.build(u, v))
 }
 
 fn vertex_point(s: &StepFile, v: Vertex) -> DVec3 {
