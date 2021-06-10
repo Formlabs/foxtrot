@@ -1,5 +1,6 @@
 use nalgebra_glm as glm;
 use glm::{DVec2, DVec3, DVec4, DMat4};
+
 use nurbs::BSplineSurface;
 use crate::mesh::Vertex;
 
@@ -141,7 +142,7 @@ impl Surface {
             Surface::Sphere { mat, mat_i, location, .. } => {
                 let ref_direction = (verts[0].pos - *location).normalize();
                 let d1 = (verts.last().unwrap().pos - *location).normalize();
-                let axis = ref_direction.cross(&d1);
+                let axis = ref_direction.cross(&d1).normalize();
 
                 *mat = Self::make_rigid_transform(
                         axis, ref_direction, *location);
@@ -178,7 +179,7 @@ impl Surface {
             ymax = py.max(ymax);
         }
         if let Surface::Sphere { mat, radius, .. } = self {
-            const NUM_PTS: usize = 4;
+            const NUM_PTS: usize = 6;
             for x in 0..NUM_PTS {
                 let x_frac = (x as f64 + 1.0) / (NUM_PTS as f64 + 1.0);
                 let u = x_frac * xmax + (1.0 - x_frac) * xmin;
