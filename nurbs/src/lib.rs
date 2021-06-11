@@ -3,12 +3,15 @@
 // single-character names everywhere, so we're matching their convention.
 
 mod abstract_curve;
+mod abstract_surface;
 mod bspline_curve;
 mod bspline_surf;
 mod knot_vector;
 mod nd_curve;
+mod nd_surface;
 mod nurbs_curve;
 mod sampled_curve;
+mod sampled_surface;
 
 use smallvec::{SmallVec};
 type VecF = SmallVec<[f64; 8]>;
