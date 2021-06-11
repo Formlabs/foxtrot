@@ -10,6 +10,7 @@ mod knot_vector;
 mod nd_curve;
 mod nd_surface;
 mod nurbs_curve;
+mod nurbs_surface;
 mod sampled_curve;
 mod sampled_surface;
 
