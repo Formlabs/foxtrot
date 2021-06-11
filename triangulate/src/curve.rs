@@ -4,6 +4,7 @@ use glm::{DVec3, DVec4, DMat4};
 use nurbs::{AbstractCurve, NDBSplineCurve, SampledCurve};
 use crate::surface::Surface;
 
+#[derive(Debug)]
 pub enum Curve {
     // TODO: move this to a standalone struct?
     Ellipse {

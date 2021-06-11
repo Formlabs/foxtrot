@@ -1,6 +1,7 @@
 use nalgebra_glm::{dot, length, length2, DVec3};
 use crate::{abstract_curve::AbstractCurve, nd_curve::NDBSplineCurve};
 
+#[derive(Debug)]
 pub struct SampledCurve<const N: usize> {
     curve: NDBSplineCurve<N>,
     samples: Vec<(f64, DVec3)>,
