@@ -16,7 +16,7 @@ use crate::{
     stats::Stats,
     surface::Surface
 };
-use nurbs::{BSplineSurface, SampledCurve, SampledSurface, KnotVector};
+use nurbs::{BSplineSurface, SampledCurve, SampledSurface, NURBSSurface, KnotVector};
 
 const SAVE_DEBUG_SVGS: bool = false;
 const SAVE_PANIC_SVGS: bool = false;
@@ -436,6 +436,58 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Result<Surface, Error> {
                 control_points_list,
             );
             Ok(Surface::BSpline(SampledSurface::new(surf)))
+        },
+        Entity::ComplexEntity(v) if v.len() == 2 => {
+            let bspline = if let Entity::BSplineSurfaceWithKnots(b) = &v[0] {
+                b
+            } else {
+                warn!("Could not get BSplineCurveWithKnots from {:?}", v[0]);
+                return Err(Error::UnknownCurveType)
+            };
+            let rational = if let Entity::RationalBSplineSurface(b) = &v[1] {
+                b
+            } else {
+                warn!("Could not get RationalBSplineCurve from {:?}", v[1]);
+                return Err(Error::UnknownCurveType)
+            };
+
+            // TODO: make KnotVector::from_multiplicies accept iterators?
+            let u_knots: Vec<f64> = bspline.u_knots.iter().map(|k| k.0).collect();
+            let u_multiplicities: Vec<usize> = bspline.u_multiplicities.iter()
+                .map(|&k| k.try_into().expect("Got negative multiplicity"))
+                .collect();
+            let u_knot_vec = KnotVector::from_multiplicities(
+                bspline.u_degree.try_into().expect("Got negative degree"),
+                &u_knots, &u_multiplicities);
+
+            let v_knots: Vec<f64> = bspline.v_knots.iter().map(|k| k.0).collect();
+            let v_multiplicities: Vec<usize> = bspline.v_multiplicities.iter()
+                .map(|&k| k.try_into().expect("Got negative multiplicity"))
+                .collect();
+            let v_knot_vec = KnotVector::from_multiplicities(
+                bspline.v_degree.try_into().expect("Got negative degree"),
+                &v_knots, &v_multiplicities);
+
+            let control_points_list = control_points_2d(
+                    s, &bspline.control_points_list)
+                .into_iter()
+                .zip(rational.weights_data.iter())
+                .map(|(ctrl, weight)|
+                    ctrl.into_iter()
+                        .zip(weight.into_iter())
+                        .map(|(p, w)| DVec4::new(p.x * w, p.y * w, p.z * w, *w))
+                        .collect())
+                .collect();
+
+            let surf = NURBSSurface::new(
+                bspline.u_closed.0.unwrap() == false,
+                bspline.v_closed.0.unwrap() == false,
+                u_knot_vec,
+                v_knot_vec,
+                control_points_list,
+            );
+            Ok(Surface::NURBS(SampledSurface::new(surf)))
+
         },
         e => {
             warn!("Could not get surface from {:?}", e);
