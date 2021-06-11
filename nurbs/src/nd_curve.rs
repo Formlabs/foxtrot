@@ -1,6 +1,6 @@
 use std::cmp::min;
 use nalgebra_glm::TVec;
-use crate::KnotVector;
+use crate::{KnotVector, curve_traits::CurveWithKnots};
 
 #[derive(Debug, Clone)]
 pub struct NDBSplineCurve<const D: usize> {
@@ -9,7 +9,7 @@ pub struct NDBSplineCurve<const D: usize> {
     control_points: Vec<TVec<f64, D>>,
 }
 
-/// Non-rational b-spline surface with 3D control points
+/// Abstract b-spline curve with N-dimensional control points
 impl<const D: usize> NDBSplineCurve<D> {
     pub fn new(
         open: bool,
@@ -101,5 +101,14 @@ impl<const D: usize> NDBSplineCurve<D> {
             result.reverse();
         }
         result
+    }
+}
+
+impl<const D: usize> CurveWithKnots for NDBSplineCurve<D> {
+    fn knots(&self) -> &KnotVector {
+        &self.knots
+    }
+    fn open(&self) -> bool {
+        self.open
     }
 }

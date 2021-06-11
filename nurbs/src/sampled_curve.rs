@@ -1,7 +1,7 @@
 use nalgebra_glm::{dot, length, length2, DVec3};
 use crate::curve_traits::{AbstractCurve, CurveWithKnots};
 
-struct SampledCurve<T> {
+pub struct SampledCurve<T> {
     curve: T,
     samples: Vec<(f64, DVec3)>,
 }
@@ -84,5 +84,41 @@ impl<T: AbstractCurve + CurveWithKnots> SampledCurve<T> {
             .min_by_key(|(_u, pos)| OrderedFloat((pos - p).norm()))
             .unwrap().0;
         self.u_from_point_newtons_method(p, best_u)
+    }
+
+    pub fn as_polyline(&self, u_start: f64, u_end: f64, num_points_per_knot: usize) -> Vec<DVec3> {
+        let (u_min, u_max) = if u_start < u_end {
+            (u_start, u_end)
+        } else {
+            (u_end, u_start)
+        };
+
+        let mut result: Vec<DVec3> = Vec::new();
+        result.push(self.curve.point(u_min));
+
+        // TODO this could be faster if we skip to the right start/end sections
+
+        assert!(num_points_per_knot > 0);
+        let knots = self.curve.knots();
+        for i in 0..knots.len() - 1 {
+            // Skip multiple knots
+            if knots[i] == knots[i + 1] {
+                continue;
+            }
+            // Iterate over a grid within this region
+            for u in 0..num_points_per_knot {
+                let frac = (u as f64) / (num_points_per_knot as f64);
+                let u = knots[i] * (1.0 - frac) + knots[i + 1] * frac;
+                if u > u_min && u < u_max {
+                    result.push(self.curve.point(u));
+                }
+            }
+        }
+        result.push(self.curve.point(u_max));
+
+        if u_start > u_end {
+            result.reverse();
+        }
+        result
     }
 }
