@@ -1,7 +1,7 @@
 use nalgebra_glm as glm;
 use glm::{DVec2, DVec3, DVec4, DMat4};
 
-use nurbs::BSplineSurface;
+use nurbs::{SampledSurface};
 use crate::{Error, mesh::Vertex};
 
 // Represents a surface in 3D space, with a function to project a 3D point
@@ -20,9 +20,7 @@ pub enum Surface {
         normal: DVec3,
         mat_i: DMat4,
     },
-    BSpline {
-        surf: BSplineSurface,
-    },
+    BSpline(SampledSurface<3>),
     Sphere {
         location: DVec3,
         mat: DMat4,     // uv to world
@@ -57,10 +55,6 @@ impl Surface {
                 .expect("Could not invert"),
             normal: axis,
         }
-    }
-
-    pub fn new_bspline(surf: BSplineSurface) -> Self {
-        Surface::BSpline { surf }
     }
 
     pub fn make_affine_transform(z_world: DVec3, x_world: DVec3, y_world: DVec3, origin_world: DVec3) -> DMat4 {
@@ -104,7 +98,7 @@ impl Surface {
                 let scale = 1.0 / (1.0 + z);
                 Ok(DVec2::new(p.x * scale, p.y * scale))
             },
-            Surface::BSpline {surf } => {
+            Surface::BSpline(surf)  => {
                 surf.uv_from_point(p.xyz()).ok_or(Error::CouldNotLower)
             },
             Surface::Sphere { mat_i, radius, .. } => {
@@ -235,9 +229,9 @@ impl Surface {
                 // (same hack as below)
                 -(p - nearest).normalize()
             },
-            Surface::BSpline { surf } => {
+            Surface::BSpline(surf) => {
                 // Calculate first order derivs, then cross them to get normal
-                let derivs = surf.surface_derivs::<1>(uv);
+                let derivs = surf.surf.surface_derivs::<1>(uv);
                 let n = derivs[1][0].cross(&derivs[0][1]);
                 n.normalize()
             },
@@ -250,7 +244,7 @@ impl Surface {
             Surface::Plane {..} => false,
             Surface::Sphere {..} => false,
             Surface::Cylinder {..} => true,
-            Surface::BSpline {..} => true,
+            Surface::BSpline(_) => true,
         }
     }
 }

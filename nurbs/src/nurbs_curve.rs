@@ -17,10 +17,10 @@ impl AbstractCurve for NURBSCurve {
     /// using basis functions of order `p + 1` respectively.
     ///
     /// ALGORITHM A4.2
-    fn derivs(&self, u: f64, d: usize) -> Vec<DVec3> {
-        let derivs = self.curve_derivs(u, d);
-        let mut CK = vec![DVec3::zeros(); d + 1];
-        for k in 0..=d {
+    fn derivs<const E: usize>(&self, u: f64) -> Vec<DVec3> {
+        let derivs = self.curve_derivs::<E>(u);
+        let mut CK = vec![DVec3::zeros(); E + 1];
+        for k in 0..=E {
             let mut v = derivs[k].xyz();
             for i in 1..=k {
                 let b = num_integer::binomial(k, i);

@@ -16,7 +16,7 @@ use crate::{
     stats::Stats,
     surface::Surface
 };
-use nurbs::{BSplineSurface, SampledCurve, KnotVector};
+use nurbs::{BSplineSurface, SampledCurve, SampledSurface, KnotVector};
 
 const SAVE_DEBUG_SVGS: bool = false;
 const SAVE_PANIC_SVGS: bool = false;
@@ -435,7 +435,7 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Result<Surface, Error> {
                 v_knot_vec,
                 control_points_list,
             );
-            Ok(Surface::new_bspline(surf))
+            Ok(Surface::BSpline(SampledSurface::new(surf)))
         },
         e => {
             warn!("Could not get surface from {:?}", e);

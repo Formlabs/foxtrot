@@ -1,49 +1,50 @@
-use nalgebra_glm::{dot, length, length2, DVec3};
-use crate::{abstract_curve::AbstractSurface, nd_curve::NDBSplineSurface};
+use nalgebra_glm::{dot, length, length2, DMat2x2, DVec2, DVec3};
+use crate::{abstract_surface::AbstractSurface, nd_surface::NDBSplineSurface};
 
+#[derive(Debug, Clone)]
 pub struct SampledSurface<const N: usize> {
-    curve: NDBSplineSurface<N>,
-    samples: Vec<(f64, DVec3)>,
+    pub surf: NDBSplineSurface<N>,
+    samples: Vec<(DVec2, DVec3)>,
 }
 
 impl<const N: usize> SampledSurface<N>
     where NDBSplineSurface<N>: AbstractSurface
 {
-    fn new(curve: NDBSplineCurve<N>) -> Self {
+    pub fn new(surf: NDBSplineSurface<N>) -> Self {
         const N: usize = 8;
         let mut samples = Vec::new();
-        for i in 0..self.u_knots.len() - 1 {
+        for i in 0..surf.u_knots.len() - 1 {
             // Skip multiple knots
-            if curve.u_knots[i] == self.u_knots[i + 1] {
+            if surf.u_knots[i] == surf.u_knots[i + 1] {
                 continue;
             }
-            for j in 0..self.v_knots.len() - 1 {
-                if self.v_knots[j] == self.v_knots[j + 1] {
+            for j in 0..surf.v_knots.len() - 1 {
+                if surf.v_knots[j] == surf.v_knots[j + 1] {
                     continue;
                 }
                 // Iterate over a grid within this region
                 for u in 0..N {
                     let frac = (u as f64) / (N as f64 - 1.0);
-                    let u = self.u_knots[i] * (1.0 - frac) + self.u_knots[i + 1] * frac;
+                    let u = surf.u_knots[i] * (1.0 - frac) + surf.u_knots[i + 1] * frac;
 
                     // Cache the u basis function outside the loop
-                    let u_span = self.u_knots.find_span(u);
-                    let u_basis = self.u_knots.basis_funs_for_span(u_span, u);
+                    let u_span = surf.u_knots.find_span(u);
+                    let u_basis = surf.u_knots.basis_funs_for_span(u_span, u);
                     for v in 0..N {
                         let frac = (v as f64) / (N as f64 - 1.0);
-                        let v = self.v_knots[j] * (1.0 - frac) + self.v_knots[j + 1] * frac;
+                        let v = surf.v_knots[j] * (1.0 - frac) + surf.v_knots[j + 1] * frac;
                         let uv = DVec2::new(u, v);
 
-                        let v_span = self.v_knots.find_span(v);
-                        let v_basis = self.v_knots.basis_funs_for_span(v_span, v);
-                        let q = self.surface_point_from_basis(
+                        let v_span = surf.v_knots.find_span(v);
+                        let v_basis = surf.v_knots.basis_funs_for_span(v_span, v);
+                        let q = surf.point_from_basis(
                             u_span, &u_basis, v_span, &v_basis);
                         samples.push((uv, q));
                     }
                 }
             }
         }
-        Self { curve, samples }
+        Self { surf, samples }
     }
 
     // Section 6.1 (start middle page 232)
@@ -54,7 +55,7 @@ impl<const N: usize> SampledSurface<N>
         let mut uv_i = uv_0;
         loop {
             // The surface and its derivatives at uv_i
-            let derivs = self.surface_derivs::<2>(uv_i);
+            let derivs = self.surf.derivs::<2>(uv_i);
             let S = derivs[0][0];
             let S_u = derivs[1][0];
             let S_v = derivs[0][1];
@@ -104,33 +105,33 @@ impl<const N: usize> SampledSurface<N>
             // if v_{i+1} < min_v: v_{i+1} = min_v if v_open else max_v - (min_v - v_{i+1})
             // if v_{i+1} > max_v: v_{i+1} = max_v if v_open else min_v + (v_{i+1} - max_v)
 
-            if uv_ip1.x < self.min_u() {
-                uv_ip1.x = if self.u_open {
-                    self.min_u()
+            if uv_ip1.x < self.surf.min_u() {
+                uv_ip1.x = if self.surf.u_open {
+                    self.surf.min_u()
                 } else {
-                    self.max_u() - (self.min_u() - uv_ip1.x)
+                    self.surf.max_u() - (self.surf.min_u() - uv_ip1.x)
                 };
             }
-            if uv_ip1.x > self.max_u() {
-                uv_ip1.x = if self.u_open {
-                    self.max_u()
+            if uv_ip1.x > self.surf.max_u() {
+                uv_ip1.x = if self.surf.u_open {
+                    self.surf.max_u()
                 } else {
-                    self.min_u() + (uv_ip1.x - self.max_u())
+                    self.surf.min_u() + (uv_ip1.x - self.surf.max_u())
                 };
             }
 
-            if uv_ip1.y < self.min_v() {
-                uv_ip1.y = if self.v_open {
-                    self.min_v()
+            if uv_ip1.y < self.surf.min_v() {
+                uv_ip1.y = if self.surf.v_open {
+                    self.surf.min_v()
                 } else {
-                    self.max_v() - (self.min_v() - uv_ip1.y)
+                    self.surf.max_v() - (self.surf.min_v() - uv_ip1.y)
                 };
             }
-            if uv_ip1.y > self.max_v() {
-                uv_ip1.y = if self.v_open {
-                    self.max_v()
+            if uv_ip1.y > self.surf.max_v() {
+                uv_ip1.y = if self.surf.v_open {
+                    self.surf.max_v()
                 } else {
-                    self.min_v() + (uv_ip1.y - self.max_v())
+                    self.surf.min_v() + (uv_ip1.y - self.surf.max_v())
                 };
             }
 

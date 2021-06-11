@@ -5,5 +5,5 @@ use nalgebra_glm::DVec3;
 /// over them in the [`SampledCurve`] `struct`.
 pub trait AbstractCurve {
     fn point(&self, u: f64) -> DVec3;
-    fn derivs(&self, u: f64, d: usize) -> Vec<DVec3>;
+    fn derivs<const E: usize>(&self, u: f64) -> Vec<DVec3>;
 }

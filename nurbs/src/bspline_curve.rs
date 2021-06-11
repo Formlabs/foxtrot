@@ -7,7 +7,7 @@ impl AbstractCurve for BSplineCurve {
     fn point(&self, u: f64) -> DVec3 {
         self.curve_point(u)
     }
-    fn derivs(&self, u: f64, d: usize) -> Vec<DVec3> {
-        self.curve_derivs(u, d)
+    fn derivs<const E: usize>(&self, u: f64) -> Vec<DVec3> {
+        self.curve_derivs::<E>(u)
     }
 }

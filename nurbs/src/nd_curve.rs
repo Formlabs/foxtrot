@@ -51,15 +51,15 @@ impl<const D: usize> NDBSplineCurve<D> {
     /// using basis functions of order `p + 1` respectively.
     ///
     /// ALGORITHM A3.2
-    pub fn curve_derivs(&self, u: f64, d: usize) -> Vec<TVec<f64, D>> {
+    pub fn curve_derivs<const E: usize>(&self, u: f64) -> Vec<TVec<f64, D>> {
         let p = self.knots.degree();
 
-        let du = min(d, p);
+        let du = min(E, p);
 
         let span = self.knots.find_span(u);
         let N_derivs = self.knots.basis_funs_derivs_for_span(span, u, du);
 
-        let mut CK = vec![TVec::zeros(); d + 1];
+        let mut CK = vec![TVec::zeros(); E + 1];
         for k in 0..=du {
             for j in 0..=p {
                 CK[k] += N_derivs[k][j] * self.control_points[span - p + j]

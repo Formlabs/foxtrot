@@ -5,7 +5,7 @@
 mod abstract_curve;
 mod abstract_surface;
 mod bspline_curve;
-mod bspline_surf;
+mod bspline_surface;
 mod knot_vector;
 mod nd_curve;
 mod nd_surface;
@@ -17,9 +17,12 @@ use smallvec::{SmallVec};
 type VecF = SmallVec<[f64; 8]>;
 
 pub use crate::abstract_curve::AbstractCurve;
+pub use crate::abstract_surface::AbstractSurface;
 pub use crate::bspline_curve::BSplineCurve;
-pub use crate::bspline_surf::BSplineSurface;
+pub use crate::bspline_surface::BSplineSurface;
 pub use crate::knot_vector::KnotVector;
 pub use crate::nd_curve::NDBSplineCurve;
+pub use crate::nd_surface::NDBSplineSurface;
 pub use crate::nurbs_curve::NURBSCurve;
 pub use crate::sampled_curve::SampledCurve;
+pub use crate::sampled_surface::SampledSurface;

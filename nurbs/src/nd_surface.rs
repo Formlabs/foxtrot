@@ -1,18 +1,18 @@
 use std::cmp::min;
-use nalgebra_glm::TVec;
-use crate::KnotVector;
+use nalgebra_glm::{DVec2, TVec};
+use crate::{KnotVector, VecF};
 
 #[derive(Debug, Clone)]
-pub struct NDBsplineSurface<const D: usize> {
-    u_open: bool,
-    v_open: bool,
-    u_knots: KnotVector,
-    v_knots: KnotVector,
+pub struct NDBSplineSurface<const D: usize> {
+    pub u_open: bool,
+    pub v_open: bool,
+    pub u_knots: KnotVector,
+    pub v_knots: KnotVector,
     control_points: Vec<Vec<TVec<f64, D>>>,
 }
 
 /// Non-rational b-spline surface with 3D control points
-impl<const D: usize> BSplineSurface<D> {
+impl<const D: usize> NDBSplineSurface<D> {
     pub fn new(
         u_open: bool,
         v_open: bool,
@@ -26,7 +26,7 @@ impl<const D: usize> BSplineSurface<D> {
             u_knots,
             v_knots,
             control_points,
-        };
+        }
     }
 
     pub fn min_u(&self) -> f64 {
@@ -64,9 +64,9 @@ impl<const D: usize> BSplineSurface<D> {
         let q = self.v_knots.degree();
 
         let uind = uspan - p;
-        let mut S = DVec3::zeros();
+        let mut S = TVec::zeros();
         for l in 0..=q {
-            let mut temp = DVec3::zeros();
+            let mut temp = TVec::zeros();
             let vind = vspan - q + l;
             for k in 0..=p {
                 temp += Nu[k] * self.control_points[uind + k][vind];

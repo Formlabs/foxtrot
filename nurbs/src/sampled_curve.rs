@@ -37,7 +37,7 @@ impl<const N: usize> SampledCurve<N>
 
         let mut u_i = u_0;
         loop {
-            let derivs = self.curve.derivs(u_i, 2);
+            let derivs = self.curve.derivs::<2>(u_i);
             let C = derivs[0];
             let C_p = derivs[1];
             let C_pp = derivs[2];
