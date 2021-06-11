@@ -8,5 +8,6 @@ edition = "2018"
 
 [dependencies]
 nalgebra-glm = "0.13.0"
+num-integer = "0.1"
 ordered-float = "2.0"
 smallvec = "1.6"

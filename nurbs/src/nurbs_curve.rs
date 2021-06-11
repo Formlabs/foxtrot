@@ -19,7 +19,16 @@ impl AbstractCurve for NURBSCurve {
     /// ALGORITHM A4.2
     fn derivs(&self, u: f64, d: usize) -> Vec<DVec3> {
         let derivs = self.curve_derivs(u, d);
-        unimplemented!()
+        let mut CK = vec![DVec3::zeros(); d + 1];
+        for k in 0..=d {
+            let mut v = derivs[k].xyz();
+            for i in 1..=k {
+                let b = num_integer::binomial(k, i);
+                v -= b as f64 * derivs[i].w * CK[k - 1];
+            }
+            CK[k] = v / derivs[0].w;
+        }
+        CK
     }
 }
 
