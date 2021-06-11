@@ -190,6 +190,8 @@ impl Surface {
                     .xyz();
                 Some(pos)
             },
+            Surface::BSpline(s) => Some(s.surf.point(uv)),
+            Surface::NURBS(s) => Some(s.surf.point(uv)),
             _ => unimplemented!(),
         }
     }
@@ -207,6 +209,10 @@ impl Surface {
         }
         let num_pts = match self {
             Surface::Sphere { .. } => 6,
+            Surface::NURBS { .. } | Surface::BSpline { .. } => {
+                // Fill with a reduced linear density
+                pts.len() / 50
+            },
             _ => 0,
         };
 

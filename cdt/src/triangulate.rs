@@ -532,7 +532,6 @@ impl Triangulation {
         assert!(b != p);
 
         let o = self.orient2d(b, a, p);
-        assert!(o >= 0.0 || o.powf(2.0) < std::f64::EPSILON);
         let h_p = if o <= 0.0 {
             /*
                     b<-------p<------a
@@ -545,10 +544,12 @@ impl Triangulation {
                            V |/
                             c
 
-                Special case: if p is exactly on the line, then we split the
-                line instead of inserting a new triangle.
+                Special case: if p is exactly on the line (or inside), then we
+                split the line instead of inserting a new triangle.
             */
             if edge.fixed() {
+                // TODO: this should only be checked if o == 0.0; otherwise,
+                // we should re-insert a-b with a-b-p being a third triangle
                 return Err(Error::PointOnFixedEdge(self.remap[p]));
             }
             assert!(edge.buddy == EMPTY_EDGE);
