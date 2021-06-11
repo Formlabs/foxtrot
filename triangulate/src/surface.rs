@@ -1,7 +1,7 @@
 use nalgebra_glm as glm;
 use glm::{DVec2, DVec3, DVec4, DMat4};
 
-use nurbs::{SampledSurface};
+use nurbs::{AbstractSurface, NDBSplineSurface, SampledSurface};
 use crate::{Error, mesh::Vertex};
 
 // Represents a surface in 3D space, with a function to project a 3D point
@@ -21,6 +21,7 @@ pub enum Surface {
         mat_i: DMat4,
     },
     BSpline(SampledSurface<3>),
+    NURBS(SampledSurface<4>),
     Sphere {
         location: DVec3,
         mat: DMat4,     // uv to world
@@ -77,17 +78,23 @@ impl Surface {
         mat
     }
 
+    fn surf_lower<const N: usize>(p: DVec3, surf: &SampledSurface<N>) -> Result<DVec2, Error>
+        where NDBSplineSurface<N>: AbstractSurface
+    {
+        surf.uv_from_point(p).ok_or(Error::CouldNotLower)
+    }
+
     /// Lowers a 3D point on a specific surface into a 2D space defined by
     /// the surface type.  This should only be called from `lower_verts`,
     /// to ensure that `prepare` is called first.
     fn lower(&self, p: DVec3) -> Result<DVec2, Error> {
-        let p = DVec4::new(p.x, p.y, p.z, 1.0);
+        let p_ = DVec4::new(p.x, p.y, p.z, 1.0);
         match self {
             Surface::Plane { mat_i, .. } => {
-                Ok(glm::vec4_to_vec2(&(mat_i * p)))
+                Ok(glm::vec4_to_vec2(&(mat_i * p_)))
             },
             Surface::Cylinder { mat_i, z_min, z_max, .. } => {
-                let p = mat_i * p;
+                let p = mat_i * p_;
                 // We convert the Z coordinates to either add or subtract from
                 // the radius, so that we maintain the right topology (instead
                 // of doing something like theta-z coordinates, which wrap
@@ -98,12 +105,11 @@ impl Surface {
                 let scale = 1.0 / (1.0 + z);
                 Ok(DVec2::new(p.x * scale, p.y * scale))
             },
-            Surface::BSpline(surf)  => {
-                surf.uv_from_point(p.xyz()).ok_or(Error::CouldNotLower)
-            },
+            Surface::BSpline(surf) => Self::surf_lower(p, surf),
+            Surface::NURBS(surf) => Self::surf_lower(p, surf),
             Surface::Sphere { mat_i, radius, .. } => {
                 // mat_i is constructed in prepare to be a reasonable basis
-                let p = (mat_i * p).xyz() / *radius;
+                let p = (mat_i * p_).xyz() / *radius;
                 let r = p.yz().norm();
 
                 // Angle from 0 to PI
@@ -213,6 +219,15 @@ impl Surface {
         }
     }
 
+    fn surf_normal<const N: usize>(uv: DVec2, surf: &SampledSurface<N>) -> DVec3
+        where NDBSplineSurface<N>: AbstractSurface
+    {
+        // Calculate first order derivs, then cross them to get normal
+        let derivs = surf.surf.derivs::<1>(uv);
+        let n = derivs[1][0].cross(&derivs[0][1]);
+        n.normalize()
+    }
+
     // Calculate the surface normal, using either the 3D or 2D position
     pub fn normal(&self, p: DVec3, uv: DVec2) -> DVec3 {
         match self {
@@ -229,12 +244,8 @@ impl Surface {
                 // (same hack as below)
                 -(p - nearest).normalize()
             },
-            Surface::BSpline(surf) => {
-                // Calculate first order derivs, then cross them to get normal
-                let derivs = surf.surf.surface_derivs::<1>(uv);
-                let n = derivs[1][0].cross(&derivs[0][1]);
-                n.normalize()
-            },
+            Surface::BSpline(surf) => Self::surf_normal(uv, surf),
+            Surface::NURBS(surf) => Self::surf_normal(uv, surf),
         }
     }
 
@@ -245,6 +256,7 @@ impl Surface {
             Surface::Sphere {..} => false,
             Surface::Cylinder {..} => true,
             Surface::BSpline(_) => true,
+            Surface::NURBS(_) => true,
         }
     }
 }
