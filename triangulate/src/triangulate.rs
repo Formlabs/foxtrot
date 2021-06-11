@@ -16,7 +16,7 @@ use crate::{
     stats::Stats,
     surface::Surface
 };
-use nurbs::{BSplineSurface, KnotVector};
+use nurbs::{BSplineSurface, SampledCurve, KnotVector};
 
 const SAVE_DEBUG_SVGS: bool = false;
 const SAVE_PANIC_SVGS: bool = false;
@@ -530,8 +530,43 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Result<Vec<DVec3
                 knot_vec,
                 control_points_list,
             );
-            Curve::new_bspline_with_knots(curve)
+            Curve::BSplineCurveWithKnots(SampledCurve::new(curve))
         },
+        Entity::ComplexEntity(v) if v.len() == 2 => {
+            let bspline = if let Entity::BSplineCurveWithKnots(b) = &v[0] {
+                b
+            } else {
+                warn!("Could not get BSplineCurveWithKnots from {:?}", v[0]);
+                return Err(Error::UnknownCurveType)
+            };
+            let rational = if let Entity::RationalBSplineCurve(b) = &v[1] {
+                b
+            } else {
+                warn!("Could not get RationalBSplineCurve from {:?}", v[1]);
+                return Err(Error::UnknownCurveType)
+            };
+            let knots: Vec<f64> = bspline.knots.iter().map(|k| k.0).collect();
+            let multiplicities: Vec<usize> = bspline.knot_multiplicities.iter()
+                .map(|&k| k.try_into().expect("Got negative multiplicity"))
+                .collect();
+            let knot_vec = KnotVector::from_multiplicities(
+                bspline.degree.try_into().expect("Got negative degree"),
+                &knots, &multiplicities);
+
+            let control_points_list = control_points_1d(
+                    s, &bspline.control_points_list)
+                .into_iter()
+                .zip(rational.weights_data.iter())
+                .map(|(p, w)| DVec4::new(p.x * w, p.y * w, p.z * w, *w))
+                .collect();
+
+            let curve = nurbs::NURBSCurve::new(
+                bspline.closed_curve.0.unwrap() == false,
+                knot_vec,
+                control_points_list,
+            );
+            Curve::NURBSCurve(SampledCurve::new(curve))
+        }
         // The Line type ignores pnt / dir and just uses u and v
         Entity::Line(_) => Curve::new_line(),
         e => {

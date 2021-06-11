@@ -1,7 +1,7 @@
 use nalgebra_glm as glm;
 use glm::{DVec3, DVec4, DMat4};
 
-use nurbs::{AbstractCurve, NDBSplineCurve, BSplineCurve, SampledCurve, NURBSCurve};
+use nurbs::{AbstractCurve, NDBSplineCurve, SampledCurve};
 use crate::surface::Surface;
 
 pub enum Curve {
@@ -45,14 +45,6 @@ impl Curve {
 
     pub fn new_line() -> Self {
         Self::Line
-    }
-
-    pub fn new_bspline_with_knots(b: BSplineCurve) -> Self {
-        Self::BSplineCurveWithKnots(SampledCurve::new(b))
-    }
-
-    pub fn new_nurbs(b: NURBSCurve) -> Self {
-        Self::NURBSCurve(SampledCurve::new(b))
     }
 
     fn curve_points<const N: usize>(u: DVec3, v: DVec3, curve: &SampledCurve<N>) -> Vec<DVec3>
