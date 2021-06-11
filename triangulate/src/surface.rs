@@ -169,6 +169,31 @@ impl Surface {
         Ok(pts)
     }
 
+    pub fn raise(&self, uv: DVec2) -> Option<DVec3> {
+        match self {
+            Surface::Sphere { mat, radius, .. } => {
+                let angle = uv.norm();
+                if angle > std::f64::consts::PI {
+                    return None;
+                }
+                let x = angle.cos();
+
+                // Calculate pre-transformed position
+                let pos = (*radius) * if uv.norm() < std::f64::EPSILON {
+                    DVec3::new(x, 0.0, 0.0)
+                } else {
+                    let yz = uv.normalize() * angle.sin();
+                    DVec3::new(x, yz.x, yz.y)
+                };
+                // Transform into world space
+                let pos = (mat * DVec4::new(pos.x, pos.y, pos.z, 1.0))
+                    .xyz();
+                Some(pos)
+            },
+            _ => unimplemented!(),
+        }
+    }
+
     pub fn add_steiner_points(&self, pts: &mut Vec<(f64, f64)>,
                                      verts: &mut Vec<Vertex>)
     {
@@ -180,38 +205,24 @@ impl Surface {
             xmax = px.max(xmax);
             ymax = py.max(ymax);
         }
-        if let Surface::Sphere { mat, radius, .. } = self {
-            const NUM_PTS: usize = 6;
-            for x in 0..NUM_PTS {
-                let x_frac = (x as f64 + 1.0) / (NUM_PTS as f64 + 1.0);
-                let u = x_frac * xmax + (1.0 - x_frac) * xmin;
-                for y in 0..NUM_PTS {
-                    let y_frac = (y as f64 + 1.0) / (NUM_PTS as f64 + 1.0);
-                    let v = y_frac * ymax + (1.0 - y_frac) * ymin;
+        let num_pts = match self {
+            Surface::Sphere { .. } => 6,
+            _ => 0,
+        };
 
-                    let p = DVec2::new(u, v);
-                    let angle = p.norm();
-                    if angle > std::f64::consts::PI {
-                        continue;
-                    }
-                    let x = angle.cos();
+        for x in 0..num_pts {
+            let x_frac = (x as f64 + 1.0) / (num_pts as f64 + 1.0);
+            let u = x_frac * xmax + (1.0 - x_frac) * xmin;
+            for y in 0..num_pts {
+                let y_frac = (y as f64 + 1.0) / (num_pts as f64 + 1.0);
+                let v = y_frac * ymax + (1.0 - y_frac) * ymin;
 
-                    // Calculate pre-transformed position
-                    let pos = (*radius) * if p.norm() < std::f64::EPSILON {
-                        DVec3::new(x, 0.0, 0.0)
-                    } else {
-                        let yz = p.normalize() * angle.sin();
-                        DVec3::new(x, yz.x, yz.y)
-                    };
-                    // Transform into world space
-                    let pos = (mat * DVec4::new(pos.x, pos.y, pos.z, 1.0))
-                        .xyz();
-
-                    // Record the point in both 2D and 3D before triangulation
-                    pts.push((p.x, p.y));
+                let uv = DVec2::new(u, v);
+                if let Some(pos) = self.raise(uv) {
+                    pts.push((u, v));
                     verts.push(Vertex {
                         pos,
-                        norm: self.normal(pos, p),
+                        norm: self.normal(pos, uv),
                         color: DVec3::new(0.0, 0.0, 0.0),
                     });
                 }
