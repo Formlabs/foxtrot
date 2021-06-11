@@ -395,8 +395,7 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Result<Surface, Error> {
         // We treat cones like planes, since that's a valid mapping into 2D
         Entity::ConicalSurface(c) => {
             let (location, axis, ref_direction) = axis2_placement_3d(s, c.position);
-            // TODO: this gets the normal wrong
-            Ok(Surface::new_plane(axis, ref_direction, location))
+            Ok(Surface::new_cone(axis, ref_direction, location, c.semi_angle.0))
         },
         Entity::SphericalSurface(c) => {
             // We'll ignore axis and ref_direction in favor of building an

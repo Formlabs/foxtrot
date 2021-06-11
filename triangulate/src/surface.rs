@@ -20,6 +20,11 @@ pub enum Surface {
         normal: DVec3,
         mat_i: DMat4,
     },
+    Cone {
+        mat: DMat4,
+        mat_i: DMat4,
+        angle: f64,
+    },
     BSpline(SampledSurface<3>),
     NURBS(SampledSurface<4>),
     Sphere {
@@ -58,6 +63,15 @@ impl Surface {
         }
     }
 
+    pub fn new_cone(axis: DVec3, ref_direction: DVec3, location: DVec3, angle: f64) -> Self {
+        let mat = Self::make_rigid_transform(axis, ref_direction, location);
+        Surface::Cone {
+            mat,
+            mat_i: mat.try_inverse().expect("Could not invert"),
+            angle,
+        }
+    }
+
     pub fn make_affine_transform(z_world: DVec3, x_world: DVec3, y_world: DVec3, origin_world: DVec3) -> DMat4 {
         let mut mat = DMat4::identity();
         mat.set_column(0, &glm::vec3_to_vec4(&x_world));
@@ -90,7 +104,7 @@ impl Surface {
     fn lower(&self, p: DVec3) -> Result<DVec2, Error> {
         let p_ = DVec4::new(p.x, p.y, p.z, 1.0);
         match self {
-            Surface::Plane { mat_i, .. } => {
+            Surface::Plane { mat_i, .. } | Surface::Cone { mat_i, .. } => {
                 Ok(glm::vec4_to_vec2(&(mat_i * p_)))
             },
             Surface::Cylinder { mat_i, z_min, z_max, .. } => {
@@ -249,6 +263,15 @@ impl Surface {
     pub fn normal(&self, p: DVec3, uv: DVec2) -> DVec3 {
         match self {
             Surface::Plane { normal, .. } => *normal,
+            Surface::Cone { mat, mat_i, angle, .. } => {
+                // Project into CONE SPACE
+                let pos = mat_i * DVec4::new(p.x, p.y, p.z, 1.0);
+                let xy = -pos.xy().normalize();
+                let normal = DVec4::new(xy.x * angle.cos(),
+                                        xy.y * angle.cos(), angle.sin(), 0.0);
+                // Deproject back into world space
+                (mat * normal).xyz()
+            }
             Surface::Sphere { location, .. } => (p - location).normalize(),
             Surface::Cylinder { location, axis, .. } => {
                 // Project the point onto the axis
@@ -270,6 +293,7 @@ impl Surface {
         // TODO: this is a hack, why are cylinders different from planes?
         match self {
             Surface::Plane {..} => false,
+            Surface::Cone {..} => false,
             Surface::Sphere {..} => false,
             Surface::Cylinder {..} => true,
             Surface::BSpline(_) => true,
