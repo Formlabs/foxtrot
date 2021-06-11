@@ -1,5 +1,5 @@
 use nalgebra_glm::{DVec3};
-use crate::{nd_curve::NDBSplineCurve, curve_traits::AbstractCurve};
+use crate::{nd_curve::NDBSplineCurve, abstract_curve::AbstractCurve};
 
 pub type BSplineCurve = NDBSplineCurve<3>;
 

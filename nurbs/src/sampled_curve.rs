@@ -1,25 +1,26 @@
 use nalgebra_glm::{dot, length, length2, DVec3};
-use crate::curve_traits::{AbstractCurve, CurveWithKnots};
+use crate::{abstract_curve::AbstractCurve, nd_curve::NDBSplineCurve};
 
-pub struct SampledCurve<T> {
-    curve: T,
+pub struct SampledCurve<const N: usize> {
+    curve: NDBSplineCurve<N>,
     samples: Vec<(f64, DVec3)>,
 }
 
-impl<T: AbstractCurve + CurveWithKnots> SampledCurve<T> {
-    pub fn new(curve: T) -> Self {
+impl<const N: usize> SampledCurve<N>
+    where NDBSplineCurve<N>: AbstractCurve
+{
+    pub fn new(curve: NDBSplineCurve<N>) -> Self {
         const N: usize = 8;
-        let knots = curve.knots();
         let mut samples = Vec::new();
-        for i in 0..knots.len() - 1 {
+        for i in 0..curve.knots.len() - 1 {
             // Skip multiple knots
-            if knots[i] == knots[i + 1] {
+            if curve.knots[i] == curve.knots[i + 1] {
                 continue;
             }
             // Iterate over a grid within this region
             for u in 0..N {
                 let frac = (u as f64) / (N as f64 - 1.0);
-                let u = knots[i] * (1.0 - frac) + knots[i + 1] * frac;
+                let u = curve.knots[i] * (1.0 - frac) + curve.knots[i + 1] * frac;
 
                 let q = curve.point(u);
                 samples.push((u, q));
@@ -55,14 +56,14 @@ impl<T: AbstractCurve + CurveWithKnots> SampledCurve<T> {
 
             // clamp the `u` onto the curve
             if u_ip1 < self.curve.min_u() {
-                u_ip1 = if self.curve.open() {
+                u_ip1 = if self.curve.open {
                     self.curve.min_u()
                 } else {
                     self.curve.max_u() - (self.curve.min_u() - u_ip1)
                 };
             }
             if u_ip1 > self.curve.max_u() {
-                u_ip1 = if self.curve.open() {
+                u_ip1 = if self.curve.open {
                     self.curve.max_u()
                 } else {
                     self.curve.min_u() + (u_ip1 - self.curve.max_u())
@@ -99,16 +100,15 @@ impl<T: AbstractCurve + CurveWithKnots> SampledCurve<T> {
         // TODO this could be faster if we skip to the right start/end sections
 
         assert!(num_points_per_knot > 0);
-        let knots = self.curve.knots();
-        for i in 0..knots.len() - 1 {
+        for i in 0..self.curve.knots.len() - 1 {
             // Skip multiple knots
-            if knots[i] == knots[i + 1] {
+            if self.curve.knots[i] == self.curve.knots[i + 1] {
                 continue;
             }
             // Iterate over a grid within this region
             for u in 0..num_points_per_knot {
                 let frac = (u as f64) / (num_points_per_knot as f64);
-                let u = knots[i] * (1.0 - frac) + knots[i + 1] * frac;
+                let u = self.curve.knots[i] * (1.0 - frac) + self.curve.knots[i + 1] * frac;
                 if u > u_min && u < u_max {
                     result.push(self.curve.point(u));
                 }

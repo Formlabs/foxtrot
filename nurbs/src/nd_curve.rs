@@ -1,11 +1,11 @@
 use std::cmp::min;
 use nalgebra_glm::TVec;
-use crate::{KnotVector, curve_traits::CurveWithKnots};
+use crate::KnotVector;
 
 #[derive(Debug, Clone)]
 pub struct NDBSplineCurve<const D: usize> {
-    open: bool,
-    knots: KnotVector,
+    pub open: bool,
+    pub knots: KnotVector,
     control_points: Vec<TVec<f64, D>>,
 }
 
@@ -101,14 +101,5 @@ impl<const D: usize> NDBSplineCurve<D> {
             result.reverse();
         }
         result
-    }
-}
-
-impl<const D: usize> CurveWithKnots for NDBSplineCurve<D> {
-    fn knots(&self) -> &KnotVector {
-        &self.knots
-    }
-    fn open(&self) -> bool {
-        self.open
     }
 }
