@@ -4,6 +4,7 @@
 
 mod knot_vector;
 mod bspline_curve;
+mod nurbs_curve;
 mod bspline_surf;
 mod nd_curve;
 mod curve_traits;
