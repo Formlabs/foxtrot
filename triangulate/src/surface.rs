@@ -180,6 +180,20 @@ impl Surface {
             v.norm = self.normal(v.pos, proj);
             pts.push((proj.x, proj.y));
         }
+        // If this is a BSpline surface, calculate an aspect ratio based on the
+        // control points net, then use it to transform projected points.  This
+        // means that positions in 2D (UV) space are closer to positions in 3D
+        // space, so the triangulation is better.
+        let aspect_ratio = match self {
+            Surface::NURBS(surf) => Some(surf.surf.aspect_ratio()),
+            Surface::BSpline(surf) => Some(surf.surf.aspect_ratio()),
+            _ => None,
+        };
+        if let Some(aspect_ratio) = aspect_ratio {
+            for p in pts.iter_mut() {
+                p.1 *= aspect_ratio;
+            }
+        }
         Ok(pts)
     }
 
@@ -210,23 +224,24 @@ impl Surface {
         }
     }
 
-    pub fn add_steiner_points(&self, pts: &mut Vec<(f64, f64)>,
-                                     verts: &mut Vec<Vertex>)
-    {
+    fn bbox(pts: &[(f64, f64)]) -> (f64, f64, f64, f64) {
         let (mut xmin, mut xmax) = (std::f64::INFINITY, -std::f64::INFINITY);
         let (mut ymin, mut ymax) = (std::f64::INFINITY, -std::f64::INFINITY);
-        for (px, py) in pts.iter() {
+        for (px, py) in pts {
             xmin = px.min(xmin);
             ymin = py.min(ymin);
             xmax = px.max(xmax);
             ymax = py.max(ymax);
         }
+        (xmin, xmax, ymin, ymax)
+    }
+
+    pub fn add_steiner_points(&self, pts: &mut Vec<(f64, f64)>,
+                                     verts: &mut Vec<Vertex>)
+    {
+        let (xmin, xmax, ymin, ymax) = Self::bbox(&pts);
         let num_pts = match self {
             Surface::Sphere { .. } => 6,
-            Surface::NURBS { .. } | Surface::BSpline { .. } => {
-                // Fill with a reduced linear density
-                pts.len() / 50
-            },
             _ => 0,
         };
 

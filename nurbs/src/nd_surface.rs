@@ -1,5 +1,5 @@
 use std::cmp::min;
-use nalgebra_glm::{DVec2, TVec};
+use nalgebra_glm::{DVec2, DVec3, TVec};
 use crate::{KnotVector, VecF};
 
 #[derive(Debug, Clone)]
@@ -117,5 +117,33 @@ impl<const D: usize> NDBSplineSurface<D> {
             }
         }
         SKL
+    }
+
+    // Computes the relative scale of U and V, based on average distance between
+    // control points in 3D space
+    pub fn aspect_ratio(&self) -> f64 {
+        let mut u_sum = 0.0;
+        let mut v_sum = 0.0;
+        // Helper function to find 3-distance even if this is 4D
+        let distance = |a, b| {
+            let delta: TVec<f64, D> = a - b;
+            DVec3::new(delta[0], delta[1], delta[2]).norm()
+        };
+        for i in 0..self.control_points.len() {
+            for j in 0..self.control_points[i].len() {
+                if i > 0 {
+                    v_sum += distance(self.control_points[i - 1][j],
+                                      self.control_points[i][j]);
+                }
+                if j > 0 {
+                    u_sum += distance(self.control_points[i][j - 1],
+                                      self.control_points[i][j]);
+                }
+            }
+        }
+        let u_mean = u_sum / self.control_points.len() as f64;
+        let v_mean = v_sum / self.control_points[0].len() as f64;
+
+        u_mean / v_mean
     }
 }
