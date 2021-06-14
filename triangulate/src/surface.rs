@@ -139,8 +139,34 @@ impl Surface {
                 let scale = 1.0 / (1.0 + z);
                 Ok(DVec2::new(p.x * scale, p.y * scale))
             },
-            Surface::Torus { mat_i, .. } => {
+            Surface::Torus { mat_i, major_radius, minor_radius, axis, .. } => {
                 let p = mat_i * p_;
+                /*
+                         ^ Y
+                         |
+                    /---------\
+                   /     |     \
+                   |   -----   |
+                   |   | O |- -|- - >Z
+                   |   -----   |
+                   \           /
+                    \---------/
+
+                    (X axis points into the screen)
+                */
+                let major_angle = p.y.atan2(p.z);
+
+                // Rotate the point so that it's got Y = 0, so we can calculate
+                // the minor angle
+                let z = DVec3::new(0.0, major_angle.sin(), major_angle.cos());
+                let new_mat = Self::make_rigid_transform(
+                    z, DVec3::new(1.0, 0.0, 0.0), DVec3::zeros());
+                let new_mat_i = new_mat.try_inverse()
+                    .expect("Could not invert");
+                let new_p = new_mat_i * DVec4::new(p.x, p.y, p.z, 1.0);
+
+                let minor_angle = new_p.y.atan2(new_p.z);
+
                 Ok(p.xy())
             },
             Surface::BSpline(surf) => Self::surf_lower(p, surf),
