@@ -33,11 +33,20 @@ pub enum Surface {
         mat_i: DMat4,   // world to uv
         radius: f64,
     },
+    Torus {
+        axis: DVec3,
+        location: DVec3,
+        mat: DMat4,
+        mat_i: DMat4,
+        major_radius: f64,
+        minor_radius: f64,
+    },
 }
 
 impl Surface {
     pub fn new_sphere(location: DVec3, radius: f64) -> Self {
         Surface::Sphere {
+            // mat and mat_i are built in prepare()
             mat: DMat4::identity(),
             mat_i: DMat4::identity(),
             location, radius,
@@ -51,6 +60,17 @@ impl Surface {
             axis, radius, location,
             z_min: 0.0,
             z_max: 0.0,
+        }
+    }
+
+    pub fn new_torus(location: DVec3, axis: DVec3,
+                     major_radius: f64, minor_radius: f64) -> Self
+    {
+        Surface::Torus {
+            // mat and mat_i are built in prepare()
+            mat: DMat4::identity(),
+            mat_i: DMat4::identity(),
+            location, axis, major_radius, minor_radius
         }
     }
 
@@ -119,6 +139,10 @@ impl Surface {
                 let scale = 1.0 / (1.0 + z);
                 Ok(DVec2::new(p.x * scale, p.y * scale))
             },
+            Surface::Torus { mat_i, .. } => {
+                let p = mat_i * p_;
+                Ok(p.xy())
+            },
             Surface::BSpline(surf) => Self::surf_lower(p, surf),
             Surface::NURBS(surf) => Self::surf_lower(p, surf),
             Surface::Sphere { mat_i, radius, .. } => {
@@ -160,6 +184,18 @@ impl Surface {
 
                 *mat = Self::make_rigid_transform(
                         axis, ref_direction, *location);
+                *mat_i = mat
+                    .try_inverse()
+                    .expect("Could not invert");
+            },
+            Surface::Torus { axis, mat, mat_i, location, .. } => {
+                let mean_dir = verts.iter()
+                    .map(|v| v.pos - *location)
+                    .sum::<DVec3>()
+                    .normalize();
+                let mean_perp_dir = mean_dir - *axis * mean_dir.dot(axis);
+                *mat = Self::make_rigid_transform(
+                    mean_perp_dir, *axis, *location);
                 *mat_i = mat
                     .try_inverse()
                     .expect("Could not invert");
@@ -301,18 +337,17 @@ impl Surface {
             },
             Surface::BSpline(surf) => Self::surf_normal(uv, surf),
             Surface::NURBS(surf) => Self::surf_normal(uv, surf),
+            Surface::Torus {..} => DVec3::zeros(), // TODO
         }
     }
 
     pub fn sign(&self) -> bool {
         // TODO: this is a hack, why are cylinders different from planes?
         match self {
-            Surface::Plane {..} => false,
-            Surface::Cone {..} => false,
-            Surface::Sphere {..} => false,
-            Surface::Cylinder {..} => true,
-            Surface::BSpline(_) => true,
-            Surface::NURBS(_) => true,
+            Surface::Plane {..}
+            | Surface::Cone {..}
+            | Surface::Sphere {..} => false,
+            _ => true,
         }
     }
 }

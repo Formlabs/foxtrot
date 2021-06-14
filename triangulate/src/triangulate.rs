@@ -388,7 +388,13 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Result<Surface, Error> {
             let (location, axis, ref_direction) = axis2_placement_3d(s, c.position);
             Ok(Surface::new_cylinder(axis, ref_direction, location, c.radius.0.0.0))
         },
+        Entity::ToroidalSurface(c) => {
+            let (location, axis, _ref_direction) = axis2_placement_3d(s, c.position);
+            Ok(Surface::new_torus(location, axis, c.major_radius.0.0.0, c.minor_radius.0.0.0))
+        },
         Entity::Plane(p) => {
+            // We'll ignore axis and ref_direction in favor of building an
+            // orthonormal basis later on
             let (location, axis, ref_direction) = axis2_placement_3d(s, p.position);
             Ok(Surface::new_plane(axis, ref_direction, location))
         },
