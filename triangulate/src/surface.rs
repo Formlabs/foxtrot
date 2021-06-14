@@ -139,7 +139,7 @@ impl Surface {
                 let scale = 1.0 / (1.0 + z);
                 Ok(DVec2::new(p.x * scale, p.y * scale))
             },
-            Surface::Torus { mat_i, major_radius, minor_radius, axis, .. } => {
+            Surface::Torus { mat_i, .. } => {
                 let p = mat_i * p_;
                 /*
                          ^ Y
@@ -160,14 +160,18 @@ impl Surface {
                 // the minor angle
                 let z = DVec3::new(0.0, major_angle.sin(), major_angle.cos());
                 let new_mat = Self::make_rigid_transform(
-                    z, DVec3::new(1.0, 0.0, 0.0), DVec3::zeros());
+                    z, DVec3::new(1.0, 0.0, 0.0), -z);
                 let new_mat_i = new_mat.try_inverse()
                     .expect("Could not invert");
                 let new_p = new_mat_i * DVec4::new(p.x, p.y, p.z, 1.0);
 
-                let minor_angle = new_p.y.atan2(new_p.z);
+                let minor_angle = (-new_p.x).atan2(new_p.z);
 
-                Ok(p.xy())
+                // Construct nested circles with a scale from 1.0 to 2.0
+                let scale = (major_angle + std::f64::consts::PI) /
+                            (2.0 * std::f64::consts::PI) + 1.0;
+                assert!(scale >= 1.0 && scale <= 2.0);
+                Ok(DVec2::new(minor_angle.cos(), minor_angle.sin()) * scale)
             },
             Surface::BSpline(surf) => Self::surf_lower(p, surf),
             Surface::NURBS(surf) => Self::surf_lower(p, surf),
