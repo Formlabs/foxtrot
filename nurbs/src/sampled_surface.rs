@@ -1,5 +1,6 @@
 use nalgebra_glm::{dot, length, length2, DMat2x2, DVec2, DVec3};
 use crate::{abstract_surface::AbstractSurface, nd_surface::NDBSplineSurface};
+use log::error;
 
 #[derive(Debug, Clone)]
 pub struct SampledSurface<const N: usize> {
@@ -53,7 +54,7 @@ impl<const N: usize> SampledSurface<N>
         let eps2 = 0.01; // a cosine error bound
 
         let mut uv_i = uv_0;
-        loop {
+        for _ in 0..256 {
             // The surface and its derivatives at uv_i
             let derivs = self.surf.derivs::<2>(uv_i);
             let S = derivs[0][0];
@@ -146,6 +147,8 @@ impl<const N: usize> SampledSurface<N>
             // otherwise, iterate again
             uv_i = uv_ip1;
         }
+        error!("Could not find UV coordinates");
+        None
     }
 
     pub fn uv_from_point(&self, p: DVec3) -> Option<DVec2> {
