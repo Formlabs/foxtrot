@@ -14,4 +14,10 @@ pub enum Error {
 
     #[error("Could not convert into a Curve")]
     UnknownCurveType,
+
+    #[error("Closed NURBS and b-spline surfaces are not implemented")]
+    ClosedSurface,
+
+    #[error("Self-intersecting NURBS and b-spline surfaces are not implemented")]
+    SelfIntersectingSurface,
 }

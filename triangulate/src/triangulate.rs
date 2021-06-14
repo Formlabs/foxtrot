@@ -411,9 +411,13 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Result<Surface, Error> {
         },
         Entity::BSplineSurfaceWithKnots(b) =>
         {
-            assert!(b.u_closed.0.unwrap() == false);
-            assert!(b.v_closed.0.unwrap() == false);
-            assert!(b.self_intersect.0.unwrap() == false);
+            if b.u_closed.0 != Some(false) || b.v_closed.0 != Some(false) {
+                error!("Cannot triangulate closed B-Spline surface");
+                return Err(Error::ClosedSurface);
+            } else if b.self_intersect.0 != Some(false) {
+                error!("Cannot triangulate self-intersecting b-spline surface");
+                return Err(Error::SelfIntersectingSurface);
+            }
 
             // TODO: make KnotVector::from_multiplicies accept iterators?
             let u_knots: Vec<f64> = b.u_knots.iter().map(|k| k.0).collect();
@@ -456,6 +460,16 @@ fn get_surface(s: &StepFile, surf: ap214::Surface) -> Result<Surface, Error> {
                 warn!("Could not get RationalBSplineCurve from {:?}", v[1]);
                 return Err(Error::UnknownCurveType)
             };
+
+            if bspline.u_closed.0 != Some(false) ||
+               bspline.v_closed.0 != Some(false)
+            {
+                error!("Cannot triangulate closed B-Spline surface");
+                return Err(Error::ClosedSurface);
+            } else if bspline.self_intersect.0 != Some(false) {
+                error!("Cannot triangulate self-intersecting b-spline surface");
+                return Err(Error::SelfIntersectingSurface);
+            }
 
             // TODO: make KnotVector::from_multiplicies accept iterators?
             let u_knots: Vec<f64> = bspline.u_knots.iter().map(|k| k.0).collect();
