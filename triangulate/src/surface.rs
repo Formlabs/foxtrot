@@ -141,7 +141,7 @@ impl Surface {
                 let scale = 1.0 / (1.0 + z);
                 Ok(DVec2::new(p.x * scale, p.y * scale))
             },
-            Surface::Torus { mat_i, major_radius, .. } => {
+            Surface::Torus { mat_i, major_radius, minor_radius, .. } => {
                 let p = mat_i * p_;
                 /*
                          ^ Y
@@ -169,12 +169,12 @@ impl Surface {
 
                 let minor_angle = new_p.x.atan2(new_p.z);
 
-                // Construct nested circles with a scale from 1.0 to 2.0
-                let scale = (major_angle + PI) / (2.0 * PI) + 1.0;
-                assert!(scale >= 1.0 && scale <= 2.0);
+                // Construct nested circles with a scale based on the ratio
+                // of radiuses (to make an _attempt_ to match 3D distance)
+                let scale = 1.0 + (major_radius / minor_radius) *
+                                  (major_angle + PI) / (2.0 * PI);
 
-                let out = DVec2::new(minor_angle.cos(), minor_angle.sin()) * scale;
-                Ok(out)
+                Ok(scale * DVec2::new(minor_angle.cos(), minor_angle.sin()))
             },
             Surface::BSpline(surf) => Self::surf_lower(p, surf),
             Surface::NURBS(surf) => Self::surf_lower(p, surf),
@@ -291,7 +291,8 @@ impl Surface {
             Surface::NURBS(s) => Some(s.surf.point(uv)),
             Surface::Torus { mat, minor_radius, major_radius, .. } => {
                 let minor_angle = uv.y.atan2(uv.x);
-                let major_angle = (uv.norm() - 1.0) * 2.0 * PI - PI;
+                let major_angle = (uv.norm() - 1.0) /
+                                  (major_radius / minor_radius) * 2.0 * PI - PI;
                 let new_p = DVec3::new(minor_angle.sin(), 0.0, minor_angle.cos()) * *minor_radius;
 
                 let z = DVec3::new(0.0, major_angle.sin(), major_angle.cos());
