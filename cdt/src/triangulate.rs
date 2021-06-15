@@ -1246,44 +1246,29 @@ impl Triangulation {
 // This is faster than sorting an entire array each time.
 fn min3(buf: &[(usize, f64)], points: &[(f64, f64)]) -> [usize; 3] {
     let mut array = [(0, std::f64::INFINITY); 3];
-    'outer: for &(p, score) in buf.iter() {
-        if score >= array[2].1 {
-            continue;
+    for &(p, score) in buf.iter() {
+        if score < array[0].1 {
+            array[0] = (p, score);
         }
-        for i in 0..3 {
-            // If the new score is bumping this item out of the array,
-            // then shift all later items over by one and return.
-            if score <= array[i].1 {
-                // Sanity-check to make sure that this point isn't a duplicate
-                // or making the initial triangle colinear
-                if array[0].1.is_infinite() {
-                    // Nothing to do here
-                } else if array[1].1.is_infinite() {
-                    // If there is one point picked already, then don't
-                    // pick it again, since that will be doomed to be colinear.
-                    let p0 = points[array[0].0];
-                    if (p0.0 - points[p].0).abs() < std::f64::EPSILON &&
-                       (p0.1 - points[p].1).abs() < std::f64::EPSILON
-                    {
-                        continue 'outer;
-                    }
-                } else {
-                    // If two points have been picked, then don't choose a
-                    // third point which is colinear with them.
-                    assert!(!array[0].1.is_infinite());
-                    assert!(!array[1].1.is_infinite());
-                    let p0 = points[array[0].0];
-                    let p1 = points[array[1].0];
-                    if orient2d(p0, p1, points[p]).abs() < std::f64::EPSILON {
-                        continue 'outer;
-                    }
-                }
-
-                for j in (i..2).rev() {
-                    array[j + 1] = array[j];
-                }
-                array[i] = (p, score);
-                break;
+    }
+    for &(p, score) in buf.iter() {
+        if score < array[1].1 {
+            // If there is one point picked already, then don't
+            // pick it again, since that will be doomed to be colinear.
+            let p0 = points[array[0].0];
+            if (p0.0 - points[p].0).abs() >= std::f64::EPSILON ||
+               (p0.1 - points[p].1).abs() >= std::f64::EPSILON
+            {
+                array[1] = (p, score);
+            }
+        }
+    }
+    for &(p, score) in buf.iter() {
+        if score < array[2].1 {
+            let p0 = points[array[0].0];
+            let p1 = points[array[1].0];
+            if orient2d(p0, p1, points[p]).abs() > std::f64::EPSILON {
+                array[2] = (p, score);
             }
         }
     }
