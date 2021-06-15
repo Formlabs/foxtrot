@@ -6,10 +6,20 @@ pub struct Backdrop {
 
 impl Backdrop {
     pub fn new(device: &wgpu::Device, swapchain_format: wgpu::TextureFormat) -> Self {
-        // Load the shaders from disk
+        // Load the shaders from disk, either at runtime or compile-time
+        #[cfg(feature = "bundle-shaders")]
+        let backdrop_src = Cow::Borrowed(include_str!("backdrop.wgsl"));
+
+        #[cfg(not(feature = "bundle-shaders"))]
+        let backdrop_src = Cow::Owned(
+            String::from_utf8(
+                std::fs::read("gui/src/backdrop.wgsl")
+                    .expect("Could not read shader"))
+                    .expect("Shader is invalid UTF-8"));
+
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
-            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("backdrop.wgsl"))),
+            source: wgpu::ShaderSource::Wgsl(backdrop_src),
             flags: wgpu::ShaderFlags::all(),
         });
 

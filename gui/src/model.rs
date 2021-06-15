@@ -128,10 +128,20 @@ impl Model {
             label: None,
         });
 
-        // Load the shaders from disk
+        // Load the shaders from disk, either at runtime or compile-time
+        #[cfg(feature = "bundle-shaders")]
+        let model_src = Cow::Borrowed(include_str!("model.wgsl"));
+
+        #[cfg(not(feature = "bundle-shaders"))]
+        let model_src = Cow::Owned(
+            String::from_utf8(
+                std::fs::read("gui/src/model.wgsl")
+                    .expect("Could not read shader"))
+                    .expect("Shader is invalid UTF-8"));
+
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
-            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("model.wgsl"))),
+            source: wgpu::ShaderSource::Wgsl(model_src),
             flags: wgpu::ShaderFlags::all(),
         });
 
