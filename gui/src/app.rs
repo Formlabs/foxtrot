@@ -234,7 +234,7 @@ impl App {
 
     fn pan(&mut self, dx:f64, dy:f64){
         if let Some(model) = &mut self.model {
-            model.translate_camera(dx as f32 / -10000.0, dy as f32 / 10000.0 );
+            model.translate_camera(dx as f32 / -10.0, dy as f32 / 10.0 );
         }
     }
 
