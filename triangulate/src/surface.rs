@@ -141,7 +141,7 @@ impl Surface {
                 let scale = 1.0 / (1.0 + z);
                 Ok(DVec2::new(p.x * scale, p.y * scale))
             },
-            Surface::Torus { mat_i, major_radius, location, .. } => {
+            Surface::Torus { mat_i, major_radius, .. } => {
                 let p = mat_i * p_;
                 /*
                          ^ Y
