@@ -1,12 +1,13 @@
 use std::borrow::Cow;
 
 use bytemuck::{Pod, Zeroable};
-use itertools::Itertools;
 use nalgebra_glm as glm;
-use glm::{Vec3, Vec4, Mat4};
+use glm::{Vec4, Mat4};
 use wgpu::util::DeviceExt;
 
 use triangulate::mesh::{Vertex, Triangle};
+
+use crate::camera::Camera;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
@@ -33,9 +34,6 @@ pub struct Model {
     bind_group: wgpu::BindGroup,
     index_count: u32,
     render_pipeline: wgpu::RenderPipeline,
-
-    // Model matrix parameters
-    aspect: f32, pitch: f32, yaw: f32, scale: f32, center: Vec3,
 }
 
 impl Model {
@@ -85,17 +83,6 @@ impl Model {
                 },
             ],
         });
-
-        let xb = verts.iter().map(|v| v.pos.x).minmax().into_option().unwrap();
-        let yb = verts.iter().map(|v| v.pos.y).minmax().into_option().unwrap();
-        let zb = verts.iter().map(|v| v.pos.z).minmax().into_option().unwrap();
-        let dx = xb.1 - xb.0;
-        let dy = yb.1 - yb.0;
-        let dz = zb.1 - zb.0;
-        let scale = (1.0 / dx.max(dy).max(dz)) as f32;
-        let center = Vec3::new((xb.0 + xb.1) as f32 / 2.0,
-                               (yb.0 + yb.1) as f32 / 2.0,
-                               (zb.0 + zb.1) as f32 / 2.0);
 
         // Create pipeline layout
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -180,50 +167,18 @@ impl Model {
             uniform_buf,
             bind_group,
             index_count: tris.len() as u32 * 3,
-            pitch: 0.0, yaw: 0.0, aspect: 1.0,
-            scale, center,
         }
     }
 
-    pub fn set_aspect(&mut self, a: f32) {
-        self.aspect = a;
-    }
-
-    /// Returns a matrix which compensates for window aspect ratio and clipping
-    fn view_matrix(&self) -> Mat4 {
-        let i = Mat4::identity();
-        // The Z clipping range is 0-1, so push forward
-        glm::translate(&i, &Vec3::new(0.0, 0.0, 0.5)) *
-
-        // Scale to compensate for aspect ratio and reduce Z scale to improve
-        // clipping
-        glm::scale(&i, &Vec3::new(1.0, self.aspect, 0.1))
-    }
-
-    fn model_matrix(&self) -> Mat4 {
-        let i = Mat4::identity();
-        // The transforms below are applied bottom-to-top when thinking about
-        // the model, i.e. it's translated, then scaled, then rotated, etc.
-
-        // Rotation!
-        glm::rotate_x(&i, self.yaw) *
-        glm::rotate_y(&i, self.pitch) *
-
-        // Scale to compensate for model size
-        glm::scale(&i, &Vec3::new(self.scale, self.scale, self.scale)) *
-
-        // Recenter model
-        glm::translate(&i, &-self.center)
-    }
-
-    pub fn draw(&self, queue: &wgpu::Queue,
+    pub fn draw(&self, camera: &Camera,
+                queue: &wgpu::Queue,
                 frame: &wgpu::SwapChainTexture,
                 depth_view: &wgpu::TextureView,
                 encoder: &mut wgpu::CommandEncoder)
     {
         // Update the uniform buffer with our new matrix
-        let view_mat = self.view_matrix();
-        let model_mat = self.model_matrix();
+        let view_mat = camera.view_matrix();
+        let model_mat = camera.model_matrix();
         queue.write_buffer(&self.uniform_buf, 0,
             bytemuck::cast_slice(view_mat.as_slice()));
         queue.write_buffer(&self.uniform_buf,
@@ -256,26 +211,5 @@ impl Model {
         rpass.set_vertex_buffer(0, self.vertex_buf.slice(..));
         rpass.set_bind_group(0, &self.bind_group, &[]);
         rpass.draw_indexed(0..self.index_count, 0, 0..1);
-    }
-
-    pub fn spin(&mut self, dx: f32, dy: f32) {
-        self.pitch += dx;
-        self.yaw += dy;
-    }
-
-    pub fn translate(&mut self, dx: f32, dy: f32, dz: f32){
-        self.center.x += dx;
-        self.center.y += dy;
-        self.center.z += dz;
-    }
-
-    pub fn translate_camera(&mut self, dx: f32, dy: f32){
-        let i = Mat4::identity();
-        let vec=glm::rotate_y(&i, -self.pitch) *glm::rotate_x(&i, -self.yaw) *Vec4::new(dx, dy, 0.0, 1.0);
-        self.translate(vec.x, vec.y, vec.z);
-    }
-
-    pub fn scale(&mut self, value: f32){
-        self.scale*=value;
     }
 }

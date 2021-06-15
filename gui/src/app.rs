@@ -1,11 +1,12 @@
+use nalgebra_glm as glm;
+use glm::Vec2;
 use winit::{
-    dpi::{PhysicalPosition, PhysicalSize},
-    event::{ElementState, ModifiersState, MouseButton, WindowEvent, DeviceEvent, VirtualKeyCode, MouseScrollDelta},
+    dpi::{PhysicalSize},
+    event::{ElementState, ModifiersState, WindowEvent, DeviceEvent, VirtualKeyCode, MouseScrollDelta},
 };
 
 use triangulate::mesh::Mesh;
-use crate::model::Model;
-use crate::backdrop::Backdrop;
+use crate::{backdrop::Backdrop, camera::Camera, model::Model};
 
 pub struct App {
     start_time: std::time::SystemTime,
@@ -14,17 +15,16 @@ pub struct App {
     device: wgpu::Device,
     swapchain_format: wgpu::TextureFormat,
     swapchain: wgpu::SwapChain,
+
     loader: Option<std::thread::JoinHandle<Mesh>>,
     model: Option<Model>,
     backdrop: Backdrop,
+    camera: Camera,
 
     depth: (wgpu::Texture, wgpu::TextureView),
     size: PhysicalSize<u32>,
 
     modifiers: ModifiersState,
-    last_cursor: Option<PhysicalPosition<f64>>,
-    left_mouse_down: bool,
-    right_mouse_down: bool,
 
     first_frame: bool,
 }
@@ -41,7 +41,8 @@ impl App {
                device: wgpu::Device, loader: std::thread::JoinHandle<Mesh>)
         -> Self
     {
-        let swapchain_format = adapter.get_swap_chain_preferred_format(&surface).unwrap();
+        let swapchain_format = adapter.get_swap_chain_preferred_format(&surface)
+            .expect("Could not get swapchain format");
 
         let swapchain = Self::rebuild_swapchain_(
             size, swapchain_format, &surface, &device);
@@ -57,30 +58,22 @@ impl App {
             swapchain_format,
             loader: Some(loader),
             model: None,
+            camera: Camera::new(size.width as f32 / size.height as f32),
             surface,
             device,
             size,
 
             modifiers: ModifiersState::empty(),
-            last_cursor: None,
-            left_mouse_down: false,
-            right_mouse_down: false,
 
             first_frame: true,
         }
     }
 
     pub fn device_event(&mut self, e: DeviceEvent) {
-        match e {
-            DeviceEvent::MouseWheel { delta } => {
-                match delta {
-                    MouseScrollDelta::PixelDelta(p) => {
-                        self.scale((1.0 + p.y / 100.0) as f32);
-                    }
-                    _ => (),
-                }
+        if let DeviceEvent::MouseWheel { delta } = e {
+            if let MouseScrollDelta::PixelDelta(p) = delta {
+                self.camera.mouse_scroll(p.y as f32);
             }
-            _ => (),
         }
     }
 
@@ -88,6 +81,10 @@ impl App {
         match e {
             WindowEvent::Resized(size) => {
                 self.resize(size);
+                Reply::Redraw
+            },
+            WindowEvent::ScaleFactorChanged { new_inner_size, .. } => {
+                self.resize(*new_inner_size);
                 Reply::Redraw
             },
             WindowEvent::CloseRequested => Reply::Quit,
@@ -103,29 +100,20 @@ impl App {
                 }
             },
             WindowEvent::MouseInput { button, state, .. } => {
-                if button == MouseButton::Left {
-                    self.left_mouse_down = state == ElementState::Pressed;
-                }
-                if button == MouseButton::Right {
-                    self.right_mouse_down = state == ElementState::Pressed;
+                use ElementState::*;
+                match state {
+                    Pressed => self.camera.mouse_pressed(button),
+                    Released => self.camera.mouse_released(button),
                 }
                 Reply::Continue
             }
             WindowEvent::CursorMoved { position, .. } => {
-                if let Some(prev) = self.last_cursor {
-                    if self.left_mouse_down {
-                        self.drag(position.x - prev.x, position.y - prev.y);
-                    }
-                    if self.right_mouse_down {
-                        self.pan(position.x - prev.x, position.y - prev.y);
-                    }
-                }
-                self.last_cursor = Some(position);
+                self.camera.mouse_move(Vec2::new(position.x as f32, position.y as f32));
                 Reply::Redraw
             },
             WindowEvent::MouseWheel { delta, ..} => {
                 if let MouseScrollDelta::LineDelta(_, verti) = delta {
-                    self.scale(1.0 + verti / 10.0);
+                    self.camera.mouse_scroll(verti);
                 }
                 Reply::Redraw
             },
@@ -139,9 +127,7 @@ impl App {
             size, self.swapchain_format,
             &self.surface, &self.device);
         self.depth = Self::rebuild_depth_(size, &self.device);
-        if let Some(model) = &mut self.model {
-            model.set_aspect(size.width as f32 / size.height as f32);
-        }
+        self.camera.set_aspect(size.width as f32 / size.height as f32);
     }
 
     fn rebuild_depth_(size: PhysicalSize<u32>, device: &wgpu::Device)
@@ -193,7 +179,7 @@ impl App {
 
         self.backdrop.draw(&frame, &self.depth.1, &mut encoder);
         if let Some(model) = &self.model {
-            model.draw(&queue, &frame, &self.depth.1, &mut encoder);
+            model.draw(&self.camera, &queue, &frame, &self.depth.1, &mut encoder);
         }
         let drew_model = self.model.is_some();
         queue.submit(Some(encoder.finish()));
@@ -214,33 +200,15 @@ impl App {
                 .unwrap()
                 .join()
                 .expect("Failed to load mesh");
-            let mut model = Model::new(&self.device, self.swapchain_format,
-                                       &mesh.verts, &mesh.triangles);
-            model.set_aspect(self.size.width as f32 / self.size.height as f32);
+            let model = Model::new(&self.device, self.swapchain_format,
+                                   &mesh.verts, &mesh.triangles);
             self.model = Some(model);
+            self.camera.fit_verts(&mesh.verts);
             self.first_frame = true;
         } else {
             self.first_frame = false;
         }
 
         !drew_model
-    }
-
-    fn drag(&mut self, dx: f64, dy: f64) {
-        if let Some(model) = &mut self.model {
-            model.spin(dx as f32 / 100.0, dy as f32 / 100.0);
-        }
-    }
-
-    fn pan(&mut self, dx:f64, dy:f64){
-        if let Some(model) = &mut self.model {
-            model.translate_camera(dx as f32 / -10.0, dy as f32 / 10.0 );
-        }
-    }
-
-    fn scale(&mut self, value: f32) {
-        if let Some(model) = &mut self.model {
-            model.scale(value);
-        }
     }
 }
