@@ -1,6 +1,6 @@
 use winit::{
     dpi::{PhysicalPosition, PhysicalSize},
-    event::{ElementState, ModifiersState, MouseButton, WindowEvent, VirtualKeyCode, MouseScrollDelta},
+    event::{ElementState, ModifiersState, MouseButton, WindowEvent, DeviceEvent, VirtualKeyCode, MouseScrollDelta},
 };
 
 use triangulate::mesh::Mesh;
@@ -70,6 +70,20 @@ impl App {
         }
     }
 
+    pub fn device_event(&mut self, e: DeviceEvent) {
+        match e {
+            DeviceEvent::MouseWheel { delta } => {
+                match delta {
+                    MouseScrollDelta::PixelDelta(p) => {
+                        self.scale((1.0 + p.y / 100.0) as f32);
+                    }
+                    _ => (),
+                }
+            }
+            _ => (),
+        }
+    }
+
     pub fn window_event(&mut self, e: WindowEvent) -> Reply {
         match e {
             WindowEvent::Resized(size) => {
@@ -110,11 +124,11 @@ impl App {
                 Reply::Redraw
             },
             WindowEvent::MouseWheel { delta, ..} => {
-                if let MouseScrollDelta::LineDelta(_,verti)=delta{
+                if let MouseScrollDelta::LineDelta(_, verti) = delta {
                     self.scale(1.0 + verti / 10.0);
                 }
                 Reply::Redraw
-            }
+            },
             _ => Reply::Continue,
         }
     }

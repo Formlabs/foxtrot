@@ -59,7 +59,8 @@ async fn run(start: SystemTime, event_loop: EventLoop<()>, window: Window,
             Event::RedrawRequested(_) => if app.redraw(&queue) {
                 window.request_redraw();
             },
-            _ => {}
+            Event::DeviceEvent { event, .. } => app.device_event(event),
+            _ => (),
         }
     });
 }
