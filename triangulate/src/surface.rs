@@ -1,3 +1,5 @@
+use std::f64::{EPSILON, consts::PI};
+
 use nalgebra_glm as glm;
 use glm::{DVec2, DVec3, DVec4, DMat4};
 
@@ -168,8 +170,7 @@ impl Surface {
                 let minor_angle = (-new_p.x).atan2(new_p.z);
 
                 // Construct nested circles with a scale from 1.0 to 2.0
-                let scale = (major_angle + std::f64::consts::PI) /
-                            (2.0 * std::f64::consts::PI) + 1.0;
+                let scale = (major_angle + PI) / (2.0 * PI) + 1.0;
                 assert!(scale >= 1.0 && scale <= 2.0);
                 Ok(DVec2::new(minor_angle.cos(), minor_angle.sin()) * scale)
             },
@@ -183,7 +184,7 @@ impl Surface {
                 // Angle from 0 to PI
                 let angle = r.atan2(p.x);
                 let yz = p.yz();
-                Ok(if yz.norm() < std::f64::EPSILON {
+                Ok(if yz.norm() < EPSILON {
                     yz
                 } else {
                     yz * angle / yz.norm()
@@ -267,13 +268,13 @@ impl Surface {
         match self {
             Surface::Sphere { mat, radius, .. } => {
                 let angle = uv.norm();
-                if angle > std::f64::consts::PI {
+                if angle > PI {
                     return None;
                 }
                 let x = angle.cos();
 
                 // Calculate pre-transformed position
-                let pos = (*radius) * if uv.norm() < std::f64::EPSILON {
+                let pos = (*radius) * if uv.norm() < EPSILON {
                     DVec3::new(x, 0.0, 0.0)
                 } else {
                     let yz = uv.normalize() * angle.sin();
