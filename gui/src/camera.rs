@@ -95,7 +95,6 @@ impl Camera {
     }
 
     pub fn fit_verts(&mut self, verts: &[Vertex]) {
-        println!("Got verts {:?}", verts);
         let xb = verts.iter().map(|v| v.pos.x).minmax().into_option().unwrap();
         let yb = verts.iter().map(|v| v.pos.y).minmax().into_option().unwrap();
         let zb = verts.iter().map(|v| v.pos.z).minmax().into_option().unwrap();
