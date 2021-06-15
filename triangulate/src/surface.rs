@@ -383,7 +383,15 @@ impl Surface {
             },
             Surface::BSpline(surf) => Self::surf_normal(uv, surf),
             Surface::NURBS(surf) => Self::surf_normal(uv, surf),
-            Surface::Torus {..} => DVec3::zeros(), // TODO
+            Surface::Torus { mat, mat_i, major_radius, .. } => {
+                let p = (*mat_i * DVec4::new(p.x, p.y, p.z, 1.0)).xyz();
+                let major_angle = p.y.atan2(p.z);
+
+                let z = DVec3::new(0.0, major_angle.sin(), major_angle.cos()) * *major_radius;
+                let norm = (p - z).normalize();
+
+                (mat * norm.to_homogeneous()).xyz()
+            },
         }
     }
 
