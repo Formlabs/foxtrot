@@ -1,6 +1,12 @@
 # Foxtrot
 _A fast STEP file viewer_
 
+## Quick start
+(install [Rust and Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html))
+```
+cargo run --release -- examples/cube_hole.step
+```
+
 ## Subsystems
 - `cdt`: Constrained Delaunay triangulation (standalone)
 - `express`: Parser for EXPRESS schemas files and a matching code generation
