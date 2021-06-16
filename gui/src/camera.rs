@@ -10,12 +10,13 @@ enum MouseState {
     Unknown,
     Free(Vec2),
     Rotate(Vec2),
-    Pan(Vec2),
+    Pan(Vec2, Vec3),
 }
 
 pub struct Camera {
     /// Aspect ratio of the window
-    aspect: f32,
+    width: f32,
+    height: f32,
 
     /// Pitch as an Euler angle
     pitch: f32,
@@ -34,9 +35,9 @@ pub struct Camera {
 
 
 impl Camera {
-    pub fn new(aspect: f32) -> Self {
+    pub fn new(width: f32, height: f32) -> Self {
         Camera {
-            aspect,
+            width, height,
             pitch: 0.0,
             yaw: 0.0,
             scale: 1.0,
@@ -50,31 +51,48 @@ impl Camera {
         if let MouseState::Free(pos) = &self.mouse {
             match button {
                 MouseButton::Left => Some(MouseState::Rotate(*pos)),
-                MouseButton::Right => Some(MouseState::Pan(*pos)),
+                MouseButton::Right => Some(MouseState::Pan(*pos, self.mouse_pos(*pos))),
                 _ => None,
             }.map(|m| self.mouse = m);
+            println!("{:?}", self.mouse)
         }
     }
     pub fn mouse_released(&mut self, button: MouseButton) {
         match &self.mouse {
             MouseState::Rotate(pos) if button == MouseButton::Left =>
                 Some(MouseState::Free(*pos)),
-            MouseState::Pan(pos) if button == MouseButton::Right =>
+            MouseState::Pan(pos, ..) if button == MouseButton::Right =>
                 Some(MouseState::Free(*pos)),
             _ => None,
         }.map(|m| self.mouse = m);
     }
 
+    pub fn mat(&self) -> Mat4 {
+        self.view_matrix() * self.model_matrix()
+    }
+
+    /// Converts a normalized mouse position into 3D
+    pub fn mouse_pos(&self, pos_norm: Vec2) -> Vec3 {
+        (self.mat().try_inverse().expect("Could not invert mouse matrix") *
+         Vec4::new(pos_norm.x, pos_norm.y, 0.0, 1.0)).xyz()
+    }
+
     pub fn mouse_move(&mut self, new_pos: Vec2) {
+        let x_norm =  2.0 * (new_pos.x / self.width - 0.5);
+        let y_norm = -2.0 * (new_pos.y / self.height - 0.5);
+        let new_pos = Vec2::new(x_norm, y_norm);
+
         // Pan or rotate depending on current mouse state
         match &self.mouse {
-            MouseState::Pan(pos) => {
-                let delta = new_pos - *pos;
-                self.translate_camera(delta.x / 100.0, delta.y / 100.0);
+            MouseState::Pan(_pos, orig) => {
+                let current_pos = self.mouse_pos(new_pos);
+                let delta_pos = orig - current_pos;
+                self.center += delta_pos;
             },
             MouseState::Rotate(pos) => {
                 let delta = new_pos - *pos;
-                self.spin(delta.x / -10.0, delta.y / 10.0);
+                self.spin(delta.x * 3.0,
+                          delta.y * 3.0 * self.height / self.width);
             },
             _ => (),
         }
@@ -82,7 +100,7 @@ impl Camera {
         // Store new mouse position
         match &mut self.mouse {
             MouseState::Free(pos)
-            | MouseState::Pan(pos)
+            | MouseState::Pan(pos, ..)
             | MouseState::Rotate(pos) => *pos = new_pos,
             MouseState::Unknown => self.mouse = MouseState::Free(new_pos),
         }
@@ -107,8 +125,9 @@ impl Camera {
                                 (zb.0 + zb.1) as f32 / 2.0);
     }
 
-    pub fn set_aspect(&mut self, a: f32) {
-        self.aspect = a;
+    pub fn set_size(&mut self, width: f32, height: f32) {
+        self.width = width;
+        self.height = height;
     }
 
     pub fn model_matrix(&self) -> Mat4 {
@@ -136,7 +155,7 @@ impl Camera {
 
         // Scale to compensate for aspect ratio and reduce Z scale to improve
         // clipping
-        glm::scale(&i, &Vec3::new(1.0, self.aspect, 0.1))
+        glm::scale(&i, &Vec3::new(1.0, self.width / self.height, 0.1))
     }
 
     pub fn spin(&mut self, dx: f32, dy: f32) {

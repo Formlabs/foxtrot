@@ -58,7 +58,7 @@ impl App {
             swapchain_format,
             loader: Some(loader),
             model: None,
-            camera: Camera::new(size.width as f32 / size.height as f32),
+            camera: Camera::new(size.width as f32, size.height as f32),
             surface,
             device,
             size,
@@ -127,7 +127,7 @@ impl App {
             size, self.swapchain_format,
             &self.surface, &self.device);
         self.depth = Self::rebuild_depth_(size, &self.device);
-        self.camera.set_aspect(size.width as f32 / size.height as f32);
+        self.camera.set_size(size.width as f32, size.height as f32);
     }
 
     fn rebuild_depth_(size: PhysicalSize<u32>, device: &wgpu::Device)
