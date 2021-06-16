@@ -146,7 +146,6 @@ impl Camera {
         glm::translate(&i, &-self.center)
     }
 
-
     /// Returns a matrix which compensates for window aspect ratio and clipping
     pub fn view_matrix(&self) -> Mat4 {
         let i = Mat4::identity();
@@ -161,20 +160,6 @@ impl Camera {
     pub fn spin(&mut self, dx: f32, dy: f32) {
         self.pitch += dx;
         self.yaw += dy;
-    }
-
-    pub fn translate(&mut self, dx: f32, dy: f32, dz: f32){
-        self.center.x += dx;
-        self.center.y += dy;
-        self.center.z += dz;
-    }
-
-    pub fn translate_camera(&mut self, dx: f32, dy: f32){
-        let i = Mat4::identity();
-        let vec = glm::rotate_y(&i, -self.pitch) *
-                  glm::rotate_x(&i, -self.yaw) *
-                  Vec4::new(dx, dy, 0.0, 1.0);
-        self.translate(vec.x, vec.y, vec.z);
     }
 
     pub fn scale(&mut self, value: f32){
