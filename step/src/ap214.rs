@@ -3381,8 +3381,8 @@ pub enum AttributeType<'a> { // select
 impl<'a> Parse<'a> for AttributeType<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("LABEL("), <Label<'a>>::parse, char(')')), |r| AttributeType::Label(r)),
-            map(delimited(tag("TEXT("), <Text<'a>>::parse, char(')')), |r| AttributeType::Text(r)),
+            map(delimited(tag("LABEL("), <Label<'a>>::parse, char(')')), AttributeType::Label),
+            map(delimited(tag("TEXT("), <Text<'a>>::parse, char(')')), AttributeType::Text),
         ))(s)
     }
 }
@@ -4733,10 +4733,10 @@ pub enum BoxCharacteristicSelect<'a> { // select
 impl<'a> Parse<'a> for BoxCharacteristicSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("BOX_HEIGHT("), <BoxHeight<'a>>::parse, char(')')), |r| BoxCharacteristicSelect::BoxHeight(r)),
-            map(delimited(tag("BOX_WIDTH("), <BoxWidth<'a>>::parse, char(')')), |r| BoxCharacteristicSelect::BoxWidth(r)),
-            map(delimited(tag("BOX_SLANT_ANGLE("), <BoxSlantAngle<'a>>::parse, char(')')), |r| BoxCharacteristicSelect::BoxSlantAngle(r)),
-            map(delimited(tag("BOX_ROTATE_ANGLE("), <BoxRotateAngle<'a>>::parse, char(')')), |r| BoxCharacteristicSelect::BoxRotateAngle(r)),
+            map(delimited(tag("BOX_HEIGHT("), <BoxHeight<'a>>::parse, char(')')), BoxCharacteristicSelect::BoxHeight),
+            map(delimited(tag("BOX_WIDTH("), <BoxWidth<'a>>::parse, char(')')), BoxCharacteristicSelect::BoxWidth),
+            map(delimited(tag("BOX_SLANT_ANGLE("), <BoxSlantAngle<'a>>::parse, char(')')), BoxCharacteristicSelect::BoxSlantAngle),
+            map(delimited(tag("BOX_ROTATE_ANGLE("), <BoxRotateAngle<'a>>::parse, char(')')), BoxCharacteristicSelect::BoxRotateAngle),
         ))(s)
     }
 }
@@ -5804,10 +5804,10 @@ pub enum CharacterSpacingSelect<'a> { // select
 impl<'a> Parse<'a> for CharacterSpacingSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), |r| CharacterSpacingSelect::LengthMeasure(r)),
-            map(delimited(tag("RATIO_MEASURE("), <RatioMeasure<'a>>::parse, char(')')), |r| CharacterSpacingSelect::RatioMeasure(r)),
-            map(<MeasureWithUnit<'a>>::parse, |r| CharacterSpacingSelect::MeasureWithUnit(r)),
-            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), |r| CharacterSpacingSelect::DescriptiveMeasure(r)),
+            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), CharacterSpacingSelect::LengthMeasure),
+            map(delimited(tag("RATIO_MEASURE("), <RatioMeasure<'a>>::parse, char(')')), CharacterSpacingSelect::RatioMeasure),
+            map(<MeasureWithUnit<'a>>::parse, CharacterSpacingSelect::MeasureWithUnit),
+            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), CharacterSpacingSelect::DescriptiveMeasure),
         ))(s)
     }
 }
@@ -7095,8 +7095,8 @@ pub enum CompoundItemDefinition<'a> { // select
 impl<'a> Parse<'a> for CompoundItemDefinition<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("LIST_REPRESENTATION_ITEM("), <Vec<RepresentationItem<'a>>>::parse, char(')')), |r| CompoundItemDefinition::ListRepresentationItem(r)),
-            map(delimited(tag("SET_REPRESENTATION_ITEM("), <Vec<RepresentationItem<'a>>>::parse, char(')')), |r| CompoundItemDefinition::SetRepresentationItem(r)),
+            map(delimited(tag("LIST_REPRESENTATION_ITEM("), <Vec<RepresentationItem<'a>>>::parse, char(')')), CompoundItemDefinition::ListRepresentationItem),
+            map(delimited(tag("SET_REPRESENTATION_ITEM("), <Vec<RepresentationItem<'a>>>::parse, char(')')), CompoundItemDefinition::SetRepresentationItem),
         ))(s)
     }
 }
@@ -10896,8 +10896,8 @@ pub enum DirectionCountSelect<'a> { // select
 impl<'a> Parse<'a> for DirectionCountSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("U_DIRECTION_COUNT("), <UDirectionCount<'a>>::parse, char(')')), |r| DirectionCountSelect::UDirectionCount(r)),
-            map(delimited(tag("V_DIRECTION_COUNT("), <VDirectionCount<'a>>::parse, char(')')), |r| DirectionCountSelect::VDirectionCount(r)),
+            map(delimited(tag("U_DIRECTION_COUNT("), <UDirectionCount<'a>>::parse, char(')')), DirectionCountSelect::UDirectionCount),
+            map(delimited(tag("V_DIRECTION_COUNT("), <VDirectionCount<'a>>::parse, char(')')), DirectionCountSelect::VDirectionCount),
         ))(s)
     }
 }
@@ -19001,8 +19001,8 @@ pub enum MarkerSelect<'a> { // select
 impl<'a> Parse<'a> for MarkerSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("MARKER_TYPE("), <MarkerType<'a>>::parse, char(')')), |r| MarkerSelect::MarkerType(r)),
-            map(<PreDefinedMarker<'a>>::parse, |r| MarkerSelect::PreDefinedMarker(r)),
+            map(delimited(tag("MARKER_TYPE("), <MarkerType<'a>>::parse, char(')')), MarkerSelect::MarkerType),
+            map(<PreDefinedMarker<'a>>::parse, MarkerSelect::PreDefinedMarker),
         ))(s)
     }
 }
@@ -19404,29 +19404,29 @@ pub enum MeasureValue<'a> { // select
 impl<'a> Parse<'a> for MeasureValue<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("AMOUNT_OF_SUBSTANCE_MEASURE("), <AmountOfSubstanceMeasure<'a>>::parse, char(')')), |r| MeasureValue::AmountOfSubstanceMeasure(r)),
-            map(delimited(tag("AREA_MEASURE("), <AreaMeasure<'a>>::parse, char(')')), |r| MeasureValue::AreaMeasure(r)),
-            map(delimited(tag("CELSIUS_TEMPERATURE_MEASURE("), <CelsiusTemperatureMeasure<'a>>::parse, char(')')), |r| MeasureValue::CelsiusTemperatureMeasure(r)),
-            map(delimited(tag("CONTEXT_DEPENDENT_MEASURE("), <ContextDependentMeasure<'a>>::parse, char(')')), |r| MeasureValue::ContextDependentMeasure(r)),
-            map(delimited(tag("COUNT_MEASURE("), <CountMeasure<'a>>::parse, char(')')), |r| MeasureValue::CountMeasure(r)),
-            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), |r| MeasureValue::DescriptiveMeasure(r)),
-            map(delimited(tag("ELECTRIC_CURRENT_MEASURE("), <ElectricCurrentMeasure<'a>>::parse, char(')')), |r| MeasureValue::ElectricCurrentMeasure(r)),
-            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), |r| MeasureValue::LengthMeasure(r)),
-            map(delimited(tag("LUMINOUS_INTENSITY_MEASURE("), <LuminousIntensityMeasure<'a>>::parse, char(')')), |r| MeasureValue::LuminousIntensityMeasure(r)),
-            map(delimited(tag("MASS_MEASURE("), <MassMeasure<'a>>::parse, char(')')), |r| MeasureValue::MassMeasure(r)),
-            map(delimited(tag("NUMERIC_MEASURE("), <NumericMeasure<'a>>::parse, char(')')), |r| MeasureValue::NumericMeasure(r)),
-            map(delimited(tag("NON_NEGATIVE_LENGTH_MEASURE("), <NonNegativeLengthMeasure<'a>>::parse, char(')')), |r| MeasureValue::NonNegativeLengthMeasure(r)),
-            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), |r| MeasureValue::ParameterValue(r)),
-            map(delimited(tag("PLANE_ANGLE_MEASURE("), <PlaneAngleMeasure<'a>>::parse, char(')')), |r| MeasureValue::PlaneAngleMeasure(r)),
-            map(delimited(tag("POSITIVE_LENGTH_MEASURE("), <PositiveLengthMeasure<'a>>::parse, char(')')), |r| MeasureValue::PositiveLengthMeasure(r)),
-            map(delimited(tag("POSITIVE_PLANE_ANGLE_MEASURE("), <PositivePlaneAngleMeasure<'a>>::parse, char(')')), |r| MeasureValue::PositivePlaneAngleMeasure(r)),
-            map(delimited(tag("POSITIVE_RATIO_MEASURE("), <PositiveRatioMeasure<'a>>::parse, char(')')), |r| MeasureValue::PositiveRatioMeasure(r)),
-            map(delimited(tag("RATIO_MEASURE("), <RatioMeasure<'a>>::parse, char(')')), |r| MeasureValue::RatioMeasure(r)),
-            map(delimited(tag("SOLID_ANGLE_MEASURE("), <SolidAngleMeasure<'a>>::parse, char(')')), |r| MeasureValue::SolidAngleMeasure(r)),
+            map(delimited(tag("AMOUNT_OF_SUBSTANCE_MEASURE("), <AmountOfSubstanceMeasure<'a>>::parse, char(')')), MeasureValue::AmountOfSubstanceMeasure),
+            map(delimited(tag("AREA_MEASURE("), <AreaMeasure<'a>>::parse, char(')')), MeasureValue::AreaMeasure),
+            map(delimited(tag("CELSIUS_TEMPERATURE_MEASURE("), <CelsiusTemperatureMeasure<'a>>::parse, char(')')), MeasureValue::CelsiusTemperatureMeasure),
+            map(delimited(tag("CONTEXT_DEPENDENT_MEASURE("), <ContextDependentMeasure<'a>>::parse, char(')')), MeasureValue::ContextDependentMeasure),
+            map(delimited(tag("COUNT_MEASURE("), <CountMeasure<'a>>::parse, char(')')), MeasureValue::CountMeasure),
+            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), MeasureValue::DescriptiveMeasure),
+            map(delimited(tag("ELECTRIC_CURRENT_MEASURE("), <ElectricCurrentMeasure<'a>>::parse, char(')')), MeasureValue::ElectricCurrentMeasure),
+            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), MeasureValue::LengthMeasure),
+            map(delimited(tag("LUMINOUS_INTENSITY_MEASURE("), <LuminousIntensityMeasure<'a>>::parse, char(')')), MeasureValue::LuminousIntensityMeasure),
+            map(delimited(tag("MASS_MEASURE("), <MassMeasure<'a>>::parse, char(')')), MeasureValue::MassMeasure),
+            map(delimited(tag("NUMERIC_MEASURE("), <NumericMeasure<'a>>::parse, char(')')), MeasureValue::NumericMeasure),
+            map(delimited(tag("NON_NEGATIVE_LENGTH_MEASURE("), <NonNegativeLengthMeasure<'a>>::parse, char(')')), MeasureValue::NonNegativeLengthMeasure),
+            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), MeasureValue::ParameterValue),
+            map(delimited(tag("PLANE_ANGLE_MEASURE("), <PlaneAngleMeasure<'a>>::parse, char(')')), MeasureValue::PlaneAngleMeasure),
+            map(delimited(tag("POSITIVE_LENGTH_MEASURE("), <PositiveLengthMeasure<'a>>::parse, char(')')), MeasureValue::PositiveLengthMeasure),
+            map(delimited(tag("POSITIVE_PLANE_ANGLE_MEASURE("), <PositivePlaneAngleMeasure<'a>>::parse, char(')')), MeasureValue::PositivePlaneAngleMeasure),
+            map(delimited(tag("POSITIVE_RATIO_MEASURE("), <PositiveRatioMeasure<'a>>::parse, char(')')), MeasureValue::PositiveRatioMeasure),
+            map(delimited(tag("RATIO_MEASURE("), <RatioMeasure<'a>>::parse, char(')')), MeasureValue::RatioMeasure),
+            map(delimited(tag("SOLID_ANGLE_MEASURE("), <SolidAngleMeasure<'a>>::parse, char(')')), MeasureValue::SolidAngleMeasure),
         alt((
-            map(delimited(tag("THERMODYNAMIC_TEMPERATURE_MEASURE("), <ThermodynamicTemperatureMeasure<'a>>::parse, char(')')), |r| MeasureValue::ThermodynamicTemperatureMeasure(r)),
-            map(delimited(tag("TIME_MEASURE("), <TimeMeasure<'a>>::parse, char(')')), |r| MeasureValue::TimeMeasure(r)),
-            map(delimited(tag("VOLUME_MEASURE("), <VolumeMeasure<'a>>::parse, char(')')), |r| MeasureValue::VolumeMeasure(r)),
+            map(delimited(tag("THERMODYNAMIC_TEMPERATURE_MEASURE("), <ThermodynamicTemperatureMeasure<'a>>::parse, char(')')), MeasureValue::ThermodynamicTemperatureMeasure),
+            map(delimited(tag("TIME_MEASURE("), <TimeMeasure<'a>>::parse, char(')')), MeasureValue::TimeMeasure),
+            map(delimited(tag("VOLUME_MEASURE("), <VolumeMeasure<'a>>::parse, char(')')), MeasureValue::VolumeMeasure),
         ))))(s)
     }
 }
@@ -19956,8 +19956,8 @@ pub enum MotionParameterMeasure<'a> { // select
 impl<'a> Parse<'a> for MotionParameterMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), |r| MotionParameterMeasure::ParameterValue(r)),
-            map(<MeasureWithUnit<'a>>::parse, |r| MotionParameterMeasure::MeasureWithUnit(r)),
+            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), MotionParameterMeasure::ParameterValue),
+            map(<MeasureWithUnit<'a>>::parse, MotionParameterMeasure::MeasureWithUnit),
         ))(s)
     }
 }
@@ -24681,16 +24681,16 @@ pub enum PresentationStyleSelect<'a> { // select
 impl<'a> Parse<'a> for PresentationStyleSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<PreDefinedPresentationStyle<'a>>::parse, |r| PresentationStyleSelect::PreDefinedPresentationStyle(r)),
-            map(<PointStyle<'a>>::parse, |r| PresentationStyleSelect::PointStyle(r)),
-            map(<CurveStyle<'a>>::parse, |r| PresentationStyleSelect::CurveStyle(r)),
-            map(<SurfaceStyleUsage<'a>>::parse, |r| PresentationStyleSelect::SurfaceStyleUsage(r)),
-            map(<SymbolStyle<'a>>::parse, |r| PresentationStyleSelect::SymbolStyle(r)),
-            map(<FillAreaStyle<'a>>::parse, |r| PresentationStyleSelect::FillAreaStyle(r)),
-            map(<TextStyle<'a>>::parse, |r| PresentationStyleSelect::TextStyle(r)),
-            map(<ApproximationTolerance<'a>>::parse, |r| PresentationStyleSelect::ApproximationTolerance(r)),
-            map(<ExternallyDefinedStyle<'a>>::parse, |r| PresentationStyleSelect::ExternallyDefinedStyle(r)),
-            map(delimited(tag("NULL_STYLE("), <NullStyle<'a>>::parse, char(')')), |r| PresentationStyleSelect::NullStyle(r)),
+            map(<PreDefinedPresentationStyle<'a>>::parse, PresentationStyleSelect::PreDefinedPresentationStyle),
+            map(<PointStyle<'a>>::parse, PresentationStyleSelect::PointStyle),
+            map(<CurveStyle<'a>>::parse, PresentationStyleSelect::CurveStyle),
+            map(<SurfaceStyleUsage<'a>>::parse, PresentationStyleSelect::SurfaceStyleUsage),
+            map(<SymbolStyle<'a>>::parse, PresentationStyleSelect::SymbolStyle),
+            map(<FillAreaStyle<'a>>::parse, PresentationStyleSelect::FillAreaStyle),
+            map(<TextStyle<'a>>::parse, PresentationStyleSelect::TextStyle),
+            map(<ApproximationTolerance<'a>>::parse, PresentationStyleSelect::ApproximationTolerance),
+            map(<ExternallyDefinedStyle<'a>>::parse, PresentationStyleSelect::ExternallyDefinedStyle),
+            map(delimited(tag("NULL_STYLE("), <NullStyle<'a>>::parse, char(')')), PresentationStyleSelect::NullStyle),
         ))(s)
     }
 }
@@ -28234,9 +28234,9 @@ pub enum ReversibleTopology<'a> { // select
 impl<'a> Parse<'a> for ReversibleTopology<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<ReversibleTopologyItem<'a>>::parse, |r| ReversibleTopology::ReversibleTopologyItem(r)),
-            map(delimited(tag("LIST_OF_REVERSIBLE_TOPOLOGY_ITEM("), <Vec<ReversibleTopologyItem<'a>>>::parse, char(')')), |r| ReversibleTopology::ListOfReversibleTopologyItem(r)),
-            map(delimited(tag("SET_OF_REVERSIBLE_TOPOLOGY_ITEM("), <Vec<ReversibleTopologyItem<'a>>>::parse, char(')')), |r| ReversibleTopology::SetOfReversibleTopologyItem(r)),
+            map(<ReversibleTopologyItem<'a>>::parse, ReversibleTopology::ReversibleTopologyItem),
+            map(delimited(tag("LIST_OF_REVERSIBLE_TOPOLOGY_ITEM("), <Vec<ReversibleTopologyItem<'a>>>::parse, char(')')), ReversibleTopology::ListOfReversibleTopologyItem),
+            map(delimited(tag("SET_OF_REVERSIBLE_TOPOLOGY_ITEM("), <Vec<ReversibleTopologyItem<'a>>>::parse, char(')')), ReversibleTopology::SetOfReversibleTopologyItem),
         ))(s)
     }
 }
@@ -28886,8 +28886,8 @@ pub enum RotationalRangeMeasure<'a> { // select
 impl<'a> Parse<'a> for RotationalRangeMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("PLANE_ANGLE_MEASURE("), <PlaneAngleMeasure<'a>>::parse, char(')')), |r| RotationalRangeMeasure::PlaneAngleMeasure(r)),
-            map(delimited(tag("UNLIMITED_RANGE("), <UnlimitedRange<'a>>::parse, char(')')), |r| RotationalRangeMeasure::UnlimitedRange(r)),
+            map(delimited(tag("PLANE_ANGLE_MEASURE("), <PlaneAngleMeasure<'a>>::parse, char(')')), RotationalRangeMeasure::PlaneAngleMeasure),
+            map(delimited(tag("UNLIMITED_RANGE("), <UnlimitedRange<'a>>::parse, char(')')), RotationalRangeMeasure::UnlimitedRange),
         ))(s)
     }
 }
@@ -30391,9 +30391,9 @@ pub enum SizeSelect<'a> { // select
 impl<'a> Parse<'a> for SizeSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("POSITIVE_LENGTH_MEASURE("), <PositiveLengthMeasure<'a>>::parse, char(')')), |r| SizeSelect::PositiveLengthMeasure(r)),
-            map(<MeasureWithUnit<'a>>::parse, |r| SizeSelect::MeasureWithUnit(r)),
-            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), |r| SizeSelect::DescriptiveMeasure(r)),
+            map(delimited(tag("POSITIVE_LENGTH_MEASURE("), <PositiveLengthMeasure<'a>>::parse, char(')')), SizeSelect::PositiveLengthMeasure),
+            map(<MeasureWithUnit<'a>>::parse, SizeSelect::MeasureWithUnit),
+            map(delimited(tag("DESCRIPTIVE_MEASURE("), <DescriptiveMeasure<'a>>::parse, char(')')), SizeSelect::DescriptiveMeasure),
         ))(s)
     }
 }
@@ -30872,7 +30872,7 @@ pub enum SourceItem<'a> { // select
 }
 impl<'a> Parse<'a> for SourceItem<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
-        map(delimited(tag("IDENTIFIER("), <Identifier<'a>>::parse, char(')')), |r| SourceItem::Identifier(r))(s)
+        map(delimited(tag("IDENTIFIER("), <Identifier<'a>>::parse, char(')')), SourceItem::Identifier)(s)
     }
 }
 impl<'a> HasId for SourceItem<'a> {
@@ -30892,8 +30892,8 @@ pub enum SpatialRotation<'a> { // select
 impl<'a> Parse<'a> for SpatialRotation<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("YPR_ROTATION("), <Vec<PlaneAngleMeasure<'a>>>::parse, char(')')), |r| SpatialRotation::YprRotation(r)),
-            map(<RotationAboutDirection<'a>>::parse, |r| SpatialRotation::RotationAboutDirection(r)),
+            map(delimited(tag("YPR_ROTATION("), <Vec<PlaneAngleMeasure<'a>>>::parse, char(')')), SpatialRotation::YprRotation),
+            map(<RotationAboutDirection<'a>>::parse, SpatialRotation::RotationAboutDirection),
         ))(s)
     }
 }
@@ -34216,8 +34216,8 @@ pub enum ToleranceDeviationSelect<'a> { // select
 impl<'a> Parse<'a> for ToleranceDeviationSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("CURVE_TOLERANCE_DEVIATION("), <CurveToleranceDeviation<'a>>::parse, char(')')), |r| ToleranceDeviationSelect::CurveToleranceDeviation(r)),
-            map(delimited(tag("SURFACE_TOLERANCE_DEVIATION("), <SurfaceToleranceDeviation<'a>>::parse, char(')')), |r| ToleranceDeviationSelect::SurfaceToleranceDeviation(r)),
+            map(delimited(tag("CURVE_TOLERANCE_DEVIATION("), <CurveToleranceDeviation<'a>>::parse, char(')')), ToleranceDeviationSelect::CurveToleranceDeviation),
+            map(delimited(tag("SURFACE_TOLERANCE_DEVIATION("), <SurfaceToleranceDeviation<'a>>::parse, char(')')), ToleranceDeviationSelect::SurfaceToleranceDeviation),
         ))(s)
     }
 }
@@ -34243,8 +34243,8 @@ pub enum ToleranceParameterSelect<'a> { // select
 impl<'a> Parse<'a> for ToleranceParameterSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("CURVE_TOLERANCE_PARAMETER("), <CurveToleranceParameter<'a>>::parse, char(')')), |r| ToleranceParameterSelect::CurveToleranceParameter(r)),
-            map(delimited(tag("SURFACE_TOLERANCE_PARAMETER("), <SurfaceToleranceParameter<'a>>::parse, char(')')), |r| ToleranceParameterSelect::SurfaceToleranceParameter(r)),
+            map(delimited(tag("CURVE_TOLERANCE_PARAMETER("), <CurveToleranceParameter<'a>>::parse, char(')')), ToleranceParameterSelect::CurveToleranceParameter),
+            map(delimited(tag("SURFACE_TOLERANCE_PARAMETER("), <SurfaceToleranceParameter<'a>>::parse, char(')')), ToleranceParameterSelect::SurfaceToleranceParameter),
         ))(s)
     }
 }
@@ -34641,8 +34641,8 @@ pub enum TranslationalRangeMeasure<'a> { // select
 impl<'a> Parse<'a> for TranslationalRangeMeasure<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), |r| TranslationalRangeMeasure::LengthMeasure(r)),
-            map(delimited(tag("UNLIMITED_RANGE("), <UnlimitedRange<'a>>::parse, char(')')), |r| TranslationalRangeMeasure::UnlimitedRange(r)),
+            map(delimited(tag("LENGTH_MEASURE("), <LengthMeasure<'a>>::parse, char(')')), TranslationalRangeMeasure::LengthMeasure),
+            map(delimited(tag("UNLIMITED_RANGE("), <UnlimitedRange<'a>>::parse, char(')')), TranslationalRangeMeasure::UnlimitedRange),
         ))(s)
     }
 }
@@ -34737,8 +34737,8 @@ pub enum TrimmingSelect<'a> { // select
 impl<'a> Parse<'a> for TrimmingSelect<'a> {
     fn parse(s: &'a str) -> IResult<'a, Self> {
         alt((
-            map(<CartesianPoint<'a>>::parse, |r| TrimmingSelect::CartesianPoint(r)),
-            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), |r| TrimmingSelect::ParameterValue(r)),
+            map(<CartesianPoint<'a>>::parse, TrimmingSelect::CartesianPoint),
+            map(delimited(tag("PARAMETER_VALUE("), <ParameterValue<'a>>::parse, char(')')), TrimmingSelect::ParameterValue),
         ))(s)
     }
 }
@@ -37963,7 +37963,7 @@ impl<'a> ParseFromChunks<'a> for Entity<'a> {
             "VOLUME_UNIT" => VolumeUnit_::parse_chunks(strs).map(|(s, v)| (s, Entity::VolumeUnit(v))),
             "XOR_EXPRESSION" => XorExpression_::parse_chunks(strs).map(|(s, v)| (s, Entity::XorExpression(v))),
             "" => parse_complex_mapping(strs[0]),
-            r => nom_alt_err(r),
+            _ => nom_alt_err(r),
         }
     }
 }

@@ -244,12 +244,12 @@ impl<'a> Parse<'a> for {}<'a> {{
                 // Same logic as above
                 let to_parse_str = |v| if !type_map.is_entity(v) {
                     format!(
-                        r#"        map(delimited(tag("{}("), <{}>::parse, char(')')), |r| {}::{}(r))"#,
+                        r#"        map(delimited(tag("{}("), <{}>::parse, char(')')), {}::{})"#,
                         capitalize(v), type_map.to_rtype(v),
                         camel_name, to_camel(v))
                 } else {
                     format!(
-                        r#"        map(<{}>::parse, |r| {}::{}(r))"#,
+                        r#"        map(<{}>::parse, {}::{})"#,
                         type_map.to_rtype(v), camel_name, to_camel(v))
                 };
 
