@@ -106,8 +106,8 @@ impl Camera {
     }
 
     pub fn mouse_scroll(&mut self, delta: f32) {
-        if let MouseState::Free(_) = &self.mouse {
-            self.scale(1.0 + delta / 10.0);
+        if let MouseState::Free(pos) = self.mouse {
+            self.scale(1.0 + delta / 200.0, pos);
         }
     }
 
@@ -161,7 +161,10 @@ impl Camera {
         self.yaw += dy;
     }
 
-    pub fn scale(&mut self, value: f32){
+    pub fn scale(&mut self, value: f32, pos: Vec2){
+        let start_pos = self.mouse_pos(pos);
         self.scale *= value;
+        let end_pos = self.mouse_pos(pos);
+        self.center -= end_pos - start_pos;
     }
 }
