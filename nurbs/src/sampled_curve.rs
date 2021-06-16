@@ -95,8 +95,7 @@ impl<const N: usize> SampledCurve<N>
             (u_end, u_start)
         };
 
-        let mut result: Vec<DVec3> = Vec::new();
-        result.push(self.curve.point(u_min));
+        let mut result = vec![self.curve.point(u_min)];
 
         // TODO this could be faster if we skip to the right start/end sections
 

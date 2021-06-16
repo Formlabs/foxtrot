@@ -75,8 +75,7 @@ impl<const D: usize> NDBSplineCurve<D> {
             (u_end, u_start)
         };
 
-        let mut result: Vec<TVec<f64, D>> = Vec::new();
-        result.push(self.curve_point(u_min));
+        let mut result = vec![self.curve_point(u_min)];
 
         // TODO this could be faster if we skip to the right start/end sections
 

@@ -21,7 +21,7 @@ impl KnotVector {
         let U = knots.iter().zip(multiplicities.iter())
             .flat_map(|(k, m)| std::iter::repeat(*k).take(*m))
             .collect();
-        Self { p, U }
+        Self { U, p }
     }
 
     /// For basis functions of order `p + 1`, finds the span in the knot vector

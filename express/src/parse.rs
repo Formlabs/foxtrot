@@ -638,7 +638,7 @@ fn case_stmt(s: &str) -> IResult<CaseStmt> {
         |(_, s, _, a, t, _, _)| CaseStmt {
             selector: s,
             actions: a,
-            otherwise: t.map(|t| Box::new(t)),
+            otherwise: t.map(Box::new),
         })(s)
 }
 

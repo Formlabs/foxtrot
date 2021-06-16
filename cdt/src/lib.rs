@@ -143,7 +143,6 @@ pub fn save_debug_panic<'a, E>(pts: &[Point], edges: E, filename: &str)
             for _ in 0..safe_steps {
                 t.step().expect("Step failed");
             }
-            ()
         });
         if result.is_ok() {
             safe_steps += 1;
