@@ -550,7 +550,22 @@ fn edge_loop(s: &StepFile, edge_list: &[OrientedEdge])
 
 fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Result<Vec<DVec3>, Error> {
     let edge_curve = s.entity(e).expect("Could not get EdgeCurve");
-    let curve = match &s.0[edge_curve.edge_geometry.0] {
+    let curve = curve(s, edge_curve, edge_curve.edge_geometry, orientation)?;
+
+    let (start, end) = if orientation {
+        (edge_curve.edge_start, edge_curve.edge_end)
+    } else {
+        (edge_curve.edge_end, edge_curve.edge_start)
+    };
+    let u = vertex_point(s, start);
+    let v = vertex_point(s, end);
+    Ok(curve.build(u, v))
+}
+
+fn curve(s: &StepFile, edge_curve: &ap214::EdgeCurve_,
+         curve_id: ap214::Curve, orientation: bool) -> Result<Curve, Error>
+{
+    Ok(match &s.0[curve_id.0] {
         Entity::Circle(c) => {
             let (location, axis, ref_direction) = axis2_placement_3d(s, c.position.cast());
             Curve::new_circle(location, axis, ref_direction, c.radius.0.0.0,
@@ -620,22 +635,20 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Result<Vec<DVec3
                 control_points_list,
             );
             Curve::NURBSCurve(SampledCurve::new(curve))
-        }
+        },
+        Entity::SurfaceCurve(v) => {
+            curve(s, edge_curve, v.curve_3d, orientation)?
+        },
+        Entity::SeamCurve(v) => {
+            curve(s, edge_curve, v.curve_3d, orientation)?
+        },
         // The Line type ignores pnt / dir and just uses u and v
         Entity::Line(_) => Curve::new_line(),
         e => {
             warn!("Could not get edge from {:?}", e);
             return Err(Error::UnknownCurveType);
         },
-    };
-    let (start, end) = if orientation {
-        (edge_curve.edge_start, edge_curve.edge_end)
-    } else {
-        (edge_curve.edge_end, edge_curve.edge_start)
-    };
-    let u = vertex_point(s, start);
-    let v = vertex_point(s, end);
-    Ok(curve.build(u, v))
+    })
 }
 
 fn vertex_point(s: &StepFile, v: Vertex) -> DVec3 {
