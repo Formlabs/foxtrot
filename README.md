@@ -1,6 +1,8 @@
 # Foxtrot
 _A fast STEP file viewer_
 
+![Motherboard example](https://mattkeeter.com/projects/foxtrot/mobo.png)
+
 ## Quick start
 (install [Rust and Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html))
 ```
