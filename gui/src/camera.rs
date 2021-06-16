@@ -54,7 +54,6 @@ impl Camera {
                 MouseButton::Right => Some(MouseState::Pan(*pos, self.mouse_pos(*pos))),
                 _ => None,
             }.map(|m| self.mouse = m);
-            println!("{:?}", self.mouse)
         }
     }
     pub fn mouse_released(&mut self, button: MouseButton) {
