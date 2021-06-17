@@ -13,6 +13,7 @@ pub enum Surface {
     Cylinder {
         location: DVec3,
         axis: DVec3,
+        mat: DMat4,
         mat_i: DMat4,
         radius: f64,
         z_min: f64,
@@ -55,10 +56,10 @@ impl Surface {
         }
     }
     pub fn new_cylinder(axis: DVec3, ref_direction: DVec3, location: DVec3, radius: f64) -> Self {
+        let mat = Self::make_rigid_transform(axis, ref_direction, location);
         Surface::Cylinder {
-            mat_i: Self::make_rigid_transform(axis, ref_direction, location)
-                .try_inverse()
-                .expect("Could not invert"),
+            mat,
+            mat_i: mat.try_inverse().expect("Could not invert"),
             axis, radius, location,
             z_min: 0.0,
             z_max: 0.0,
@@ -86,7 +87,7 @@ impl Surface {
     }
 
     pub fn new_cone(axis: DVec3, ref_direction: DVec3, location: DVec3, angle: f64) -> Self {
-        let mat = Self::make_rigid_transform(axis, ref_direction, location);
+        let mat = Self::make_rigid_transform(-axis, ref_direction, location);
         Surface::Cone {
             mat,
             mat_i: mat.try_inverse().expect("Could not invert"),
@@ -364,23 +365,25 @@ impl Surface {
             Surface::Cone { mat, mat_i, angle, .. } => {
                 // Project into CONE SPACE
                 let pos = mat_i * DVec4::new(p.x, p.y, p.z, 1.0);
-                let xy = -pos.xy().normalize();
+                let xy = if pos.xy().norm() > std::f64::EPSILON {
+                    -pos.xy().normalize()
+                } else {
+                    DVec2::zeros()
+                };
                 let normal = DVec4::new(xy.x * angle.cos(),
                                         xy.y * angle.cos(), angle.sin(), 0.0);
                 // Deproject back into world space
-                (mat * normal).xyz()
+                -(mat * normal).xyz()
             }
             Surface::Sphere { location, .. } => (p - location).normalize(),
-            Surface::Cylinder { location, axis, .. } => {
+            Surface::Cylinder { mat, mat_i, .. } => {
                 // Project the point onto the axis
-                let proj = (p - location).dot(axis);
-
-                // Find the nearest point along the axis
-                let nearest = location + axis * proj;
+                let proj = mat_i * DVec4::new(p.x, p.y, p.z, 1.0);
 
                 // Then the normal is just pointing along that direction
                 // (same hack as below)
-                -(p - nearest).normalize()
+                let norm = DVec3::new(proj.x, proj.y, 0.0).normalize();
+                (mat * norm.to_homogeneous()).xyz()
             },
             Surface::BSpline(surf) => Self::surf_normal(uv, surf),
             Surface::NURBS(surf) => Self::surf_normal(uv, surf),
@@ -391,18 +394,8 @@ impl Surface {
                 let z = DVec3::new(0.0, major_angle.sin(), major_angle.cos()) * *major_radius;
                 let norm = (p - z).normalize();
 
-                (mat * norm.to_homogeneous()).xyz()
+                -(mat * norm.to_homogeneous()).xyz()
             },
-        }
-    }
-
-    pub fn sign(&self) -> bool {
-        // TODO: this is a hack, why are cylinders different from planes?
-        match self {
-            Surface::Plane {..}
-            | Surface::Cone {..}
-            | Surface::Sphere {..} => false,
-            _ => true,
         }
     }
 }

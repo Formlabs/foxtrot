@@ -371,7 +371,7 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh,
                 let b = (b + offset) as u32;
                 let c = (c + offset) as u32;
                 mesh.triangles.push(Triangle { verts:
-                    if face.same_sense ^ surf.sign() {
+                    if face.same_sense {
                         U32Vec3::new(a, b, c)
                     } else {
                         U32Vec3::new(a, c, b)
@@ -393,6 +393,12 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh,
                     .expect("Could not save debug SVG");
             }
             stats.num_panics += 1;
+        }
+    }
+    // Flip normals of new vertices, depending on the same_sense flag
+    if !face.same_sense {
+        for v in &mut mesh.verts[v_start..] {
+            v.norm = -v.norm;
         }
     }
     Ok(())
