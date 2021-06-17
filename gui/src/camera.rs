@@ -70,10 +70,15 @@ impl Camera {
         self.view_matrix() * self.model_matrix()
     }
 
+    pub fn mat_i(&self) -> Mat4 {
+        (self.view_matrix() * self.model_matrix())
+            .try_inverse()
+            .expect("Failed to invert mouse matrix")
+    }
+
     /// Converts a normalized mouse position into 3D
     pub fn mouse_pos(&self, pos_norm: Vec2) -> Vec3 {
-        (self.mat().try_inverse().expect("Could not invert mouse matrix") *
-         Vec4::new(pos_norm.x, pos_norm.y, 0.0, 1.0)).xyz()
+        (self.mat_i() * Vec4::new(pos_norm.x, pos_norm.y, 0.0, 1.0)).xyz()
     }
 
     pub fn mouse_move(&mut self, new_pos: Vec2) {
@@ -91,7 +96,7 @@ impl Camera {
             MouseState::Rotate(pos) => {
                 let delta = new_pos - *pos;
                 self.spin(delta.x * 3.0,
-                          delta.y * 3.0 * self.height / self.width);
+                          -delta.y * 3.0 * self.height / self.width);
             },
             _ => (),
         }
@@ -134,12 +139,12 @@ impl Camera {
         // The transforms below are applied bottom-to-top when thinking about
         // the model, i.e. it's translated, then scaled, then rotated, etc.
 
+        // Scale to compensate for model size
+        glm::scale(&i, &Vec3::new(self.scale, self.scale, self.scale)) *
+
         // Rotation!
         glm::rotate_x(&i, self.yaw) *
         glm::rotate_y(&i, self.pitch) *
-
-        // Scale to compensate for model size
-        glm::scale(&i, &Vec3::new(self.scale, self.scale, self.scale)) *
 
         // Recenter model
         glm::translate(&i, &-self.center)
@@ -165,6 +170,11 @@ impl Camera {
         let start_pos = self.mouse_pos(pos);
         self.scale *= value;
         let end_pos = self.mouse_pos(pos);
-        self.center -= end_pos - start_pos;
+
+        let delta = start_pos - end_pos;
+        let mut delta_mouse = (self.mat() * delta.to_homogeneous()).xyz();
+        delta_mouse.z = 0.0;
+
+        self.center += (self.mat_i() * delta_mouse.to_homogeneous()).xyz();
     }
 }
