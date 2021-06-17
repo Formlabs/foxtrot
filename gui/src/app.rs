@@ -113,7 +113,7 @@ impl App {
             },
             WindowEvent::MouseWheel { delta, ..} => {
                 if let MouseScrollDelta::LineDelta(_, verti) = delta {
-                    self.camera.mouse_scroll(verti);
+                    self.camera.mouse_scroll(verti * 10.0);
                 }
                 Reply::Redraw
             },
