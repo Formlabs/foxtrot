@@ -1,0 +1,17 @@
+[package]
+name = "wasm"
+version = "0.1.0"
+authors = ["Matt Keeter <matt.j.keeter@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+step = { path = "../step", default-features = false }
+triangulate = { path = "../triangulate", default-features = false, features = [] }
+console_log = "0.2"
+log = "0.4.14"
+wasm-bindgen = "0.2"
+
+[lib]
+crate-type = ["cdylib", "rlib"]

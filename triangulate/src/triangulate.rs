@@ -3,8 +3,10 @@ use std::convert::TryInto;
 
 use nalgebra_glm as glm;
 use glm::{DVec3, DVec4, DMat4, U32Vec3};
-use rayon::prelude::*;
 use log::{info, warn, error};
+
+#[cfg(feature = "rayon")]
+use rayon::prelude::*;
 
 use step::{
     ap214, ap214::*, step_file::{FromEntity, StepFile}, id::Id, ap214::Entity,
@@ -94,10 +96,16 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
         to_mesh.entry(*m).or_default().push(DMat4::identity());
     }
 
-    let (mesh, stats) = to_mesh.par_iter()
+    let (to_mesh_iter, empty) = {
+        #[cfg(feature = "rayon")]
+        { (to_mesh.par_iter(), || (Mesh::default(), Stats::default())) }
+        #[cfg(not(feature = "rayon"))]
+        { (to_mesh.iter(), (Mesh::default(), Stats::default())) }
+    };
+    let mesh_fold = to_mesh_iter
         .fold(
             // Empty constructor
-            || (Mesh::default(), Stats::default()),
+            empty,
 
             // Fold operation
             |(mut mesh, mut stats), (id, mats)| {
@@ -155,9 +163,17 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                     mesh.verts[v].color = color;
                 }
                 (mesh, stats)
-            })
-        .reduce(|| (Mesh::default(), Stats::default()),
-                |a, b| (Mesh::combine(a.0, b.0), Stats::combine(a.1, b.1)));
+            });
+
+    let (mesh, stats) = {
+        #[cfg(feature = "rayon")]
+        { mesh_fold.reduce(empty,
+                |a, b| (Mesh::combine(a.0, b.0), Stats::combine(a.1, b.1))) }
+        #[cfg(not(feature = "rayon"))]
+        {
+            mesh_fold
+        }
+    };
 
     info!("num_shells: {}", stats.num_shells);
     info!("num_faces: {}", stats.num_faces);

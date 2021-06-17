@@ -11,3 +11,6 @@ members = [
     "nurbs",
     "triangulate",
 ]
+exclude = [
+    "wasm",
+]

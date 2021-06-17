@@ -1,6 +1,8 @@
 use memchr::{memchr, memchr2, memchr_iter};
-use rayon::prelude::*;
 use log::warn;
+
+#[cfg(feature = "rayon")]
+use rayon::prelude::*;
 
 use crate::{
     ap214::Entity,
@@ -23,9 +25,18 @@ impl<'a> StepFile<'a> {
             .position(|b| b == b"ENDSEC;")
             .unwrap_or(0) + data_start;
 
-        // Parse every block, accumulating a Vec of Results
-        let parsed: Vec<(usize, Entity)> = blocks[data_start..data_end]
-            .par_iter()
+        // Parse every block, accumulating a Vec of Results.  We parse in
+        // single-threaded mode in WASM builds, because there's no thread
+        // pool.
+        let block_iter = {
+            let block_slice = &blocks[data_start..data_end];
+            #[cfg(feature = "rayon")]
+            { block_slice.par_iter() }
+            #[cfg(not(feature = "rayon"))]
+            { block_slice.iter() }
+        };
+
+        let parsed: Vec<(usize, Entity)> = block_iter
             .filter_map(|b| parse_entity_decl(*b)
                 .or_else(|e| {
                     warn!("Failed to parse {}: {:?}",

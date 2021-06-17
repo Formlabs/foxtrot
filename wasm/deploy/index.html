@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Foxtrot 365</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inconsolata&family=Lato&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+    <script type="module">
+        import init, {init_log, foxtrot} from './wasm.js';
+        await init();
+        init_log();
+        window.foxtrot = foxtrot;
+    </script>
+    <p> Hello, world</p>
+  </body>
+</html>

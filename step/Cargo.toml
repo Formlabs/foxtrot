@@ -9,7 +9,10 @@ fast-float = "0.2"
 log = "0.4.14"
 memchr = "2.4.0"
 nom = "6.0"
-rayon = "1.5"
+rayon = {version = "1.5", optional = true }
+
+[features]
+parallel = ["rayon"]
 
 [dev-dependencies]
 clap = "2.33"

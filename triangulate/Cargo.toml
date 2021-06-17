@@ -11,8 +11,11 @@ step = { path = "../step" }
 
 log = "0.4.14"
 nalgebra-glm = "0.13.0"
-rayon = "1.5"
+rayon = { version = "1.5", optional = true }
 thiserror = "1.0"
+
+[features]
+parallel = ["rayon", "step/parallel"]
 
 [dev-dependencies]
 clap = "2.33"
