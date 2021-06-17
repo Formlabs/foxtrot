@@ -8,7 +8,7 @@
 /// Vertices are rows of three indexes into the triangle array
 ///
 use wasm_bindgen::prelude::*;
-use log::{Level, info};
+use log::{Level};
 
 #[wasm_bindgen]
 pub fn init_log() {
@@ -22,8 +22,28 @@ pub fn foxtrot(data: String) -> Vec<f32> {
 
     let flat = StepFile::strip_flatten(data.as_bytes());
     let step = StepFile::parse(&flat);
-    info!("Got {} entities", step.0.len());
-    let (mesh, _stats) = triangulate(&step);
+    let (mut mesh, _stats) = triangulate(&step);
+
+    let (mut xmin, mut xmax) = (std::f64::INFINITY, -std::f64::INFINITY);
+    let (mut ymin, mut ymax) = (std::f64::INFINITY, -std::f64::INFINITY);
+    let (mut zmin, mut zmax) = (std::f64::INFINITY, -std::f64::INFINITY);
+    for pos in mesh.verts.iter().map(|p| p.pos) {
+        xmin = xmin.min(pos.x);
+        xmax = xmax.max(pos.x);
+        ymin = ymin.min(pos.y);
+        ymax = ymax.max(pos.y);
+        zmin = ymin.min(pos.z);
+        zmax = ymax.max(pos.z);
+    }
+    let scale = (xmax - xmin).max(ymax - ymin).max(zmax - zmin);
+    let xc = (xmax + xmin) / 2.0;
+    let yc = (ymax + ymin) / 2.0;
+    let zc = (zmax + zmin) / 2.0;
+    for pos in mesh.verts.iter_mut().map(|p| &mut p.pos) {
+        pos.x = (pos.x - xc) / scale * 200.0;
+        pos.y = (pos.y - yc) / scale * 200.0;
+        pos.z = (pos.z - zc) / scale * 200.0;
+    }
 
     mesh.triangles.iter()
         .flat_map(|v| v.verts.iter())
@@ -31,14 +51,4 @@ pub fn foxtrot(data: String) -> Vec<f32> {
         .flat_map(|v| v.pos.iter().chain(&v.norm).chain(&v.color))
         .map(|f| *f as f32)
         .collect()
-}
-
-#[wasm_bindgen]
-pub fn call_me_from_javascript(a: i32, b: i32) -> i32 {
-    a + b + 15
-}
-
-#[wasm_bindgen]
-pub fn call_me2() -> Vec<f32> {
-    vec![1.0, 2.0, 3.0]
 }

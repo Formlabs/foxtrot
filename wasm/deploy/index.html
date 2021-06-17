@@ -5,15 +5,44 @@
         <title>Foxtrot 365</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Inconsolata&family=Lato&display=swap" rel="stylesheet">
+        <link href="style.css" rel="stylesheet">
     </head>
 
     <body>
+    <h1>Foxtrot 365</h1>
     <script type="module">
-        import init, {init_log, foxtrot} from './wasm.js';
-        await init();
-        init_log();
-        window.foxtrot = foxtrot;
+        import * as SCENE from './scene.js';
+
+        const worker = new Worker("worker.js");
+        const setStatus = function(s) {
+            document.getElementById("status").innerHTML = s;
+        };
+        worker.onmessage = function(e) {
+            SCENE.loadMesh(e.data);
+            setStatus("Done!");
+        }
+        const loadMeshFromString = function(s) {
+            setStatus("Parsing & triangulating...");
+            worker.postMessage(s);
+        }
+
+        document.getElementById("input").innerHTML = '<input type="file" file=null id="file-selector" accept=".step">';
+        const fileSelector = document.getElementById('file-selector');
+        fileSelector.addEventListener('change', (event) => {
+            const fileList = event.target.files;
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.addEventListener('load', (event) => {
+                loadMeshFromString(event.target.result);
+            });
+            setStatus("Uploading...");
+            reader.readAsText(file);
+        });
+
+        setStatus("");
     </script>
-    <p> Hello, world</p>
+    <canvas id="canvas" width="800px" height="600px"></canvas><br>
+    <p id="input"></p>
+    <p id="status">Loading...</p>
   </body>
 </html>
