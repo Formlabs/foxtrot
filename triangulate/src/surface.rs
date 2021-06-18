@@ -87,7 +87,7 @@ impl Surface {
     }
 
     pub fn new_cone(axis: DVec3, ref_direction: DVec3, location: DVec3, angle: f64) -> Self {
-        let mat = Self::make_rigid_transform(-axis, ref_direction, location);
+        let mat = Self::make_rigid_transform(axis, ref_direction, location);
         Surface::Cone {
             mat,
             mat_i: mat.try_inverse().expect("Could not invert"),
@@ -127,9 +127,14 @@ impl Surface {
     fn lower(&self, p: DVec3) -> Result<DVec2, Error> {
         let p_ = DVec4::new(p.x, p.y, p.z, 1.0);
         match self {
-            Surface::Plane { mat_i, .. } | Surface::Cone { mat_i, .. } => {
+            Surface::Plane { mat_i, .. } => {
                 Ok(glm::vec4_to_vec2(&(mat_i * p_)))
             },
+            Surface::Cone { mat_i, .. } => {
+                let xy = glm::vec4_to_vec2(&(mat_i * p_));
+                Ok(DVec2::new(-xy.x, xy.y))
+            },
+
             Surface::Cylinder { mat_i, z_min, z_max, .. } => {
                 let p = mat_i * p_;
                 // We convert the Z coordinates to either add or subtract from
