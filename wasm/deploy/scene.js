@@ -7,7 +7,7 @@ init();
 
 export function init() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xcccccc);
+    scene.background = new THREE.Color(0xffffff);
 
     const canvas = document.getElementById("canvas");
     console.log(canvas.width, canvas.height);
@@ -17,8 +17,8 @@ export function init() {
     camera = new THREE.PerspectiveCamera(60, 1 / 0.6, 1, 1000);
     camera.position.set(200, 200, 0);
     camera.lookAt(new THREE.Vector3(0,0,0));
-    camera.add(new THREE.DirectionalLight());
-    camera.add(new THREE.HemisphereLight());
+    camera.add(new THREE.DirectionalLight(0xffffff, 0.2));
+    camera.add(new THREE.HemisphereLight(0xffffff, 0.5));
     scene.add(camera);
 
     onWindowResize();
@@ -70,5 +70,48 @@ export function loadMesh(buf) {
     mesh.name = "step";
 
     scene.add(mesh);
+
+    camera.position.set(200, 200, 0);
+    camera.lookAt(new THREE.Vector3(0,0,0));
+    axisX();
+
     render();
+}
+
+export function axisX() {
+    const obj = scene.getObjectByName("step");
+    if (obj) {
+        const m = new THREE.Matrix4();
+        m.set(1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, 0, 1);
+        obj.matrix = m;
+        render();
+    }
+}
+
+export function axisY() {
+    const obj = scene.getObjectByName("step");
+    if (obj) {
+        const m = new THREE.Matrix4();
+        m.set(0, 1, 0, 0,
+              0, 0, 1, 0,
+              1, 0, 0, 0,
+              0, 0, 0, 1);
+        obj.matrix = m;
+        render();
+    }
+}
+export function axisZ() {
+    const obj = scene.getObjectByName("step");
+    if (obj) {
+        const m = new THREE.Matrix4();
+        m.set(0, 0, 1, 0,
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 0, 1);
+        obj.matrix = m;
+        render();
+    }
 }

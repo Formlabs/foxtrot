@@ -5,6 +5,46 @@ body {
     margin-right: 20px;
 }
 
+canvas {
+    border: 1px solid #000000;
+    width: 100%;
+    height: calc(min(800px, 100vw - 40px) * 0.6);
+}
+
 div#main {
     max-width: 800px;
+}
+#main p {
+    width: 100%;
+}
+h1 {
+    margin-bottom: 10px;
+}
+a {
+    color: #333;
+    margin-right: 10px;
+}
+#axes {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+}
+#load {
+    position: absolute;
+    left: 10px;
+    top: 10px
+}
+#status {
+    position: absolute;
+    right: 10px;
+    bottom: 10px
+}
+#canvas_div {
+    position: relative;
+}
+#axis_label {
+    margin-left: 10px;
+    background: #ffffff88;
+    padding: 3px;
+    visibility: hidden;
 }
