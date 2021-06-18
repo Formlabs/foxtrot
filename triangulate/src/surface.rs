@@ -399,7 +399,11 @@ impl Surface {
                 let z = DVec3::new(0.0, major_angle.sin(), major_angle.cos()) * *major_radius;
                 let norm = (p - z).normalize();
 
-                -(mat * norm.to_homogeneous()).xyz()
+                if *major_radius > 0.0 {
+                    -(mat * norm.to_homogeneous()).xyz()
+                } else {
+                    (mat * norm.to_homogeneous()).xyz()
+                }
             },
         }
     }
