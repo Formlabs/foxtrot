@@ -62,8 +62,8 @@ export function loadMesh(buf) {
     geometry.setAttribute('normal', new THREE.InterleavedBufferAttribute(interleaved, 3, 3));
     geometry.setAttribute('color', new THREE.InterleavedBufferAttribute(interleaved, 3, 6));
 
-    //const material = new THREE.MeshPhongMaterial({vertexColors: true, side: THREE.DoubleSide});
-    const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
+    const material = new THREE.MeshPhongMaterial({vertexColors: true});
+    //const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.updateMatrix();
     mesh.matrixAutoUpdate = false;

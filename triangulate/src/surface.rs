@@ -180,7 +180,12 @@ impl Surface {
                 let scale = 1.0 + (major_radius / minor_radius) *
                                   (major_angle + PI) / (2.0 * PI);
 
-                Ok(scale * DVec2::new(minor_angle.cos(), minor_angle.sin()))
+                let x = if *major_radius > 0.0 {
+                    -minor_angle.cos()
+                } else {
+                    minor_angle.cos()
+                };
+                Ok(scale * DVec2::new(x, minor_angle.sin()))
             },
             Surface::BSpline(surf) => Self::surf_lower(p, surf),
             Surface::NURBS(surf) => Self::surf_lower(p, surf),
@@ -296,6 +301,10 @@ impl Surface {
             Surface::BSpline(s) => Some(s.surf.point(uv)),
             Surface::NURBS(s) => Some(s.surf.point(uv)),
             Surface::Torus { mat, minor_radius, major_radius, .. } => {
+                let mut uv = uv;
+                if *major_radius > 0.0 {
+                    uv.x *= -1.0;
+                }
                 let minor_angle = uv.y.atan2(uv.x);
                 let major_angle = (uv.norm() - 1.0) /
                                   (major_radius / minor_radius) * 2.0 * PI - PI;
@@ -399,11 +408,7 @@ impl Surface {
                 let z = DVec3::new(0.0, major_angle.sin(), major_angle.cos()) * *major_radius;
                 let norm = (p - z).normalize();
 
-                if *major_radius > 0.0 {
-                    -(mat * norm.to_homogeneous()).xyz()
-                } else {
-                    (mat * norm.to_homogeneous()).xyz()
-                }
+                (mat * norm.to_homogeneous()).xyz()
             },
         }
     }
