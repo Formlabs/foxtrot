@@ -865,7 +865,9 @@ impl Triangulation {
 
                 // We can't have walked out of the wedge, because otherwise
                 // o_right would be < 0.0 and we wouldn't be in this branch
-                assert!(buddy != EMPTY_EDGE);
+                if buddy == EMPTY_EDGE {
+                    return Err(Error::WedgeEscape);
+                }
                 index_a_src = self.half.edge(buddy).prev;
             } else {
                 // If we hit a vertex, exactly, then return an error
