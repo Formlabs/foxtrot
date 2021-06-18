@@ -184,14 +184,22 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
 
 fn item_defined_transformation(s: &StepFile, t: Id<ItemDefinedTransformation_>) -> DMat4 {
     let i = s.entity(t).expect("Could not get ItemDefinedTransform");
-    let (location, axis, ref_direction) = axis2_placement_3d(s,
-        i.transform_item_2.cast::<Axis2Placement3d_>());
 
-    // Build a rotation matrix to go from flat (XY) to 3D space
-    Surface::make_affine_transform(axis,
+    let (location, axis, ref_direction) = axis2_placement_3d(s,
+        i.transform_item_1.cast());
+    let t1 = Surface::make_affine_transform(axis,
         ref_direction,
         axis.cross(&ref_direction),
-        location)
+        location);
+
+    let (location, axis, ref_direction) = axis2_placement_3d(s,
+        i.transform_item_2.cast());
+    let t2 = Surface::make_affine_transform(axis,
+        ref_direction,
+        axis.cross(&ref_direction),
+        location);
+
+    t2 * t1.try_inverse().expect("Could not invert transform matrix")
 }
 
 fn presentation_style_color(s: &StepFile, p: PresentationStyleAssignment)
