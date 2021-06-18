@@ -11,6 +11,7 @@
     <body>
     <h1>Foxtrot 365</h1>
     <script type="module">
+        document.getElementById("input").innerHTML = '<input type="file" file=null id="file-selector" accept=".step,.stp">';
         import * as SCENE from './scene.js';
 
         const worker = new Worker("worker.js");
@@ -26,7 +27,6 @@
             worker.postMessage(s);
         }
 
-        document.getElementById("input").innerHTML = '<input type="file" file=null id="file-selector" accept=".step">';
         const fileSelector = document.getElementById('file-selector');
         fileSelector.addEventListener('change', (event) => {
             const fileList = event.target.files;
@@ -41,8 +41,12 @@
 
         setStatus("");
     </script>
-    <canvas id="canvas" width="800px" height="600px"></canvas><br>
-    <p id="input"></p>
-    <p id="status">Loading...</p>
+    <div id="main">
+    <canvas id="canvas"></canvas><br>
+    <p style="width: 100%">
+    <span id="input"></span>
+    <span id="status" style="float: right;">Loading...</span>
+    </p>
+    </div>
   </body>
 </html>
