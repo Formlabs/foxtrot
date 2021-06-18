@@ -23,6 +23,46 @@ use nurbs::{BSplineSurface, SampledCurve, SampledSurface, NURBSSurface, KnotVect
 const SAVE_DEBUG_SVGS: bool = false;
 const SAVE_PANIC_SVGS: bool = false;
 
+/// `TransformStack` is a mapping of representations to transformed children.
+type TransformStack<'a> =
+    HashMap<Representation<'a>, Vec<(Representation<'a>, DMat4)>>;
+fn build_transform_stack<'a>(s: &'a StepFile, flip: bool) -> TransformStack<'a> {
+    // Store a map of parent -> (child, transform)
+    let mut transform_stack: HashMap<_, Vec<_>> = HashMap::new();
+    for r in s.0.iter()
+        .filter_map(|e|
+            RepresentationRelationshipWithTransformation_::try_from_entity(e))
+    {
+        let (a, b) = if flip {
+            (r.rep_2, r.rep_1)
+        } else {
+            (r.rep_1, r.rep_2)
+        };
+        let mut mat = item_defined_transformation(s, r.transformation_operator.cast());
+        if flip {
+            mat = mat.try_inverse().expect("Could not invert transform matrix");
+        }
+
+        transform_stack.entry(b)
+            .or_default()
+            .push((a, mat));
+    }
+    transform_stack
+}
+
+fn transform_stack_roots<'a>(transform_stack: &TransformStack<'a>) -> Vec<Representation<'a>> {
+    let children: HashSet<_> = transform_stack
+        .values()
+        .flat_map(|v| v.iter())
+        .map(|v| v.0)
+        .collect();
+    transform_stack
+        .keys()
+        .filter(|k| !children.contains(k))
+        .copied()
+        .collect()
+}
+
 pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
     let styled_items: Vec<_> = s.0.iter()
         .filter_map(|e| MechanicalDesignGeometricPresentationRepresentation_::try_from_entity(e))
@@ -45,32 +85,41 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
         .collect();
 
     // Store a map of parent -> (child, transform)
-    let mut transform_stack: HashMap<_, Vec<_>> = HashMap::new();
-    for r in s.0.iter()
-        .filter_map(|e|
-            RepresentationRelationshipWithTransformation_::try_from_entity(e))
-    {
-        transform_stack.entry(r.rep_2)
-            .or_default()
-            .push((r.rep_1, r.transformation_operator));
+    let mut transform_stack = build_transform_stack(s, false);
+    let mut roots = transform_stack_roots(&transform_stack);
+    // The transformation graph isn't directional (because STEP is a Good File
+    // Format), so if it's got more than one root, assume it's backwards.  We
+    // are assuming that directions in the graph are consistent within the file,
+    // until we find a counterexample.
+    if roots.len() > 1 {
+        info!("Flipping transform stack");
+        transform_stack = build_transform_stack(s, true);
+        roots = transform_stack_roots(&transform_stack);
+    }
+    let mut todo: Vec<_> = roots.into_iter()
+        .map(|v| (v, DMat4::identity()))
+        .collect();
+    if todo.len() > 1 {
+        warn!("Transformation stack has more than one root!");
     }
 
-    let children: HashSet<_> = transform_stack
-        .values()
-        .flat_map(|v| v.iter())
-        .map(|v| v.0)
-        .collect();
-    let mut todo: Vec<_> = transform_stack
-        .keys()
-        .filter(|k| !children.contains(k))
-        .map(|v| (*v, DMat4::identity()))
-        .collect();
+    // Store a map of ShapeRepresentationRelationships, which some models
+    // use to map from axes to specific instances
+    let mut shape_rep_relationship: HashMap<Id<_>, Vec<Id<_>>> = HashMap::new();
+    for (r1, r2) in s.0.iter()
+        .filter_map(|e| ShapeRepresentationRelationship_::try_from_entity(e))
+        .map(|e| (e.rep_1, e.rep_2))
+    {
+        shape_rep_relationship.entry(r1).or_default().push(r2);
+    }
 
     let mut to_mesh: HashMap<Id<_>, Vec<_>> = HashMap::new();
     while let Some((id, mat)) = todo.pop() {
+        for child in shape_rep_relationship.get(&id).unwrap_or(&vec![]) {
+            todo.push((*child, mat));
+        }
         if let Some(children) = transform_stack.get(&id) {
-            for (child, transform) in children {
-                let next_mat = item_defined_transformation(s, transform.cast());
+            for (child, next_mat) in children {
                 todo.push((*child, mat * next_mat));
             }
         } else {
