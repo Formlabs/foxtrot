@@ -15,7 +15,8 @@ export function init() {
 
     // build a camera with lights attached
     camera = new THREE.PerspectiveCamera(60, 1 / 0.6, 1, 1000);
-    camera.position.set(400, 200, 0);
+    camera.position.set(200, 200, 0);
+    camera.lookAt(new THREE.Vector3(0,0,0));
     camera.add(new THREE.DirectionalLight());
     camera.add(new THREE.HemisphereLight());
     scene.add(camera);
