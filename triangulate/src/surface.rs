@@ -366,14 +366,14 @@ impl Surface {
                 // Project into CONE SPACE
                 let pos = mat_i * DVec4::new(p.x, p.y, p.z, 1.0);
                 let xy = if pos.xy().norm() > std::f64::EPSILON {
-                    -pos.xy().normalize()
+                    pos.xy().normalize()
                 } else {
-                    DVec2::zeros()
+                    return DVec3::zeros();
                 };
                 let normal = DVec4::new(xy.x * angle.cos(),
-                                        xy.y * angle.cos(), angle.sin(), 0.0);
+                                        xy.y * angle.cos(), -angle.sin(), 0.0);
                 // Deproject back into world space
-                -(mat * normal).xyz()
+                (mat * normal).xyz()
             }
             Surface::Sphere { location, .. } => (p - location).normalize(),
             Surface::Cylinder { mat, mat_i, .. } => {
