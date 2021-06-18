@@ -16,7 +16,7 @@ pub fn init_log() {
 }
 
 #[wasm_bindgen]
-pub fn foxtrot(data: String) -> Vec<f32> {
+pub fn step_to_triangle_buf(data: String) -> Vec<f32> {
     use step::step_file::StepFile;
     use triangulate::triangulate::triangulate; // lol
 
