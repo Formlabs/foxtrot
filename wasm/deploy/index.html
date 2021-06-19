@@ -17,19 +17,35 @@
         const worker = new Worker("worker.js");
         const setStatus = function(s) {
             document.getElementById("status").innerHTML = s;
+            loadTimeShowing = false;
         };
+        let startTime, loadTimeShowing = false;
+        SCENE.addCameraCallback(function () {
+            if (loadTimeShowing) {
+                setStatus("");
+            }
+        });
+
         worker.onmessage = function(e) {
             setStatus("Building scene...");
             SCENE.loadMesh(e.data);
-            setStatus("");
+            fileSelector.disabled = false;
+            const d = new Date();
+            const now = d.getTime();
+            const dt_sec = (now - startTime) / 1000.0;
+            setStatus("Loaded in " + dt_sec.toPrecision(3) + " sec");
+            loadTimeShowing = true;
         }
         const loadMeshFromString = function(s) {
+            const d = new Date();
+            startTime = d.getTime();
             setStatus("Parsing & triangulating...");
             worker.postMessage(s);
         }
 
         const fileSelector = document.getElementById('file-selector');
         fileSelector.addEventListener('change', (event) => {
+            fileSelector.disabled = true;
             const fileList = event.target.files;
             const file = event.target.files[0];
             const reader = new FileReader();

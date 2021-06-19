@@ -25,7 +25,6 @@ export function init() {
 
     // controls
     controls = new OrbitControls(camera, renderer.domElement);
-    controls.listenToKeyEvents(window); // optional
     controls.addEventListener('change', render);
 
     controls.screenSpacePanning = true;
@@ -33,6 +32,10 @@ export function init() {
     controls.maxDistance = 500;
 
     window.addEventListener('resize', onWindowResize);
+}
+
+export function addCameraCallback(f) {
+    controls.addEventListener('change', f);
 }
 
 function onWindowResize() {
