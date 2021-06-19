@@ -64,5 +64,14 @@ dual licensed as above, without any additional terms or conditions.
 This isn't an official Formlabs project (experimental or otherwise),
 it is just code that happens to be owned by Formlabs.
 
+No one at Formlabs is paid to maintain this,
+so set your expectations for support accordingly.
+
+Foxtrot is a proof-of-concept demo, not an industrial-strength CAD kernel.
+It may not work for your models!
+Even in the screenshots above,
+there are a handful of surfaces that it fails to triangulate;
+look in the console for details.
+
 ## References
 [STEP Integrated Definitions](https://www.steptools.com/stds/stp_expg/aim.html)
