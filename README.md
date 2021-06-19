@@ -1,12 +1,22 @@
 # Foxtrot
 _A fast STEP file viewer_
 
-![Motherboard example](https://mattkeeter.com/projects/foxtrot/mobo.png)
+![Motherboard example](https://mattkeeter.com/projects/foxtrot/mobo.png)  
+([demo model source](https://grabcad.com/library/raspberry-pi-3-reference-design-model-b-rpi-raspberrypi-raspberry-pi-1))
 
 ## Quick start
-(install [Rust and Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html))
+(Prerequisite: [install Rust and Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html))
 ```
 cargo run --release -- examples/cube_hole.step
+```
+
+## WebAssembly demo
+(Prerequisite: [install `wasm-pack`](https://rustwasm.github.io/wasm-pack/installer/))
+```sh
+cd wasm
+wasm-pack build --target no-modules
+cd deploy
+python3 -m http.server # or the simple server of your choice
 ```
 
 ## Subsystems
