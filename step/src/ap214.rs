@@ -40,7 +40,7 @@ impl<'a> ParseFromChunks<'a> for AbsFunction_<'a> {
 }
 impl<'a> HasId for AbsFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -69,7 +69,7 @@ impl<'a> ParseFromChunks<'a> for AcosFunction_<'a> {
 }
 impl<'a> HasId for AcosFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -104,9 +104,9 @@ impl<'a> ParseFromChunks<'a> for Action_<'a> {
 }
 impl<'a> HasId for Action_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -135,7 +135,7 @@ impl<'a> ParseFromChunks<'a> for ActionAssignment_<'a> {
 }
 impl<'a> HasId for ActionAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_action.append_ids(_v);
+        self.assigned_action.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -176,11 +176,11 @@ impl<'a> ParseFromChunks<'a> for ActionDirective_<'a> {
 }
 impl<'a> HasId for ActionDirective_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.analysis.append_ids(_v);
-    self.comment.append_ids(_v);
-    self.requests.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.analysis.append_ids(_v);
+        self.comment.append_ids(_v);
+        self.requests.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -222,10 +222,10 @@ impl<'a> ParseFromChunks<'a> for ActionMethod_<'a> {
 }
 impl<'a> HasId for ActionMethod_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.consequence.append_ids(_v);
-    self.purpose.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.consequence.append_ids(_v);
+        self.purpose.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -263,10 +263,10 @@ impl<'a> ParseFromChunks<'a> for ActionMethodRelationship_<'a> {
 }
 impl<'a> HasId for ActionMethodRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_method.append_ids(_v);
-    self.related_method.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_method.append_ids(_v);
+        self.related_method.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -301,9 +301,9 @@ impl<'a> ParseFromChunks<'a> for ActionProperty_<'a> {
 }
 impl<'a> HasId for ActionProperty_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -341,10 +341,10 @@ impl<'a> ParseFromChunks<'a> for ActionPropertyRepresentation_<'a> {
 }
 impl<'a> HasId for ActionPropertyRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.property.append_ids(_v);
-    self.representation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.property.append_ids(_v);
+        self.representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -382,10 +382,10 @@ impl<'a> ParseFromChunks<'a> for ActionRelationship_<'a> {
 }
 impl<'a> HasId for ActionRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_action.append_ids(_v);
-    self.related_action.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_action.append_ids(_v);
+        self.related_action.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -414,7 +414,7 @@ impl<'a> ParseFromChunks<'a> for ActionRequestAssignment_<'a> {
 }
 impl<'a> HasId for ActionRequestAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_action_request.append_ids(_v);
+        self.assigned_action_request.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -450,8 +450,8 @@ impl<'a> ParseFromChunks<'a> for ActionRequestSolution_<'a> {
 }
 impl<'a> HasId for ActionRequestSolution_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.method.append_ids(_v);
-    self.request.append_ids(_v);
+        self.method.append_ids(_v);
+        self.request.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -483,8 +483,8 @@ impl<'a> ParseFromChunks<'a> for ActionRequestStatus_<'a> {
 }
 impl<'a> HasId for ActionRequestStatus_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.status.append_ids(_v);
-    self.assigned_request.append_ids(_v);
+        self.status.append_ids(_v);
+        self.assigned_request.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -522,10 +522,10 @@ impl<'a> ParseFromChunks<'a> for ActionResource_<'a> {
 }
 impl<'a> HasId for ActionResource_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.usage.append_ids(_v);
-    self.kind.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.usage.append_ids(_v);
+        self.kind.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -563,10 +563,10 @@ impl<'a> ParseFromChunks<'a> for ActionResourceRequirement_<'a> {
 }
 impl<'a> HasId for ActionResourceRequirement_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.kind.append_ids(_v);
-    self.operations.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.kind.append_ids(_v);
+        self.operations.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -595,7 +595,7 @@ impl<'a> ParseFromChunks<'a> for ActionResourceType_<'a> {
 }
 impl<'a> HasId for ActionResourceType_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -627,8 +627,8 @@ impl<'a> ParseFromChunks<'a> for ActionStatus_<'a> {
 }
 impl<'a> HasId for ActionStatus_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.status.append_ids(_v);
-    self.assigned_action.append_ids(_v);
+        self.status.append_ids(_v);
+        self.assigned_action.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -690,18 +690,18 @@ impl<'a> ParseFromChunks<'a> for Address_<'a> {
 }
 impl<'a> HasId for Address_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.internal_location.append_ids(_v);
-    self.street_number.append_ids(_v);
-    self.street.append_ids(_v);
-    self.postal_box.append_ids(_v);
-    self.town.append_ids(_v);
-    self.region.append_ids(_v);
-    self.postal_code.append_ids(_v);
-    self.country.append_ids(_v);
-    self.facsimile_number.append_ids(_v);
-    self.telephone_number.append_ids(_v);
-    self.electronic_mail_address.append_ids(_v);
-    self.telex_number.append_ids(_v);
+        self.internal_location.append_ids(_v);
+        self.street_number.append_ids(_v);
+        self.street.append_ids(_v);
+        self.postal_box.append_ids(_v);
+        self.town.append_ids(_v);
+        self.region.append_ids(_v);
+        self.postal_code.append_ids(_v);
+        self.country.append_ids(_v);
+        self.facsimile_number.append_ids(_v);
+        self.telephone_number.append_ids(_v);
+        self.electronic_mail_address.append_ids(_v);
+        self.telex_number.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -736,9 +736,9 @@ impl<'a> ParseFromChunks<'a> for AdvancedBrepShapeRepresentation_<'a> {
 }
 impl<'a> HasId for AdvancedBrepShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -776,10 +776,10 @@ impl<'a> ParseFromChunks<'a> for AdvancedFace_<'a> {
 }
 impl<'a> HasId for AdvancedFace_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.bounds.append_ids(_v);
-    self.face_geometry.append_ids(_v);
-    self.same_sense.append_ids(_v);
+        self.name.append_ids(_v);
+        self.bounds.append_ids(_v);
+        self.face_geometry.append_ids(_v);
+        self.same_sense.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -844,11 +844,11 @@ impl<'a> ParseFromChunks<'a> for AlternateProductRelationship_<'a> {
 }
 impl<'a> HasId for AlternateProductRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.definition.append_ids(_v);
-    self.alternate.append_ids(_v);
-    self.base.append_ids(_v);
-    self.basis.append_ids(_v);
+        self.name.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.alternate.append_ids(_v);
+        self.base.append_ids(_v);
+        self.basis.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -891,8 +891,8 @@ impl<'a> ParseFromChunks<'a> for AmountOfSubstanceMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for AmountOfSubstanceMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -921,7 +921,7 @@ impl<'a> ParseFromChunks<'a> for AmountOfSubstanceUnit_<'a> {
 }
 impl<'a> HasId for AmountOfSubstanceUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -950,7 +950,7 @@ impl<'a> ParseFromChunks<'a> for AndExpression_<'a> {
 }
 impl<'a> HasId for AndExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1006,8 +1006,8 @@ impl<'a> ParseFromChunks<'a> for AngularDimension_<'a> {
 }
 impl<'a> HasId for AngularDimension_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1048,11 +1048,11 @@ impl<'a> ParseFromChunks<'a> for AngularLocation_<'a> {
 }
 impl<'a> HasId for AngularLocation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
-    self.angle_selection.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
+        self.angle_selection.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1087,9 +1087,9 @@ impl<'a> ParseFromChunks<'a> for AngularSize_<'a> {
 }
 impl<'a> HasId for AngularSize_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to.append_ids(_v);
-    self.name.append_ids(_v);
-    self.angle_selection.append_ids(_v);
+        self.applies_to.append_ids(_v);
+        self.name.append_ids(_v);
+        self.angle_selection.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1130,11 +1130,11 @@ impl<'a> ParseFromChunks<'a> for AngularityTolerance_<'a> {
 }
 impl<'a> HasId for AngularityTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1169,9 +1169,9 @@ impl<'a> ParseFromChunks<'a> for AnnotationCurveOccurrence_<'a> {
 }
 impl<'a> HasId for AnnotationCurveOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1203,8 +1203,8 @@ impl<'a> ParseFromChunks<'a> for AnnotationFillArea_<'a> {
 }
 impl<'a> HasId for AnnotationFillArea_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.boundaries.append_ids(_v);
+        self.name.append_ids(_v);
+        self.boundaries.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1242,10 +1242,10 @@ impl<'a> ParseFromChunks<'a> for AnnotationFillAreaOccurrence_<'a> {
 }
 impl<'a> HasId for AnnotationFillAreaOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
-    self.fill_style_target.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
+        self.fill_style_target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1280,9 +1280,9 @@ impl<'a> ParseFromChunks<'a> for AnnotationOccurrence_<'a> {
 }
 impl<'a> HasId for AnnotationOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1320,10 +1320,10 @@ impl<'a> ParseFromChunks<'a> for AnnotationOccurrenceAssociativity_<'a> {
 }
 impl<'a> HasId for AnnotationOccurrenceAssociativity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_annotation_occurrence.append_ids(_v);
-    self.related_annotation_occurrence.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_annotation_occurrence.append_ids(_v);
+        self.related_annotation_occurrence.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1361,10 +1361,10 @@ impl<'a> ParseFromChunks<'a> for AnnotationOccurrenceRelationship_<'a> {
 }
 impl<'a> HasId for AnnotationOccurrenceRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_annotation_occurrence.append_ids(_v);
-    self.related_annotation_occurrence.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_annotation_occurrence.append_ids(_v);
+        self.related_annotation_occurrence.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -1404,10 +1404,10 @@ impl<'a> ParseFromChunks<'a> for AnnotationPlane_<'a> {
 }
 impl<'a> HasId for AnnotationPlane_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
-    self.elements.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
+        self.elements.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1446,9 +1446,9 @@ impl<'a> ParseFromChunks<'a> for AnnotationSubfigureOccurrence_<'a> {
 }
 impl<'a> HasId for AnnotationSubfigureOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1483,9 +1483,9 @@ impl<'a> ParseFromChunks<'a> for AnnotationSymbol_<'a> {
 }
 impl<'a> HasId for AnnotationSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.mapping_source.append_ids(_v);
-    self.mapping_target.append_ids(_v);
+        self.name.append_ids(_v);
+        self.mapping_source.append_ids(_v);
+        self.mapping_target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1520,9 +1520,9 @@ impl<'a> ParseFromChunks<'a> for AnnotationSymbolOccurrence_<'a> {
 }
 impl<'a> HasId for AnnotationSymbolOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1561,9 +1561,9 @@ impl<'a> ParseFromChunks<'a> for AnnotationText_<'a> {
 }
 impl<'a> HasId for AnnotationText_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.mapping_source.append_ids(_v);
-    self.mapping_target.append_ids(_v);
+        self.name.append_ids(_v);
+        self.mapping_source.append_ids(_v);
+        self.mapping_target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1601,10 +1601,10 @@ impl<'a> ParseFromChunks<'a> for AnnotationTextCharacter_<'a> {
 }
 impl<'a> HasId for AnnotationTextCharacter_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.mapping_source.append_ids(_v);
-    self.mapping_target.append_ids(_v);
-    self.alignment.append_ids(_v);
+        self.name.append_ids(_v);
+        self.mapping_source.append_ids(_v);
+        self.mapping_target.append_ids(_v);
+        self.alignment.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1639,9 +1639,9 @@ impl<'a> ParseFromChunks<'a> for AnnotationTextOccurrence_<'a> {
 }
 impl<'a> HasId for AnnotationTextOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1683,10 +1683,10 @@ impl<'a> ParseFromChunks<'a> for Apex_<'a> {
 }
 impl<'a> HasId for Apex_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1715,7 +1715,7 @@ impl<'a> ParseFromChunks<'a> for ApplicationContext_<'a> {
 }
 impl<'a> HasId for ApplicationContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.application.append_ids(_v);
+        self.application.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1747,8 +1747,8 @@ impl<'a> ParseFromChunks<'a> for ApplicationContextElement_<'a> {
 }
 impl<'a> HasId for ApplicationContextElement_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
+        self.name.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1786,10 +1786,10 @@ impl<'a> ParseFromChunks<'a> for ApplicationContextRelationship_<'a> {
 }
 impl<'a> HasId for ApplicationContextRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_context.append_ids(_v);
-    self.related_context.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_context.append_ids(_v);
+        self.related_context.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1827,10 +1827,10 @@ impl<'a> ParseFromChunks<'a> for ApplicationProtocolDefinition_<'a> {
 }
 impl<'a> HasId for ApplicationProtocolDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.status.append_ids(_v);
-    self.application_interpreted_model_schema_name.append_ids(_v);
-    self.application_protocol_year.append_ids(_v);
-    self.application.append_ids(_v);
+        self.status.append_ids(_v);
+        self.application_interpreted_model_schema_name.append_ids(_v);
+        self.application_protocol_year.append_ids(_v);
+        self.application.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1862,8 +1862,8 @@ impl<'a> ParseFromChunks<'a> for AppliedActionAssignment_<'a> {
 }
 impl<'a> HasId for AppliedActionAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_action.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_action.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1895,8 +1895,8 @@ impl<'a> ParseFromChunks<'a> for AppliedActionRequestAssignment_<'a> {
 }
 impl<'a> HasId for AppliedActionRequestAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_action_request.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_action_request.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1928,8 +1928,8 @@ impl<'a> ParseFromChunks<'a> for AppliedApprovalAssignment_<'a> {
 }
 impl<'a> HasId for AppliedApprovalAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_approval.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_approval.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -1967,10 +1967,10 @@ impl<'a> ParseFromChunks<'a> for AppliedArea_<'a> {
 }
 impl<'a> HasId for AppliedArea_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2002,8 +2002,8 @@ impl<'a> ParseFromChunks<'a> for AppliedCertificationAssignment_<'a> {
 }
 impl<'a> HasId for AppliedCertificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_certification.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_certification.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2038,9 +2038,9 @@ impl<'a> ParseFromChunks<'a> for AppliedClassificationAssignment_<'a> {
 }
 impl<'a> HasId for AppliedClassificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_class.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_class.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2072,8 +2072,8 @@ impl<'a> ParseFromChunks<'a> for AppliedContractAssignment_<'a> {
 }
 impl<'a> HasId for AppliedContractAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_contract.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_contract.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2108,9 +2108,9 @@ impl<'a> ParseFromChunks<'a> for AppliedDateAndTimeAssignment_<'a> {
 }
 impl<'a> HasId for AppliedDateAndTimeAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_date_and_time.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_date_and_time.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2145,9 +2145,9 @@ impl<'a> ParseFromChunks<'a> for AppliedDateAssignment_<'a> {
 }
 impl<'a> HasId for AppliedDateAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_date.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_date.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2182,9 +2182,9 @@ impl<'a> ParseFromChunks<'a> for AppliedDocumentReference_<'a> {
 }
 impl<'a> HasId for AppliedDocumentReference_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_document.append_ids(_v);
-    self.source.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_document.append_ids(_v);
+        self.source.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2219,9 +2219,9 @@ impl<'a> ParseFromChunks<'a> for AppliedDocumentUsageConstraintAssignment_<'a> {
 }
 impl<'a> HasId for AppliedDocumentUsageConstraintAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_document_usage.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_document_usage.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2253,8 +2253,8 @@ impl<'a> ParseFromChunks<'a> for AppliedEffectivityAssignment_<'a> {
 }
 impl<'a> HasId for AppliedEffectivityAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_effectivity.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_effectivity.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2289,9 +2289,9 @@ impl<'a> ParseFromChunks<'a> for AppliedEventOccurrenceAssignment_<'a> {
 }
 impl<'a> HasId for AppliedEventOccurrenceAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_event_occurrence.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_event_occurrence.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2329,10 +2329,10 @@ impl<'a> ParseFromChunks<'a> for AppliedExternalIdentificationAssignment_<'a> {
 }
 impl<'a> HasId for AppliedExternalIdentificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_id.append_ids(_v);
-    self.role.append_ids(_v);
-    self.source.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_id.append_ids(_v);
+        self.role.append_ids(_v);
+        self.source.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2364,8 +2364,8 @@ impl<'a> ParseFromChunks<'a> for AppliedGroupAssignment_<'a> {
 }
 impl<'a> HasId for AppliedGroupAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_group.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_group.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2400,9 +2400,9 @@ impl<'a> ParseFromChunks<'a> for AppliedIdentificationAssignment_<'a> {
 }
 impl<'a> HasId for AppliedIdentificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_id.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_id.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2434,8 +2434,8 @@ impl<'a> ParseFromChunks<'a> for AppliedIneffectivityAssignment_<'a> {
 }
 impl<'a> HasId for AppliedIneffectivityAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_effectivity.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_effectivity.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2467,8 +2467,8 @@ impl<'a> ParseFromChunks<'a> for AppliedNameAssignment_<'a> {
 }
 impl<'a> HasId for AppliedNameAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_name.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_name.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2503,9 +2503,9 @@ impl<'a> ParseFromChunks<'a> for AppliedOrganizationAssignment_<'a> {
 }
 impl<'a> HasId for AppliedOrganizationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_organization.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_organization.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2540,9 +2540,9 @@ impl<'a> ParseFromChunks<'a> for AppliedOrganizationalProjectAssignment_<'a> {
 }
 impl<'a> HasId for AppliedOrganizationalProjectAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_organizational_project.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_organizational_project.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2577,9 +2577,9 @@ impl<'a> ParseFromChunks<'a> for AppliedPersonAndOrganizationAssignment_<'a> {
 }
 impl<'a> HasId for AppliedPersonAndOrganizationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_person_and_organization.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_person_and_organization.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2608,7 +2608,7 @@ impl<'a> ParseFromChunks<'a> for AppliedPresentedItem_<'a> {
 }
 impl<'a> HasId for AppliedPresentedItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.items.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2640,8 +2640,8 @@ impl<'a> ParseFromChunks<'a> for AppliedSecurityClassificationAssignment_<'a> {
 }
 impl<'a> HasId for AppliedSecurityClassificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_security_classification.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_security_classification.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2676,9 +2676,9 @@ impl<'a> ParseFromChunks<'a> for AppliedTimeIntervalAssignment_<'a> {
 }
 impl<'a> HasId for AppliedTimeIntervalAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_time_interval.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_time_interval.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2710,8 +2710,8 @@ impl<'a> ParseFromChunks<'a> for Approval_<'a> {
 }
 impl<'a> HasId for Approval_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.status.append_ids(_v);
-    self.level.append_ids(_v);
+        self.status.append_ids(_v);
+        self.level.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2740,7 +2740,7 @@ impl<'a> ParseFromChunks<'a> for ApprovalAssignment_<'a> {
 }
 impl<'a> HasId for ApprovalAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_approval.append_ids(_v);
+        self.assigned_approval.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2772,8 +2772,8 @@ impl<'a> ParseFromChunks<'a> for ApprovalDateTime_<'a> {
 }
 impl<'a> HasId for ApprovalDateTime_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.date_time.append_ids(_v);
-    self.dated_approval.append_ids(_v);
+        self.date_time.append_ids(_v);
+        self.dated_approval.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2812,9 +2812,9 @@ impl<'a> ParseFromChunks<'a> for ApprovalPersonOrganization_<'a> {
 }
 impl<'a> HasId for ApprovalPersonOrganization_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.person_organization.append_ids(_v);
-    self.authorized_approval.append_ids(_v);
-    self.role.append_ids(_v);
+        self.person_organization.append_ids(_v);
+        self.authorized_approval.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2852,10 +2852,10 @@ impl<'a> ParseFromChunks<'a> for ApprovalRelationship_<'a> {
 }
 impl<'a> HasId for ApprovalRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_approval.append_ids(_v);
-    self.related_approval.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_approval.append_ids(_v);
+        self.related_approval.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2884,7 +2884,7 @@ impl<'a> ParseFromChunks<'a> for ApprovalRole_<'a> {
 }
 impl<'a> HasId for ApprovalRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.role.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2913,7 +2913,7 @@ impl<'a> ParseFromChunks<'a> for ApprovalStatus_<'a> {
 }
 impl<'a> HasId for ApprovalStatus_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2964,7 +2964,7 @@ impl<'a> ParseFromChunks<'a> for ApproximationTolerance_<'a> {
 }
 impl<'a> HasId for ApproximationTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.tolerance.append_ids(_v);
+        self.tolerance.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -2999,9 +2999,9 @@ impl<'a> ParseFromChunks<'a> for ApproximationToleranceDeviation_<'a> {
 }
 impl<'a> HasId for ApproximationToleranceDeviation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.tessellation_type.append_ids(_v);
-    self.tolerances.append_ids(_v);
-    self.definition_space.append_ids(_v);
+        self.tessellation_type.append_ids(_v);
+        self.tolerances.append_ids(_v);
+        self.definition_space.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3030,7 +3030,7 @@ impl<'a> ParseFromChunks<'a> for ApproximationToleranceParameter_<'a> {
 }
 impl<'a> HasId for ApproximationToleranceParameter_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.tolerances.append_ids(_v);
+        self.tolerances.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3062,8 +3062,8 @@ impl<'a> ParseFromChunks<'a> for AreaInSet_<'a> {
 }
 impl<'a> HasId for AreaInSet_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.area.append_ids(_v);
-    self.in_set.append_ids(_v);
+        self.area.append_ids(_v);
+        self.in_set.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3106,8 +3106,8 @@ impl<'a> ParseFromChunks<'a> for AreaMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for AreaMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3140,7 +3140,7 @@ impl<'a> ParseFromChunks<'a> for AreaUnit_<'a> {
 }
 impl<'a> HasId for AreaUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.elements.append_ids(_v);
+        self.elements.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3169,7 +3169,7 @@ impl<'a> ParseFromChunks<'a> for AsinFunction_<'a> {
 }
 impl<'a> HasId for AsinFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3213,12 +3213,12 @@ impl<'a> ParseFromChunks<'a> for AssemblyComponentUsage_<'a> {
 }
 impl<'a> HasId for AssemblyComponentUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition.append_ids(_v);
-    self.related_product_definition.append_ids(_v);
-    self.reference_designator.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition.append_ids(_v);
+        self.related_product_definition.append_ids(_v);
+        self.reference_designator.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3256,10 +3256,10 @@ impl<'a> ParseFromChunks<'a> for AssemblyComponentUsageSubstitute_<'a> {
 }
 impl<'a> HasId for AssemblyComponentUsageSubstitute_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.definition.append_ids(_v);
-    self.base.append_ids(_v);
-    self.substitute.append_ids(_v);
+        self.name.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.base.append_ids(_v);
+        self.substitute.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3288,7 +3288,7 @@ impl<'a> ParseFromChunks<'a> for AtanFunction_<'a> {
 }
 impl<'a> HasId for AtanFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3323,9 +3323,9 @@ impl<'a> ParseFromChunks<'a> for AttributeClassificationAssignment_<'a> {
 }
 impl<'a> HasId for AttributeClassificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_class.append_ids(_v);
-    self.attribute_name.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_class.append_ids(_v);
+        self.attribute_name.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3363,10 +3363,10 @@ impl<'a> ParseFromChunks<'a> for AttributeLanguageAssignment_<'a> {
 }
 impl<'a> HasId for AttributeLanguageAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_class.append_ids(_v);
-    self.attribute_name.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_class.append_ids(_v);
+        self.attribute_name.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3428,9 +3428,9 @@ impl<'a> ParseFromChunks<'a> for AttributeValueAssignment_<'a> {
 }
 impl<'a> HasId for AttributeValueAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.attribute_name.append_ids(_v);
-    self.attribute_value.append_ids(_v);
-    self.role.append_ids(_v);
+        self.attribute_name.append_ids(_v);
+        self.attribute_value.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3462,8 +3462,8 @@ impl<'a> ParseFromChunks<'a> for AttributeValueRole_<'a> {
 }
 impl<'a> HasId for AttributeValueRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3498,9 +3498,9 @@ impl<'a> ParseFromChunks<'a> for Axis1Placement_<'a> {
 }
 impl<'a> HasId for Axis1Placement_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.location.append_ids(_v);
-    self.axis.append_ids(_v);
+        self.name.append_ids(_v);
+        self.location.append_ids(_v);
+        self.axis.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3539,9 +3539,9 @@ impl<'a> ParseFromChunks<'a> for Axis2Placement2d_<'a> {
 }
 impl<'a> HasId for Axis2Placement2d_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.location.append_ids(_v);
-    self.ref_direction.append_ids(_v);
+        self.name.append_ids(_v);
+        self.location.append_ids(_v);
+        self.ref_direction.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3579,10 +3579,10 @@ impl<'a> ParseFromChunks<'a> for Axis2Placement3d_<'a> {
 }
 impl<'a> HasId for Axis2Placement3d_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.location.append_ids(_v);
-    self.axis.append_ids(_v);
-    self.ref_direction.append_ids(_v);
+        self.name.append_ids(_v);
+        self.location.append_ids(_v);
+        self.axis.append_ids(_v);
+        self.ref_direction.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3626,12 +3626,12 @@ impl<'a> ParseFromChunks<'a> for BSplineCurve_<'a> {
 }
 impl<'a> HasId for BSplineCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.curve_form.append_ids(_v);
-    self.closed_curve.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.curve_form.append_ids(_v);
+        self.closed_curve.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3714,15 +3714,15 @@ impl<'a> ParseFromChunks<'a> for BSplineCurveWithKnots_<'a> {
 }
 impl<'a> HasId for BSplineCurveWithKnots_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.curve_form.append_ids(_v);
-    self.closed_curve.append_ids(_v);
-    self.self_intersect.append_ids(_v);
-    self.knot_multiplicities.append_ids(_v);
-    self.knots.append_ids(_v);
-    self.knot_spec.append_ids(_v);
+        self.name.append_ids(_v);
+        self.degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.curve_form.append_ids(_v);
+        self.closed_curve.append_ids(_v);
+        self.self_intersect.append_ids(_v);
+        self.knot_multiplicities.append_ids(_v);
+        self.knots.append_ids(_v);
+        self.knot_spec.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3772,14 +3772,14 @@ impl<'a> ParseFromChunks<'a> for BSplineSurface_<'a> {
 }
 impl<'a> HasId for BSplineSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.u_degree.append_ids(_v);
-    self.v_degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.surface_form.append_ids(_v);
-    self.u_closed.append_ids(_v);
-    self.v_closed.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.u_degree.append_ids(_v);
+        self.v_degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.surface_form.append_ids(_v);
+        self.u_closed.append_ids(_v);
+        self.v_closed.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3884,19 +3884,19 @@ impl<'a> ParseFromChunks<'a> for BSplineSurfaceWithKnots_<'a> {
 }
 impl<'a> HasId for BSplineSurfaceWithKnots_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.u_degree.append_ids(_v);
-    self.v_degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.surface_form.append_ids(_v);
-    self.u_closed.append_ids(_v);
-    self.v_closed.append_ids(_v);
-    self.self_intersect.append_ids(_v);
-    self.u_multiplicities.append_ids(_v);
-    self.v_multiplicities.append_ids(_v);
-    self.u_knots.append_ids(_v);
-    self.v_knots.append_ids(_v);
-    self.knot_spec.append_ids(_v);
+        self.name.append_ids(_v);
+        self.u_degree.append_ids(_v);
+        self.v_degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.surface_form.append_ids(_v);
+        self.u_closed.append_ids(_v);
+        self.v_closed.append_ids(_v);
+        self.self_intersect.append_ids(_v);
+        self.u_multiplicities.append_ids(_v);
+        self.v_multiplicities.append_ids(_v);
+        self.u_knots.append_ids(_v);
+        self.v_knots.append_ids(_v);
+        self.knot_spec.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3925,7 +3925,7 @@ impl<'a> ParseFromChunks<'a> for BackgroundColour_<'a> {
 }
 impl<'a> HasId for BackgroundColour_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.presentation.append_ids(_v);
+        self.presentation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3957,8 +3957,8 @@ impl<'a> ParseFromChunks<'a> for BarringHole_<'a> {
 }
 impl<'a> HasId for BarringHole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -3990,8 +3990,8 @@ impl<'a> ParseFromChunks<'a> for Bead_<'a> {
 }
 impl<'a> HasId for Bead_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4029,10 +4029,10 @@ impl<'a> ParseFromChunks<'a> for BeadEnd_<'a> {
 }
 impl<'a> HasId for BeadEnd_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4076,12 +4076,12 @@ impl<'a> ParseFromChunks<'a> for BezierCurve_<'a> {
 }
 impl<'a> HasId for BezierCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.curve_form.append_ids(_v);
-    self.closed_curve.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.curve_form.append_ids(_v);
+        self.closed_curve.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4131,14 +4131,14 @@ impl<'a> ParseFromChunks<'a> for BezierSurface_<'a> {
 }
 impl<'a> HasId for BezierSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.u_degree.append_ids(_v);
-    self.v_degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.surface_form.append_ids(_v);
-    self.u_closed.append_ids(_v);
-    self.v_closed.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.u_degree.append_ids(_v);
+        self.v_degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.surface_form.append_ids(_v);
+        self.u_closed.append_ids(_v);
+        self.v_closed.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4167,7 +4167,7 @@ impl<'a> ParseFromChunks<'a> for BinaryBooleanExpression_<'a> {
 }
 impl<'a> HasId for BinaryBooleanExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4196,7 +4196,7 @@ impl<'a> ParseFromChunks<'a> for BinaryFunctionCall_<'a> {
 }
 impl<'a> HasId for BinaryFunctionCall_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4225,7 +4225,7 @@ impl<'a> ParseFromChunks<'a> for BinaryGenericExpression_<'a> {
 }
 impl<'a> HasId for BinaryGenericExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4254,7 +4254,7 @@ impl<'a> ParseFromChunks<'a> for BinaryNumericExpression_<'a> {
 }
 impl<'a> HasId for BinaryNumericExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4295,11 +4295,11 @@ impl<'a> ParseFromChunks<'a> for Block_<'a> {
 }
 impl<'a> HasId for Block_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.x.append_ids(_v);
-    self.y.append_ids(_v);
-    self.z.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.x.append_ids(_v);
+        self.y.append_ids(_v);
+        self.z.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4376,7 +4376,7 @@ impl<'a> ParseFromChunks<'a> for BooleanLiteral_<'a> {
 }
 impl<'a> HasId for BooleanLiteral_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.the_value.append_ids(_v);
+        self.the_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4442,10 +4442,10 @@ impl<'a> ParseFromChunks<'a> for BooleanResult_<'a> {
 }
 impl<'a> HasId for BooleanResult_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.operator.append_ids(_v);
-    self.first_operand.append_ids(_v);
-    self.second_operand.append_ids(_v);
+        self.name.append_ids(_v);
+        self.operator.append_ids(_v);
+        self.first_operand.append_ids(_v);
+        self.second_operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4501,8 +4501,8 @@ impl<'a> ParseFromChunks<'a> for Boss_<'a> {
 }
 impl<'a> HasId for Boss_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4540,10 +4540,10 @@ impl<'a> ParseFromChunks<'a> for BossTop_<'a> {
 }
 impl<'a> HasId for BossTop_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4578,9 +4578,9 @@ impl<'a> ParseFromChunks<'a> for BoundaryCurve_<'a> {
 }
 impl<'a> HasId for BoundaryCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.segments.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.segments.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4609,7 +4609,7 @@ impl<'a> ParseFromChunks<'a> for BoundedCurve_<'a> {
 }
 impl<'a> HasId for BoundedCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -4646,9 +4646,9 @@ impl<'a> ParseFromChunks<'a> for BoundedPcurve_<'a> {
 }
 impl<'a> HasId for BoundedPcurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.basis_surface.append_ids(_v);
-    self.reference_to_curve.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.basis_surface.append_ids(_v);
+        self.reference_to_curve.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4677,7 +4677,7 @@ impl<'a> ParseFromChunks<'a> for BoundedSurface_<'a> {
 }
 impl<'a> HasId for BoundedSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -4717,10 +4717,10 @@ impl<'a> ParseFromChunks<'a> for BoundedSurfaceCurve_<'a> {
 }
 impl<'a> HasId for BoundedSurfaceCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.curve_3d.append_ids(_v);
-    self.associated_geometry.append_ids(_v);
-    self.master_representation.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.curve_3d.append_ids(_v);
+        self.associated_geometry.append_ids(_v);
+        self.master_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4787,10 +4787,10 @@ impl<'a> ParseFromChunks<'a> for BoxDomain_<'a> {
 }
 impl<'a> HasId for BoxDomain_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.corner.append_ids(_v);
-    self.xlength.append_ids(_v);
-    self.ylength.append_ids(_v);
-    self.zlength.append_ids(_v);
+        self.corner.append_ids(_v);
+        self.xlength.append_ids(_v);
+        self.ylength.append_ids(_v);
+        self.zlength.append_ids(_v);
     }
 }
 
@@ -4884,10 +4884,10 @@ impl<'a> ParseFromChunks<'a> for BoxedHalfSpace_<'a> {
 }
 impl<'a> HasId for BoxedHalfSpace_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.base_surface.append_ids(_v);
-    self.agreement_flag.append_ids(_v);
-    self.enclosure.append_ids(_v);
+        self.name.append_ids(_v);
+        self.base_surface.append_ids(_v);
+        self.agreement_flag.append_ids(_v);
+        self.enclosure.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4922,9 +4922,9 @@ impl<'a> ParseFromChunks<'a> for BrepWithVoids_<'a> {
 }
 impl<'a> HasId for BrepWithVoids_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.outer.append_ids(_v);
-    self.voids.append_ids(_v);
+        self.name.append_ids(_v);
+        self.outer.append_ids(_v);
+        self.voids.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4959,9 +4959,9 @@ impl<'a> ParseFromChunks<'a> for CalendarDate_<'a> {
 }
 impl<'a> HasId for CalendarDate_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.year_component.append_ids(_v);
-    self.day_component.append_ids(_v);
-    self.month_component.append_ids(_v);
+        self.year_component.append_ids(_v);
+        self.day_component.append_ids(_v);
+        self.month_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -4996,9 +4996,9 @@ impl<'a> ParseFromChunks<'a> for CameraImage_<'a> {
 }
 impl<'a> HasId for CameraImage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.mapping_source.append_ids(_v);
-    self.mapping_target.append_ids(_v);
+        self.name.append_ids(_v);
+        self.mapping_source.append_ids(_v);
+        self.mapping_target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5033,9 +5033,9 @@ impl<'a> ParseFromChunks<'a> for CameraImage2dWithScale_<'a> {
 }
 impl<'a> HasId for CameraImage2dWithScale_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.mapping_source.append_ids(_v);
-    self.mapping_target.append_ids(_v);
+        self.name.append_ids(_v);
+        self.mapping_source.append_ids(_v);
+        self.mapping_target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5070,9 +5070,9 @@ impl<'a> ParseFromChunks<'a> for CameraImage3dWithScale_<'a> {
 }
 impl<'a> HasId for CameraImage3dWithScale_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.mapping_source.append_ids(_v);
-    self.mapping_target.append_ids(_v);
+        self.name.append_ids(_v);
+        self.mapping_source.append_ids(_v);
+        self.mapping_target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5101,7 +5101,7 @@ impl<'a> ParseFromChunks<'a> for CameraModel_<'a> {
 }
 impl<'a> HasId for CameraModel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5136,9 +5136,9 @@ impl<'a> ParseFromChunks<'a> for CameraModelD2_<'a> {
 }
 impl<'a> HasId for CameraModelD2_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.view_window.append_ids(_v);
-    self.view_window_clipping.append_ids(_v);
+        self.name.append_ids(_v);
+        self.view_window.append_ids(_v);
+        self.view_window_clipping.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5173,9 +5173,9 @@ impl<'a> ParseFromChunks<'a> for CameraModelD3_<'a> {
 }
 impl<'a> HasId for CameraModelD3_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.view_reference_system.append_ids(_v);
-    self.perspective_of_volume.append_ids(_v);
+        self.name.append_ids(_v);
+        self.view_reference_system.append_ids(_v);
+        self.perspective_of_volume.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5213,10 +5213,10 @@ impl<'a> ParseFromChunks<'a> for CameraModelD3WithHlhsr_<'a> {
 }
 impl<'a> HasId for CameraModelD3WithHlhsr_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.view_reference_system.append_ids(_v);
-    self.perspective_of_volume.append_ids(_v);
-    self.hidden_line_surface_removal.append_ids(_v);
+        self.name.append_ids(_v);
+        self.view_reference_system.append_ids(_v);
+        self.perspective_of_volume.append_ids(_v);
+        self.hidden_line_surface_removal.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5248,8 +5248,8 @@ impl<'a> ParseFromChunks<'a> for CameraUsage_<'a> {
 }
 impl<'a> HasId for CameraUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.mapping_origin.append_ids(_v);
-    self.mapped_representation.append_ids(_v);
+        self.mapping_origin.append_ids(_v);
+        self.mapped_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5281,8 +5281,8 @@ impl<'a> ParseFromChunks<'a> for CartesianPoint_<'a> {
 }
 impl<'a> HasId for CartesianPoint_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.coordinates.append_ids(_v);
+        self.name.append_ids(_v);
+        self.coordinates.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -5332,13 +5332,13 @@ impl<'a> ParseFromChunks<'a> for CartesianTransformationOperator_<'a> {
 }
 impl<'a> HasId for CartesianTransformationOperator_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.functionally_defined_transformation__name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.axis1.append_ids(_v);
-    self.axis2.append_ids(_v);
-    self.local_origin.append_ids(_v);
-    self.scale.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.functionally_defined_transformation__name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.axis1.append_ids(_v);
+        self.axis2.append_ids(_v);
+        self.local_origin.append_ids(_v);
+        self.scale.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -5388,13 +5388,13 @@ impl<'a> ParseFromChunks<'a> for CartesianTransformationOperator2d_<'a> {
 }
 impl<'a> HasId for CartesianTransformationOperator2d_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.functionally_defined_transformation__name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.axis1.append_ids(_v);
-    self.axis2.append_ids(_v);
-    self.local_origin.append_ids(_v);
-    self.scale.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.functionally_defined_transformation__name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.axis1.append_ids(_v);
+        self.axis2.append_ids(_v);
+        self.local_origin.append_ids(_v);
+        self.scale.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -5447,14 +5447,14 @@ impl<'a> ParseFromChunks<'a> for CartesianTransformationOperator3d_<'a> {
 }
 impl<'a> HasId for CartesianTransformationOperator3d_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.functionally_defined_transformation__name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.axis1.append_ids(_v);
-    self.axis2.append_ids(_v);
-    self.local_origin.append_ids(_v);
-    self.scale.append_ids(_v);
-    self.axis3.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.functionally_defined_transformation__name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.axis1.append_ids(_v);
+        self.axis2.append_ids(_v);
+        self.local_origin.append_ids(_v);
+        self.scale.append_ids(_v);
+        self.axis3.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5501,8 +5501,8 @@ impl<'a> ParseFromChunks<'a> for CelsiusTemperatureMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for CelsiusTemperatureMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5562,10 +5562,10 @@ impl<'a> ParseFromChunks<'a> for CentreOfSymmetry_<'a> {
 }
 impl<'a> HasId for CentreOfSymmetry_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5600,9 +5600,9 @@ impl<'a> ParseFromChunks<'a> for Certification_<'a> {
 }
 impl<'a> HasId for Certification_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.purpose.append_ids(_v);
-    self.kind.append_ids(_v);
+        self.name.append_ids(_v);
+        self.purpose.append_ids(_v);
+        self.kind.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5631,7 +5631,7 @@ impl<'a> ParseFromChunks<'a> for CertificationAssignment_<'a> {
 }
 impl<'a> HasId for CertificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_certification.append_ids(_v);
+        self.assigned_certification.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5664,7 +5664,7 @@ impl<'a> ParseFromChunks<'a> for CertificationType_<'a> {
 }
 impl<'a> HasId for CertificationType_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.description.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5702,10 +5702,10 @@ impl<'a> ParseFromChunks<'a> for Chamfer_<'a> {
 }
 impl<'a> HasId for Chamfer_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5743,10 +5743,10 @@ impl<'a> ParseFromChunks<'a> for ChamferOffset_<'a> {
 }
 impl<'a> HasId for ChamferOffset_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5787,11 +5787,11 @@ impl<'a> ParseFromChunks<'a> for CharacterGlyphSymbol_<'a> {
 }
 impl<'a> HasId for CharacterGlyphSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
-    self.character_box.append_ids(_v);
-    self.baseline_ratio.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
+        self.character_box.append_ids(_v);
+        self.baseline_ratio.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5871,10 +5871,10 @@ impl<'a> ParseFromChunks<'a> for CharacterizedClass_<'a> {
 }
 impl<'a> HasId for CharacterizedClass_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.characterized_object__name.append_ids(_v);
-    self.characterized_object__description.append_ids(_v);
-    self.group__name.append_ids(_v);
-    self.group__description.append_ids(_v);
+        self.characterized_object__name.append_ids(_v);
+        self.characterized_object__description.append_ids(_v);
+        self.group__name.append_ids(_v);
+        self.group__description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5914,8 +5914,8 @@ impl<'a> ParseFromChunks<'a> for CharacterizedObject_<'a> {
 }
 impl<'a> HasId for CharacterizedObject_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5958,9 +5958,9 @@ impl<'a> ParseFromChunks<'a> for Circle_<'a> {
 }
 impl<'a> HasId for Circle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.radius.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.radius.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -5998,10 +5998,10 @@ impl<'a> ParseFromChunks<'a> for CircularClosedProfile_<'a> {
 }
 impl<'a> HasId for CircularClosedProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6033,8 +6033,8 @@ impl<'a> ParseFromChunks<'a> for CircularPattern_<'a> {
 }
 impl<'a> HasId for CircularPattern_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6075,11 +6075,11 @@ impl<'a> ParseFromChunks<'a> for CircularRunoutTolerance_<'a> {
 }
 impl<'a> HasId for CircularRunoutTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6111,8 +6111,8 @@ impl<'a> ParseFromChunks<'a> for Class_<'a> {
 }
 impl<'a> HasId for Class_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6144,8 +6144,8 @@ impl<'a> ParseFromChunks<'a> for ClassSystem_<'a> {
 }
 impl<'a> HasId for ClassSystem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6180,9 +6180,9 @@ impl<'a> ParseFromChunks<'a> for ClassUsageEffectivityContextAssignment_<'a> {
 }
 impl<'a> HasId for ClassUsageEffectivityContextAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_effectivity_assignment.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_effectivity_assignment.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6218,8 +6218,8 @@ impl<'a> ParseFromChunks<'a> for ClassificationAssignment_<'a> {
 }
 impl<'a> HasId for ClassificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_class.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_class.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6255,8 +6255,8 @@ impl<'a> ParseFromChunks<'a> for ClassificationRole_<'a> {
 }
 impl<'a> HasId for ClassificationRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6294,10 +6294,10 @@ impl<'a> ParseFromChunks<'a> for ClosedPathProfile_<'a> {
 }
 impl<'a> HasId for ClosedPathProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6329,8 +6329,8 @@ impl<'a> ParseFromChunks<'a> for ClosedShell_<'a> {
 }
 impl<'a> HasId for ClosedShell_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.cfs_faces.append_ids(_v);
+        self.name.append_ids(_v);
+        self.cfs_faces.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6371,11 +6371,11 @@ impl<'a> ParseFromChunks<'a> for CoaxialityTolerance_<'a> {
 }
 impl<'a> HasId for CoaxialityTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6437,10 +6437,10 @@ impl<'a> ParseFromChunks<'a> for ColourRgb_<'a> {
 }
 impl<'a> HasId for ColourRgb_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.red.append_ids(_v);
-    self.green.append_ids(_v);
-    self.blue.append_ids(_v);
+        self.name.append_ids(_v);
+        self.red.append_ids(_v);
+        self.green.append_ids(_v);
+        self.blue.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6469,7 +6469,7 @@ impl<'a> ParseFromChunks<'a> for ColourSpecification_<'a> {
 }
 impl<'a> HasId for ColourSpecification_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -6515,11 +6515,11 @@ impl<'a> ParseFromChunks<'a> for CommonDatum_<'a> {
 }
 impl<'a> HasId for CommonDatum_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.shape_aspect__name.append_ids(_v);
-    self.shape_aspect__description.append_ids(_v);
-    self.shape_aspect__of_shape.append_ids(_v);
-    self.shape_aspect__product_definitional.append_ids(_v);
-    self.identification.append_ids(_v);
+        self.shape_aspect__name.append_ids(_v);
+        self.shape_aspect__description.append_ids(_v);
+        self.shape_aspect__of_shape.append_ids(_v);
+        self.shape_aspect__product_definitional.append_ids(_v);
+        self.identification.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6548,7 +6548,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonEqual_<'a> {
 }
 impl<'a> HasId for ComparisonEqual_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6577,7 +6577,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonExpression_<'a> {
 }
 impl<'a> HasId for ComparisonExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6606,7 +6606,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonGreater_<'a> {
 }
 impl<'a> HasId for ComparisonGreater_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6635,7 +6635,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonGreaterEqual_<'a> {
 }
 impl<'a> HasId for ComparisonGreaterEqual_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6664,7 +6664,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonLess_<'a> {
 }
 impl<'a> HasId for ComparisonLess_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6693,7 +6693,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonLessEqual_<'a> {
 }
 impl<'a> HasId for ComparisonLessEqual_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6722,7 +6722,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonNotEqual_<'a> {
 }
 impl<'a> HasId for ComparisonNotEqual_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6757,9 +6757,9 @@ impl<'a> ParseFromChunks<'a> for CompositeCurve_<'a> {
 }
 impl<'a> HasId for CompositeCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.segments.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.segments.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6794,9 +6794,9 @@ impl<'a> ParseFromChunks<'a> for CompositeCurveOnSurface_<'a> {
 }
 impl<'a> HasId for CompositeCurveOnSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.segments.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.segments.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6831,9 +6831,9 @@ impl<'a> ParseFromChunks<'a> for CompositeCurveSegment_<'a> {
 }
 impl<'a> HasId for CompositeCurveSegment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.transition.append_ids(_v);
-    self.same_sense.append_ids(_v);
-    self.parent_curve.append_ids(_v);
+        self.transition.append_ids(_v);
+        self.same_sense.append_ids(_v);
+        self.parent_curve.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6865,8 +6865,8 @@ impl<'a> ParseFromChunks<'a> for CompositeHole_<'a> {
 }
 impl<'a> HasId for CompositeHole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6904,10 +6904,10 @@ impl<'a> ParseFromChunks<'a> for CompositeShapeAspect_<'a> {
 }
 impl<'a> HasId for CompositeShapeAspect_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6939,8 +6939,8 @@ impl<'a> ParseFromChunks<'a> for CompositeText_<'a> {
 }
 impl<'a> HasId for CompositeText_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.collected_text.append_ids(_v);
+        self.name.append_ids(_v);
+        self.collected_text.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -6975,9 +6975,9 @@ impl<'a> ParseFromChunks<'a> for CompositeTextWithAssociatedCurves_<'a> {
 }
 impl<'a> HasId for CompositeTextWithAssociatedCurves_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.collected_text.append_ids(_v);
-    self.associated_curves.append_ids(_v);
+        self.name.append_ids(_v);
+        self.collected_text.append_ids(_v);
+        self.associated_curves.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7012,9 +7012,9 @@ impl<'a> ParseFromChunks<'a> for CompositeTextWithBlankingBox_<'a> {
 }
 impl<'a> HasId for CompositeTextWithBlankingBox_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.collected_text.append_ids(_v);
-    self.blanking.append_ids(_v);
+        self.name.append_ids(_v);
+        self.collected_text.append_ids(_v);
+        self.blanking.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7049,9 +7049,9 @@ impl<'a> ParseFromChunks<'a> for CompositeTextWithExtent_<'a> {
 }
 impl<'a> HasId for CompositeTextWithExtent_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.collected_text.append_ids(_v);
-    self.extent.append_ids(_v);
+        self.name.append_ids(_v);
+        self.collected_text.append_ids(_v);
+        self.extent.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7083,8 +7083,8 @@ impl<'a> ParseFromChunks<'a> for CompoundFeature_<'a> {
 }
 impl<'a> HasId for CompoundFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7139,8 +7139,8 @@ impl<'a> ParseFromChunks<'a> for CompoundRepresentationItem_<'a> {
 }
 impl<'a> HasId for CompoundRepresentationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.item_element.append_ids(_v);
+        self.name.append_ids(_v);
+        self.item_element.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7175,9 +7175,9 @@ impl<'a> ParseFromChunks<'a> for CompoundShapeRepresentation_<'a> {
 }
 impl<'a> HasId for CompoundShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7206,7 +7206,7 @@ impl<'a> ParseFromChunks<'a> for ConcatExpression_<'a> {
 }
 impl<'a> HasId for ConcatExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7247,11 +7247,11 @@ impl<'a> ParseFromChunks<'a> for ConcentricityTolerance_<'a> {
 }
 impl<'a> HasId for ConcentricityTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7283,8 +7283,8 @@ impl<'a> ParseFromChunks<'a> for ConceptFeatureOperator_<'a> {
 }
 impl<'a> HasId for ConceptFeatureOperator_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7322,10 +7322,10 @@ impl<'a> ParseFromChunks<'a> for ConceptFeatureRelationship_<'a> {
 }
 impl<'a> HasId for ConceptFeatureRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_concept_feature.append_ids(_v);
-    self.related_product_concept_feature.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_concept_feature.append_ids(_v);
+        self.related_product_concept_feature.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7366,11 +7366,11 @@ impl<'a> ParseFromChunks<'a> for ConceptFeatureRelationshipWithCondition_<'a> {
 }
 impl<'a> HasId for ConceptFeatureRelationshipWithCondition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_concept_feature.append_ids(_v);
-    self.related_product_concept_feature.append_ids(_v);
-    self.conditional_operator.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_concept_feature.append_ids(_v);
+        self.related_product_concept_feature.append_ids(_v);
+        self.conditional_operator.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7408,10 +7408,10 @@ impl<'a> ParseFromChunks<'a> for ConditionalConceptFeature_<'a> {
 }
 impl<'a> HasId for ConditionalConceptFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.condition.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.condition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7455,12 +7455,12 @@ impl<'a> ParseFromChunks<'a> for ConfigurableItem_<'a> {
 }
 impl<'a> HasId for ConfigurableItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.item_concept.append_ids(_v);
-    self.purpose.append_ids(_v);
-    self.item_concept_feature.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.item_concept.append_ids(_v);
+        self.purpose.append_ids(_v);
+        self.item_concept_feature.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7492,8 +7492,8 @@ impl<'a> ParseFromChunks<'a> for ConfigurationDefinition_<'a> {
 }
 impl<'a> HasId for ConfigurationDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.pair_values.append_ids(_v);
-    self.t_parameter.append_ids(_v);
+        self.pair_values.append_ids(_v);
+        self.t_parameter.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7525,8 +7525,8 @@ impl<'a> ParseFromChunks<'a> for ConfigurationDesign_<'a> {
 }
 impl<'a> HasId for ConfigurationDesign_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.configuration.append_ids(_v);
-    self.design.append_ids(_v);
+        self.configuration.append_ids(_v);
+        self.design.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7565,9 +7565,9 @@ impl<'a> ParseFromChunks<'a> for ConfigurationEffectivity_<'a> {
 }
 impl<'a> HasId for ConfigurationEffectivity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.usage.append_ids(_v);
-    self.configuration.append_ids(_v);
+        self.id.append_ids(_v);
+        self.usage.append_ids(_v);
+        self.configuration.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7602,9 +7602,9 @@ impl<'a> ParseFromChunks<'a> for ConfigurationInterpolation_<'a> {
 }
 impl<'a> HasId for ConfigurationInterpolation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.previous_configuration_definition.append_ids(_v);
-    self.next_configuration_definition.append_ids(_v);
-    self.interpolation.append_ids(_v);
+        self.previous_configuration_definition.append_ids(_v);
+        self.next_configuration_definition.append_ids(_v);
+        self.interpolation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7645,11 +7645,11 @@ impl<'a> ParseFromChunks<'a> for ConfigurationItem_<'a> {
 }
 impl<'a> HasId for ConfigurationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.item_concept.append_ids(_v);
-    self.purpose.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.item_concept.append_ids(_v);
+        self.purpose.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7681,8 +7681,8 @@ impl<'a> ParseFromChunks<'a> for ConfiguredEffectivityAssignment_<'a> {
 }
 impl<'a> HasId for ConfiguredEffectivityAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_effectivity.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_effectivity.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7717,9 +7717,9 @@ impl<'a> ParseFromChunks<'a> for ConfiguredEffectivityContextAssignment_<'a> {
 }
 impl<'a> HasId for ConfiguredEffectivityContextAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_effectivity_assignment.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_effectivity_assignment.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7759,8 +7759,8 @@ impl<'a> ParseFromChunks<'a> for Conic_<'a> {
 }
 impl<'a> HasId for Conic_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7798,10 +7798,10 @@ impl<'a> ParseFromChunks<'a> for ConicalSurface_<'a> {
 }
 impl<'a> HasId for ConicalSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.radius.append_ids(_v);
-    self.semi_angle.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.radius.append_ids(_v);
+        self.semi_angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7833,8 +7833,8 @@ impl<'a> ParseFromChunks<'a> for ConnectedEdgeSet_<'a> {
 }
 impl<'a> HasId for ConnectedEdgeSet_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.ces_edges.append_ids(_v);
+        self.name.append_ids(_v);
+        self.ces_edges.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7866,8 +7866,8 @@ impl<'a> ParseFromChunks<'a> for ConnectedFaceSet_<'a> {
 }
 impl<'a> HasId for ConnectedFaceSet_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.cfs_faces.append_ids(_v);
+        self.name.append_ids(_v);
+        self.cfs_faces.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7902,9 +7902,9 @@ impl<'a> ParseFromChunks<'a> for ConnectedFaceSubSet_<'a> {
 }
 impl<'a> HasId for ConnectedFaceSubSet_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.cfs_faces.append_ids(_v);
-    self.parent_face_set.append_ids(_v);
+        self.name.append_ids(_v);
+        self.cfs_faces.append_ids(_v);
+        self.parent_face_set.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7939,9 +7939,9 @@ impl<'a> ParseFromChunks<'a> for ConstructiveGeometryRepresentation_<'a> {
 }
 impl<'a> HasId for ConstructiveGeometryRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -7979,10 +7979,10 @@ impl<'a> ParseFromChunks<'a> for ConstructiveGeometryRepresentationRelationship_
 }
 impl<'a> HasId for ConstructiveGeometryRepresentationRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.rep_2.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.rep_2.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8017,9 +8017,9 @@ impl<'a> ParseFromChunks<'a> for ContactRatioRepresentation_<'a> {
 }
 impl<'a> HasId for ContactRatioRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8051,8 +8051,8 @@ impl<'a> ParseFromChunks<'a> for ContextDependentInvisibility_<'a> {
 }
 impl<'a> HasId for ContextDependentInvisibility_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.invisible_items.append_ids(_v);
-    self.presentation_context.append_ids(_v);
+        self.invisible_items.append_ids(_v);
+        self.presentation_context.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8104,11 +8104,11 @@ impl<'a> ParseFromChunks<'a> for ContextDependentOverRidingStyledItem_<'a> {
 }
 impl<'a> HasId for ContextDependentOverRidingStyledItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
-    self.over_ridden_style.append_ids(_v);
-    self.style_context.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
+        self.over_ridden_style.append_ids(_v);
+        self.style_context.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8140,8 +8140,8 @@ impl<'a> ParseFromChunks<'a> for ContextDependentShapeRepresentation_<'a> {
 }
 impl<'a> HasId for ContextDependentShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_relation.append_ids(_v);
-    self.represented_product_relation.append_ids(_v);
+        self.representation_relation.append_ids(_v);
+        self.represented_product_relation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8173,8 +8173,8 @@ impl<'a> ParseFromChunks<'a> for ContextDependentUnit_<'a> {
 }
 impl<'a> HasId for ContextDependentUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
-    self.name.append_ids(_v);
+        self.dimensions.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8209,9 +8209,9 @@ impl<'a> ParseFromChunks<'a> for Contract_<'a> {
 }
 impl<'a> HasId for Contract_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.purpose.append_ids(_v);
-    self.kind.append_ids(_v);
+        self.name.append_ids(_v);
+        self.purpose.append_ids(_v);
+        self.kind.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8240,7 +8240,7 @@ impl<'a> ParseFromChunks<'a> for ContractAssignment_<'a> {
 }
 impl<'a> HasId for ContractAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_contract.append_ids(_v);
+        self.assigned_contract.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8273,7 +8273,7 @@ impl<'a> ParseFromChunks<'a> for ContractType_<'a> {
 }
 impl<'a> HasId for ContractType_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.description.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8306,8 +8306,8 @@ impl<'a> ParseFromChunks<'a> for ConversionBasedUnit_<'a> {
 }
 impl<'a> HasId for ConversionBasedUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.conversion_factor.append_ids(_v);
+        self.name.append_ids(_v);
+        self.conversion_factor.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8342,9 +8342,9 @@ impl<'a> ParseFromChunks<'a> for CoordinatedUniversalTimeOffset_<'a> {
 }
 impl<'a> HasId for CoordinatedUniversalTimeOffset_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.hour_offset.append_ids(_v);
-    self.minute_offset.append_ids(_v);
-    self.sense.append_ids(_v);
+        self.hour_offset.append_ids(_v);
+        self.minute_offset.append_ids(_v);
+        self.sense.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8373,7 +8373,7 @@ impl<'a> ParseFromChunks<'a> for CosFunction_<'a> {
 }
 impl<'a> HasId for CosFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8427,9 +8427,9 @@ impl<'a> ParseFromChunks<'a> for CsgShapeRepresentation_<'a> {
 }
 impl<'a> HasId for CsgShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8461,8 +8461,8 @@ impl<'a> ParseFromChunks<'a> for CsgSolid_<'a> {
 }
 impl<'a> HasId for CsgSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.tree_root_expression.append_ids(_v);
+        self.name.append_ids(_v);
+        self.tree_root_expression.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8491,7 +8491,7 @@ impl<'a> ParseFromChunks<'a> for Curve_<'a> {
 }
 impl<'a> HasId for Curve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8529,10 +8529,10 @@ impl<'a> ParseFromChunks<'a> for CurveBoundedSurface_<'a> {
 }
 impl<'a> HasId for CurveBoundedSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_surface.append_ids(_v);
-    self.boundaries.append_ids(_v);
-    self.implicit_outer.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_surface.append_ids(_v);
+        self.boundaries.append_ids(_v);
+        self.implicit_outer.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8564,8 +8564,8 @@ impl<'a> ParseFromChunks<'a> for CurveDimension_<'a> {
 }
 impl<'a> HasId for CurveDimension_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8612,9 +8612,9 @@ impl<'a> ParseFromChunks<'a> for CurveReplica_<'a> {
 }
 impl<'a> HasId for CurveReplica_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.parent_curve.append_ids(_v);
-    self.transformation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.parent_curve.append_ids(_v);
+        self.transformation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8652,10 +8652,10 @@ impl<'a> ParseFromChunks<'a> for CurveStyle_<'a> {
 }
 impl<'a> HasId for CurveStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.curve_font.append_ids(_v);
-    self.curve_width.append_ids(_v);
-    self.curve_colour.append_ids(_v);
+        self.name.append_ids(_v);
+        self.curve_font.append_ids(_v);
+        self.curve_width.append_ids(_v);
+        self.curve_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8687,8 +8687,8 @@ impl<'a> ParseFromChunks<'a> for CurveStyleFont_<'a> {
 }
 impl<'a> HasId for CurveStyleFont_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.pattern_list.append_ids(_v);
+        self.name.append_ids(_v);
+        self.pattern_list.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8720,8 +8720,8 @@ impl<'a> ParseFromChunks<'a> for CurveStyleFontPattern_<'a> {
 }
 impl<'a> HasId for CurveStyleFontPattern_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.visible_segment_length.append_ids(_v);
-    self.invisible_segment_length.append_ids(_v);
+        self.visible_segment_length.append_ids(_v);
+        self.invisible_segment_length.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8757,8 +8757,8 @@ impl<'a> ParseFromChunks<'a> for CurveStyleRendering_<'a> {
 }
 impl<'a> HasId for CurveStyleRendering_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.rendering_method.append_ids(_v);
-    self.rendering_properties.append_ids(_v);
+        self.rendering_method.append_ids(_v);
+        self.rendering_properties.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8793,9 +8793,9 @@ impl<'a> ParseFromChunks<'a> for CurveSweptSolidShapeRepresentation_<'a> {
 }
 impl<'a> HasId for CurveSweptSolidShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 
@@ -8861,11 +8861,11 @@ impl<'a> ParseFromChunks<'a> for CylindricalPair_<'a> {
 }
 impl<'a> HasId for CylindricalPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8906,11 +8906,11 @@ impl<'a> ParseFromChunks<'a> for CylindricalPairRange_<'a> {
 }
 impl<'a> HasId for CylindricalPairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_actual_translation.append_ids(_v);
-    self.upper_limit_actual_translation.append_ids(_v);
-    self.lower_limit_actual_rotation.append_ids(_v);
-    self.upper_limit_actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_actual_translation.append_ids(_v);
+        self.upper_limit_actual_translation.append_ids(_v);
+        self.lower_limit_actual_rotation.append_ids(_v);
+        self.upper_limit_actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8945,9 +8945,9 @@ impl<'a> ParseFromChunks<'a> for CylindricalPairValue_<'a> {
 }
 impl<'a> HasId for CylindricalPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_translation.append_ids(_v);
-    self.actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_translation.append_ids(_v);
+        self.actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -8982,9 +8982,9 @@ impl<'a> ParseFromChunks<'a> for CylindricalSurface_<'a> {
 }
 impl<'a> HasId for CylindricalSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.radius.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.radius.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9022,10 +9022,10 @@ impl<'a> ParseFromChunks<'a> for CylindricityTolerance_<'a> {
 }
 impl<'a> HasId for CylindricityTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9060,9 +9060,9 @@ impl<'a> ParseFromChunks<'a> for DataEnvironment_<'a> {
 }
 impl<'a> HasId for DataEnvironment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.elements.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.elements.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9091,7 +9091,7 @@ impl<'a> ParseFromChunks<'a> for Date_<'a> {
 }
 impl<'a> HasId for Date_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.year_component.append_ids(_v);
+        self.year_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9123,8 +9123,8 @@ impl<'a> ParseFromChunks<'a> for DateAndTime_<'a> {
 }
 impl<'a> HasId for DateAndTime_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.date_component.append_ids(_v);
-    self.time_component.append_ids(_v);
+        self.date_component.append_ids(_v);
+        self.time_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9156,8 +9156,8 @@ impl<'a> ParseFromChunks<'a> for DateAndTimeAssignment_<'a> {
 }
 impl<'a> HasId for DateAndTimeAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_date_and_time.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_date_and_time.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9193,8 +9193,8 @@ impl<'a> ParseFromChunks<'a> for DateAssignment_<'a> {
 }
 impl<'a> HasId for DateAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_date.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_date.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9227,7 +9227,7 @@ impl<'a> ParseFromChunks<'a> for DateRole_<'a> {
 }
 impl<'a> HasId for DateRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9260,7 +9260,7 @@ impl<'a> ParseFromChunks<'a> for DateTimeRole_<'a> {
 }
 impl<'a> HasId for DateTimeRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9299,9 +9299,9 @@ impl<'a> ParseFromChunks<'a> for DatedEffectivity_<'a> {
 }
 impl<'a> HasId for DatedEffectivity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.effectivity_end_date.append_ids(_v);
-    self.effectivity_start_date.append_ids(_v);
+        self.id.append_ids(_v);
+        self.effectivity_end_date.append_ids(_v);
+        self.effectivity_start_date.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9342,11 +9342,11 @@ impl<'a> ParseFromChunks<'a> for Datum_<'a> {
 }
 impl<'a> HasId for Datum_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
-    self.identification.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
+        self.identification.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9384,10 +9384,10 @@ impl<'a> ParseFromChunks<'a> for DatumFeature_<'a> {
 }
 impl<'a> HasId for DatumFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9419,8 +9419,8 @@ impl<'a> ParseFromChunks<'a> for DatumFeatureCallout_<'a> {
 }
 impl<'a> HasId for DatumFeatureCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9452,8 +9452,8 @@ impl<'a> ParseFromChunks<'a> for DatumReference_<'a> {
 }
 impl<'a> HasId for DatumReference_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.precedence.append_ids(_v);
-    self.referenced_datum.append_ids(_v);
+        self.precedence.append_ids(_v);
+        self.referenced_datum.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9494,11 +9494,11 @@ impl<'a> ParseFromChunks<'a> for DatumTarget_<'a> {
 }
 impl<'a> HasId for DatumTarget_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
-    self.target_id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
+        self.target_id.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9530,8 +9530,8 @@ impl<'a> ParseFromChunks<'a> for DatumTargetCallout_<'a> {
 }
 impl<'a> HasId for DatumTargetCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9577,9 +9577,9 @@ impl<'a> ParseFromChunks<'a> for DefaultToleranceTable_<'a> {
 }
 impl<'a> HasId for DefaultToleranceTable_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9611,8 +9611,8 @@ impl<'a> ParseFromChunks<'a> for DefaultToleranceTableCell_<'a> {
 }
 impl<'a> HasId for DefaultToleranceTableCell_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.item_element.append_ids(_v);
+        self.name.append_ids(_v);
+        self.item_element.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9647,9 +9647,9 @@ impl<'a> ParseFromChunks<'a> for DefinedCharacterGlyph_<'a> {
 }
 impl<'a> HasId for DefinedCharacterGlyph_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.definition.append_ids(_v);
-    self.placement.append_ids(_v);
+        self.name.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.placement.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9712,9 +9712,9 @@ impl<'a> ParseFromChunks<'a> for DefinedSymbol_<'a> {
 }
 impl<'a> HasId for DefinedSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.definition.append_ids(_v);
-    self.target.append_ids(_v);
+        self.name.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9753,9 +9753,9 @@ impl<'a> ParseFromChunks<'a> for DefinitionalRepresentation_<'a> {
 }
 impl<'a> HasId for DefinitionalRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9790,9 +9790,9 @@ impl<'a> ParseFromChunks<'a> for DegeneratePcurve_<'a> {
 }
 impl<'a> HasId for DegeneratePcurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_surface.append_ids(_v);
-    self.reference_to_curve.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_surface.append_ids(_v);
+        self.reference_to_curve.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9833,11 +9833,11 @@ impl<'a> ParseFromChunks<'a> for DegenerateToroidalSurface_<'a> {
 }
 impl<'a> HasId for DegenerateToroidalSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.major_radius.append_ids(_v);
-    self.minor_radius.append_ids(_v);
-    self.select_outer.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.major_radius.append_ids(_v);
+        self.minor_radius.append_ids(_v);
+        self.select_outer.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9879,10 +9879,10 @@ impl<'a> ParseFromChunks<'a> for DerivedShapeAspect_<'a> {
 }
 impl<'a> HasId for DerivedShapeAspect_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9911,7 +9911,7 @@ impl<'a> ParseFromChunks<'a> for DerivedUnit_<'a> {
 }
 impl<'a> HasId for DerivedUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.elements.append_ids(_v);
+        self.elements.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9943,8 +9943,8 @@ impl<'a> ParseFromChunks<'a> for DerivedUnitElement_<'a> {
 }
 impl<'a> HasId for DerivedUnitElement_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.unit.append_ids(_v);
-    self.exponent.append_ids(_v);
+        self.unit.append_ids(_v);
+        self.exponent.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -9973,7 +9973,7 @@ impl<'a> ParseFromChunks<'a> for DerivedUnitVariable_<'a> {
 }
 impl<'a> HasId for DerivedUnitVariable_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.elements.append_ids(_v);
+        self.elements.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10005,8 +10005,8 @@ impl<'a> ParseFromChunks<'a> for DescriptionAttribute_<'a> {
 }
 impl<'a> HasId for DescriptionAttribute_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.attribute_value.append_ids(_v);
-    self.described_item.append_ids(_v);
+        self.attribute_value.append_ids(_v);
+        self.described_item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10053,8 +10053,8 @@ impl<'a> ParseFromChunks<'a> for DescriptiveRepresentationItem_<'a> {
 }
 impl<'a> HasId for DescriptiveRepresentationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10086,8 +10086,8 @@ impl<'a> ParseFromChunks<'a> for DiameterDimension_<'a> {
 }
 impl<'a> HasId for DiameterDimension_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10119,8 +10119,8 @@ impl<'a> ParseFromChunks<'a> for DimensionCallout_<'a> {
 }
 impl<'a> HasId for DimensionCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10158,10 +10158,10 @@ impl<'a> ParseFromChunks<'a> for DimensionCalloutComponentRelationship_<'a> {
 }
 impl<'a> HasId for DimensionCalloutComponentRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_draughting_callout.append_ids(_v);
-    self.related_draughting_callout.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_draughting_callout.append_ids(_v);
+        self.related_draughting_callout.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10199,10 +10199,10 @@ impl<'a> ParseFromChunks<'a> for DimensionCalloutRelationship_<'a> {
 }
 impl<'a> HasId for DimensionCalloutRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_draughting_callout.append_ids(_v);
-    self.related_draughting_callout.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_draughting_callout.append_ids(_v);
+        self.related_draughting_callout.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10248,9 +10248,9 @@ impl<'a> ParseFromChunks<'a> for DimensionCurve_<'a> {
 }
 impl<'a> HasId for DimensionCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10282,8 +10282,8 @@ impl<'a> ParseFromChunks<'a> for DimensionCurveDirectedCallout_<'a> {
 }
 impl<'a> HasId for DimensionCurveDirectedCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10324,11 +10324,11 @@ impl<'a> ParseFromChunks<'a> for DimensionCurveTerminator_<'a> {
 }
 impl<'a> HasId for DimensionCurveTerminator_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
-    self.annotated_curve.append_ids(_v);
-    self.role.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
+        self.annotated_curve.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10388,10 +10388,10 @@ impl<'a> ParseFromChunks<'a> for DimensionPair_<'a> {
 }
 impl<'a> HasId for DimensionPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_draughting_callout.append_ids(_v);
-    self.related_draughting_callout.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_draughting_callout.append_ids(_v);
+        self.related_draughting_callout.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10423,8 +10423,8 @@ impl<'a> ParseFromChunks<'a> for DimensionRelatedToleranceZoneElement_<'a> {
 }
 impl<'a> HasId for DimensionRelatedToleranceZoneElement_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.related_dimension.append_ids(_v);
-    self.related_element.append_ids(_v);
+        self.related_dimension.append_ids(_v);
+        self.related_element.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -10476,14 +10476,14 @@ impl<'a> ParseFromChunks<'a> for DimensionTextAssociativity_<'a> {
 }
 impl<'a> HasId for DimensionTextAssociativity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.literal.append_ids(_v);
-    self.placement.append_ids(_v);
-    self.alignment.append_ids(_v);
-    self.path.append_ids(_v);
-    self.font.append_ids(_v);
-    self.mapping_source.append_ids(_v);
-    self.mapping_target.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.literal.append_ids(_v);
+        self.placement.append_ids(_v);
+        self.alignment.append_ids(_v);
+        self.path.append_ids(_v);
+        self.font.append_ids(_v);
+        self.mapping_source.append_ids(_v);
+        self.mapping_target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10519,8 +10519,8 @@ impl<'a> ParseFromChunks<'a> for DimensionalCharacteristicRepresentation_<'a> {
 }
 impl<'a> HasId for DimensionalCharacteristicRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimension.append_ids(_v);
-    self.representation.append_ids(_v);
+        self.dimension.append_ids(_v);
+        self.representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10567,13 +10567,13 @@ impl<'a> ParseFromChunks<'a> for DimensionalExponents_<'a> {
 }
 impl<'a> HasId for DimensionalExponents_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.length_exponent.append_ids(_v);
-    self.mass_exponent.append_ids(_v);
-    self.time_exponent.append_ids(_v);
-    self.electric_current_exponent.append_ids(_v);
-    self.thermodynamic_temperature_exponent.append_ids(_v);
-    self.amount_of_substance_exponent.append_ids(_v);
-    self.luminous_intensity_exponent.append_ids(_v);
+        self.length_exponent.append_ids(_v);
+        self.mass_exponent.append_ids(_v);
+        self.time_exponent.append_ids(_v);
+        self.electric_current_exponent.append_ids(_v);
+        self.thermodynamic_temperature_exponent.append_ids(_v);
+        self.amount_of_substance_exponent.append_ids(_v);
+        self.luminous_intensity_exponent.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10611,10 +10611,10 @@ impl<'a> ParseFromChunks<'a> for DimensionalLocation_<'a> {
 }
 impl<'a> HasId for DimensionalLocation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10655,11 +10655,11 @@ impl<'a> ParseFromChunks<'a> for DimensionalLocationWithPath_<'a> {
 }
 impl<'a> HasId for DimensionalLocationWithPath_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
-    self.path.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
+        self.path.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10691,8 +10691,8 @@ impl<'a> ParseFromChunks<'a> for DimensionalSize_<'a> {
 }
 impl<'a> HasId for DimensionalSize_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to.append_ids(_v);
-    self.name.append_ids(_v);
+        self.applies_to.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10727,9 +10727,9 @@ impl<'a> ParseFromChunks<'a> for DimensionalSizeWithPath_<'a> {
 }
 impl<'a> HasId for DimensionalSizeWithPath_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to.append_ids(_v);
-    self.name.append_ids(_v);
-    self.path.append_ids(_v);
+        self.applies_to.append_ids(_v);
+        self.name.append_ids(_v);
+        self.path.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10767,10 +10767,10 @@ impl<'a> ParseFromChunks<'a> for DirectedAction_<'a> {
 }
 impl<'a> HasId for DirectedAction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
-    self.directive.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
+        self.directive.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10808,10 +10808,10 @@ impl<'a> ParseFromChunks<'a> for DirectedAngle_<'a> {
 }
 impl<'a> HasId for DirectedAngle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10849,10 +10849,10 @@ impl<'a> ParseFromChunks<'a> for DirectedDimensionalLocation_<'a> {
 }
 impl<'a> HasId for DirectedDimensionalLocation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10884,8 +10884,8 @@ impl<'a> ParseFromChunks<'a> for Direction_<'a> {
 }
 impl<'a> HasId for Direction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.direction_ratios.append_ids(_v);
+        self.name.append_ids(_v);
+        self.direction_ratios.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10943,9 +10943,9 @@ impl<'a> ParseFromChunks<'a> for DirectionShapeRepresentation_<'a> {
 }
 impl<'a> HasId for DirectionShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -10974,7 +10974,7 @@ impl<'a> ParseFromChunks<'a> for DivExpression_<'a> {
 }
 impl<'a> HasId for DivExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11012,10 +11012,10 @@ impl<'a> ParseFromChunks<'a> for Document_<'a> {
 }
 impl<'a> HasId for Document_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.kind.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.kind.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -11064,12 +11064,12 @@ impl<'a> ParseFromChunks<'a> for DocumentFile_<'a> {
 }
 impl<'a> HasId for DocumentFile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.document__name.append_ids(_v);
-    self.document__description.append_ids(_v);
-    self.kind.append_ids(_v);
-    self.characterized_object__name.append_ids(_v);
-    self.characterized_object__description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.document__name.append_ids(_v);
+        self.document__description.append_ids(_v);
+        self.kind.append_ids(_v);
+        self.characterized_object__name.append_ids(_v);
+        self.characterized_object__description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11107,10 +11107,10 @@ impl<'a> ParseFromChunks<'a> for DocumentProductAssociation_<'a> {
 }
 impl<'a> HasId for DocumentProductAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_document.append_ids(_v);
-    self.related_product.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_document.append_ids(_v);
+        self.related_product.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11148,10 +11148,10 @@ impl<'a> ParseFromChunks<'a> for DocumentProductEquivalence_<'a> {
 }
 impl<'a> HasId for DocumentProductEquivalence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_document.append_ids(_v);
-    self.related_product.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_document.append_ids(_v);
+        self.related_product.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11183,8 +11183,8 @@ impl<'a> ParseFromChunks<'a> for DocumentReference_<'a> {
 }
 impl<'a> HasId for DocumentReference_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_document.append_ids(_v);
-    self.source.append_ids(_v);
+        self.assigned_document.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11226,10 +11226,10 @@ impl<'a> ParseFromChunks<'a> for DocumentRelationship_<'a> {
 }
 impl<'a> HasId for DocumentRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_document.append_ids(_v);
-    self.related_document.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_document.append_ids(_v);
+        self.related_document.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11261,8 +11261,8 @@ impl<'a> ParseFromChunks<'a> for DocumentRepresentationType_<'a> {
 }
 impl<'a> HasId for DocumentRepresentationType_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.represented_document.append_ids(_v);
+        self.name.append_ids(_v);
+        self.represented_document.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11291,7 +11291,7 @@ impl<'a> ParseFromChunks<'a> for DocumentType_<'a> {
 }
 impl<'a> HasId for DocumentType_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.product_data_type.append_ids(_v);
+        self.product_data_type.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11326,9 +11326,9 @@ impl<'a> ParseFromChunks<'a> for DocumentUsageConstraint_<'a> {
 }
 impl<'a> HasId for DocumentUsageConstraint_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.source.append_ids(_v);
-    self.subject_element.append_ids(_v);
-    self.subject_element_value.append_ids(_v);
+        self.source.append_ids(_v);
+        self.subject_element.append_ids(_v);
+        self.subject_element_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11360,8 +11360,8 @@ impl<'a> ParseFromChunks<'a> for DocumentUsageConstraintAssignment_<'a> {
 }
 impl<'a> HasId for DocumentUsageConstraintAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_document_usage.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_document_usage.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11393,8 +11393,8 @@ impl<'a> ParseFromChunks<'a> for DocumentUsageRole_<'a> {
 }
 impl<'a> HasId for DocumentUsageRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11429,9 +11429,9 @@ impl<'a> ParseFromChunks<'a> for DraughtingAnnotationOccurrence_<'a> {
 }
 impl<'a> HasId for DraughtingAnnotationOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11463,8 +11463,8 @@ impl<'a> ParseFromChunks<'a> for DraughtingCallout_<'a> {
 }
 impl<'a> HasId for DraughtingCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11506,10 +11506,10 @@ impl<'a> ParseFromChunks<'a> for DraughtingCalloutRelationship_<'a> {
 }
 impl<'a> HasId for DraughtingCalloutRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_draughting_callout.append_ids(_v);
-    self.related_draughting_callout.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_draughting_callout.append_ids(_v);
+        self.related_draughting_callout.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11541,8 +11541,8 @@ impl<'a> ParseFromChunks<'a> for DraughtingElements_<'a> {
 }
 impl<'a> HasId for DraughtingElements_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11577,9 +11577,9 @@ impl<'a> ParseFromChunks<'a> for DraughtingModel_<'a> {
 }
 impl<'a> HasId for DraughtingModel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11620,11 +11620,11 @@ impl<'a> ParseFromChunks<'a> for DraughtingModelItemAssociation_<'a> {
 }
 impl<'a> HasId for DraughtingModelItemAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
-    self.used_representation.append_ids(_v);
-    self.identified_item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.used_representation.append_ids(_v);
+        self.identified_item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11657,7 +11657,7 @@ impl<'a> ParseFromChunks<'a> for DraughtingPreDefinedColour_<'a> {
 }
 impl<'a> HasId for DraughtingPreDefinedColour_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11686,7 +11686,7 @@ impl<'a> ParseFromChunks<'a> for DraughtingPreDefinedCurveFont_<'a> {
 }
 impl<'a> HasId for DraughtingPreDefinedCurveFont_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11715,7 +11715,7 @@ impl<'a> ParseFromChunks<'a> for DraughtingPreDefinedTextFont_<'a> {
 }
 impl<'a> HasId for DraughtingPreDefinedTextFont_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11750,9 +11750,9 @@ impl<'a> ParseFromChunks<'a> for DraughtingSpecificationReference_<'a> {
 }
 impl<'a> HasId for DraughtingSpecificationReference_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_document.append_ids(_v);
-    self.source.append_ids(_v);
-    self.specified_items.append_ids(_v);
+        self.assigned_document.append_ids(_v);
+        self.source.append_ids(_v);
+        self.specified_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11787,9 +11787,9 @@ impl<'a> ParseFromChunks<'a> for DraughtingSubfigureRepresentation_<'a> {
 }
 impl<'a> HasId for DraughtingSubfigureRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11824,9 +11824,9 @@ impl<'a> ParseFromChunks<'a> for DraughtingSymbolRepresentation_<'a> {
 }
 impl<'a> HasId for DraughtingSymbolRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11873,13 +11873,13 @@ impl<'a> ParseFromChunks<'a> for DraughtingTextLiteralWithDelineation_<'a> {
 }
 impl<'a> HasId for DraughtingTextLiteralWithDelineation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.literal.append_ids(_v);
-    self.placement.append_ids(_v);
-    self.alignment.append_ids(_v);
-    self.path.append_ids(_v);
-    self.font.append_ids(_v);
-    self.delineation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.literal.append_ids(_v);
+        self.placement.append_ids(_v);
+        self.alignment.append_ids(_v);
+        self.path.append_ids(_v);
+        self.font.append_ids(_v);
+        self.delineation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11914,9 +11914,9 @@ impl<'a> ParseFromChunks<'a> for DraughtingTitle_<'a> {
 }
 impl<'a> HasId for DraughtingTitle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.items.append_ids(_v);
-    self.language.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.items.append_ids(_v);
+        self.language.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11952,8 +11952,8 @@ impl<'a> ParseFromChunks<'a> for DrawingDefinition_<'a> {
 }
 impl<'a> HasId for DrawingDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.drawing_number.append_ids(_v);
-    self.drawing_type.append_ids(_v);
+        self.drawing_number.append_ids(_v);
+        self.drawing_type.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -11988,9 +11988,9 @@ impl<'a> ParseFromChunks<'a> for DrawingRevision_<'a> {
 }
 impl<'a> HasId for DrawingRevision_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.revision_identifier.append_ids(_v);
-    self.drawing_identifier.append_ids(_v);
-    self.intended_scale.append_ids(_v);
+        self.revision_identifier.append_ids(_v);
+        self.drawing_identifier.append_ids(_v);
+        self.intended_scale.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12022,8 +12022,8 @@ impl<'a> ParseFromChunks<'a> for DrawingRevisionSequence_<'a> {
 }
 impl<'a> HasId for DrawingRevisionSequence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.predecessor.append_ids(_v);
-    self.successor.append_ids(_v);
+        self.predecessor.append_ids(_v);
+        self.successor.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12058,9 +12058,9 @@ impl<'a> ParseFromChunks<'a> for DrawingSheetLayout_<'a> {
 }
 impl<'a> HasId for DrawingSheetLayout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12098,10 +12098,10 @@ impl<'a> ParseFromChunks<'a> for DrawingSheetRevision_<'a> {
 }
 impl<'a> HasId for DrawingSheetRevision_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
-    self.revision_identifier.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
+        self.revision_identifier.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12136,9 +12136,9 @@ impl<'a> ParseFromChunks<'a> for DrawingSheetRevisionUsage_<'a> {
 }
 impl<'a> HasId for DrawingSheetRevisionUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.area.append_ids(_v);
-    self.in_set.append_ids(_v);
-    self.sheet_number.append_ids(_v);
+        self.area.append_ids(_v);
+        self.in_set.append_ids(_v);
+        self.sheet_number.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12173,9 +12173,9 @@ impl<'a> ParseFromChunks<'a> for Edge_<'a> {
 }
 impl<'a> HasId for Edge_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.edge_start.append_ids(_v);
-    self.edge_end.append_ids(_v);
+        self.name.append_ids(_v);
+        self.edge_start.append_ids(_v);
+        self.edge_end.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12207,8 +12207,8 @@ impl<'a> ParseFromChunks<'a> for EdgeBasedWireframeModel_<'a> {
 }
 impl<'a> HasId for EdgeBasedWireframeModel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.ebwm_boundary.append_ids(_v);
+        self.name.append_ids(_v);
+        self.ebwm_boundary.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12243,9 +12243,9 @@ impl<'a> ParseFromChunks<'a> for EdgeBasedWireframeShapeRepresentation_<'a> {
 }
 impl<'a> HasId for EdgeBasedWireframeShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -12288,11 +12288,11 @@ impl<'a> ParseFromChunks<'a> for EdgeCurve_<'a> {
 }
 impl<'a> HasId for EdgeCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.edge_start.append_ids(_v);
-    self.edge_end.append_ids(_v);
-    self.edge_geometry.append_ids(_v);
-    self.same_sense.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.edge_start.append_ids(_v);
+        self.edge_end.append_ids(_v);
+        self.edge_geometry.append_ids(_v);
+        self.same_sense.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -12326,8 +12326,8 @@ impl<'a> ParseFromChunks<'a> for EdgeLoop_<'a> {
 }
 impl<'a> HasId for EdgeLoop_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.edge_list.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.edge_list.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12365,10 +12365,10 @@ impl<'a> ParseFromChunks<'a> for EdgeRound_<'a> {
 }
 impl<'a> HasId for EdgeRound_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12397,7 +12397,7 @@ impl<'a> ParseFromChunks<'a> for Effectivity_<'a> {
 }
 impl<'a> HasId for Effectivity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
+        self.id.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12426,7 +12426,7 @@ impl<'a> ParseFromChunks<'a> for EffectivityAssignment_<'a> {
 }
 impl<'a> HasId for EffectivityAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_effectivity.append_ids(_v);
+        self.assigned_effectivity.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12458,8 +12458,8 @@ impl<'a> ParseFromChunks<'a> for EffectivityContextAssignment_<'a> {
 }
 impl<'a> HasId for EffectivityContextAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_effectivity_assignment.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_effectivity_assignment.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12491,8 +12491,8 @@ impl<'a> ParseFromChunks<'a> for EffectivityContextRole_<'a> {
 }
 impl<'a> HasId for EffectivityContextRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12534,10 +12534,10 @@ impl<'a> ParseFromChunks<'a> for EffectivityRelationship_<'a> {
 }
 impl<'a> HasId for EffectivityRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.related_effectivity.append_ids(_v);
-    self.relating_effectivity.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.related_effectivity.append_ids(_v);
+        self.relating_effectivity.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12580,8 +12580,8 @@ impl<'a> ParseFromChunks<'a> for ElectricCurrentMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for ElectricCurrentMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12610,7 +12610,7 @@ impl<'a> ParseFromChunks<'a> for ElectricCurrentUnit_<'a> {
 }
 impl<'a> HasId for ElectricCurrentUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12645,9 +12645,9 @@ impl<'a> ParseFromChunks<'a> for ElementDelivery_<'a> {
 }
 impl<'a> HasId for ElementDelivery_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12679,8 +12679,8 @@ impl<'a> ParseFromChunks<'a> for ElementarySurface_<'a> {
 }
 impl<'a> HasId for ElementarySurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12718,10 +12718,10 @@ impl<'a> ParseFromChunks<'a> for Ellipse_<'a> {
 }
 impl<'a> HasId for Ellipse_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.semi_axis_1.append_ids(_v);
-    self.semi_axis_2.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.semi_axis_1.append_ids(_v);
+        self.semi_axis_2.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12753,8 +12753,8 @@ impl<'a> ParseFromChunks<'a> for Environment_<'a> {
 }
 impl<'a> HasId for Environment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.syntactic_representation.append_ids(_v);
-    self.semantics.append_ids(_v);
+        self.syntactic_representation.append_ids(_v);
+        self.semantics.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12783,7 +12783,7 @@ impl<'a> ParseFromChunks<'a> for EqualsExpression_<'a> {
 }
 impl<'a> HasId for EqualsExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12821,10 +12821,10 @@ impl<'a> ParseFromChunks<'a> for EvaluatedDegeneratePcurve_<'a> {
 }
 impl<'a> HasId for EvaluatedDegeneratePcurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_surface.append_ids(_v);
-    self.reference_to_curve.append_ids(_v);
-    self.equivalent_point.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_surface.append_ids(_v);
+        self.reference_to_curve.append_ids(_v);
+        self.equivalent_point.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12859,9 +12859,9 @@ impl<'a> ParseFromChunks<'a> for EventOccurrence_<'a> {
 }
 impl<'a> HasId for EventOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12893,8 +12893,8 @@ impl<'a> ParseFromChunks<'a> for EventOccurrenceAssignment_<'a> {
 }
 impl<'a> HasId for EventOccurrenceAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_event_occurrence.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_event_occurrence.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12926,8 +12926,8 @@ impl<'a> ParseFromChunks<'a> for EventOccurrenceContextAssignment_<'a> {
 }
 impl<'a> HasId for EventOccurrenceContextAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_event_occurrence_assignment.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_event_occurrence_assignment.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12959,8 +12959,8 @@ impl<'a> ParseFromChunks<'a> for EventOccurrenceContextRole_<'a> {
 }
 impl<'a> HasId for EventOccurrenceContextRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -12996,8 +12996,8 @@ impl<'a> ParseFromChunks<'a> for EventOccurrenceRole_<'a> {
 }
 impl<'a> HasId for EventOccurrenceRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13029,8 +13029,8 @@ impl<'a> ParseFromChunks<'a> for ExclusiveProductConceptFeatureCategory_<'a> {
 }
 impl<'a> HasId for ExclusiveProductConceptFeatureCategory_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13065,9 +13065,9 @@ impl<'a> ParseFromChunks<'a> for ExecutedAction_<'a> {
 }
 impl<'a> HasId for ExecutedAction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13096,7 +13096,7 @@ impl<'a> ParseFromChunks<'a> for ExpFunction_<'a> {
 }
 impl<'a> HasId for ExpFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13152,8 +13152,8 @@ impl<'a> ParseFromChunks<'a> for ExpressionConversionBasedUnit_<'a> {
 }
 impl<'a> HasId for ExpressionConversionBasedUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
-    self.name.append_ids(_v);
+        self.dimensions.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13191,10 +13191,10 @@ impl<'a> ParseFromChunks<'a> for Extension_<'a> {
 }
 impl<'a> HasId for Extension_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13229,9 +13229,9 @@ impl<'a> ParseFromChunks<'a> for ExternalIdentificationAssignment_<'a> {
 }
 impl<'a> HasId for ExternalIdentificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_id.append_ids(_v);
-    self.role.append_ids(_v);
-    self.source.append_ids(_v);
+        self.assigned_id.append_ids(_v);
+        self.role.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13264,7 +13264,7 @@ impl<'a> ParseFromChunks<'a> for ExternalSource_<'a> {
 }
 impl<'a> HasId for ExternalSource_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.source_id.append_ids(_v);
+        self.source_id.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13296,8 +13296,8 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedCharacterGlyph_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedCharacterGlyph_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13335,10 +13335,10 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedClass_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedClass_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13370,8 +13370,8 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedCurveFont_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedCurveFont_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13409,10 +13409,10 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedDimensionDefinition_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedDimensionDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to.append_ids(_v);
-    self.name.append_ids(_v);
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.applies_to.append_ids(_v);
+        self.name.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13450,10 +13450,10 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedFeatureDefinition_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedFeatureDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13494,11 +13494,11 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedGeneralProperty_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedGeneralProperty_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13533,9 +13533,9 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedHatchStyle_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedHatchStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
-    self.name.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13567,8 +13567,8 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedItem_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13606,10 +13606,10 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedItemRelationship_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedItemRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_item.append_ids(_v);
-    self.related_item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_item.append_ids(_v);
+        self.related_item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13641,8 +13641,8 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedStyle_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13674,8 +13674,8 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedSymbol_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13707,8 +13707,8 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedTextFont_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedTextFont_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13743,9 +13743,9 @@ impl<'a> ParseFromChunks<'a> for ExternallyDefinedTileStyle_<'a> {
 }
 impl<'a> HasId for ExternallyDefinedTileStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.item_id.append_ids(_v);
-    self.source.append_ids(_v);
-    self.name.append_ids(_v);
+        self.item_id.append_ids(_v);
+        self.source.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13783,10 +13783,10 @@ impl<'a> ParseFromChunks<'a> for ExtrudedAreaSolid_<'a> {
 }
 impl<'a> HasId for ExtrudedAreaSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_area.append_ids(_v);
-    self.extruded_direction.append_ids(_v);
-    self.depth.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_area.append_ids(_v);
+        self.extruded_direction.append_ids(_v);
+        self.depth.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13824,10 +13824,10 @@ impl<'a> ParseFromChunks<'a> for ExtrudedFaceSolid_<'a> {
 }
 impl<'a> HasId for ExtrudedFaceSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_face.append_ids(_v);
-    self.extruded_direction.append_ids(_v);
-    self.depth.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_face.append_ids(_v);
+        self.extruded_direction.append_ids(_v);
+        self.depth.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13859,8 +13859,8 @@ impl<'a> ParseFromChunks<'a> for Face_<'a> {
 }
 impl<'a> HasId for Face_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.bounds.append_ids(_v);
+        self.name.append_ids(_v);
+        self.bounds.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13892,8 +13892,8 @@ impl<'a> ParseFromChunks<'a> for FaceBasedSurfaceModel_<'a> {
 }
 impl<'a> HasId for FaceBasedSurfaceModel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.fbsm_faces.append_ids(_v);
+        self.name.append_ids(_v);
+        self.fbsm_faces.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13928,9 +13928,9 @@ impl<'a> ParseFromChunks<'a> for FaceBound_<'a> {
 }
 impl<'a> HasId for FaceBound_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.bound.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.bound.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -13965,9 +13965,9 @@ impl<'a> ParseFromChunks<'a> for FaceOuterBound_<'a> {
 }
 impl<'a> HasId for FaceOuterBound_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.bound.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.bound.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14002,9 +14002,9 @@ impl<'a> ParseFromChunks<'a> for FaceShapeRepresentation_<'a> {
 }
 impl<'a> HasId for FaceShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -14044,10 +14044,10 @@ impl<'a> ParseFromChunks<'a> for FaceSurface_<'a> {
 }
 impl<'a> HasId for FaceSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.bounds.append_ids(_v);
-    self.face_geometry.append_ids(_v);
-    self.same_sense.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.bounds.append_ids(_v);
+        self.face_geometry.append_ids(_v);
+        self.same_sense.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14079,8 +14079,8 @@ impl<'a> ParseFromChunks<'a> for FacetedBrep_<'a> {
 }
 impl<'a> HasId for FacetedBrep_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.outer.append_ids(_v);
+        self.name.append_ids(_v);
+        self.outer.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14115,9 +14115,9 @@ impl<'a> ParseFromChunks<'a> for FacetedBrepShapeRepresentation_<'a> {
 }
 impl<'a> HasId for FacetedBrepShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14149,8 +14149,8 @@ impl<'a> ParseFromChunks<'a> for FeatureComponentDefinition_<'a> {
 }
 impl<'a> HasId for FeatureComponentDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14188,10 +14188,10 @@ impl<'a> ParseFromChunks<'a> for FeatureComponentRelationship_<'a> {
 }
 impl<'a> HasId for FeatureComponentRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14223,8 +14223,8 @@ impl<'a> ParseFromChunks<'a> for FeatureDefinition_<'a> {
 }
 impl<'a> HasId for FeatureDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14256,8 +14256,8 @@ impl<'a> ParseFromChunks<'a> for FeatureInPanel_<'a> {
 }
 impl<'a> HasId for FeatureInPanel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14289,8 +14289,8 @@ impl<'a> ParseFromChunks<'a> for FeaturePattern_<'a> {
 }
 impl<'a> HasId for FeaturePattern_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14325,9 +14325,9 @@ impl<'a> ParseFromChunks<'a> for FeaturedShape_<'a> {
 }
 impl<'a> HasId for FeaturedShape_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14359,8 +14359,8 @@ impl<'a> ParseFromChunks<'a> for FillAreaStyle_<'a> {
 }
 impl<'a> HasId for FillAreaStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.fill_styles.append_ids(_v);
+        self.name.append_ids(_v);
+        self.fill_styles.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14392,8 +14392,8 @@ impl<'a> ParseFromChunks<'a> for FillAreaStyleColour_<'a> {
 }
 impl<'a> HasId for FillAreaStyleColour_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.fill_colour.append_ids(_v);
+        self.name.append_ids(_v);
+        self.fill_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14437,12 +14437,12 @@ impl<'a> ParseFromChunks<'a> for FillAreaStyleHatching_<'a> {
 }
 impl<'a> HasId for FillAreaStyleHatching_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.hatch_line_appearance.append_ids(_v);
-    self.start_of_next_hatch_line.append_ids(_v);
-    self.point_of_reference_hatch_line.append_ids(_v);
-    self.pattern_start.append_ids(_v);
-    self.hatch_line_angle.append_ids(_v);
+        self.name.append_ids(_v);
+        self.hatch_line_appearance.append_ids(_v);
+        self.start_of_next_hatch_line.append_ids(_v);
+        self.point_of_reference_hatch_line.append_ids(_v);
+        self.pattern_start.append_ids(_v);
+        self.hatch_line_angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14478,8 +14478,8 @@ impl<'a> ParseFromChunks<'a> for FillAreaStyleTileSymbolWithStyle_<'a> {
 }
 impl<'a> HasId for FillAreaStyleTileSymbolWithStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.symbol.append_ids(_v);
+        self.name.append_ids(_v);
+        self.symbol.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14517,10 +14517,10 @@ impl<'a> ParseFromChunks<'a> for FillAreaStyleTiles_<'a> {
 }
 impl<'a> HasId for FillAreaStyleTiles_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.tiling_pattern.append_ids(_v);
-    self.tiles.append_ids(_v);
-    self.tiling_scale.append_ids(_v);
+        self.name.append_ids(_v);
+        self.tiling_pattern.append_ids(_v);
+        self.tiles.append_ids(_v);
+        self.tiling_scale.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14562,10 +14562,10 @@ impl<'a> ParseFromChunks<'a> for Fillet_<'a> {
 }
 impl<'a> HasId for Fillet_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14603,10 +14603,10 @@ impl<'a> ParseFromChunks<'a> for FlatnessTolerance_<'a> {
 }
 impl<'a> HasId for FlatnessTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14639,7 +14639,7 @@ impl<'a> ParseFromChunks<'a> for FormatFunction_<'a> {
 }
 impl<'a> HasId for FormatFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14702,9 +14702,9 @@ impl<'a> ParseFromChunks<'a> for FoundedKinematicPath_<'a> {
 }
 impl<'a> HasId for FoundedKinematicPath_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14745,11 +14745,11 @@ impl<'a> ParseFromChunks<'a> for FullyConstrainedPair_<'a> {
 }
 impl<'a> HasId for FullyConstrainedPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14781,8 +14781,8 @@ impl<'a> ParseFromChunks<'a> for FunctionallyDefinedTransformation_<'a> {
 }
 impl<'a> HasId for FunctionallyDefinedTransformation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14838,16 +14838,16 @@ impl<'a> ParseFromChunks<'a> for GearPair_<'a> {
 }
 impl<'a> HasId for GearPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.radius_first_link.append_ids(_v);
-    self.radius_second_link.append_ids(_v);
-    self.bevel.append_ids(_v);
-    self.helical_angle.append_ids(_v);
-    self.gear_ratio.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.radius_first_link.append_ids(_v);
+        self.radius_second_link.append_ids(_v);
+        self.bevel.append_ids(_v);
+        self.helical_angle.append_ids(_v);
+        self.gear_ratio.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14882,9 +14882,9 @@ impl<'a> ParseFromChunks<'a> for GearPairRange_<'a> {
 }
 impl<'a> HasId for GearPairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_actual_rotation_1.append_ids(_v);
-    self.upper_limit_actual_rotation_1.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_actual_rotation_1.append_ids(_v);
+        self.upper_limit_actual_rotation_1.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14916,8 +14916,8 @@ impl<'a> ParseFromChunks<'a> for GearPairValue_<'a> {
 }
 impl<'a> HasId for GearPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_rotation_1.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_rotation_1.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14949,8 +14949,8 @@ impl<'a> ParseFromChunks<'a> for GeneralFeature_<'a> {
 }
 impl<'a> HasId for GeneralFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -14985,9 +14985,9 @@ impl<'a> ParseFromChunks<'a> for GeneralMaterialProperty_<'a> {
 }
 impl<'a> HasId for GeneralMaterialProperty_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15022,9 +15022,9 @@ impl<'a> ParseFromChunks<'a> for GeneralProperty_<'a> {
 }
 impl<'a> HasId for GeneralProperty_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15062,10 +15062,10 @@ impl<'a> ParseFromChunks<'a> for GeneralPropertyAssociation_<'a> {
 }
 impl<'a> HasId for GeneralPropertyAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.base_definition.append_ids(_v);
-    self.derived_definition.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.base_definition.append_ids(_v);
+        self.derived_definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15103,10 +15103,10 @@ impl<'a> ParseFromChunks<'a> for GeneralPropertyRelationship_<'a> {
 }
 impl<'a> HasId for GeneralPropertyRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_property.append_ids(_v);
-    self.related_property.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_property.append_ids(_v);
+        self.related_property.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15141,9 +15141,9 @@ impl<'a> ParseFromChunks<'a> for GenericCharacterGlyphSymbol_<'a> {
 }
 impl<'a> HasId for GenericCharacterGlyphSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15253,10 +15253,10 @@ impl<'a> ParseFromChunks<'a> for GeometricAlignment_<'a> {
 }
 impl<'a> HasId for GeometricAlignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15288,8 +15288,8 @@ impl<'a> ParseFromChunks<'a> for GeometricCurveSet_<'a> {
 }
 impl<'a> HasId for GeometricCurveSet_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.elements.append_ids(_v);
+        self.name.append_ids(_v);
+        self.elements.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15327,10 +15327,10 @@ impl<'a> ParseFromChunks<'a> for GeometricIntersection_<'a> {
 }
 impl<'a> HasId for GeometricIntersection_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15371,11 +15371,11 @@ impl<'a> ParseFromChunks<'a> for GeometricItemSpecificUsage_<'a> {
 }
 impl<'a> HasId for GeometricItemSpecificUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
-    self.used_representation.append_ids(_v);
-    self.identified_item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.used_representation.append_ids(_v);
+        self.identified_item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15410,9 +15410,9 @@ impl<'a> ParseFromChunks<'a> for GeometricRepresentationContext_<'a> {
 }
 impl<'a> HasId for GeometricRepresentationContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.context_identifier.append_ids(_v);
-    self.context_type.append_ids(_v);
-    self.coordinate_space_dimension.append_ids(_v);
+        self.context_identifier.append_ids(_v);
+        self.context_type.append_ids(_v);
+        self.coordinate_space_dimension.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15441,7 +15441,7 @@ impl<'a> ParseFromChunks<'a> for GeometricRepresentationItem_<'a> {
 }
 impl<'a> HasId for GeometricRepresentationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15473,8 +15473,8 @@ impl<'a> ParseFromChunks<'a> for GeometricSet_<'a> {
 }
 impl<'a> HasId for GeometricSet_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.elements.append_ids(_v);
+        self.name.append_ids(_v);
+        self.elements.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15516,10 +15516,10 @@ impl<'a> ParseFromChunks<'a> for GeometricTolerance_<'a> {
 }
 impl<'a> HasId for GeometricTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15557,10 +15557,10 @@ impl<'a> ParseFromChunks<'a> for GeometricToleranceRelationship_<'a> {
 }
 impl<'a> HasId for GeometricToleranceRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_geometric_tolerance.append_ids(_v);
-    self.related_geometric_tolerance.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_geometric_tolerance.append_ids(_v);
+        self.related_geometric_tolerance.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15601,11 +15601,11 @@ impl<'a> ParseFromChunks<'a> for GeometricToleranceWithDatumReference_<'a> {
 }
 impl<'a> HasId for GeometricToleranceWithDatumReference_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15646,11 +15646,11 @@ impl<'a> ParseFromChunks<'a> for GeometricToleranceWithDefinedUnit_<'a> {
 }
 impl<'a> HasId for GeometricToleranceWithDefinedUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.unit_size.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.unit_size.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15682,8 +15682,8 @@ impl<'a> ParseFromChunks<'a> for GeometricalToleranceCallout_<'a> {
 }
 impl<'a> HasId for GeometricalToleranceCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15718,9 +15718,9 @@ impl<'a> ParseFromChunks<'a> for GeometricallyBounded2dWireframeRepresentation_<
 }
 impl<'a> HasId for GeometricallyBounded2dWireframeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15755,9 +15755,9 @@ impl<'a> ParseFromChunks<'a> for GeometricallyBoundedSurfaceShapeRepresentation_
 }
 impl<'a> HasId for GeometricallyBoundedSurfaceShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15792,9 +15792,9 @@ impl<'a> ParseFromChunks<'a> for GeometricallyBoundedWireframeShapeRepresentatio
 }
 impl<'a> HasId for GeometricallyBoundedWireframeShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15829,9 +15829,9 @@ impl<'a> ParseFromChunks<'a> for GlobalUncertaintyAssignedContext_<'a> {
 }
 impl<'a> HasId for GlobalUncertaintyAssignedContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.context_identifier.append_ids(_v);
-    self.context_type.append_ids(_v);
-    self.uncertainty.append_ids(_v);
+        self.context_identifier.append_ids(_v);
+        self.context_type.append_ids(_v);
+        self.uncertainty.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15866,9 +15866,9 @@ impl<'a> ParseFromChunks<'a> for GlobalUnitAssignedContext_<'a> {
 }
 impl<'a> HasId for GlobalUnitAssignedContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.context_identifier.append_ids(_v);
-    self.context_type.append_ids(_v);
-    self.units.append_ids(_v);
+        self.context_identifier.append_ids(_v);
+        self.context_type.append_ids(_v);
+        self.units.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15900,8 +15900,8 @@ impl<'a> ParseFromChunks<'a> for Group_<'a> {
 }
 impl<'a> HasId for Group_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15930,7 +15930,7 @@ impl<'a> ParseFromChunks<'a> for GroupAssignment_<'a> {
 }
 impl<'a> HasId for GroupAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_group.append_ids(_v);
+        self.assigned_group.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -15972,10 +15972,10 @@ impl<'a> ParseFromChunks<'a> for GroupRelationship_<'a> {
 }
 impl<'a> HasId for GroupRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_group.append_ids(_v);
-    self.related_group.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_group.append_ids(_v);
+        self.related_group.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16010,9 +16010,9 @@ impl<'a> ParseFromChunks<'a> for HalfSpaceSolid_<'a> {
 }
 impl<'a> HasId for HalfSpaceSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.base_surface.append_ids(_v);
-    self.agreement_flag.append_ids(_v);
+        self.name.append_ids(_v);
+        self.base_surface.append_ids(_v);
+        self.agreement_flag.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16047,9 +16047,9 @@ impl<'a> ParseFromChunks<'a> for HardnessRepresentation_<'a> {
 }
 impl<'a> HasId for HardnessRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16090,11 +16090,11 @@ impl<'a> ParseFromChunks<'a> for HiddenElementOverRidingStyledItem_<'a> {
 }
 impl<'a> HasId for HiddenElementOverRidingStyledItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
-    self.over_ridden_style.append_ids(_v);
-    self.style_context.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
+        self.over_ridden_style.append_ids(_v);
+        self.style_context.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16132,10 +16132,10 @@ impl<'a> ParseFromChunks<'a> for HoleBottom_<'a> {
 }
 impl<'a> HasId for HoleBottom_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16167,8 +16167,8 @@ impl<'a> ParseFromChunks<'a> for HoleInPanel_<'a> {
 }
 impl<'a> HasId for HoleInPanel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16212,12 +16212,12 @@ impl<'a> ParseFromChunks<'a> for HomokineticPair_<'a> {
 }
 impl<'a> HasId for HomokineticPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.input_skew_angle.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.input_skew_angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16266,10 +16266,10 @@ impl<'a> ParseFromChunks<'a> for Hyperbola_<'a> {
 }
 impl<'a> HasId for Hyperbola_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.semi_axis.append_ids(_v);
-    self.semi_imag_axis.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.semi_axis.append_ids(_v);
+        self.semi_imag_axis.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16301,8 +16301,8 @@ impl<'a> ParseFromChunks<'a> for IdAttribute_<'a> {
 }
 impl<'a> HasId for IdAttribute_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.attribute_value.append_ids(_v);
-    self.identified_item.append_ids(_v);
+        self.attribute_value.append_ids(_v);
+        self.identified_item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16338,8 +16338,8 @@ impl<'a> ParseFromChunks<'a> for IdentificationAssignment_<'a> {
 }
 impl<'a> HasId for IdentificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_id.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_id.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16375,8 +16375,8 @@ impl<'a> ParseFromChunks<'a> for IdentificationRole_<'a> {
 }
 impl<'a> HasId for IdentificationRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16425,10 +16425,10 @@ impl<'a> ParseFromChunks<'a> for InclusionProductConceptFeature_<'a> {
 }
 impl<'a> HasId for InclusionProductConceptFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.condition.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.condition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16457,7 +16457,7 @@ impl<'a> ParseFromChunks<'a> for IndexExpression_<'a> {
 }
 impl<'a> HasId for IndexExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16489,8 +16489,8 @@ impl<'a> ParseFromChunks<'a> for InitialState_<'a> {
 }
 impl<'a> HasId for InitialState_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_mechanism.append_ids(_v);
-    self.pair_values.append_ids(_v);
+        self.applies_to_mechanism.append_ids(_v);
+        self.pair_values.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -16539,12 +16539,12 @@ impl<'a> ParseFromChunks<'a> for InstancedFeature_<'a> {
 }
 impl<'a> HasId for InstancedFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.shape_aspect__name.append_ids(_v);
-    self.shape_aspect__description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
-    self.characterized_object__name.append_ids(_v);
-    self.characterized_object__description.append_ids(_v);
+        self.shape_aspect__name.append_ids(_v);
+        self.shape_aspect__description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
+        self.characterized_object__name.append_ids(_v);
+        self.characterized_object__description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16573,7 +16573,7 @@ impl<'a> ParseFromChunks<'a> for IntLiteral_<'a> {
 }
 impl<'a> HasId for IntLiteral_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.the_value.append_ids(_v);
+        self.the_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16626,7 +16626,7 @@ impl<'a> ParseFromChunks<'a> for IntValueFunction_<'a> {
 }
 impl<'a> HasId for IntValueFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16679,7 +16679,7 @@ impl<'a> ParseFromChunks<'a> for InterpolatedConfigurationSequence_<'a> {
 }
 impl<'a> HasId for InterpolatedConfigurationSequence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.interpolation.append_ids(_v);
+        self.interpolation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16741,10 +16741,10 @@ impl<'a> ParseFromChunks<'a> for IntersectionCurve_<'a> {
 }
 impl<'a> HasId for IntersectionCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.curve_3d.append_ids(_v);
-    self.associated_geometry.append_ids(_v);
-    self.master_representation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.curve_3d.append_ids(_v);
+        self.associated_geometry.append_ids(_v);
+        self.master_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16773,7 +16773,7 @@ impl<'a> ParseFromChunks<'a> for IntervalExpression_<'a> {
 }
 impl<'a> HasId for IntervalExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16802,7 +16802,7 @@ impl<'a> ParseFromChunks<'a> for Invisibility_<'a> {
 }
 impl<'a> HasId for Invisibility_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.invisible_items.append_ids(_v);
+        self.invisible_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16848,10 +16848,10 @@ impl<'a> ParseFromChunks<'a> for ItemDefinedTransformation_<'a> {
 }
 impl<'a> HasId for ItemDefinedTransformation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16892,11 +16892,11 @@ impl<'a> ParseFromChunks<'a> for ItemIdentifiedRepresentationUsage_<'a> {
 }
 impl<'a> HasId for ItemIdentifiedRepresentationUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
-    self.used_representation.append_ids(_v);
-    self.identified_item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.used_representation.append_ids(_v);
+        self.identified_item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16928,8 +16928,8 @@ impl<'a> ParseFromChunks<'a> for Joggle_<'a> {
 }
 impl<'a> HasId for Joggle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -16967,10 +16967,10 @@ impl<'a> ParseFromChunks<'a> for JoggleTermination_<'a> {
 }
 impl<'a> HasId for JoggleTermination_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17002,8 +17002,8 @@ impl<'a> ParseFromChunks<'a> for KinematicAnalysisConsistency_<'a> {
 }
 impl<'a> HasId for KinematicAnalysisConsistency_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.control.append_ids(_v);
-    self.result.append_ids(_v);
+        self.control.append_ids(_v);
+        self.result.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17039,8 +17039,8 @@ impl<'a> ParseFromChunks<'a> for KinematicAnalysisResult_<'a> {
 }
 impl<'a> HasId for KinematicAnalysisResult_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.analysed_mechanism.append_ids(_v);
-    self.contained_kinematic_results.append_ids(_v);
+        self.analysed_mechanism.append_ids(_v);
+        self.contained_kinematic_results.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17072,8 +17072,8 @@ impl<'a> ParseFromChunks<'a> for KinematicControl_<'a> {
 }
 impl<'a> HasId for KinematicControl_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.controlled_mechanism.append_ids(_v);
-    self.contained_kinematic_programs.append_ids(_v);
+        self.controlled_mechanism.append_ids(_v);
+        self.contained_kinematic_programs.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17112,9 +17112,9 @@ impl<'a> ParseFromChunks<'a> for KinematicFrameBackgroundRepresentation_<'a> {
 }
 impl<'a> HasId for KinematicFrameBackgroundRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17155,11 +17155,11 @@ impl<'a> ParseFromChunks<'a> for KinematicFrameBackgroundRepresentationAssociati
 }
 impl<'a> HasId for KinematicFrameBackgroundRepresentationAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.rep_2.append_ids(_v);
-    self.transformation_operator.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.rep_2.append_ids(_v);
+        self.transformation_operator.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -17200,10 +17200,10 @@ impl<'a> ParseFromChunks<'a> for KinematicFrameBasedTransformation_<'a> {
 }
 impl<'a> HasId for KinematicFrameBasedTransformation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.functionally_defined_transformation__name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transformator.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.functionally_defined_transformation__name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transformator.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17238,9 +17238,9 @@ impl<'a> ParseFromChunks<'a> for KinematicGroundRepresentation_<'a> {
 }
 impl<'a> HasId for KinematicGroundRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17272,8 +17272,8 @@ impl<'a> ParseFromChunks<'a> for KinematicJoint_<'a> {
 }
 impl<'a> HasId for KinematicJoint_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.first_link.append_ids(_v);
-    self.second_link.append_ids(_v);
+        self.first_link.append_ids(_v);
+        self.second_link.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17332,9 +17332,9 @@ impl<'a> ParseFromChunks<'a> for KinematicLinkRepresentation_<'a> {
 }
 impl<'a> HasId for KinematicLinkRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17372,10 +17372,10 @@ impl<'a> ParseFromChunks<'a> for KinematicLinkRepresentationAssociation_<'a> {
 }
 impl<'a> HasId for KinematicLinkRepresentationAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.rep_2.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.rep_2.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17407,8 +17407,8 @@ impl<'a> ParseFromChunks<'a> for KinematicLinkRepresentationRelation_<'a> {
 }
 impl<'a> HasId for KinematicLinkRepresentationRelation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.topological_aspects.append_ids(_v);
-    self.geometric_aspects.append_ids(_v);
+        self.topological_aspects.append_ids(_v);
+        self.geometric_aspects.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17449,11 +17449,11 @@ impl<'a> ParseFromChunks<'a> for KinematicPair_<'a> {
 }
 impl<'a> HasId for KinematicPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17482,7 +17482,7 @@ impl<'a> ParseFromChunks<'a> for KinematicPath_<'a> {
 }
 impl<'a> HasId for KinematicPath_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17520,10 +17520,10 @@ impl<'a> ParseFromChunks<'a> for KinematicPropertyDefinition_<'a> {
 }
 impl<'a> HasId for KinematicPropertyDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
-    self.ground_definition.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.ground_definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17555,8 +17555,8 @@ impl<'a> ParseFromChunks<'a> for KinematicPropertyRepresentationRelation_<'a> {
 }
 impl<'a> HasId for KinematicPropertyRepresentationRelation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.definition.append_ids(_v);
-    self.used_representation.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.used_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17589,7 +17589,7 @@ impl<'a> ParseFromChunks<'a> for KinematicStructure_<'a> {
 }
 impl<'a> HasId for KinematicStructure_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.joints.append_ids(_v);
+        self.joints.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17647,8 +17647,8 @@ impl<'a> ParseFromChunks<'a> for KnownSource_<'a> {
 }
 impl<'a> HasId for KnownSource_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.source_id.append_ids(_v);
-    self.name.append_ids(_v);
+        self.source_id.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17691,8 +17691,8 @@ impl<'a> ParseFromChunks<'a> for Language_<'a> {
 }
 impl<'a> HasId for Language_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17727,9 +17727,9 @@ impl<'a> ParseFromChunks<'a> for LanguageAssignment_<'a> {
 }
 impl<'a> HasId for LanguageAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_class.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_class.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17772,9 +17772,9 @@ impl<'a> ParseFromChunks<'a> for LeaderCurve_<'a> {
 }
 impl<'a> HasId for LeaderCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17806,8 +17806,8 @@ impl<'a> ParseFromChunks<'a> for LeaderDirectedCallout_<'a> {
 }
 impl<'a> HasId for LeaderDirectedCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17839,8 +17839,8 @@ impl<'a> ParseFromChunks<'a> for LeaderDirectedDimension_<'a> {
 }
 impl<'a> HasId for LeaderDirectedDimension_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17878,10 +17878,10 @@ impl<'a> ParseFromChunks<'a> for LeaderTerminator_<'a> {
 }
 impl<'a> HasId for LeaderTerminator_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
-    self.annotated_curve.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
+        self.annotated_curve.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17910,7 +17910,7 @@ impl<'a> ParseFromChunks<'a> for LengthFunction_<'a> {
 }
 impl<'a> HasId for LengthFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17953,8 +17953,8 @@ impl<'a> ParseFromChunks<'a> for LengthMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for LengthMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -17983,7 +17983,7 @@ impl<'a> ParseFromChunks<'a> for LengthUnit_<'a> {
 }
 impl<'a> HasId for LengthUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18015,8 +18015,8 @@ impl<'a> ParseFromChunks<'a> for LightSource_<'a> {
 }
 impl<'a> HasId for LightSource_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.light_colour.append_ids(_v);
+        self.name.append_ids(_v);
+        self.light_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18048,8 +18048,8 @@ impl<'a> ParseFromChunks<'a> for LightSourceAmbient_<'a> {
 }
 impl<'a> HasId for LightSourceAmbient_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.light_colour.append_ids(_v);
+        self.name.append_ids(_v);
+        self.light_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18084,9 +18084,9 @@ impl<'a> ParseFromChunks<'a> for LightSourceDirectional_<'a> {
 }
 impl<'a> HasId for LightSourceDirectional_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.light_colour.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.light_colour.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18127,11 +18127,11 @@ impl<'a> ParseFromChunks<'a> for LightSourcePositional_<'a> {
 }
 impl<'a> HasId for LightSourcePositional_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.light_colour.append_ids(_v);
-    self.position.append_ids(_v);
-    self.constant_attenuation.append_ids(_v);
-    self.distance_attenuation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.light_colour.append_ids(_v);
+        self.position.append_ids(_v);
+        self.constant_attenuation.append_ids(_v);
+        self.distance_attenuation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18181,14 +18181,14 @@ impl<'a> ParseFromChunks<'a> for LightSourceSpot_<'a> {
 }
 impl<'a> HasId for LightSourceSpot_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.light_colour.append_ids(_v);
-    self.position.append_ids(_v);
-    self.orientation.append_ids(_v);
-    self.concentration_exponent.append_ids(_v);
-    self.constant_attenuation.append_ids(_v);
-    self.distance_attenuation.append_ids(_v);
-    self.spread_angle.append_ids(_v);
+        self.name.append_ids(_v);
+        self.light_colour.append_ids(_v);
+        self.position.append_ids(_v);
+        self.orientation.append_ids(_v);
+        self.concentration_exponent.append_ids(_v);
+        self.constant_attenuation.append_ids(_v);
+        self.distance_attenuation.append_ids(_v);
+        self.spread_angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18217,7 +18217,7 @@ impl<'a> ParseFromChunks<'a> for LikeExpression_<'a> {
 }
 impl<'a> HasId for LikeExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18279,10 +18279,10 @@ impl<'a> ParseFromChunks<'a> for LimitsAndFits_<'a> {
 }
 impl<'a> HasId for LimitsAndFits_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.form_variance.append_ids(_v);
-    self.zone_variance.append_ids(_v);
-    self.grade.append_ids(_v);
-    self.source.append_ids(_v);
+        self.form_variance.append_ids(_v);
+        self.zone_variance.append_ids(_v);
+        self.grade.append_ids(_v);
+        self.source.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18317,9 +18317,9 @@ impl<'a> ParseFromChunks<'a> for Line_<'a> {
 }
 impl<'a> HasId for Line_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.pnt.append_ids(_v);
-    self.dir.append_ids(_v);
+        self.name.append_ids(_v);
+        self.pnt.append_ids(_v);
+        self.dir.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18357,10 +18357,10 @@ impl<'a> ParseFromChunks<'a> for LineProfileTolerance_<'a> {
 }
 impl<'a> HasId for LineProfileTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18392,8 +18392,8 @@ impl<'a> ParseFromChunks<'a> for LinearDimension_<'a> {
 }
 impl<'a> HasId for LinearDimension_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18452,7 +18452,7 @@ impl<'a> ParseFromChunks<'a> for LiteralNumber_<'a> {
 }
 impl<'a> HasId for LiteralNumber_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.the_value.append_ids(_v);
+        self.the_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18490,10 +18490,10 @@ impl<'a> ParseFromChunks<'a> for LocalTime_<'a> {
 }
 impl<'a> HasId for LocalTime_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.hour_component.append_ids(_v);
-    self.minute_component.append_ids(_v);
-    self.second_component.append_ids(_v);
-    self.zone.append_ids(_v);
+        self.hour_component.append_ids(_v);
+        self.minute_component.append_ids(_v);
+        self.second_component.append_ids(_v);
+        self.zone.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18528,9 +18528,9 @@ impl<'a> ParseFromChunks<'a> for LocationShapeRepresentation_<'a> {
 }
 impl<'a> HasId for LocationShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18562,8 +18562,8 @@ impl<'a> ParseFromChunks<'a> for Locator_<'a> {
 }
 impl<'a> HasId for Locator_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18592,7 +18592,7 @@ impl<'a> ParseFromChunks<'a> for Log10Function_<'a> {
 }
 impl<'a> HasId for Log10Function_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18621,7 +18621,7 @@ impl<'a> ParseFromChunks<'a> for Log2Function_<'a> {
 }
 impl<'a> HasId for Log2Function_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18650,7 +18650,7 @@ impl<'a> ParseFromChunks<'a> for LogFunction_<'a> {
 }
 impl<'a> HasId for LogFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18679,7 +18679,7 @@ impl<'a> ParseFromChunks<'a> for Loop_<'a> {
 }
 impl<'a> HasId for Loop_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18714,9 +18714,9 @@ impl<'a> ParseFromChunks<'a> for LotEffectivity_<'a> {
 }
 impl<'a> HasId for LotEffectivity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.effectivity_lot_id.append_ids(_v);
-    self.effectivity_lot_size.append_ids(_v);
+        self.id.append_ids(_v);
+        self.effectivity_lot_id.append_ids(_v);
+        self.effectivity_lot_size.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18759,8 +18759,8 @@ impl<'a> ParseFromChunks<'a> for LuminousIntensityMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for LuminousIntensityMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18789,7 +18789,7 @@ impl<'a> ParseFromChunks<'a> for LuminousIntensityUnit_<'a> {
 }
 impl<'a> HasId for LuminousIntensityUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18839,14 +18839,14 @@ impl<'a> ParseFromChunks<'a> for MakeFromUsageOption_<'a> {
 }
 impl<'a> HasId for MakeFromUsageOption_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition.append_ids(_v);
-    self.related_product_definition.append_ids(_v);
-    self.ranking.append_ids(_v);
-    self.ranking_rationale.append_ids(_v);
-    self.quantity.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition.append_ids(_v);
+        self.related_product_definition.append_ids(_v);
+        self.ranking.append_ids(_v);
+        self.ranking_rationale.append_ids(_v);
+        self.quantity.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18878,8 +18878,8 @@ impl<'a> ParseFromChunks<'a> for ManifoldSolidBrep_<'a> {
 }
 impl<'a> HasId for ManifoldSolidBrep_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.outer.append_ids(_v);
+        self.name.append_ids(_v);
+        self.outer.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18914,9 +18914,9 @@ impl<'a> ParseFromChunks<'a> for ManifoldSubsurfaceShapeRepresentation_<'a> {
 }
 impl<'a> HasId for ManifoldSubsurfaceShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18951,9 +18951,9 @@ impl<'a> ParseFromChunks<'a> for ManifoldSurfaceShapeRepresentation_<'a> {
 }
 impl<'a> HasId for ManifoldSurfaceShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -18988,9 +18988,9 @@ impl<'a> ParseFromChunks<'a> for MappedItem_<'a> {
 }
 impl<'a> HasId for MappedItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.mapping_source.append_ids(_v);
-    self.mapping_target.append_ids(_v);
+        self.name.append_ids(_v);
+        self.mapping_source.append_ids(_v);
+        self.mapping_target.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19088,8 +19088,8 @@ impl<'a> ParseFromChunks<'a> for MassMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for MassMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19118,7 +19118,7 @@ impl<'a> ParseFromChunks<'a> for MassUnit_<'a> {
 }
 impl<'a> HasId for MassUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19150,8 +19150,8 @@ impl<'a> ParseFromChunks<'a> for MaterialDesignation_<'a> {
 }
 impl<'a> HasId for MaterialDesignation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.definitions.append_ids(_v);
+        self.name.append_ids(_v);
+        self.definitions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19189,10 +19189,10 @@ impl<'a> ParseFromChunks<'a> for MaterialDesignationCharacterization_<'a> {
 }
 impl<'a> HasId for MaterialDesignationCharacterization_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.designation.append_ids(_v);
-    self.property.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.designation.append_ids(_v);
+        self.property.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19227,9 +19227,9 @@ impl<'a> ParseFromChunks<'a> for MaterialProperty_<'a> {
 }
 impl<'a> HasId for MaterialProperty_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19264,9 +19264,9 @@ impl<'a> ParseFromChunks<'a> for MaterialPropertyRepresentation_<'a> {
 }
 impl<'a> HasId for MaterialPropertyRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.definition.append_ids(_v);
-    self.used_representation.append_ids(_v);
-    self.dependent_environment.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.used_representation.append_ids(_v);
+        self.dependent_environment.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19295,7 +19295,7 @@ impl<'a> ParseFromChunks<'a> for MaximumFunction_<'a> {
 }
 impl<'a> HasId for MaximumFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19333,10 +19333,10 @@ impl<'a> ParseFromChunks<'a> for MeasureQualification_<'a> {
 }
 impl<'a> HasId for MeasureQualification_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.qualified_measure.append_ids(_v);
-    self.qualifiers.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.qualified_measure.append_ids(_v);
+        self.qualifiers.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19371,9 +19371,9 @@ impl<'a> ParseFromChunks<'a> for MeasureRepresentationItem_<'a> {
 }
 impl<'a> HasId for MeasureRepresentationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.name.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19489,8 +19489,8 @@ impl<'a> ParseFromChunks<'a> for MeasureWithUnit_<'a> {
 }
 impl<'a> HasId for MeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19525,9 +19525,9 @@ impl<'a> ParseFromChunks<'a> for MechanicalDesignGeometricPresentationArea_<'a> 
 }
 impl<'a> HasId for MechanicalDesignGeometricPresentationArea_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19562,9 +19562,9 @@ impl<'a> ParseFromChunks<'a> for MechanicalDesignGeometricPresentationRepresenta
 }
 impl<'a> HasId for MechanicalDesignGeometricPresentationRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19599,9 +19599,9 @@ impl<'a> ParseFromChunks<'a> for Mechanism_<'a> {
 }
 impl<'a> HasId for Mechanism_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.structure_definition.append_ids(_v);
-    self.base.append_ids(_v);
-    self.containing_property.append_ids(_v);
+        self.structure_definition.append_ids(_v);
+        self.base.append_ids(_v);
+        self.containing_property.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19643,11 +19643,11 @@ impl<'a> ParseFromChunks<'a> for MechanismBasePlacement_<'a> {
 }
 impl<'a> HasId for MechanismBasePlacement_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.transformation_operator.append_ids(_v);
-    self.base_of_mechanism.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.transformation_operator.append_ids(_v);
+        self.base_of_mechanism.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19676,7 +19676,7 @@ impl<'a> ParseFromChunks<'a> for MinimumFunction_<'a> {
 }
 impl<'a> HasId for MinimumFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19705,7 +19705,7 @@ impl<'a> ParseFromChunks<'a> for MinusExpression_<'a> {
 }
 impl<'a> HasId for MinusExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19734,7 +19734,7 @@ impl<'a> ParseFromChunks<'a> for MinusFunction_<'a> {
 }
 impl<'a> HasId for MinusFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19774,7 +19774,7 @@ impl<'a> ParseFromChunks<'a> for ModExpression_<'a> {
 }
 impl<'a> HasId for ModExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19815,11 +19815,11 @@ impl<'a> ParseFromChunks<'a> for ModifiedGeometricTolerance_<'a> {
 }
 impl<'a> HasId for ModifiedGeometricTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.modifier.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.modifier.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19851,8 +19851,8 @@ impl<'a> ParseFromChunks<'a> for ModifiedPattern_<'a> {
 }
 impl<'a> HasId for ModifiedPattern_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19887,9 +19887,9 @@ impl<'a> ParseFromChunks<'a> for MomentsOfInertiaRepresentation_<'a> {
 }
 impl<'a> HasId for MomentsOfInertiaRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19941,11 +19941,11 @@ impl<'a> ParseFromChunks<'a> for MotionLinkRelationship_<'a> {
 }
 impl<'a> HasId for MotionLinkRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.rep_2.append_ids(_v);
-    self.related_frame.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.rep_2.append_ids(_v);
+        self.related_frame.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -19997,7 +19997,7 @@ impl<'a> ParseFromChunks<'a> for MultExpression_<'a> {
 }
 impl<'a> HasId for MultExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20035,10 +20035,10 @@ impl<'a> ParseFromChunks<'a> for MultiLanguageAttributeAssignment_<'a> {
 }
 impl<'a> HasId for MultiLanguageAttributeAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.attribute_name.append_ids(_v);
-    self.attribute_value.append_ids(_v);
-    self.role.append_ids(_v);
-    self.items.append_ids(_v);
+        self.attribute_name.append_ids(_v);
+        self.attribute_value.append_ids(_v);
+        self.role.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20071,7 +20071,7 @@ impl<'a> ParseFromChunks<'a> for MultipleArityBooleanExpression_<'a> {
 }
 impl<'a> HasId for MultipleArityBooleanExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20100,7 +20100,7 @@ impl<'a> ParseFromChunks<'a> for MultipleArityFunctionCall_<'a> {
 }
 impl<'a> HasId for MultipleArityFunctionCall_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20129,7 +20129,7 @@ impl<'a> ParseFromChunks<'a> for MultipleArityGenericExpression_<'a> {
 }
 impl<'a> HasId for MultipleArityGenericExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20158,7 +20158,7 @@ impl<'a> ParseFromChunks<'a> for MultipleArityNumericExpression_<'a> {
 }
 impl<'a> HasId for MultipleArityNumericExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20187,7 +20187,7 @@ impl<'a> ParseFromChunks<'a> for NameAssignment_<'a> {
 }
 impl<'a> HasId for NameAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_name.append_ids(_v);
+        self.assigned_name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20219,8 +20219,8 @@ impl<'a> ParseFromChunks<'a> for NameAttribute_<'a> {
 }
 impl<'a> HasId for NameAttribute_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.attribute_value.append_ids(_v);
-    self.named_item.append_ids(_v);
+        self.attribute_value.append_ids(_v);
+        self.named_item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20257,7 +20257,7 @@ impl<'a> ParseFromChunks<'a> for NamedUnit_<'a> {
 }
 impl<'a> HasId for NamedUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20286,7 +20286,7 @@ impl<'a> ParseFromChunks<'a> for NamedUnitVariable_<'a> {
 }
 impl<'a> HasId for NamedUnitVariable_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20330,12 +20330,12 @@ impl<'a> ParseFromChunks<'a> for NextAssemblyUsageOccurrence_<'a> {
 }
 impl<'a> HasId for NextAssemblyUsageOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition.append_ids(_v);
-    self.related_product_definition.append_ids(_v);
-    self.reference_designator.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition.append_ids(_v);
+        self.related_product_definition.append_ids(_v);
+        self.reference_designator.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20373,10 +20373,10 @@ impl<'a> ParseFromChunks<'a> for NgonClosedProfile_<'a> {
 }
 impl<'a> HasId for NgonClosedProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20411,9 +20411,9 @@ impl<'a> ParseFromChunks<'a> for NonManifoldSurfaceShapeRepresentation_<'a> {
 }
 impl<'a> HasId for NonManifoldSurfaceShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 
@@ -20456,7 +20456,7 @@ impl<'a> ParseFromChunks<'a> for NotExpression_<'a> {
 }
 impl<'a> HasId for NotExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20591,8 +20591,8 @@ impl<'a> ParseFromChunks<'a> for ObjectRole_<'a> {
 }
 impl<'a> HasId for ObjectRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20621,7 +20621,7 @@ impl<'a> ParseFromChunks<'a> for OddFunction_<'a> {
 }
 impl<'a> HasId for OddFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20659,10 +20659,10 @@ impl<'a> ParseFromChunks<'a> for OffsetCurve2d_<'a> {
 }
 impl<'a> HasId for OffsetCurve2d_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_curve.append_ids(_v);
-    self.distance.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_curve.append_ids(_v);
+        self.distance.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20703,11 +20703,11 @@ impl<'a> ParseFromChunks<'a> for OffsetCurve3d_<'a> {
 }
 impl<'a> HasId for OffsetCurve3d_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_curve.append_ids(_v);
-    self.distance.append_ids(_v);
-    self.self_intersect.append_ids(_v);
-    self.ref_direction.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_curve.append_ids(_v);
+        self.distance.append_ids(_v);
+        self.self_intersect.append_ids(_v);
+        self.ref_direction.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20745,10 +20745,10 @@ impl<'a> ParseFromChunks<'a> for OffsetSurface_<'a> {
 }
 impl<'a> HasId for OffsetSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_surface.append_ids(_v);
-    self.distance.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_surface.append_ids(_v);
+        self.distance.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20780,8 +20780,8 @@ impl<'a> ParseFromChunks<'a> for OneDirectionRepeatFactor_<'a> {
 }
 impl<'a> HasId for OneDirectionRepeatFactor_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.repeat_factor.append_ids(_v);
+        self.name.append_ids(_v);
+        self.repeat_factor.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20819,10 +20819,10 @@ impl<'a> ParseFromChunks<'a> for OpenPathProfile_<'a> {
 }
 impl<'a> HasId for OpenPathProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20854,8 +20854,8 @@ impl<'a> ParseFromChunks<'a> for OpenShell_<'a> {
 }
 impl<'a> HasId for OpenShell_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.cfs_faces.append_ids(_v);
+        self.name.append_ids(_v);
+        self.cfs_faces.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20884,7 +20884,7 @@ impl<'a> ParseFromChunks<'a> for OrExpression_<'a> {
 }
 impl<'a> HasId for OrExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20916,8 +20916,8 @@ impl<'a> ParseFromChunks<'a> for OrdinateDimension_<'a> {
 }
 impl<'a> HasId for OrdinateDimension_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20952,9 +20952,9 @@ impl<'a> ParseFromChunks<'a> for Organization_<'a> {
 }
 impl<'a> HasId for Organization_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -20986,8 +20986,8 @@ impl<'a> ParseFromChunks<'a> for OrganizationAssignment_<'a> {
 }
 impl<'a> HasId for OrganizationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_organization.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_organization.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21029,10 +21029,10 @@ impl<'a> ParseFromChunks<'a> for OrganizationRelationship_<'a> {
 }
 impl<'a> HasId for OrganizationRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_organization.append_ids(_v);
-    self.related_organization.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_organization.append_ids(_v);
+        self.related_organization.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21061,7 +21061,7 @@ impl<'a> ParseFromChunks<'a> for OrganizationRole_<'a> {
 }
 impl<'a> HasId for OrganizationRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21129,20 +21129,20 @@ impl<'a> ParseFromChunks<'a> for OrganizationalAddress_<'a> {
 }
 impl<'a> HasId for OrganizationalAddress_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.internal_location.append_ids(_v);
-    self.street_number.append_ids(_v);
-    self.street.append_ids(_v);
-    self.postal_box.append_ids(_v);
-    self.town.append_ids(_v);
-    self.region.append_ids(_v);
-    self.postal_code.append_ids(_v);
-    self.country.append_ids(_v);
-    self.facsimile_number.append_ids(_v);
-    self.telephone_number.append_ids(_v);
-    self.electronic_mail_address.append_ids(_v);
-    self.telex_number.append_ids(_v);
-    self.organizations.append_ids(_v);
-    self.description.append_ids(_v);
+        self.internal_location.append_ids(_v);
+        self.street_number.append_ids(_v);
+        self.street.append_ids(_v);
+        self.postal_box.append_ids(_v);
+        self.town.append_ids(_v);
+        self.region.append_ids(_v);
+        self.postal_code.append_ids(_v);
+        self.country.append_ids(_v);
+        self.facsimile_number.append_ids(_v);
+        self.telephone_number.append_ids(_v);
+        self.electronic_mail_address.append_ids(_v);
+        self.telex_number.append_ids(_v);
+        self.organizations.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21177,9 +21177,9 @@ impl<'a> ParseFromChunks<'a> for OrganizationalProject_<'a> {
 }
 impl<'a> HasId for OrganizationalProject_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.responsible_organizations.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.responsible_organizations.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21211,8 +21211,8 @@ impl<'a> ParseFromChunks<'a> for OrganizationalProjectAssignment_<'a> {
 }
 impl<'a> HasId for OrganizationalProjectAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_organizational_project.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_organizational_project.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21254,10 +21254,10 @@ impl<'a> ParseFromChunks<'a> for OrganizationalProjectRelationship_<'a> {
 }
 impl<'a> HasId for OrganizationalProjectRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_organizational_project.append_ids(_v);
-    self.related_organizational_project.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_organizational_project.append_ids(_v);
+        self.related_organizational_project.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21289,8 +21289,8 @@ impl<'a> ParseFromChunks<'a> for OrganizationalProjectRole_<'a> {
 }
 impl<'a> HasId for OrganizationalProjectRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21326,9 +21326,9 @@ impl<'a> ParseFromChunks<'a> for OrientedClosedShell_<'a> {
 }
 impl<'a> HasId for OrientedClosedShell_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.closed_shell_element.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.closed_shell_element.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21365,9 +21365,9 @@ impl<'a> ParseFromChunks<'a> for OrientedEdge_<'a> {
 }
 impl<'a> HasId for OrientedEdge_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.edge_element.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.edge_element.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21403,9 +21403,9 @@ impl<'a> ParseFromChunks<'a> for OrientedFace_<'a> {
 }
 impl<'a> HasId for OrientedFace_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.face_element.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.face_element.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21441,9 +21441,9 @@ impl<'a> ParseFromChunks<'a> for OrientedOpenShell_<'a> {
 }
 impl<'a> HasId for OrientedOpenShell_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.open_shell_element.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.open_shell_element.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21479,9 +21479,9 @@ impl<'a> ParseFromChunks<'a> for OrientedPath_<'a> {
 }
 impl<'a> HasId for OrientedPath_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.path_element.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.path_element.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21513,8 +21513,8 @@ impl<'a> ParseFromChunks<'a> for OrientedSurface_<'a> {
 }
 impl<'a> HasId for OrientedSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21549,9 +21549,9 @@ impl<'a> ParseFromChunks<'a> for OuterBoundaryCurve_<'a> {
 }
 impl<'a> HasId for OuterBoundaryCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.segments.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.segments.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21589,10 +21589,10 @@ impl<'a> ParseFromChunks<'a> for OverRidingStyledItem_<'a> {
 }
 impl<'a> HasId for OverRidingStyledItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
-    self.over_ridden_style.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
+        self.over_ridden_style.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21627,9 +21627,9 @@ impl<'a> ParseFromChunks<'a> for PackageProductConceptFeature_<'a> {
 }
 impl<'a> HasId for PackageProductConceptFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21661,8 +21661,8 @@ impl<'a> ParseFromChunks<'a> for PairActuator_<'a> {
 }
 impl<'a> HasId for PairActuator_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.actuated_pair.append_ids(_v);
-    self.name.append_ids(_v);
+        self.actuated_pair.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21691,7 +21691,7 @@ impl<'a> ParseFromChunks<'a> for PairValue_<'a> {
 }
 impl<'a> HasId for PairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21726,9 +21726,9 @@ impl<'a> ParseFromChunks<'a> for Parabola_<'a> {
 }
 impl<'a> HasId for Parabola_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.focal_dist.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.focal_dist.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21769,11 +21769,11 @@ impl<'a> ParseFromChunks<'a> for ParallelOffset_<'a> {
 }
 impl<'a> HasId for ParallelOffset_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
-    self.offset.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
+        self.offset.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21814,11 +21814,11 @@ impl<'a> ParseFromChunks<'a> for ParallelismTolerance_<'a> {
 }
 impl<'a> HasId for ParallelismTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21861,8 +21861,8 @@ impl<'a> ParseFromChunks<'a> for ParametricRepresentationContext_<'a> {
 }
 impl<'a> HasId for ParametricRepresentationContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.context_identifier.append_ids(_v);
-    self.context_type.append_ids(_v);
+        self.context_identifier.append_ids(_v);
+        self.context_type.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21900,10 +21900,10 @@ impl<'a> ParseFromChunks<'a> for PartialCircularProfile_<'a> {
 }
 impl<'a> HasId for PartialCircularProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21935,8 +21935,8 @@ impl<'a> ParseFromChunks<'a> for Path_<'a> {
 }
 impl<'a> HasId for Path_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.edge_list.append_ids(_v);
+        self.name.append_ids(_v);
+        self.edge_list.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -21974,10 +21974,10 @@ impl<'a> ParseFromChunks<'a> for PathFeatureComponent_<'a> {
 }
 impl<'a> HasId for PathFeatureComponent_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22012,9 +22012,9 @@ impl<'a> ParseFromChunks<'a> for PathShapeRepresentation_<'a> {
 }
 impl<'a> HasId for PathShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22052,10 +22052,10 @@ impl<'a> ParseFromChunks<'a> for PatternOffsetMembership_<'a> {
 }
 impl<'a> HasId for PatternOffsetMembership_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22093,10 +22093,10 @@ impl<'a> ParseFromChunks<'a> for PatternOmitMembership_<'a> {
 }
 impl<'a> HasId for PatternOmitMembership_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22131,9 +22131,9 @@ impl<'a> ParseFromChunks<'a> for Pcurve_<'a> {
 }
 impl<'a> HasId for Pcurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_surface.append_ids(_v);
-    self.reference_to_curve.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_surface.append_ids(_v);
+        self.reference_to_curve.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22175,10 +22175,10 @@ impl<'a> ParseFromChunks<'a> for PerpendicularTo_<'a> {
 }
 impl<'a> HasId for PerpendicularTo_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22219,11 +22219,11 @@ impl<'a> ParseFromChunks<'a> for PerpendicularityTolerance_<'a> {
 }
 impl<'a> HasId for PerpendicularityTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22267,12 +22267,12 @@ impl<'a> ParseFromChunks<'a> for Person_<'a> {
 }
 impl<'a> HasId for Person_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.last_name.append_ids(_v);
-    self.first_name.append_ids(_v);
-    self.middle_names.append_ids(_v);
-    self.prefix_titles.append_ids(_v);
-    self.suffix_titles.append_ids(_v);
+        self.id.append_ids(_v);
+        self.last_name.append_ids(_v);
+        self.first_name.append_ids(_v);
+        self.middle_names.append_ids(_v);
+        self.prefix_titles.append_ids(_v);
+        self.suffix_titles.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22304,8 +22304,8 @@ impl<'a> ParseFromChunks<'a> for PersonAndOrganization_<'a> {
 }
 impl<'a> HasId for PersonAndOrganization_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.the_person.append_ids(_v);
-    self.the_organization.append_ids(_v);
+        self.the_person.append_ids(_v);
+        self.the_organization.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -22394,22 +22394,22 @@ impl<'a> ParseFromChunks<'a> for PersonAndOrganizationAddress_<'a> {
 }
 impl<'a> HasId for PersonAndOrganizationAddress_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.address__internal_location.append_ids(_v);
-    self.address__street_number.append_ids(_v);
-    self.address__street.append_ids(_v);
-    self.address__postal_box.append_ids(_v);
-    self.address__town.append_ids(_v);
-    self.address__region.append_ids(_v);
-    self.address__postal_code.append_ids(_v);
-    self.address__country.append_ids(_v);
-    self.address__facsimile_number.append_ids(_v);
-    self.address__telephone_number.append_ids(_v);
-    self.address__electronic_mail_address.append_ids(_v);
-    self.address__telex_number.append_ids(_v);
-    self.organizations.append_ids(_v);
-    self.organizational_address__description.append_ids(_v);
-    self.people.append_ids(_v);
-    self.personal_address__description.append_ids(_v);
+        self.address__internal_location.append_ids(_v);
+        self.address__street_number.append_ids(_v);
+        self.address__street.append_ids(_v);
+        self.address__postal_box.append_ids(_v);
+        self.address__town.append_ids(_v);
+        self.address__region.append_ids(_v);
+        self.address__postal_code.append_ids(_v);
+        self.address__country.append_ids(_v);
+        self.address__facsimile_number.append_ids(_v);
+        self.address__telephone_number.append_ids(_v);
+        self.address__electronic_mail_address.append_ids(_v);
+        self.address__telex_number.append_ids(_v);
+        self.organizations.append_ids(_v);
+        self.organizational_address__description.append_ids(_v);
+        self.people.append_ids(_v);
+        self.personal_address__description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22441,8 +22441,8 @@ impl<'a> ParseFromChunks<'a> for PersonAndOrganizationAssignment_<'a> {
 }
 impl<'a> HasId for PersonAndOrganizationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_person_and_organization.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_person_and_organization.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22475,7 +22475,7 @@ impl<'a> ParseFromChunks<'a> for PersonAndOrganizationRole_<'a> {
 }
 impl<'a> HasId for PersonAndOrganizationRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22547,20 +22547,20 @@ impl<'a> ParseFromChunks<'a> for PersonalAddress_<'a> {
 }
 impl<'a> HasId for PersonalAddress_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.internal_location.append_ids(_v);
-    self.street_number.append_ids(_v);
-    self.street.append_ids(_v);
-    self.postal_box.append_ids(_v);
-    self.town.append_ids(_v);
-    self.region.append_ids(_v);
-    self.postal_code.append_ids(_v);
-    self.country.append_ids(_v);
-    self.facsimile_number.append_ids(_v);
-    self.telephone_number.append_ids(_v);
-    self.electronic_mail_address.append_ids(_v);
-    self.telex_number.append_ids(_v);
-    self.people.append_ids(_v);
-    self.description.append_ids(_v);
+        self.internal_location.append_ids(_v);
+        self.street_number.append_ids(_v);
+        self.street.append_ids(_v);
+        self.postal_box.append_ids(_v);
+        self.town.append_ids(_v);
+        self.region.append_ids(_v);
+        self.postal_code.append_ids(_v);
+        self.country.append_ids(_v);
+        self.facsimile_number.append_ids(_v);
+        self.telephone_number.append_ids(_v);
+        self.electronic_mail_address.append_ids(_v);
+        self.telex_number.append_ids(_v);
+        self.people.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22601,11 +22601,11 @@ impl<'a> ParseFromChunks<'a> for PhysicallyModelledProductDefinition_<'a> {
 }
 impl<'a> HasId for PhysicallyModelledProductDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.description.append_ids(_v);
-    self.formation.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
-    self.documentation_ids.append_ids(_v);
+        self.id.append_ids(_v);
+        self.description.append_ids(_v);
+        self.formation.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
+        self.documentation_ids.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22646,11 +22646,11 @@ impl<'a> ParseFromChunks<'a> for PlacedDatumTargetFeature_<'a> {
 }
 impl<'a> HasId for PlacedDatumTargetFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
-    self.target_id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
+        self.target_id.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22688,10 +22688,10 @@ impl<'a> ParseFromChunks<'a> for PlacedFeature_<'a> {
 }
 impl<'a> HasId for PlacedFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22723,8 +22723,8 @@ impl<'a> ParseFromChunks<'a> for Placement_<'a> {
 }
 impl<'a> HasId for Placement_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.location.append_ids(_v);
+        self.name.append_ids(_v);
+        self.location.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22762,10 +22762,10 @@ impl<'a> ParseFromChunks<'a> for PlanarBox_<'a> {
 }
 impl<'a> HasId for PlanarBox_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.size_in_x.append_ids(_v);
-    self.size_in_y.append_ids(_v);
-    self.placement.append_ids(_v);
+        self.name.append_ids(_v);
+        self.size_in_x.append_ids(_v);
+        self.size_in_y.append_ids(_v);
+        self.placement.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22815,14 +22815,14 @@ impl<'a> ParseFromChunks<'a> for PlanarCurvePair_<'a> {
 }
 impl<'a> HasId for PlanarCurvePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.curve_1.append_ids(_v);
-    self.curve_2.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.curve_1.append_ids(_v);
+        self.curve_2.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22857,9 +22857,9 @@ impl<'a> ParseFromChunks<'a> for PlanarCurvePairRange_<'a> {
 }
 impl<'a> HasId for PlanarCurvePairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.range_on_curve_1.append_ids(_v);
-    self.range_on_curve_2.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.range_on_curve_1.append_ids(_v);
+        self.range_on_curve_2.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22894,9 +22894,9 @@ impl<'a> ParseFromChunks<'a> for PlanarExtent_<'a> {
 }
 impl<'a> HasId for PlanarExtent_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.size_in_x.append_ids(_v);
-    self.size_in_y.append_ids(_v);
+        self.name.append_ids(_v);
+        self.size_in_x.append_ids(_v);
+        self.size_in_y.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22937,11 +22937,11 @@ impl<'a> ParseFromChunks<'a> for PlanarPair_<'a> {
 }
 impl<'a> HasId for PlanarPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -22988,13 +22988,13 @@ impl<'a> ParseFromChunks<'a> for PlanarPairRange_<'a> {
 }
 impl<'a> HasId for PlanarPairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_actual_rotation.append_ids(_v);
-    self.upper_limit_actual_rotation.append_ids(_v);
-    self.lower_limit_actual_translation_x.append_ids(_v);
-    self.upper_limit_actual_translation_x.append_ids(_v);
-    self.lower_limit_actual_translation_y.append_ids(_v);
-    self.upper_limit_actual_translation_y.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_actual_rotation.append_ids(_v);
+        self.upper_limit_actual_rotation.append_ids(_v);
+        self.lower_limit_actual_translation_x.append_ids(_v);
+        self.upper_limit_actual_translation_x.append_ids(_v);
+        self.lower_limit_actual_translation_y.append_ids(_v);
+        self.upper_limit_actual_translation_y.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23032,10 +23032,10 @@ impl<'a> ParseFromChunks<'a> for PlanarPairValue_<'a> {
 }
 impl<'a> HasId for PlanarPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_rotation.append_ids(_v);
-    self.actual_translation_x.append_ids(_v);
-    self.actual_translation_y.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_rotation.append_ids(_v);
+        self.actual_translation_x.append_ids(_v);
+        self.actual_translation_y.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23070,9 +23070,9 @@ impl<'a> ParseFromChunks<'a> for PlanarShapeRepresentation_<'a> {
 }
 impl<'a> HasId for PlanarShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23104,8 +23104,8 @@ impl<'a> ParseFromChunks<'a> for Plane_<'a> {
 }
 impl<'a> HasId for Plane_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23148,8 +23148,8 @@ impl<'a> ParseFromChunks<'a> for PlaneAngleMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for PlaneAngleMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23178,7 +23178,7 @@ impl<'a> ParseFromChunks<'a> for PlaneAngleUnit_<'a> {
 }
 impl<'a> HasId for PlaneAngleUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23211,7 +23211,7 @@ impl<'a> ParseFromChunks<'a> for PlusExpression_<'a> {
 }
 impl<'a> HasId for PlusExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23243,8 +23243,8 @@ impl<'a> ParseFromChunks<'a> for PlusMinusTolerance_<'a> {
 }
 impl<'a> HasId for PlusMinusTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.range.append_ids(_v);
-    self.toleranced_dimension.append_ids(_v);
+        self.range.append_ids(_v);
+        self.toleranced_dimension.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23276,8 +23276,8 @@ impl<'a> ParseFromChunks<'a> for Pocket_<'a> {
 }
 impl<'a> HasId for Pocket_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23315,10 +23315,10 @@ impl<'a> ParseFromChunks<'a> for PocketBottom_<'a> {
 }
 impl<'a> HasId for PocketBottom_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23347,7 +23347,7 @@ impl<'a> ParseFromChunks<'a> for Point_<'a> {
 }
 impl<'a> HasId for Point_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23382,9 +23382,9 @@ impl<'a> ParseFromChunks<'a> for PointOnCurve_<'a> {
 }
 impl<'a> HasId for PointOnCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_curve.append_ids(_v);
-    self.point_parameter.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_curve.append_ids(_v);
+        self.point_parameter.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23431,13 +23431,13 @@ impl<'a> ParseFromChunks<'a> for PointOnPlanarCurvePair_<'a> {
 }
 impl<'a> HasId for PointOnPlanarCurvePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.pair_curve.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.pair_curve.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23487,14 +23487,14 @@ impl<'a> ParseFromChunks<'a> for PointOnPlanarCurvePairRange_<'a> {
 }
 impl<'a> HasId for PointOnPlanarCurvePairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.range_on_pair_curve.append_ids(_v);
-    self.lower_limit_yaw.append_ids(_v);
-    self.upper_limit_yaw.append_ids(_v);
-    self.lower_limit_pitch.append_ids(_v);
-    self.upper_limit_pitch.append_ids(_v);
-    self.lower_limit_roll.append_ids(_v);
-    self.upper_limit_roll.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.range_on_pair_curve.append_ids(_v);
+        self.lower_limit_yaw.append_ids(_v);
+        self.upper_limit_yaw.append_ids(_v);
+        self.lower_limit_pitch.append_ids(_v);
+        self.upper_limit_pitch.append_ids(_v);
+        self.lower_limit_roll.append_ids(_v);
+        self.upper_limit_roll.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23529,9 +23529,9 @@ impl<'a> ParseFromChunks<'a> for PointOnPlanarCurvePairValue_<'a> {
 }
 impl<'a> HasId for PointOnPlanarCurvePairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_point_on_curve.append_ids(_v);
-    self.input_orientation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_point_on_curve.append_ids(_v);
+        self.input_orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23569,10 +23569,10 @@ impl<'a> ParseFromChunks<'a> for PointOnSurface_<'a> {
 }
 impl<'a> HasId for PointOnSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_surface.append_ids(_v);
-    self.point_parameter_u.append_ids(_v);
-    self.point_parameter_v.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_surface.append_ids(_v);
+        self.point_parameter_u.append_ids(_v);
+        self.point_parameter_v.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23616,12 +23616,12 @@ impl<'a> ParseFromChunks<'a> for PointOnSurfacePair_<'a> {
 }
 impl<'a> HasId for PointOnSurfacePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.pair_surface.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.pair_surface.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23671,14 +23671,14 @@ impl<'a> ParseFromChunks<'a> for PointOnSurfacePairRange_<'a> {
 }
 impl<'a> HasId for PointOnSurfacePairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.range_on_pair_surface.append_ids(_v);
-    self.lower_limit_yaw.append_ids(_v);
-    self.upper_limit_yaw.append_ids(_v);
-    self.lower_limit_pitch.append_ids(_v);
-    self.upper_limit_pitch.append_ids(_v);
-    self.lower_limit_roll.append_ids(_v);
-    self.upper_limit_roll.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.range_on_pair_surface.append_ids(_v);
+        self.lower_limit_yaw.append_ids(_v);
+        self.upper_limit_yaw.append_ids(_v);
+        self.lower_limit_pitch.append_ids(_v);
+        self.upper_limit_pitch.append_ids(_v);
+        self.lower_limit_roll.append_ids(_v);
+        self.upper_limit_roll.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23713,9 +23713,9 @@ impl<'a> ParseFromChunks<'a> for PointOnSurfacePairValue_<'a> {
 }
 impl<'a> HasId for PointOnSurfacePairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_point_on_surface.append_ids(_v);
-    self.input_orientation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_point_on_surface.append_ids(_v);
+        self.input_orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23750,9 +23750,9 @@ impl<'a> ParseFromChunks<'a> for PointPlacementShapeRepresentation_<'a> {
 }
 impl<'a> HasId for PointPlacementShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23787,9 +23787,9 @@ impl<'a> ParseFromChunks<'a> for PointReplica_<'a> {
 }
 impl<'a> HasId for PointReplica_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.parent_pt.append_ids(_v);
-    self.transformation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.parent_pt.append_ids(_v);
+        self.transformation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23827,10 +23827,10 @@ impl<'a> ParseFromChunks<'a> for PointStyle_<'a> {
 }
 impl<'a> HasId for PointStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.marker.append_ids(_v);
-    self.marker_size.append_ids(_v);
-    self.marker_colour.append_ids(_v);
+        self.name.append_ids(_v);
+        self.marker.append_ids(_v);
+        self.marker_size.append_ids(_v);
+        self.marker_colour.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -23864,8 +23864,8 @@ impl<'a> ParseFromChunks<'a> for PolyLoop_<'a> {
 }
 impl<'a> HasId for PolyLoop_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.polygon.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.polygon.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23897,8 +23897,8 @@ impl<'a> ParseFromChunks<'a> for Polyline_<'a> {
 }
 impl<'a> HasId for Polyline_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.points.append_ids(_v);
+        self.name.append_ids(_v);
+        self.points.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -23936,10 +23936,10 @@ impl<'a> ParseFromChunks<'a> for PositionTolerance_<'a> {
 }
 impl<'a> HasId for PositionTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
     }
 }
 
@@ -24010,7 +24010,7 @@ impl<'a> ParseFromChunks<'a> for PowerExpression_<'a> {
 }
 impl<'a> HasId for PowerExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24039,7 +24039,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedColour_<'a> {
 }
 impl<'a> HasId for PreDefinedColour_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24068,7 +24068,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedCurveFont_<'a> {
 }
 impl<'a> HasId for PreDefinedCurveFont_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24097,7 +24097,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedDimensionSymbol_<'a> {
 }
 impl<'a> HasId for PreDefinedDimensionSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24126,7 +24126,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedGeometricalToleranceSymbol_<'a> {
 }
 impl<'a> HasId for PreDefinedGeometricalToleranceSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24155,7 +24155,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedItem_<'a> {
 }
 impl<'a> HasId for PreDefinedItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24184,7 +24184,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedMarker_<'a> {
 }
 impl<'a> HasId for PreDefinedMarker_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -24215,7 +24215,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedPointMarkerSymbol_<'a> {
 }
 impl<'a> HasId for PreDefinedPointMarkerSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.pre_defined_item__name.append_ids(_v);
+        self.pre_defined_item__name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24244,7 +24244,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedPresentationStyle_<'a> {
 }
 impl<'a> HasId for PreDefinedPresentationStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24273,7 +24273,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedSurfaceConditionSymbol_<'a> {
 }
 impl<'a> HasId for PreDefinedSurfaceConditionSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24302,7 +24302,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedSymbol_<'a> {
 }
 impl<'a> HasId for PreDefinedSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24331,7 +24331,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedTerminatorSymbol_<'a> {
 }
 impl<'a> HasId for PreDefinedTerminatorSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24360,7 +24360,7 @@ impl<'a> ParseFromChunks<'a> for PreDefinedTextFont_<'a> {
 }
 impl<'a> HasId for PreDefinedTextFont_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24389,7 +24389,7 @@ impl<'a> ParseFromChunks<'a> for PrecisionQualifier_<'a> {
 }
 impl<'a> HasId for PrecisionQualifier_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.precision_value.append_ids(_v);
+        self.precision_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24459,9 +24459,9 @@ impl<'a> ParseFromChunks<'a> for PresentationArea_<'a> {
 }
 impl<'a> HasId for PresentationArea_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24496,9 +24496,9 @@ impl<'a> ParseFromChunks<'a> for PresentationLayerAssignment_<'a> {
 }
 impl<'a> HasId for PresentationLayerAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.assigned_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.assigned_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24533,9 +24533,9 @@ impl<'a> ParseFromChunks<'a> for PresentationRepresentation_<'a> {
 }
 impl<'a> HasId for PresentationRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24595,8 +24595,8 @@ impl<'a> ParseFromChunks<'a> for PresentationSize_<'a> {
 }
 impl<'a> HasId for PresentationSize_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.unit.append_ids(_v);
-    self.size.append_ids(_v);
+        self.unit.append_ids(_v);
+        self.size.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24629,7 +24629,7 @@ impl<'a> ParseFromChunks<'a> for PresentationStyleAssignment_<'a> {
 }
 impl<'a> HasId for PresentationStyleAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.styles.append_ids(_v);
+        self.styles.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24661,8 +24661,8 @@ impl<'a> ParseFromChunks<'a> for PresentationStyleByContext_<'a> {
 }
 impl<'a> HasId for PresentationStyleByContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.styles.append_ids(_v);
-    self.style_context.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.style_context.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24744,9 +24744,9 @@ impl<'a> ParseFromChunks<'a> for PresentationView_<'a> {
 }
 impl<'a> HasId for PresentationView_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24802,8 +24802,8 @@ impl<'a> ParseFromChunks<'a> for PresentedItemRepresentation_<'a> {
 }
 impl<'a> HasId for PresentedItemRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.presentation.append_ids(_v);
-    self.item.append_ids(_v);
+        self.presentation.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24848,11 +24848,11 @@ impl<'a> ParseFromChunks<'a> for PrismaticPair_<'a> {
 }
 impl<'a> HasId for PrismaticPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24887,9 +24887,9 @@ impl<'a> ParseFromChunks<'a> for PrismaticPairRange_<'a> {
 }
 impl<'a> HasId for PrismaticPairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_actual_translation.append_ids(_v);
-    self.upper_limit_actual_translation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_actual_translation.append_ids(_v);
+        self.upper_limit_actual_translation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24921,8 +24921,8 @@ impl<'a> ParseFromChunks<'a> for PrismaticPairValue_<'a> {
 }
 impl<'a> HasId for PrismaticPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_translation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_translation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24960,10 +24960,10 @@ impl<'a> ParseFromChunks<'a> for ProcessOperation_<'a> {
 }
 impl<'a> HasId for ProcessOperation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.consequence.append_ids(_v);
-    self.purpose.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.consequence.append_ids(_v);
+        self.purpose.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -24998,9 +24998,9 @@ impl<'a> ParseFromChunks<'a> for ProcessPlan_<'a> {
 }
 impl<'a> HasId for ProcessPlan_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25038,10 +25038,10 @@ impl<'a> ParseFromChunks<'a> for ProcessProductAssociation_<'a> {
 }
 impl<'a> HasId for ProcessProductAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.defined_product.append_ids(_v);
-    self.process.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.defined_product.append_ids(_v);
+        self.process.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25079,10 +25079,10 @@ impl<'a> ParseFromChunks<'a> for ProcessPropertyAssociation_<'a> {
 }
 impl<'a> HasId for ProcessPropertyAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.process.append_ids(_v);
-    self.property_or_shape.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.process.append_ids(_v);
+        self.property_or_shape.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25120,10 +25120,10 @@ impl<'a> ParseFromChunks<'a> for Product_<'a> {
 }
 impl<'a> HasId for Product_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25155,8 +25155,8 @@ impl<'a> ParseFromChunks<'a> for ProductCategory_<'a> {
 }
 impl<'a> HasId for ProductCategory_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25194,10 +25194,10 @@ impl<'a> ParseFromChunks<'a> for ProductCategoryRelationship_<'a> {
 }
 impl<'a> HasId for ProductCategoryRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.category.append_ids(_v);
-    self.sub_category.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.category.append_ids(_v);
+        self.sub_category.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -25246,12 +25246,12 @@ impl<'a> ParseFromChunks<'a> for ProductClass_<'a> {
 }
 impl<'a> HasId for ProductClass_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.product_concept__name.append_ids(_v);
-    self.product_concept__description.append_ids(_v);
-    self.market_context.append_ids(_v);
-    self.characterized_object__name.append_ids(_v);
-    self.characterized_object__description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.product_concept__name.append_ids(_v);
+        self.product_concept__description.append_ids(_v);
+        self.market_context.append_ids(_v);
+        self.characterized_object__name.append_ids(_v);
+        self.characterized_object__description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25289,10 +25289,10 @@ impl<'a> ParseFromChunks<'a> for ProductConcept_<'a> {
 }
 impl<'a> HasId for ProductConcept_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.market_context.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.market_context.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25327,9 +25327,9 @@ impl<'a> ParseFromChunks<'a> for ProductConceptContext_<'a> {
 }
 impl<'a> HasId for ProductConceptContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
-    self.market_segment_type.append_ids(_v);
+        self.name.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
+        self.market_segment_type.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25364,9 +25364,9 @@ impl<'a> ParseFromChunks<'a> for ProductConceptFeature_<'a> {
 }
 impl<'a> HasId for ProductConceptFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25404,10 +25404,10 @@ impl<'a> ParseFromChunks<'a> for ProductConceptFeatureAssociation_<'a> {
 }
 impl<'a> HasId for ProductConceptFeatureAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.concept.append_ids(_v);
-    self.feature.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.concept.append_ids(_v);
+        self.feature.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25439,8 +25439,8 @@ impl<'a> ParseFromChunks<'a> for ProductConceptFeatureCategory_<'a> {
 }
 impl<'a> HasId for ProductConceptFeatureCategory_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25472,8 +25472,8 @@ impl<'a> ParseFromChunks<'a> for ProductConceptFeatureCategoryUsage_<'a> {
 }
 impl<'a> HasId for ProductConceptFeatureCategoryUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_group.append_ids(_v);
-    self.items.append_ids(_v);
+        self.assigned_group.append_ids(_v);
+        self.items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25511,10 +25511,10 @@ impl<'a> ParseFromChunks<'a> for ProductConceptRelationship_<'a> {
 }
 impl<'a> HasId for ProductConceptRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_concept.append_ids(_v);
-    self.related_product_concept.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_concept.append_ids(_v);
+        self.related_product_concept.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25549,9 +25549,9 @@ impl<'a> ParseFromChunks<'a> for ProductContext_<'a> {
 }
 impl<'a> HasId for ProductContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
-    self.discipline_type.append_ids(_v);
+        self.name.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
+        self.discipline_type.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25589,10 +25589,10 @@ impl<'a> ParseFromChunks<'a> for ProductDefinition_<'a> {
 }
 impl<'a> HasId for ProductDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.description.append_ids(_v);
-    self.formation.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
+        self.id.append_ids(_v);
+        self.description.append_ids(_v);
+        self.formation.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25627,9 +25627,9 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionContext_<'a> {
 }
 impl<'a> HasId for ProductDefinitionContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
-    self.life_cycle_stage.append_ids(_v);
+        self.name.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
+        self.life_cycle_stage.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25664,9 +25664,9 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionContextAssociation_<'a> {
 }
 impl<'a> HasId for ProductDefinitionContextAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.definition.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
-    self.role.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25698,8 +25698,8 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionContextRole_<'a> {
 }
 impl<'a> HasId for ProductDefinitionContextRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25731,8 +25731,8 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionEffectivity_<'a> {
 }
 impl<'a> HasId for ProductDefinitionEffectivity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.usage.append_ids(_v);
+        self.id.append_ids(_v);
+        self.usage.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25767,9 +25767,9 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionFormation_<'a> {
 }
 impl<'a> HasId for ProductDefinitionFormation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_product.append_ids(_v);
+        self.id.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_product.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25810,11 +25810,11 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionFormationRelationship_<'a> {
 }
 impl<'a> HasId for ProductDefinitionFormationRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition_formation.append_ids(_v);
-    self.related_product_definition_formation.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition_formation.append_ids(_v);
+        self.related_product_definition_formation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25852,10 +25852,10 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionFormationWithSpecifiedSource_<
 }
 impl<'a> HasId for ProductDefinitionFormationWithSpecifiedSource_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_product.append_ids(_v);
-    self.make_or_buy.append_ids(_v);
+        self.id.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_product.append_ids(_v);
+        self.make_or_buy.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25893,10 +25893,10 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionOccurrenceRelationship_<'a> {
 }
 impl<'a> HasId for ProductDefinitionOccurrenceRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.occurrence.append_ids(_v);
-    self.occurrence_usage.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.occurrence.append_ids(_v);
+        self.occurrence_usage.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25934,10 +25934,10 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionProcess_<'a> {
 }
 impl<'a> HasId for ProductDefinitionProcess_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
-    self.identification.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
+        self.identification.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -25978,11 +25978,11 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionRelationship_<'a> {
 }
 impl<'a> HasId for ProductDefinitionRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition.append_ids(_v);
-    self.related_product_definition.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition.append_ids(_v);
+        self.related_product_definition.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -26035,14 +26035,14 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionResource_<'a> {
 }
 impl<'a> HasId for ProductDefinitionResource_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.action_resource__description.append_ids(_v);
-    self.usage.append_ids(_v);
-    self.kind.append_ids(_v);
-    self.id.append_ids(_v);
-    self.product_definition__description.append_ids(_v);
-    self.formation.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
+        self.name.append_ids(_v);
+        self.action_resource__description.append_ids(_v);
+        self.usage.append_ids(_v);
+        self.kind.append_ids(_v);
+        self.id.append_ids(_v);
+        self.product_definition__description.append_ids(_v);
+        self.formation.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26077,9 +26077,9 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionShape_<'a> {
 }
 impl<'a> HasId for ProductDefinitionShape_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26114,9 +26114,9 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionSubstitute_<'a> {
 }
 impl<'a> HasId for ProductDefinitionSubstitute_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.description.append_ids(_v);
-    self.context_relationship.append_ids(_v);
-    self.substitute_definition.append_ids(_v);
+        self.description.append_ids(_v);
+        self.context_relationship.append_ids(_v);
+        self.substitute_definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26157,11 +26157,11 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionUsage_<'a> {
 }
 impl<'a> HasId for ProductDefinitionUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition.append_ids(_v);
-    self.related_product_definition.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition.append_ids(_v);
+        self.related_product_definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26202,11 +26202,11 @@ impl<'a> ParseFromChunks<'a> for ProductDefinitionWithAssociatedDocuments_<'a> {
 }
 impl<'a> HasId for ProductDefinitionWithAssociatedDocuments_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.description.append_ids(_v);
-    self.formation.append_ids(_v);
-    self.frame_of_reference.append_ids(_v);
-    self.documentation_ids.append_ids(_v);
+        self.id.append_ids(_v);
+        self.description.append_ids(_v);
+        self.formation.append_ids(_v);
+        self.frame_of_reference.append_ids(_v);
+        self.documentation_ids.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -26258,13 +26258,13 @@ impl<'a> ParseFromChunks<'a> for ProductIdentification_<'a> {
 }
 impl<'a> HasId for ProductIdentification_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.configuration_item__name.append_ids(_v);
-    self.configuration_item__description.append_ids(_v);
-    self.item_concept.append_ids(_v);
-    self.purpose.append_ids(_v);
-    self.characterized_object__name.append_ids(_v);
-    self.characterized_object__description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.configuration_item__name.append_ids(_v);
+        self.configuration_item__description.append_ids(_v);
+        self.item_concept.append_ids(_v);
+        self.purpose.append_ids(_v);
+        self.characterized_object__name.append_ids(_v);
+        self.characterized_object__description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26328,10 +26328,10 @@ impl<'a> ParseFromChunks<'a> for ProductProcessPlan_<'a> {
 }
 impl<'a> HasId for ProductProcessPlan_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
-    self.identification.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
+        self.identification.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26366,9 +26366,9 @@ impl<'a> ParseFromChunks<'a> for ProductRelatedProductCategory_<'a> {
 }
 impl<'a> HasId for ProductRelatedProductCategory_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.products.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.products.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -26426,14 +26426,14 @@ impl<'a> ParseFromChunks<'a> for ProductSpecification_<'a> {
 }
 impl<'a> HasId for ProductSpecification_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.configuration_item__id.append_ids(_v);
-    self.configuration_item__name.append_ids(_v);
-    self.configuration_item__description.append_ids(_v);
-    self.configuration_item__item_concept.append_ids(_v);
-    self.configuration_item__purpose.append_ids(_v);
-    self.characterized_object__name.append_ids(_v);
-    self.characterized_object__description.append_ids(_v);
-    self.item_concept_feature.append_ids(_v);
+        self.configuration_item__id.append_ids(_v);
+        self.configuration_item__name.append_ids(_v);
+        self.configuration_item__description.append_ids(_v);
+        self.configuration_item__item_concept.append_ids(_v);
+        self.configuration_item__purpose.append_ids(_v);
+        self.characterized_object__name.append_ids(_v);
+        self.characterized_object__description.append_ids(_v);
+        self.item_concept_feature.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26471,10 +26471,10 @@ impl<'a> ParseFromChunks<'a> for ProjectedZoneDefinition_<'a> {
 }
 impl<'a> HasId for ProjectedZoneDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.zone.append_ids(_v);
-    self.boundaries.append_ids(_v);
-    self.projection_end.append_ids(_v);
-    self.projected_length.append_ids(_v);
+        self.zone.append_ids(_v);
+        self.boundaries.append_ids(_v);
+        self.projection_end.append_ids(_v);
+        self.projected_length.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26509,9 +26509,9 @@ impl<'a> ParseFromChunks<'a> for ProjectionCurve_<'a> {
 }
 impl<'a> HasId for ProjectionCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26543,8 +26543,8 @@ impl<'a> ParseFromChunks<'a> for ProjectionDirectedCallout_<'a> {
 }
 impl<'a> HasId for ProjectionDirectedCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26588,12 +26588,12 @@ impl<'a> ParseFromChunks<'a> for PromissoryUsageOccurrence_<'a> {
 }
 impl<'a> HasId for PromissoryUsageOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition.append_ids(_v);
-    self.related_product_definition.append_ids(_v);
-    self.reference_designator.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition.append_ids(_v);
+        self.related_product_definition.append_ids(_v);
+        self.reference_designator.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26628,9 +26628,9 @@ impl<'a> ParseFromChunks<'a> for PropertyDefinition_<'a> {
 }
 impl<'a> HasId for PropertyDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.definition.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26668,10 +26668,10 @@ impl<'a> ParseFromChunks<'a> for PropertyDefinitionRelationship_<'a> {
 }
 impl<'a> HasId for PropertyDefinitionRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_property_definition.append_ids(_v);
-    self.related_property_definition.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_property_definition.append_ids(_v);
+        self.related_property_definition.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26703,8 +26703,8 @@ impl<'a> ParseFromChunks<'a> for PropertyDefinitionRepresentation_<'a> {
 }
 impl<'a> HasId for PropertyDefinitionRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.definition.append_ids(_v);
-    self.used_representation.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.used_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26746,10 +26746,10 @@ impl<'a> ParseFromChunks<'a> for PropertyProcess_<'a> {
 }
 impl<'a> HasId for PropertyProcess_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
-    self.identification.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
+        self.identification.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26781,8 +26781,8 @@ impl<'a> ParseFromChunks<'a> for QualifiedRepresentationItem_<'a> {
 }
 impl<'a> HasId for QualifiedRepresentationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.qualifiers.append_ids(_v);
+        self.name.append_ids(_v);
+        self.qualifiers.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26817,9 +26817,9 @@ impl<'a> ParseFromChunks<'a> for QualitativeUncertainty_<'a> {
 }
 impl<'a> HasId for QualitativeUncertainty_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.measure_name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.uncertainty_value.append_ids(_v);
+        self.measure_name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.uncertainty_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26866,13 +26866,13 @@ impl<'a> ParseFromChunks<'a> for QuantifiedAssemblyComponentUsage_<'a> {
 }
 impl<'a> HasId for QuantifiedAssemblyComponentUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition.append_ids(_v);
-    self.related_product_definition.append_ids(_v);
-    self.reference_designator.append_ids(_v);
-    self.quantity.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition.append_ids(_v);
+        self.related_product_definition.append_ids(_v);
+        self.reference_designator.append_ids(_v);
+        self.quantity.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26916,12 +26916,12 @@ impl<'a> ParseFromChunks<'a> for QuasiUniformCurve_<'a> {
 }
 impl<'a> HasId for QuasiUniformCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.curve_form.append_ids(_v);
-    self.closed_curve.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.curve_form.append_ids(_v);
+        self.closed_curve.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -26971,14 +26971,14 @@ impl<'a> ParseFromChunks<'a> for QuasiUniformSurface_<'a> {
 }
 impl<'a> HasId for QuasiUniformSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.u_degree.append_ids(_v);
-    self.v_degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.surface_form.append_ids(_v);
-    self.u_closed.append_ids(_v);
-    self.v_closed.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.u_degree.append_ids(_v);
+        self.v_degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.surface_form.append_ids(_v);
+        self.u_closed.append_ids(_v);
+        self.v_closed.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27022,12 +27022,12 @@ impl<'a> ParseFromChunks<'a> for RackAndPinionPair_<'a> {
 }
 impl<'a> HasId for RackAndPinionPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.pinion_radius.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.pinion_radius.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27062,9 +27062,9 @@ impl<'a> ParseFromChunks<'a> for RackAndPinionPairRange_<'a> {
 }
 impl<'a> HasId for RackAndPinionPairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_rack_displacement.append_ids(_v);
-    self.upper_limit_rack_displacement.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_rack_displacement.append_ids(_v);
+        self.upper_limit_rack_displacement.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27096,8 +27096,8 @@ impl<'a> ParseFromChunks<'a> for RackAndPinionPairValue_<'a> {
 }
 impl<'a> HasId for RackAndPinionPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_displacement.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_displacement.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27129,8 +27129,8 @@ impl<'a> ParseFromChunks<'a> for RadiusDimension_<'a> {
 }
 impl<'a> HasId for RadiusDimension_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27173,8 +27173,8 @@ impl<'a> ParseFromChunks<'a> for RatioMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for RatioMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27203,7 +27203,7 @@ impl<'a> ParseFromChunks<'a> for RatioUnit_<'a> {
 }
 impl<'a> HasId for RatioUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27250,13 +27250,13 @@ impl<'a> ParseFromChunks<'a> for RationalBSplineCurve_<'a> {
 }
 impl<'a> HasId for RationalBSplineCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.curve_form.append_ids(_v);
-    self.closed_curve.append_ids(_v);
-    self.self_intersect.append_ids(_v);
-    self.weights_data.append_ids(_v);
+        self.name.append_ids(_v);
+        self.degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.curve_form.append_ids(_v);
+        self.closed_curve.append_ids(_v);
+        self.self_intersect.append_ids(_v);
+        self.weights_data.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27309,15 +27309,15 @@ impl<'a> ParseFromChunks<'a> for RationalBSplineSurface_<'a> {
 }
 impl<'a> HasId for RationalBSplineSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.u_degree.append_ids(_v);
-    self.v_degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.surface_form.append_ids(_v);
-    self.u_closed.append_ids(_v);
-    self.v_closed.append_ids(_v);
-    self.self_intersect.append_ids(_v);
-    self.weights_data.append_ids(_v);
+        self.name.append_ids(_v);
+        self.u_degree.append_ids(_v);
+        self.v_degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.surface_form.append_ids(_v);
+        self.u_closed.append_ids(_v);
+        self.v_closed.append_ids(_v);
+        self.self_intersect.append_ids(_v);
+        self.weights_data.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27370,7 +27370,7 @@ impl<'a> ParseFromChunks<'a> for RealLiteral_<'a> {
 }
 impl<'a> HasId for RealLiteral_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.the_value.append_ids(_v);
+        self.the_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27432,10 +27432,10 @@ impl<'a> ParseFromChunks<'a> for RectangularClosedProfile_<'a> {
 }
 impl<'a> HasId for RectangularClosedProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27467,8 +27467,8 @@ impl<'a> ParseFromChunks<'a> for RectangularCompositeSurface_<'a> {
 }
 impl<'a> HasId for RectangularCompositeSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.segments.append_ids(_v);
+        self.name.append_ids(_v);
+        self.segments.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27500,8 +27500,8 @@ impl<'a> ParseFromChunks<'a> for RectangularPattern_<'a> {
 }
 impl<'a> HasId for RectangularPattern_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27551,14 +27551,14 @@ impl<'a> ParseFromChunks<'a> for RectangularTrimmedSurface_<'a> {
 }
 impl<'a> HasId for RectangularTrimmedSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_surface.append_ids(_v);
-    self.u1.append_ids(_v);
-    self.u2.append_ids(_v);
-    self.v1.append_ids(_v);
-    self.v2.append_ids(_v);
-    self.usense.append_ids(_v);
-    self.vsense.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_surface.append_ids(_v);
+        self.u1.append_ids(_v);
+        self.u2.append_ids(_v);
+        self.v1.append_ids(_v);
+        self.v2.append_ids(_v);
+        self.usense.append_ids(_v);
+        self.vsense.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27593,9 +27593,9 @@ impl<'a> ParseFromChunks<'a> for ReferencedModifiedDatum_<'a> {
 }
 impl<'a> HasId for ReferencedModifiedDatum_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.precedence.append_ids(_v);
-    self.referenced_datum.append_ids(_v);
-    self.modifier.append_ids(_v);
+        self.precedence.append_ids(_v);
+        self.referenced_datum.append_ids(_v);
+        self.modifier.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27636,11 +27636,11 @@ impl<'a> ParseFromChunks<'a> for RelativeEventOccurrence_<'a> {
 }
 impl<'a> HasId for RelativeEventOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.base_event.append_ids(_v);
-    self.offset.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.base_event.append_ids(_v);
+        self.offset.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27682,9 +27682,9 @@ impl<'a> ParseFromChunks<'a> for RepItemGroup_<'a> {
 }
 impl<'a> HasId for RepItemGroup_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.group__name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.representation_item__name.append_ids(_v);
+        self.group__name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27722,10 +27722,10 @@ impl<'a> ParseFromChunks<'a> for ReparametrisedCompositeCurveSegment_<'a> {
 }
 impl<'a> HasId for ReparametrisedCompositeCurveSegment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.transition.append_ids(_v);
-    self.same_sense.append_ids(_v);
-    self.parent_curve.append_ids(_v);
-    self.param_length.append_ids(_v);
+        self.transition.append_ids(_v);
+        self.same_sense.append_ids(_v);
+        self.parent_curve.append_ids(_v);
+        self.param_length.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27757,8 +27757,8 @@ impl<'a> ParseFromChunks<'a> for ReplicateFeature_<'a> {
 }
 impl<'a> HasId for ReplicateFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27793,9 +27793,9 @@ impl<'a> ParseFromChunks<'a> for Representation_<'a> {
 }
 impl<'a> HasId for Representation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27827,8 +27827,8 @@ impl<'a> ParseFromChunks<'a> for RepresentationContext_<'a> {
 }
 impl<'a> HasId for RepresentationContext_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.context_identifier.append_ids(_v);
-    self.context_type.append_ids(_v);
+        self.context_identifier.append_ids(_v);
+        self.context_type.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27857,7 +27857,7 @@ impl<'a> ParseFromChunks<'a> for RepresentationItem_<'a> {
 }
 impl<'a> HasId for RepresentationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27889,8 +27889,8 @@ impl<'a> ParseFromChunks<'a> for RepresentationMap_<'a> {
 }
 impl<'a> HasId for RepresentationMap_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.mapping_origin.append_ids(_v);
-    self.mapped_representation.append_ids(_v);
+        self.mapping_origin.append_ids(_v);
+        self.mapped_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27928,10 +27928,10 @@ impl<'a> ParseFromChunks<'a> for RepresentationRelationship_<'a> {
 }
 impl<'a> HasId for RepresentationRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.rep_2.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.rep_2.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -27972,11 +27972,11 @@ impl<'a> ParseFromChunks<'a> for RepresentationRelationshipWithTransformation_<'
 }
 impl<'a> HasId for RepresentationRelationshipWithTransformation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.rep_2.append_ids(_v);
-    self.transformation_operator.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.rep_2.append_ids(_v);
+        self.transformation_operator.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28021,11 +28021,11 @@ impl<'a> ParseFromChunks<'a> for RequirementForActionResource_<'a> {
 }
 impl<'a> HasId for RequirementForActionResource_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.kind.append_ids(_v);
-    self.operations.append_ids(_v);
-    self.resources.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.kind.append_ids(_v);
+        self.operations.append_ids(_v);
+        self.resources.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28060,9 +28060,9 @@ impl<'a> ParseFromChunks<'a> for ResourceProperty_<'a> {
 }
 impl<'a> HasId for ResourceProperty_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.resource.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.resource.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28100,10 +28100,10 @@ impl<'a> ParseFromChunks<'a> for ResourcePropertyRepresentation_<'a> {
 }
 impl<'a> HasId for ResourcePropertyRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.property.append_ids(_v);
-    self.representation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.property.append_ids(_v);
+        self.representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28135,8 +28135,8 @@ impl<'a> ParseFromChunks<'a> for ResourceRequirementType_<'a> {
 }
 impl<'a> HasId for ResourceRequirementType_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28180,12 +28180,12 @@ impl<'a> ParseFromChunks<'a> for ResultingPath_<'a> {
 }
 impl<'a> HasId for ResultingPath_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.rep_2.append_ids(_v);
-    self.related_frame.append_ids(_v);
-    self.controlling_joints.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.rep_2.append_ids(_v);
+        self.related_frame.append_ids(_v);
+        self.controlling_joints.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28220,9 +28220,9 @@ impl<'a> ParseFromChunks<'a> for Retention_<'a> {
 }
 impl<'a> HasId for Retention_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.chosen_method.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.chosen_method.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28293,11 +28293,11 @@ impl<'a> ParseFromChunks<'a> for RevolutePair_<'a> {
 }
 impl<'a> HasId for RevolutePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28332,9 +28332,9 @@ impl<'a> ParseFromChunks<'a> for RevolutePairRange_<'a> {
 }
 impl<'a> HasId for RevolutePairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_actual_rotation.append_ids(_v);
-    self.upper_limit_actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_actual_rotation.append_ids(_v);
+        self.upper_limit_actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28366,8 +28366,8 @@ impl<'a> ParseFromChunks<'a> for RevolutePairValue_<'a> {
 }
 impl<'a> HasId for RevolutePairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28405,10 +28405,10 @@ impl<'a> ParseFromChunks<'a> for RevolvedAreaSolid_<'a> {
 }
 impl<'a> HasId for RevolvedAreaSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_area.append_ids(_v);
-    self.axis.append_ids(_v);
-    self.angle.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_area.append_ids(_v);
+        self.axis.append_ids(_v);
+        self.angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28446,10 +28446,10 @@ impl<'a> ParseFromChunks<'a> for RevolvedFaceSolid_<'a> {
 }
 impl<'a> HasId for RevolvedFaceSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_face.append_ids(_v);
-    self.axis.append_ids(_v);
-    self.angle.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_face.append_ids(_v);
+        self.axis.append_ids(_v);
+        self.angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28481,8 +28481,8 @@ impl<'a> ParseFromChunks<'a> for Rib_<'a> {
 }
 impl<'a> HasId for Rib_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28526,12 +28526,12 @@ impl<'a> ParseFromChunks<'a> for RightAngularWedge_<'a> {
 }
 impl<'a> HasId for RightAngularWedge_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.x.append_ids(_v);
-    self.y.append_ids(_v);
-    self.z.append_ids(_v);
-    self.ltx.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.x.append_ids(_v);
+        self.y.append_ids(_v);
+        self.z.append_ids(_v);
+        self.ltx.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28572,11 +28572,11 @@ impl<'a> ParseFromChunks<'a> for RightCircularCone_<'a> {
 }
 impl<'a> HasId for RightCircularCone_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.height.append_ids(_v);
-    self.radius.append_ids(_v);
-    self.semi_angle.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.height.append_ids(_v);
+        self.radius.append_ids(_v);
+        self.semi_angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28614,10 +28614,10 @@ impl<'a> ParseFromChunks<'a> for RightCircularCylinder_<'a> {
 }
 impl<'a> HasId for RightCircularCylinder_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.height.append_ids(_v);
-    self.radius.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.height.append_ids(_v);
+        self.radius.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28653,8 +28653,8 @@ impl<'a> ParseFromChunks<'a> for RoleAssociation_<'a> {
 }
 impl<'a> HasId for RoleAssociation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.role.append_ids(_v);
-    self.item_with_role.append_ids(_v);
+        self.role.append_ids(_v);
+        self.item_with_role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28708,14 +28708,14 @@ impl<'a> ParseFromChunks<'a> for RollingCurvePair_<'a> {
 }
 impl<'a> HasId for RollingCurvePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.curve_1.append_ids(_v);
-    self.curve_2.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.curve_1.append_ids(_v);
+        self.curve_2.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28747,8 +28747,8 @@ impl<'a> ParseFromChunks<'a> for RollingCurvePairValue_<'a> {
 }
 impl<'a> HasId for RollingCurvePairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_point_on_curve_1.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_point_on_curve_1.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28798,14 +28798,14 @@ impl<'a> ParseFromChunks<'a> for RollingSurfacePair_<'a> {
 }
 impl<'a> HasId for RollingSurfacePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.surface_1.append_ids(_v);
-    self.surface_2.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.surface_1.append_ids(_v);
+        self.surface_2.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28840,9 +28840,9 @@ impl<'a> ParseFromChunks<'a> for RollingSurfacePairValue_<'a> {
 }
 impl<'a> HasId for RollingSurfacePairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_point_on_surface.append_ids(_v);
-    self.actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_point_on_surface.append_ids(_v);
+        self.actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28874,8 +28874,8 @@ impl<'a> ParseFromChunks<'a> for RotationAboutDirection_<'a> {
 }
 impl<'a> HasId for RotationAboutDirection_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.direction_of_axis.append_ids(_v);
-    self.rotation_angle.append_ids(_v);
+        self.direction_of_axis.append_ids(_v);
+        self.rotation_angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28930,8 +28930,8 @@ impl<'a> ParseFromChunks<'a> for RoundHole_<'a> {
 }
 impl<'a> HasId for RoundHole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -28969,10 +28969,10 @@ impl<'a> ParseFromChunks<'a> for RoundedUProfile_<'a> {
 }
 impl<'a> HasId for RoundedUProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29010,10 +29010,10 @@ impl<'a> ParseFromChunks<'a> for RoundnessTolerance_<'a> {
 }
 impl<'a> HasId for RoundnessTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29057,12 +29057,12 @@ impl<'a> ParseFromChunks<'a> for RuledSurfaceSweptAreaSolid_<'a> {
 }
 impl<'a> HasId for RuledSurfaceSweptAreaSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_area.append_ids(_v);
-    self.directrix.append_ids(_v);
-    self.start_param.append_ids(_v);
-    self.end_param.append_ids(_v);
-    self.reference_surface.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_area.append_ids(_v);
+        self.directrix.append_ids(_v);
+        self.start_param.append_ids(_v);
+        self.end_param.append_ids(_v);
+        self.reference_surface.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29097,9 +29097,9 @@ impl<'a> ParseFromChunks<'a> for RunoutZoneDefinition_<'a> {
 }
 impl<'a> HasId for RunoutZoneDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.zone.append_ids(_v);
-    self.boundaries.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.zone.append_ids(_v);
+        self.boundaries.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29128,7 +29128,7 @@ impl<'a> ParseFromChunks<'a> for RunoutZoneOrientation_<'a> {
 }
 impl<'a> HasId for RunoutZoneOrientation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.angle.append_ids(_v);
+        self.angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29160,8 +29160,8 @@ impl<'a> ParseFromChunks<'a> for RunoutZoneOrientationReferenceDirection_<'a> {
 }
 impl<'a> HasId for RunoutZoneOrientationReferenceDirection_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.angle.append_ids(_v);
-    self.orientation_defining_relationship.append_ids(_v);
+        self.angle.append_ids(_v);
+        self.orientation_defining_relationship.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29205,12 +29205,12 @@ impl<'a> ParseFromChunks<'a> for ScrewPair_<'a> {
 }
 impl<'a> HasId for ScrewPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.pitch.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.pitch.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29245,9 +29245,9 @@ impl<'a> ParseFromChunks<'a> for ScrewPairRange_<'a> {
 }
 impl<'a> HasId for ScrewPairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_actual_rotation.append_ids(_v);
-    self.upper_limit_actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_actual_rotation.append_ids(_v);
+        self.upper_limit_actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29279,8 +29279,8 @@ impl<'a> ParseFromChunks<'a> for ScrewPairValue_<'a> {
 }
 impl<'a> HasId for ScrewPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29318,10 +29318,10 @@ impl<'a> ParseFromChunks<'a> for SeamCurve_<'a> {
 }
 impl<'a> HasId for SeamCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.curve_3d.append_ids(_v);
-    self.associated_geometry.append_ids(_v);
-    self.master_representation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.curve_3d.append_ids(_v);
+        self.associated_geometry.append_ids(_v);
+        self.master_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29365,12 +29365,12 @@ impl<'a> ParseFromChunks<'a> for SeamEdge_<'a> {
 }
 impl<'a> HasId for SeamEdge_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.edge_start.append_ids(_v);
-    self.edge_end.append_ids(_v);
-    self.edge_element.append_ids(_v);
-    self.orientation.append_ids(_v);
-    self.pcurve_reference.append_ids(_v);
+        self.name.append_ids(_v);
+        self.edge_start.append_ids(_v);
+        self.edge_end.append_ids(_v);
+        self.edge_element.append_ids(_v);
+        self.orientation.append_ids(_v);
+        self.pcurve_reference.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29416,9 +29416,9 @@ impl<'a> ParseFromChunks<'a> for SecurityClassification_<'a> {
 }
 impl<'a> HasId for SecurityClassification_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.purpose.append_ids(_v);
-    self.security_level.append_ids(_v);
+        self.name.append_ids(_v);
+        self.purpose.append_ids(_v);
+        self.security_level.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29447,7 +29447,7 @@ impl<'a> ParseFromChunks<'a> for SecurityClassificationAssignment_<'a> {
 }
 impl<'a> HasId for SecurityClassificationAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_security_classification.append_ids(_v);
+        self.assigned_security_classification.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29480,7 +29480,7 @@ impl<'a> ParseFromChunks<'a> for SecurityClassificationLevel_<'a> {
 }
 impl<'a> HasId for SecurityClassificationLevel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29515,9 +29515,9 @@ impl<'a> ParseFromChunks<'a> for SerialNumberedEffectivity_<'a> {
 }
 impl<'a> HasId for SerialNumberedEffectivity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.effectivity_start_id.append_ids(_v);
-    self.effectivity_end_id.append_ids(_v);
+        self.id.append_ids(_v);
+        self.effectivity_start_id.append_ids(_v);
+        self.effectivity_end_id.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29633,10 +29633,10 @@ impl<'a> ParseFromChunks<'a> for ShapeAspect_<'a> {
 }
 impl<'a> HasId for ShapeAspect_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29674,10 +29674,10 @@ impl<'a> ParseFromChunks<'a> for ShapeAspectAssociativity_<'a> {
 }
 impl<'a> HasId for ShapeAspectAssociativity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29715,10 +29715,10 @@ impl<'a> ParseFromChunks<'a> for ShapeAspectDerivingRelationship_<'a> {
 }
 impl<'a> HasId for ShapeAspectDerivingRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29756,10 +29756,10 @@ impl<'a> ParseFromChunks<'a> for ShapeAspectRelationship_<'a> {
 }
 impl<'a> HasId for ShapeAspectRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29797,10 +29797,10 @@ impl<'a> ParseFromChunks<'a> for ShapeAspectTransition_<'a> {
 }
 impl<'a> HasId for ShapeAspectTransition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29838,10 +29838,10 @@ impl<'a> ParseFromChunks<'a> for ShapeDefiningRelationship_<'a> {
 }
 impl<'a> HasId for ShapeDefiningRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_shape_aspect.append_ids(_v);
-    self.related_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_shape_aspect.append_ids(_v);
+        self.related_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29877,8 +29877,8 @@ impl<'a> ParseFromChunks<'a> for ShapeDefinitionRepresentation_<'a> {
 }
 impl<'a> HasId for ShapeDefinitionRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.definition.append_ids(_v);
-    self.used_representation.append_ids(_v);
+        self.definition.append_ids(_v);
+        self.used_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29913,9 +29913,9 @@ impl<'a> ParseFromChunks<'a> for ShapeDimensionRepresentation_<'a> {
 }
 impl<'a> HasId for ShapeDimensionRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29950,9 +29950,9 @@ impl<'a> ParseFromChunks<'a> for ShapeRepresentation_<'a> {
 }
 impl<'a> HasId for ShapeRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -29990,10 +29990,10 @@ impl<'a> ParseFromChunks<'a> for ShapeRepresentationRelationship_<'a> {
 }
 impl<'a> HasId for ShapeRepresentationRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.rep_1.append_ids(_v);
-    self.rep_2.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.rep_1.append_ids(_v);
+        self.rep_2.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30028,9 +30028,9 @@ impl<'a> ParseFromChunks<'a> for ShapeRepresentationWithParameters_<'a> {
 }
 impl<'a> HasId for ShapeRepresentationWithParameters_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30066,8 +30066,8 @@ impl<'a> ParseFromChunks<'a> for ShellBasedSurfaceModel_<'a> {
 }
 impl<'a> HasId for ShellBasedSurfaceModel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.sbsm_boundary.append_ids(_v);
+        self.name.append_ids(_v);
+        self.sbsm_boundary.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30150,8 +30150,8 @@ impl<'a> ParseFromChunks<'a> for SiUnit_<'a> {
 }
 impl<'a> HasId for SiUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.prefix.append_ids(_v);
-    self.name.append_ids(_v);
+        self.prefix.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30326,7 +30326,7 @@ impl<'a> ParseFromChunks<'a> for SimplePairRange_<'a> {
 }
 impl<'a> HasId for SimplePairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30379,7 +30379,7 @@ impl<'a> ParseFromChunks<'a> for SinFunction_<'a> {
 }
 impl<'a> HasId for SinFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30434,7 +30434,7 @@ impl<'a> ParseFromChunks<'a> for SlashExpression_<'a> {
 }
 impl<'a> HasId for SlashExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30484,14 +30484,14 @@ impl<'a> ParseFromChunks<'a> for SlidingCurvePair_<'a> {
 }
 impl<'a> HasId for SlidingCurvePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.curve_1.append_ids(_v);
-    self.curve_2.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.curve_1.append_ids(_v);
+        self.curve_2.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30526,9 +30526,9 @@ impl<'a> ParseFromChunks<'a> for SlidingCurvePairValue_<'a> {
 }
 impl<'a> HasId for SlidingCurvePairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_point_on_curve_1.append_ids(_v);
-    self.actual_point_on_curve_2.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_point_on_curve_1.append_ids(_v);
+        self.actual_point_on_curve_2.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30578,14 +30578,14 @@ impl<'a> ParseFromChunks<'a> for SlidingSurfacePair_<'a> {
 }
 impl<'a> HasId for SlidingSurfacePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.surface_1.append_ids(_v);
-    self.surface_2.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.surface_1.append_ids(_v);
+        self.surface_2.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30623,10 +30623,10 @@ impl<'a> ParseFromChunks<'a> for SlidingSurfacePairValue_<'a> {
 }
 impl<'a> HasId for SlidingSurfacePairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_point_on_surface_1.append_ids(_v);
-    self.actual_point_on_surface_2.append_ids(_v);
-    self.actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_point_on_surface_1.append_ids(_v);
+        self.actual_point_on_surface_2.append_ids(_v);
+        self.actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30658,8 +30658,8 @@ impl<'a> ParseFromChunks<'a> for Slot_<'a> {
 }
 impl<'a> HasId for Slot_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30697,10 +30697,10 @@ impl<'a> ParseFromChunks<'a> for SlotEnd_<'a> {
 }
 impl<'a> HasId for SlotEnd_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30743,8 +30743,8 @@ impl<'a> ParseFromChunks<'a> for SolidAngleMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for SolidAngleMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30773,7 +30773,7 @@ impl<'a> ParseFromChunks<'a> for SolidAngleUnit_<'a> {
 }
 impl<'a> HasId for SolidAngleUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30802,7 +30802,7 @@ impl<'a> ParseFromChunks<'a> for SolidModel_<'a> {
 }
 impl<'a> HasId for SolidModel_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30837,9 +30837,9 @@ impl<'a> ParseFromChunks<'a> for SolidReplica_<'a> {
 }
 impl<'a> HasId for SolidReplica_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.parent_solid.append_ids(_v);
-    self.transformation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.parent_solid.append_ids(_v);
+        self.transformation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -30954,14 +30954,14 @@ impl<'a> ParseFromChunks<'a> for SpecifiedHigherUsageOccurrence_<'a> {
 }
 impl<'a> HasId for SpecifiedHigherUsageOccurrence_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_product_definition.append_ids(_v);
-    self.related_product_definition.append_ids(_v);
-    self.reference_designator.append_ids(_v);
-    self.upper_usage.append_ids(_v);
-    self.next_usage.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_product_definition.append_ids(_v);
+        self.related_product_definition.append_ids(_v);
+        self.reference_designator.append_ids(_v);
+        self.upper_usage.append_ids(_v);
+        self.next_usage.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31000,9 +31000,9 @@ impl<'a> ParseFromChunks<'a> for Sphere_<'a> {
 }
 impl<'a> HasId for Sphere_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.radius.append_ids(_v);
-    self.centre.append_ids(_v);
+        self.name.append_ids(_v);
+        self.radius.append_ids(_v);
+        self.centre.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31043,11 +31043,11 @@ impl<'a> ParseFromChunks<'a> for SphericalPair_<'a> {
 }
 impl<'a> HasId for SphericalPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31094,13 +31094,13 @@ impl<'a> ParseFromChunks<'a> for SphericalPairRange_<'a> {
 }
 impl<'a> HasId for SphericalPairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_yaw.append_ids(_v);
-    self.upper_limit_yaw.append_ids(_v);
-    self.lower_limit_pitch.append_ids(_v);
-    self.upper_limit_pitch.append_ids(_v);
-    self.lower_limit_roll.append_ids(_v);
-    self.upper_limit_roll.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_yaw.append_ids(_v);
+        self.upper_limit_yaw.append_ids(_v);
+        self.lower_limit_pitch.append_ids(_v);
+        self.upper_limit_pitch.append_ids(_v);
+        self.lower_limit_roll.append_ids(_v);
+        self.upper_limit_roll.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31132,8 +31132,8 @@ impl<'a> ParseFromChunks<'a> for SphericalPairValue_<'a> {
 }
 impl<'a> HasId for SphericalPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.input_orientation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.input_orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31168,9 +31168,9 @@ impl<'a> ParseFromChunks<'a> for SphericalSurface_<'a> {
 }
 impl<'a> HasId for SphericalSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.radius.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.radius.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31223,7 +31223,7 @@ impl<'a> ParseFromChunks<'a> for SquareRootFunction_<'a> {
 }
 impl<'a> HasId for SquareRootFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31261,10 +31261,10 @@ impl<'a> ParseFromChunks<'a> for SquareUProfile_<'a> {
 }
 impl<'a> HasId for SquareUProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31299,9 +31299,9 @@ impl<'a> ParseFromChunks<'a> for StandardUncertainty_<'a> {
 }
 impl<'a> HasId for StandardUncertainty_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.measure_name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.uncertainty_value.append_ids(_v);
+        self.measure_name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.uncertainty_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31339,10 +31339,10 @@ impl<'a> ParseFromChunks<'a> for StraightnessTolerance_<'a> {
 }
 impl<'a> HasId for StraightnessTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31419,7 +31419,7 @@ impl<'a> ParseFromChunks<'a> for StringLiteral_<'a> {
 }
 impl<'a> HasId for StringLiteral_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.the_value.append_ids(_v);
+        self.the_value.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31475,8 +31475,8 @@ impl<'a> ParseFromChunks<'a> for StructuredDimensionCallout_<'a> {
 }
 impl<'a> HasId for StructuredDimensionCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31515,9 +31515,9 @@ impl<'a> ParseFromChunks<'a> for StyledItem_<'a> {
 }
 impl<'a> HasId for StyledItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31555,10 +31555,10 @@ impl<'a> ParseFromChunks<'a> for Subedge_<'a> {
 }
 impl<'a> HasId for Subedge_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.edge_start.append_ids(_v);
-    self.edge_end.append_ids(_v);
-    self.parent_edge.append_ids(_v);
+        self.name.append_ids(_v);
+        self.edge_start.append_ids(_v);
+        self.edge_end.append_ids(_v);
+        self.parent_edge.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31593,9 +31593,9 @@ impl<'a> ParseFromChunks<'a> for Subface_<'a> {
 }
 impl<'a> HasId for Subface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.bounds.append_ids(_v);
-    self.parent_face.append_ids(_v);
+        self.name.append_ids(_v);
+        self.bounds.append_ids(_v);
+        self.parent_face.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31624,7 +31624,7 @@ impl<'a> ParseFromChunks<'a> for SubstringExpression_<'a> {
 }
 impl<'a> HasId for SubstringExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31657,7 +31657,7 @@ impl<'a> ParseFromChunks<'a> for Surface_<'a> {
 }
 impl<'a> HasId for Surface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31689,8 +31689,8 @@ impl<'a> ParseFromChunks<'a> for SurfaceConditionCallout_<'a> {
 }
 impl<'a> HasId for SurfaceConditionCallout_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.contents.append_ids(_v);
+        self.name.append_ids(_v);
+        self.contents.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31728,10 +31728,10 @@ impl<'a> ParseFromChunks<'a> for SurfaceCurve_<'a> {
 }
 impl<'a> HasId for SurfaceCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.curve_3d.append_ids(_v);
-    self.associated_geometry.append_ids(_v);
-    self.master_representation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.curve_3d.append_ids(_v);
+        self.associated_geometry.append_ids(_v);
+        self.master_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31775,12 +31775,12 @@ impl<'a> ParseFromChunks<'a> for SurfaceCurveSweptAreaSolid_<'a> {
 }
 impl<'a> HasId for SurfaceCurveSweptAreaSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_area.append_ids(_v);
-    self.directrix.append_ids(_v);
-    self.start_param.append_ids(_v);
-    self.end_param.append_ids(_v);
-    self.reference_surface.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_area.append_ids(_v);
+        self.directrix.append_ids(_v);
+        self.start_param.append_ids(_v);
+        self.end_param.append_ids(_v);
+        self.reference_surface.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31815,9 +31815,9 @@ impl<'a> ParseFromChunks<'a> for SurfaceOfLinearExtrusion_<'a> {
 }
 impl<'a> HasId for SurfaceOfLinearExtrusion_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_curve.append_ids(_v);
-    self.extrusion_axis.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_curve.append_ids(_v);
+        self.extrusion_axis.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31852,9 +31852,9 @@ impl<'a> ParseFromChunks<'a> for SurfaceOfRevolution_<'a> {
 }
 impl<'a> HasId for SurfaceOfRevolution_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_curve.append_ids(_v);
-    self.axis_position.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_curve.append_ids(_v);
+        self.axis_position.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31904,14 +31904,14 @@ impl<'a> ParseFromChunks<'a> for SurfacePair_<'a> {
 }
 impl<'a> HasId for SurfacePair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.surface_1.append_ids(_v);
-    self.surface_2.append_ids(_v);
-    self.orientation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.surface_1.append_ids(_v);
+        self.surface_2.append_ids(_v);
+        self.orientation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31952,11 +31952,11 @@ impl<'a> ParseFromChunks<'a> for SurfacePairRange_<'a> {
 }
 impl<'a> HasId for SurfacePairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.range_on_surface_1.append_ids(_v);
-    self.range_on_surface_2.append_ids(_v);
-    self.lower_limit_actual_rotation.append_ids(_v);
-    self.upper_limit_actual_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.range_on_surface_1.append_ids(_v);
+        self.range_on_surface_2.append_ids(_v);
+        self.lower_limit_actual_rotation.append_ids(_v);
+        self.upper_limit_actual_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -31997,11 +31997,11 @@ impl<'a> ParseFromChunks<'a> for SurfacePatch_<'a> {
 }
 impl<'a> HasId for SurfacePatch_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.parent_surface.append_ids(_v);
-    self.u_transition.append_ids(_v);
-    self.v_transition.append_ids(_v);
-    self.u_sense.append_ids(_v);
-    self.v_sense.append_ids(_v);
+        self.parent_surface.append_ids(_v);
+        self.u_transition.append_ids(_v);
+        self.v_transition.append_ids(_v);
+        self.u_sense.append_ids(_v);
+        self.v_sense.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32039,10 +32039,10 @@ impl<'a> ParseFromChunks<'a> for SurfaceProfileTolerance_<'a> {
 }
 impl<'a> HasId for SurfaceProfileTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32071,7 +32071,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceRenderingProperties_<'a> {
 }
 impl<'a> HasId for SurfaceRenderingProperties_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.rendered_colour.append_ids(_v);
+        self.rendered_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32106,9 +32106,9 @@ impl<'a> ParseFromChunks<'a> for SurfaceReplica_<'a> {
 }
 impl<'a> HasId for SurfaceReplica_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.parent_surface.append_ids(_v);
-    self.transformation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.parent_surface.append_ids(_v);
+        self.transformation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32164,8 +32164,8 @@ impl<'a> ParseFromChunks<'a> for SurfaceSideStyle_<'a> {
 }
 impl<'a> HasId for SurfaceSideStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32198,7 +32198,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleBoundary_<'a> {
 }
 impl<'a> HasId for SurfaceStyleBoundary_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.style_of_boundary.append_ids(_v);
+        self.style_of_boundary.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32227,7 +32227,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleControlGrid_<'a> {
 }
 impl<'a> HasId for SurfaceStyleControlGrid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.style_of_control_grid.append_ids(_v);
+        self.style_of_control_grid.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32260,7 +32260,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleFillArea_<'a> {
 }
 impl<'a> HasId for SurfaceStyleFillArea_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.fill_area.append_ids(_v);
+        self.fill_area.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32292,8 +32292,8 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleParameterLine_<'a> {
 }
 impl<'a> HasId for SurfaceStyleParameterLine_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.style_of_parameter_lines.append_ids(_v);
-    self.direction_counts.append_ids(_v);
+        self.style_of_parameter_lines.append_ids(_v);
+        self.direction_counts.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32322,7 +32322,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleReflectanceAmbient_<'a> {
 }
 impl<'a> HasId for SurfaceStyleReflectanceAmbient_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.ambient_reflectance.append_ids(_v);
+        self.ambient_reflectance.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32354,8 +32354,8 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleReflectanceAmbientDiffuse_<'a> {
 }
 impl<'a> HasId for SurfaceStyleReflectanceAmbientDiffuse_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.ambient_reflectance.append_ids(_v);
-    self.diffuse_reflectance.append_ids(_v);
+        self.ambient_reflectance.append_ids(_v);
+        self.diffuse_reflectance.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32396,11 +32396,11 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleReflectanceAmbientDiffuseSpecular_<
 }
 impl<'a> HasId for SurfaceStyleReflectanceAmbientDiffuseSpecular_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.ambient_reflectance.append_ids(_v);
-    self.diffuse_reflectance.append_ids(_v);
-    self.specular_reflectance.append_ids(_v);
-    self.specular_exponent.append_ids(_v);
-    self.specular_colour.append_ids(_v);
+        self.ambient_reflectance.append_ids(_v);
+        self.diffuse_reflectance.append_ids(_v);
+        self.specular_reflectance.append_ids(_v);
+        self.specular_exponent.append_ids(_v);
+        self.specular_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32432,8 +32432,8 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleRendering_<'a> {
 }
 impl<'a> HasId for SurfaceStyleRendering_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.rendering_method.append_ids(_v);
-    self.surface_colour.append_ids(_v);
+        self.rendering_method.append_ids(_v);
+        self.surface_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32468,9 +32468,9 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleRenderingWithProperties_<'a> {
 }
 impl<'a> HasId for SurfaceStyleRenderingWithProperties_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.rendering_method.append_ids(_v);
-    self.surface_colour.append_ids(_v);
-    self.properties.append_ids(_v);
+        self.rendering_method.append_ids(_v);
+        self.surface_colour.append_ids(_v);
+        self.properties.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32499,7 +32499,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleSegmentationCurve_<'a> {
 }
 impl<'a> HasId for SurfaceStyleSegmentationCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.style_of_segmentation_curve.append_ids(_v);
+        self.style_of_segmentation_curve.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32528,7 +32528,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleSilhouette_<'a> {
 }
 impl<'a> HasId for SurfaceStyleSilhouette_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.style_of_silhouette.append_ids(_v);
+        self.style_of_silhouette.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32557,7 +32557,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleTransparent_<'a> {
 }
 impl<'a> HasId for SurfaceStyleTransparent_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.transparency.append_ids(_v);
+        self.transparency.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32589,8 +32589,8 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleUsage_<'a> {
 }
 impl<'a> HasId for SurfaceStyleUsage_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.side.append_ids(_v);
-    self.style.append_ids(_v);
+        self.side.append_ids(_v);
+        self.style.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32625,9 +32625,9 @@ impl<'a> ParseFromChunks<'a> for SurfaceTextureRepresentation_<'a> {
 }
 impl<'a> HasId for SurfaceTextureRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 
@@ -32684,8 +32684,8 @@ impl<'a> ParseFromChunks<'a> for SweptAreaSolid_<'a> {
 }
 impl<'a> HasId for SweptAreaSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_area.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_area.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32729,12 +32729,12 @@ impl<'a> ParseFromChunks<'a> for SweptDiskSolid_<'a> {
 }
 impl<'a> HasId for SweptDiskSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.directrix.append_ids(_v);
-    self.radius.append_ids(_v);
-    self.inner_radius.append_ids(_v);
-    self.start_param.append_ids(_v);
-    self.end_param.append_ids(_v);
+        self.name.append_ids(_v);
+        self.directrix.append_ids(_v);
+        self.radius.append_ids(_v);
+        self.inner_radius.append_ids(_v);
+        self.start_param.append_ids(_v);
+        self.end_param.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32766,8 +32766,8 @@ impl<'a> ParseFromChunks<'a> for SweptFaceSolid_<'a> {
 }
 impl<'a> HasId for SweptFaceSolid_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_face.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_face.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32799,8 +32799,8 @@ impl<'a> ParseFromChunks<'a> for SweptSurface_<'a> {
 }
 impl<'a> HasId for SweptSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.swept_curve.append_ids(_v);
+        self.name.append_ids(_v);
+        self.swept_curve.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32829,7 +32829,7 @@ impl<'a> ParseFromChunks<'a> for SymbolColour_<'a> {
 }
 impl<'a> HasId for SymbolColour_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.colour_of_symbol.append_ids(_v);
+        self.colour_of_symbol.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32864,9 +32864,9 @@ impl<'a> ParseFromChunks<'a> for SymbolRepresentation_<'a> {
 }
 impl<'a> HasId for SymbolRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32898,8 +32898,8 @@ impl<'a> ParseFromChunks<'a> for SymbolRepresentationMap_<'a> {
 }
 impl<'a> HasId for SymbolRepresentationMap_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.mapping_origin.append_ids(_v);
-    self.mapped_representation.append_ids(_v);
+        self.mapping_origin.append_ids(_v);
+        self.mapped_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32931,8 +32931,8 @@ impl<'a> ParseFromChunks<'a> for SymbolStyle_<'a> {
 }
 impl<'a> HasId for SymbolStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.style_of_symbol.append_ids(_v);
+        self.name.append_ids(_v);
+        self.style_of_symbol.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -32974,10 +32974,10 @@ impl<'a> ParseFromChunks<'a> for SymbolTarget_<'a> {
 }
 impl<'a> HasId for SymbolTarget_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.placement.append_ids(_v);
-    self.x_scale.append_ids(_v);
-    self.y_scale.append_ids(_v);
+        self.name.append_ids(_v);
+        self.placement.append_ids(_v);
+        self.x_scale.append_ids(_v);
+        self.y_scale.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33015,10 +33015,10 @@ impl<'a> ParseFromChunks<'a> for SymmetricShapeAspect_<'a> {
 }
 impl<'a> HasId for SymmetricShapeAspect_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33059,11 +33059,11 @@ impl<'a> ParseFromChunks<'a> for SymmetryTolerance_<'a> {
 }
 impl<'a> HasId for SymmetryTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33098,9 +33098,9 @@ impl<'a> ParseFromChunks<'a> for TactileAppearanceRepresentation_<'a> {
 }
 impl<'a> HasId for TactileAppearanceRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33129,7 +33129,7 @@ impl<'a> ParseFromChunks<'a> for TanFunction_<'a> {
 }
 impl<'a> HasId for TanFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33167,10 +33167,10 @@ impl<'a> ParseFromChunks<'a> for Tangent_<'a> {
 }
 impl<'a> HasId for Tangent_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33208,10 +33208,10 @@ impl<'a> ParseFromChunks<'a> for Taper_<'a> {
 }
 impl<'a> HasId for Taper_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33249,10 +33249,10 @@ impl<'a> ParseFromChunks<'a> for TeeProfile_<'a> {
 }
 impl<'a> HasId for TeeProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33290,10 +33290,10 @@ impl<'a> ParseFromChunks<'a> for TerminatorSymbol_<'a> {
 }
 impl<'a> HasId for TerminatorSymbol_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.styles.append_ids(_v);
-    self.item.append_ids(_v);
-    self.annotated_curve.append_ids(_v);
+        self.name.append_ids(_v);
+        self.styles.append_ids(_v);
+        self.item.append_ids(_v);
+        self.annotated_curve.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33376,12 +33376,12 @@ impl<'a> ParseFromChunks<'a> for TextLiteral_<'a> {
 }
 impl<'a> HasId for TextLiteral_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.literal.append_ids(_v);
-    self.placement.append_ids(_v);
-    self.alignment.append_ids(_v);
-    self.path.append_ids(_v);
-    self.font.append_ids(_v);
+        self.name.append_ids(_v);
+        self.literal.append_ids(_v);
+        self.placement.append_ids(_v);
+        self.alignment.append_ids(_v);
+        self.path.append_ids(_v);
+        self.font.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33428,13 +33428,13 @@ impl<'a> ParseFromChunks<'a> for TextLiteralWithAssociatedCurves_<'a> {
 }
 impl<'a> HasId for TextLiteralWithAssociatedCurves_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.literal.append_ids(_v);
-    self.placement.append_ids(_v);
-    self.alignment.append_ids(_v);
-    self.path.append_ids(_v);
-    self.font.append_ids(_v);
-    self.associated_curves.append_ids(_v);
+        self.name.append_ids(_v);
+        self.literal.append_ids(_v);
+        self.placement.append_ids(_v);
+        self.alignment.append_ids(_v);
+        self.path.append_ids(_v);
+        self.font.append_ids(_v);
+        self.associated_curves.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33481,13 +33481,13 @@ impl<'a> ParseFromChunks<'a> for TextLiteralWithBlankingBox_<'a> {
 }
 impl<'a> HasId for TextLiteralWithBlankingBox_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.literal.append_ids(_v);
-    self.placement.append_ids(_v);
-    self.alignment.append_ids(_v);
-    self.path.append_ids(_v);
-    self.font.append_ids(_v);
-    self.blanking.append_ids(_v);
+        self.name.append_ids(_v);
+        self.literal.append_ids(_v);
+        self.placement.append_ids(_v);
+        self.alignment.append_ids(_v);
+        self.path.append_ids(_v);
+        self.font.append_ids(_v);
+        self.blanking.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33534,13 +33534,13 @@ impl<'a> ParseFromChunks<'a> for TextLiteralWithDelineation_<'a> {
 }
 impl<'a> HasId for TextLiteralWithDelineation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.literal.append_ids(_v);
-    self.placement.append_ids(_v);
-    self.alignment.append_ids(_v);
-    self.path.append_ids(_v);
-    self.font.append_ids(_v);
-    self.delineation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.literal.append_ids(_v);
+        self.placement.append_ids(_v);
+        self.alignment.append_ids(_v);
+        self.path.append_ids(_v);
+        self.font.append_ids(_v);
+        self.delineation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33587,13 +33587,13 @@ impl<'a> ParseFromChunks<'a> for TextLiteralWithExtent_<'a> {
 }
 impl<'a> HasId for TextLiteralWithExtent_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.literal.append_ids(_v);
-    self.placement.append_ids(_v);
-    self.alignment.append_ids(_v);
-    self.path.append_ids(_v);
-    self.font.append_ids(_v);
-    self.extent.append_ids(_v);
+        self.name.append_ids(_v);
+        self.literal.append_ids(_v);
+        self.placement.append_ids(_v);
+        self.alignment.append_ids(_v);
+        self.path.append_ids(_v);
+        self.font.append_ids(_v);
+        self.extent.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33658,9 +33658,9 @@ impl<'a> ParseFromChunks<'a> for TextStringRepresentation_<'a> {
 }
 impl<'a> HasId for TextStringRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33696,8 +33696,8 @@ impl<'a> ParseFromChunks<'a> for TextStyle_<'a> {
 }
 impl<'a> HasId for TextStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.character_appearance.append_ids(_v);
+        self.name.append_ids(_v);
+        self.character_appearance.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33726,7 +33726,7 @@ impl<'a> ParseFromChunks<'a> for TextStyleForDefinedFont_<'a> {
 }
 impl<'a> HasId for TextStyleForDefinedFont_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.text_colour.append_ids(_v);
+        self.text_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33761,9 +33761,9 @@ impl<'a> ParseFromChunks<'a> for TextStyleWithBoxCharacteristics_<'a> {
 }
 impl<'a> HasId for TextStyleWithBoxCharacteristics_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.character_appearance.append_ids(_v);
-    self.characteristics.append_ids(_v);
+        self.name.append_ids(_v);
+        self.character_appearance.append_ids(_v);
+        self.characteristics.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33798,9 +33798,9 @@ impl<'a> ParseFromChunks<'a> for TextStyleWithMirror_<'a> {
 }
 impl<'a> HasId for TextStyleWithMirror_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.character_appearance.append_ids(_v);
-    self.mirror_placement.append_ids(_v);
+        self.name.append_ids(_v);
+        self.character_appearance.append_ids(_v);
+        self.mirror_placement.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33835,9 +33835,9 @@ impl<'a> ParseFromChunks<'a> for TextStyleWithSpacing_<'a> {
 }
 impl<'a> HasId for TextStyleWithSpacing_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.character_appearance.append_ids(_v);
-    self.character_spacing.append_ids(_v);
+        self.name.append_ids(_v);
+        self.character_appearance.append_ids(_v);
+        self.character_spacing.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33880,8 +33880,8 @@ impl<'a> ParseFromChunks<'a> for ThermodynamicTemperatureMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for ThermodynamicTemperatureMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33910,7 +33910,7 @@ impl<'a> ParseFromChunks<'a> for ThermodynamicTemperatureUnit_<'a> {
 }
 impl<'a> HasId for ThermodynamicTemperatureUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33942,8 +33942,8 @@ impl<'a> ParseFromChunks<'a> for Thread_<'a> {
 }
 impl<'a> HasId for Thread_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -33978,9 +33978,9 @@ impl<'a> ParseFromChunks<'a> for TimeInterval_<'a> {
 }
 impl<'a> HasId for TimeInterval_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34012,8 +34012,8 @@ impl<'a> ParseFromChunks<'a> for TimeIntervalAssignment_<'a> {
 }
 impl<'a> HasId for TimeIntervalAssignment_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.assigned_time_interval.append_ids(_v);
-    self.role.append_ids(_v);
+        self.assigned_time_interval.append_ids(_v);
+        self.role.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34045,8 +34045,8 @@ impl<'a> ParseFromChunks<'a> for TimeIntervalBasedEffectivity_<'a> {
 }
 impl<'a> HasId for TimeIntervalBasedEffectivity_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.effectivity_period.append_ids(_v);
+        self.id.append_ids(_v);
+        self.effectivity_period.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34082,8 +34082,8 @@ impl<'a> ParseFromChunks<'a> for TimeIntervalRole_<'a> {
 }
 impl<'a> HasId for TimeIntervalRole_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34127,12 +34127,12 @@ impl<'a> ParseFromChunks<'a> for TimeIntervalWithBounds_<'a> {
 }
 impl<'a> HasId for TimeIntervalWithBounds_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.primary_bound.append_ids(_v);
-    self.secondary_bound.append_ids(_v);
-    self.duration.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.primary_bound.append_ids(_v);
+        self.secondary_bound.append_ids(_v);
+        self.duration.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34175,8 +34175,8 @@ impl<'a> ParseFromChunks<'a> for TimeMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for TimeMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34205,7 +34205,7 @@ impl<'a> ParseFromChunks<'a> for TimeUnit_<'a> {
 }
 impl<'a> HasId for TimeUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.dimensions.append_ids(_v);
+        self.dimensions.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34291,8 +34291,8 @@ impl<'a> ParseFromChunks<'a> for ToleranceValue_<'a> {
 }
 impl<'a> HasId for ToleranceValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.lower_bound.append_ids(_v);
-    self.upper_bound.append_ids(_v);
+        self.lower_bound.append_ids(_v);
+        self.upper_bound.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34336,12 +34336,12 @@ impl<'a> ParseFromChunks<'a> for ToleranceZone_<'a> {
 }
 impl<'a> HasId for ToleranceZone_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
-    self.defining_tolerance.append_ids(_v);
-    self.form.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
+        self.defining_tolerance.append_ids(_v);
+        self.form.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34373,8 +34373,8 @@ impl<'a> ParseFromChunks<'a> for ToleranceZoneDefinition_<'a> {
 }
 impl<'a> HasId for ToleranceZoneDefinition_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.zone.append_ids(_v);
-    self.boundaries.append_ids(_v);
+        self.zone.append_ids(_v);
+        self.boundaries.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34403,7 +34403,7 @@ impl<'a> ParseFromChunks<'a> for ToleranceZoneForm_<'a> {
 }
 impl<'a> HasId for ToleranceZoneForm_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34432,7 +34432,7 @@ impl<'a> ParseFromChunks<'a> for TopologicalRepresentationItem_<'a> {
 }
 impl<'a> HasId for TopologicalRepresentationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34470,10 +34470,10 @@ impl<'a> ParseFromChunks<'a> for ToroidalSurface_<'a> {
 }
 impl<'a> HasId for ToroidalSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.major_radius.append_ids(_v);
-    self.minor_radius.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.major_radius.append_ids(_v);
+        self.minor_radius.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34511,10 +34511,10 @@ impl<'a> ParseFromChunks<'a> for Torus_<'a> {
 }
 impl<'a> HasId for Torus_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.position.append_ids(_v);
-    self.major_radius.append_ids(_v);
-    self.minor_radius.append_ids(_v);
+        self.name.append_ids(_v);
+        self.position.append_ids(_v);
+        self.major_radius.append_ids(_v);
+        self.minor_radius.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34555,11 +34555,11 @@ impl<'a> ParseFromChunks<'a> for TotalRunoutTolerance_<'a> {
 }
 impl<'a> HasId for TotalRunoutTolerance_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.magnitude.append_ids(_v);
-    self.toleranced_shape_aspect.append_ids(_v);
-    self.datum_system.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.magnitude.append_ids(_v);
+        self.toleranced_shape_aspect.append_ids(_v);
+        self.datum_system.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34627,10 +34627,10 @@ impl<'a> ParseFromChunks<'a> for TransitionFeature_<'a> {
 }
 impl<'a> HasId for TransitionFeature_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34697,12 +34697,12 @@ impl<'a> ParseFromChunks<'a> for TrimmedCurve_<'a> {
 }
 impl<'a> HasId for TrimmedCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.basis_curve.append_ids(_v);
-    self.trim_1.append_ids(_v);
-    self.trim_2.append_ids(_v);
-    self.sense_agreement.append_ids(_v);
-    self.master_representation.append_ids(_v);
+        self.name.append_ids(_v);
+        self.basis_curve.append_ids(_v);
+        self.trim_1.append_ids(_v);
+        self.trim_2.append_ids(_v);
+        self.sense_agreement.append_ids(_v);
+        self.master_representation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34784,9 +34784,9 @@ impl<'a> ParseFromChunks<'a> for TwoDirectionRepeatFactor_<'a> {
 }
 impl<'a> HasId for TwoDirectionRepeatFactor_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.repeat_factor.append_ids(_v);
-    self.second_repeat_factor.append_ids(_v);
+        self.name.append_ids(_v);
+        self.repeat_factor.append_ids(_v);
+        self.second_repeat_factor.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34815,7 +34815,7 @@ impl<'a> ParseFromChunks<'a> for TypeQualifier_<'a> {
 }
 impl<'a> HasId for TypeQualifier_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34855,7 +34855,7 @@ impl<'a> ParseFromChunks<'a> for UnaryBooleanExpression_<'a> {
 }
 impl<'a> HasId for UnaryBooleanExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34884,7 +34884,7 @@ impl<'a> ParseFromChunks<'a> for UnaryFunctionCall_<'a> {
 }
 impl<'a> HasId for UnaryFunctionCall_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34913,7 +34913,7 @@ impl<'a> ParseFromChunks<'a> for UnaryGenericExpression_<'a> {
 }
 impl<'a> HasId for UnaryGenericExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34942,7 +34942,7 @@ impl<'a> ParseFromChunks<'a> for UnaryNumericExpression_<'a> {
 }
 impl<'a> HasId for UnaryNumericExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -34980,10 +34980,10 @@ impl<'a> ParseFromChunks<'a> for UncertaintyAssignedRepresentation_<'a> {
 }
 impl<'a> HasId for UncertaintyAssignedRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
-    self.uncertainty.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
+        self.uncertainty.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35021,10 +35021,10 @@ impl<'a> ParseFromChunks<'a> for UncertaintyMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for UncertaintyMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35056,8 +35056,8 @@ impl<'a> ParseFromChunks<'a> for UncertaintyQualifier_<'a> {
 }
 impl<'a> HasId for UncertaintyQualifier_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.measure_name.append_ids(_v);
-    self.description.append_ids(_v);
+        self.measure_name.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35098,11 +35098,11 @@ impl<'a> ParseFromChunks<'a> for UnconstrainedPair_<'a> {
 }
 impl<'a> HasId for UnconstrainedPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35134,8 +35134,8 @@ impl<'a> ParseFromChunks<'a> for UnconstrainedPairValue_<'a> {
 }
 impl<'a> HasId for UnconstrainedPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.actual_placement.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.actual_placement.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35179,12 +35179,12 @@ impl<'a> ParseFromChunks<'a> for UniformCurve_<'a> {
 }
 impl<'a> HasId for UniformCurve_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.curve_form.append_ids(_v);
-    self.closed_curve.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.curve_form.append_ids(_v);
+        self.closed_curve.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35234,14 +35234,14 @@ impl<'a> ParseFromChunks<'a> for UniformSurface_<'a> {
 }
 impl<'a> HasId for UniformSurface_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.u_degree.append_ids(_v);
-    self.v_degree.append_ids(_v);
-    self.control_points_list.append_ids(_v);
-    self.surface_form.append_ids(_v);
-    self.u_closed.append_ids(_v);
-    self.v_closed.append_ids(_v);
-    self.self_intersect.append_ids(_v);
+        self.name.append_ids(_v);
+        self.u_degree.append_ids(_v);
+        self.v_degree.append_ids(_v);
+        self.control_points_list.append_ids(_v);
+        self.surface_form.append_ids(_v);
+        self.u_closed.append_ids(_v);
+        self.v_closed.append_ids(_v);
+        self.self_intersect.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35289,12 +35289,12 @@ impl<'a> ParseFromChunks<'a> for UniversalPair_<'a> {
 }
 impl<'a> HasId for UniversalPair_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.transform_item_1.append_ids(_v);
-    self.transform_item_2.append_ids(_v);
-    self.joint.append_ids(_v);
-    self.input_skew_angle.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.transform_item_1.append_ids(_v);
+        self.transform_item_2.append_ids(_v);
+        self.joint.append_ids(_v);
+        self.input_skew_angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35335,11 +35335,11 @@ impl<'a> ParseFromChunks<'a> for UniversalPairRange_<'a> {
 }
 impl<'a> HasId for UniversalPairRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.lower_limit_first_rotation.append_ids(_v);
-    self.upper_limit_first_rotation.append_ids(_v);
-    self.lower_limit_second_rotation.append_ids(_v);
-    self.upper_limit_second_rotation.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.lower_limit_first_rotation.append_ids(_v);
+        self.upper_limit_first_rotation.append_ids(_v);
+        self.lower_limit_second_rotation.append_ids(_v);
+        self.upper_limit_second_rotation.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35374,9 +35374,9 @@ impl<'a> ParseFromChunks<'a> for UniversalPairValue_<'a> {
 }
 impl<'a> HasId for UniversalPairValue_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.applies_to_pair.append_ids(_v);
-    self.first_rotation_angle.append_ids(_v);
-    self.second_rotation_angle.append_ids(_v);
+        self.applies_to_pair.append_ids(_v);
+        self.first_rotation_angle.append_ids(_v);
+        self.second_rotation_angle.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35436,7 +35436,7 @@ impl<'a> ParseFromChunks<'a> for ValueFunction_<'a> {
 }
 impl<'a> HasId for ValueFunction_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operand.append_ids(_v);
+        self.operand.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35472,8 +35472,8 @@ impl<'a> ParseFromChunks<'a> for ValueRange_<'a> {
 }
 impl<'a> HasId for ValueRange_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.item_element.append_ids(_v);
+        self.name.append_ids(_v);
+        self.item_element.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35505,8 +35505,8 @@ impl<'a> ParseFromChunks<'a> for ValueRepresentationItem_<'a> {
 }
 impl<'a> HasId for ValueRepresentationItem_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.value_component.append_ids(_v);
+        self.name.append_ids(_v);
+        self.value_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35589,9 +35589,9 @@ impl<'a> ParseFromChunks<'a> for Vector_<'a> {
 }
 impl<'a> HasId for Vector_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.orientation.append_ids(_v);
-    self.magnitude.append_ids(_v);
+        self.name.append_ids(_v);
+        self.orientation.append_ids(_v);
+        self.magnitude.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35639,11 +35639,11 @@ impl<'a> ParseFromChunks<'a> for VectorStyle_<'a> {
 }
 impl<'a> HasId for VectorStyle_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.pre_defined_item__name.append_ids(_v);
-    self.curve_style__name.append_ids(_v);
-    self.curve_font.append_ids(_v);
-    self.curve_width.append_ids(_v);
-    self.curve_colour.append_ids(_v);
+        self.pre_defined_item__name.append_ids(_v);
+        self.curve_style__name.append_ids(_v);
+        self.curve_font.append_ids(_v);
+        self.curve_width.append_ids(_v);
+        self.curve_colour.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35681,10 +35681,10 @@ impl<'a> ParseFromChunks<'a> for VeeProfile_<'a> {
 }
 impl<'a> HasId for VeeProfile_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.of_shape.append_ids(_v);
-    self.product_definitional.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.of_shape.append_ids(_v);
+        self.product_definitional.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35722,10 +35722,10 @@ impl<'a> ParseFromChunks<'a> for VersionedActionRequest_<'a> {
 }
 impl<'a> HasId for VersionedActionRequest_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.version.append_ids(_v);
-    self.purpose.append_ids(_v);
-    self.description.append_ids(_v);
+        self.id.append_ids(_v);
+        self.version.append_ids(_v);
+        self.purpose.append_ids(_v);
+        self.description.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35766,11 +35766,11 @@ impl<'a> ParseFromChunks<'a> for VersionedActionRequestRelationship_<'a> {
 }
 impl<'a> HasId for VersionedActionRequestRelationship_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.id.append_ids(_v);
-    self.name.append_ids(_v);
-    self.description.append_ids(_v);
-    self.relating_versioned_action_request.append_ids(_v);
-    self.related_versioned_action_request.append_ids(_v);
+        self.id.append_ids(_v);
+        self.name.append_ids(_v);
+        self.description.append_ids(_v);
+        self.relating_versioned_action_request.append_ids(_v);
+        self.related_versioned_action_request.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35799,7 +35799,7 @@ impl<'a> ParseFromChunks<'a> for Vertex_<'a> {
 }
 impl<'a> HasId for Vertex_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
+        self.name.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35831,8 +35831,8 @@ impl<'a> ParseFromChunks<'a> for VertexLoop_<'a> {
 }
 impl<'a> HasId for VertexLoop_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.loop_vertex.append_ids(_v);
+        self.name.append_ids(_v);
+        self.loop_vertex.append_ids(_v);
     }
 }
 #[allow(non_snake_case)]
@@ -35866,8 +35866,8 @@ impl<'a> ParseFromChunks<'a> for VertexPoint_<'a> {
 }
 impl<'a> HasId for VertexPoint_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.representation_item__name.append_ids(_v);
-    self.vertex_geometry.append_ids(_v);
+        self.representation_item__name.append_ids(_v);
+        self.vertex_geometry.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35920,15 +35920,15 @@ impl<'a> ParseFromChunks<'a> for ViewVolume_<'a> {
 }
 impl<'a> HasId for ViewVolume_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.projection_type.append_ids(_v);
-    self.projection_point.append_ids(_v);
-    self.view_plane_distance.append_ids(_v);
-    self.front_plane_distance.append_ids(_v);
-    self.front_plane_clipping.append_ids(_v);
-    self.back_plane_distance.append_ids(_v);
-    self.back_plane_clipping.append_ids(_v);
-    self.view_volume_sides_clipping.append_ids(_v);
-    self.view_window.append_ids(_v);
+        self.projection_type.append_ids(_v);
+        self.projection_point.append_ids(_v);
+        self.view_plane_distance.append_ids(_v);
+        self.front_plane_distance.append_ids(_v);
+        self.front_plane_clipping.append_ids(_v);
+        self.back_plane_distance.append_ids(_v);
+        self.back_plane_clipping.append_ids(_v);
+        self.view_volume_sides_clipping.append_ids(_v);
+        self.view_window.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -35963,9 +35963,9 @@ impl<'a> ParseFromChunks<'a> for VisualAppearanceRepresentation_<'a> {
 }
 impl<'a> HasId for VisualAppearanceRepresentation_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.name.append_ids(_v);
-    self.items.append_ids(_v);
-    self.context_of_items.append_ids(_v);
+        self.name.append_ids(_v);
+        self.items.append_ids(_v);
+        self.context_of_items.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -36008,8 +36008,8 @@ impl<'a> ParseFromChunks<'a> for VolumeMeasureWithUnit_<'a> {
 }
 impl<'a> HasId for VolumeMeasureWithUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.value_component.append_ids(_v);
-    self.unit_component.append_ids(_v);
+        self.value_component.append_ids(_v);
+        self.unit_component.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -36038,7 +36038,7 @@ impl<'a> ParseFromChunks<'a> for VolumeUnit_<'a> {
 }
 impl<'a> HasId for VolumeUnit_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.elements.append_ids(_v);
+        self.elements.append_ids(_v);
     }
 }
 #[derive(Debug)]
@@ -36067,7 +36067,7 @@ impl<'a> ParseFromChunks<'a> for XorExpression_<'a> {
 }
 impl<'a> HasId for XorExpression_<'a> {
     fn append_ids(&self, _v: &mut Vec<usize>) {
-    self.operands.append_ids(_v);
+        self.operands.append_ids(_v);
     }
 }
 #[derive(Debug)]
