@@ -390,10 +390,10 @@ impl<'a> HasId for {}_<'a> {{
     fn append_ids(&self, _v: &mut Vec<usize>) {{", camel_name)?;
                 for a in attrs.iter().filter(|a| !a.derived) {
                     if a.dupe {
-                        writeln!(buf, "    self.{}__{}.append_ids(_v);",
+                        writeln!(buf, "        self.{}__{}.append_ids(_v);",
                                  a.from.unwrap(), a.name)?;
                     } else {
-                        writeln!(buf, "    self.{}.append_ids(_v);", a.name)?;
+                        writeln!(buf, "        self.{}.append_ids(_v);", a.name)?;
                     }
                 }
                 writeln!(buf, "    }}
