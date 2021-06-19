@@ -30,7 +30,7 @@ python3 -m http.server # or the simple server of your choice
   `cdt` as its core
 - `nurbs`: A handful of NURBS / B-spline algorithms used by `triangulate`
 - `gui`: GUI for rendering STEP files
-- `wasm`: Scaffolding to running in the browser using WebAssembly
+- `wasm`: Scaffolding to run in the browser using WebAssembly
 
 ## Code generation
 `step/src/ap214.rs` is automatically generated from
