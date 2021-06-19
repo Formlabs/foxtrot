@@ -1,7 +1,7 @@
 use std::collections::{HashSet, HashMap};
 use nom::{
     branch::{alt},
-    bytes::complete::{tag, is_not},
+    bytes::complete::{is_not, tag},
     character::complete::{char, digit1},
     combinator::{map, map_res, opt},
     error::*,
@@ -9,27 +9,22 @@ use nom::{
     multi::{separated_list0},
 };
 use memchr::{memchr, memchr3};
+use arrayvec::ArrayVec;
 
 use crate::{id::{Id, HasId}, ap214::{Entity, superclasses_of}};
 
 ////////////////////////////////////////////////////////////////////////////////
 
-pub type IResult<'a, U> = nom::IResult<&'a str, U, VerboseError<&'a str>>;
+pub type IResult<'a, U> = nom::IResult<&'a str, U, Error<&'a str>>;
 
 /// Helper function to generate a `nom` error result
-fn nom_err<'a, U>(s: &'a str, msg: &'static str) -> IResult<'a, U> {
-    Err(nom::Err::Error(
-        VerboseError {
-            errors: vec![(s, VerboseErrorKind::Context(msg))]
-        }))
+fn nom_err<'a, U>(s: &'a str, kind: nom::error::ErrorKind) -> IResult<'a, U> {
+    Err(nom::Err::Error(Error::new(s, kind)))
 }
 
 /// Helper function to generate a `nom` error result with the `Alt` tag
 pub fn nom_alt_err<'a, U>(s: &'a str) -> IResult<'a, U> {
-    Err(nom::Err::Error(
-        VerboseError {
-            errors: vec![(s, VerboseErrorKind::Nom(ErrorKind::Alt))]
-        }))
+    nom_err(s, ErrorKind::Alt)
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -48,7 +43,7 @@ pub(crate) trait Parse<'a> {
 impl Parse<'_> for f64 {
     fn parse(s: &str) -> IResult<Self> {
         match fast_float::parse_partial::<f64, _>(s) {
-            Err(_) => nom_err(s, "Could not parse float"),
+            Err(_) => nom_err(s, ErrorKind::Float),
             Ok((x, n)) => Ok((&s[n..], x)),
         }
     }
@@ -80,6 +75,35 @@ impl<'a> Parse<'a> for &'a str {
 impl<'a, T: Parse<'a>> Parse<'a> for Vec<T> {
     fn parse(s: &'a str) -> IResult<'a, Vec<T>> {
         delimited(char('('), separated_list0(char(','), T::parse), char(')'))(s)
+    }
+}
+impl<'a, T: Parse<'a>, const CAP: usize> Parse<'a> for ArrayVec<T, CAP> {
+    fn parse(s: &'a str) -> IResult<'a, ArrayVec<T, CAP>> {
+        let (mut s, _) = char('(')(s)?;
+        let mut out = ArrayVec::new();
+        // Based on nom's separated_list0
+        let (s_, o) = match T::parse(s) {
+            Err(nom::Err::Error(_)) => return Ok((s, out)),
+            e => e?,
+        };
+        s = s_;
+        out.push(o);
+
+        loop {
+            let (s_, _) = match char(',')(s) {
+                Err(nom::Err::Error(_)) => break,
+                e => e?,
+            };
+            s = s_;
+            let (s_, o) = match T::parse(s) {
+                Err(nom::Err::Error(_)) => break,
+                e => e?,
+            };
+            s = s_;
+            out.push(o);
+        }
+        let (s, _) = char(')')(s)?;
+        Ok((s, out))
     }
 }
 impl<'a, T: Parse<'a>> Parse<'a> for Option<T> {
@@ -180,7 +204,7 @@ pub(crate) fn parse_enum_tag(s: &str) -> IResult<&str> {
 pub(crate) fn parse_entity_decl(s: &[u8]) -> IResult<(usize, Entity)> {
     let s = match std::str::from_utf8(s) {
         Ok(s) => s,
-        Err(_) => return nom_err("", "Invalid unicode"),
+        Err(_) => return nom_err("", ErrorKind::Escaped), // TODO correct code?
     };
     map(tuple((Id::<()>::parse, char('='), Entity::parse)),
         |(i, _, e)| (i.0, e))(s)
@@ -189,7 +213,7 @@ pub(crate) fn parse_entity_decl(s: &[u8]) -> IResult<(usize, Entity)> {
 pub(crate) fn parse_entity_fallback(s: &[u8]) -> IResult<(usize, Entity)> {
     let s = match std::str::from_utf8(s) {
         Ok(s) => s,
-        Err(_) => return nom_err("", "Invalid unicode"),
+        Err(_) => return nom_err("", ErrorKind::Escaped),
     };
     map(Id::<()>::parse, |i| (i.0, Entity::_FailedToParse))(s)
 }
@@ -210,7 +234,7 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
     loop {
         let next = match memchr3(b'(', b')', b'\'', &bstr[index..]) {
             Some(i) => i,
-            None => return nom_err(s, "Invalid complex mapping"),
+            None => return nom_err(s, ErrorKind::Alt),
         };
         match bstr[index + next] {
             b'(' => {
@@ -241,7 +265,7 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
                 // TODO: handle escaped quotes
                 let j = match memchr(b'\'', &bstr[(index + next + 1)..]) {
                     Some(j) => j,
-                    None => return nom_err(s, "Open quote in complex mapping"),
+                    None => return nom_err(s, ErrorKind::Char),
                 };
                 index += j + 1;
             }
@@ -279,8 +303,7 @@ pub(crate) fn parse_complex_mapping(s: &str) -> IResult<Entity> {
             match sup.len() {
                 0 => break,
                 1 => chain.push(sup[0]),
-                _ => return nom_err(s,
-                    "complex entity with multiple superclasses"),
+                _ => return nom_err(s, ErrorKind::LengthValue), // TODO: error
             }
         }
         let mut new_decl: Vec<&str> = vec![name_tags.get(leaf).unwrap()];

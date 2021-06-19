@@ -1,3 +1,5 @@
+use arrayvec::ArrayVec;
+
 #[derive(Debug)]
 pub struct Id<T>(pub usize, std::marker::PhantomData<*const T>);
 impl<T> Id<T> {
@@ -42,6 +44,13 @@ impl<T> HasId for Id<T> {
     }
 }
 impl<T: HasId> HasId for Vec<T> {
+    fn append_ids(&self, v: &mut Vec<usize>) {
+        for t in self {
+            t.append_ids(v);
+        }
+    }
+}
+impl<T: HasId, const CAP: usize> HasId for ArrayVec<T, CAP> {
     fn append_ids(&self, v: &mut Vec<usize>) {
         for t in self {
             t.append_ids(v);

@@ -69,7 +69,7 @@ fn list1<'a, U, F>(c: char, p: F) -> impl FnMut(&'a str) -> IResult<'a, Vec<U>>
 macro_rules! alias {
     ($a:ident $(< $lt:lifetime >)?, $b:ident) => {
         #[derive(Debug)]
-        pub struct $a $(< $lt >)?($b $(< $lt >)?);
+        pub struct $a $(< $lt >)?(pub $b $(< $lt >)?);
         impl $(< $lt >)? $a $(< $lt >)?  {
             fn parse(s: &$( $lt )? str) -> IResult<Self> {
                 map($b::parse, Self)(s)
@@ -517,7 +517,7 @@ alias!(Bound2<'a>, NumericExpression, bound_2);
 
 // 185
 #[derive(Debug)]
-pub struct BoundSpec<'a>(Bound1<'a>, Bound2<'a>);
+pub struct BoundSpec<'a>(Bound1<'a>, pub Bound2<'a>);
 fn bound_spec(s: &str) -> IResult<BoundSpec> {
     map(tuple((
         char('['),
@@ -951,7 +951,7 @@ fn expression(s: &str) -> IResult<Expression> { Expression::parse(s) }
 
 // 217 factor = simple_factor [ ’**’ simple_factor ] .
 #[derive(Debug)]
-pub struct Factor<'a>(SimpleFactor<'a>, Option<SimpleFactor<'a>>);
+pub struct Factor<'a>(pub SimpleFactor<'a>, pub Option<SimpleFactor<'a>>);
 fn factor(s: &str) -> IResult<Factor> {
     map(pair(simple_factor, opt(preceded(tag("**"), simple_factor))),
         |(a, b)| Factor(a, b))(s)
@@ -2070,7 +2070,7 @@ fn set_type(s: &str) -> IResult<SetType> {
 
 // 305 simple_expression = term { add_like_op term } .
 #[derive(Debug)]
-pub struct SimpleExpression<'a>(Box<Term<'a>>, Vec<(AddLikeOp, Term<'a>)>);
+pub struct SimpleExpression<'a>(pub Box<Term<'a>>, pub Vec<(AddLikeOp, Term<'a>)>);
 impl<'a> SimpleExpression<'a> {
     fn parse(s: &'a str) -> IResult<Self> {
         let (s, a) = term(s)?;
@@ -2362,7 +2362,7 @@ fn syntax(s: &str) -> IResult<Syntax> {
 
 // 325 term = factor { multiplication_like_op factor } .
 #[derive(Debug)]
-pub struct Term<'a>(Factor<'a>, Vec<(MultiplicationLikeOp, Factor<'a>)>);
+pub struct Term<'a>(pub Factor<'a>, pub Vec<(MultiplicationLikeOp, Factor<'a>)>);
 fn term(s: &str) -> IResult<Term> {
     map(pair(factor, many0(pair(multiplication_like_op, factor))),
         |(a, b)| Term(a, b))(s)

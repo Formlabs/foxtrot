@@ -7,12 +7,13 @@ use crate::{
 };
 use nom::{
     branch::{alt},
-    bytes::complete::{tag},
+    bytes::complete::tag,
     character::complete::{alpha0, alphanumeric1, char},
     combinator::{map, recognize},
     multi::{many0},
     sequence::{delimited, pair},
 };
+use arrayvec::ArrayVec;
 #[derive(Debug)]
 pub struct AbsFunction_<'a> { // entity
     pub operand: GenericExpression<'a>,
@@ -2969,7 +2970,7 @@ impl<'a> HasId for ApproximationTolerance_<'a> {
 #[derive(Debug)]
 pub struct ApproximationToleranceDeviation_<'a> { // entity
     pub tessellation_type: ApproximationMethod<'a>,
-    pub tolerances: Vec<ToleranceDeviationSelect<'a>>,
+    pub tolerances: ArrayVec::<ToleranceDeviationSelect<'a>, 2>,
     pub definition_space: ProductOrPresentationSpace<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -2987,7 +2988,7 @@ impl<'a> ParseFromChunks<'a> for ApproximationToleranceDeviation_<'a> {
         let mut i = 0;
         let (s, _) = tag("APPROXIMATION_TOLERANCE_DEVIATION(")(strs[0])?;
         let (s, tessellation_type) = param_from_chunks::<ApproximationMethod<'a>>(false, s, &mut i, strs)?;
-        let (s, tolerances) = param_from_chunks::<Vec<ToleranceDeviationSelect<'a>>>(false, s, &mut i, strs)?;
+        let (s, tolerances) = param_from_chunks::<ArrayVec::<ToleranceDeviationSelect<'a>, 2>>(false, s, &mut i, strs)?;
         let (s, definition_space) = param_from_chunks::<ProductOrPresentationSpace<'a>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             tessellation_type,
@@ -3005,7 +3006,7 @@ impl<'a> HasId for ApproximationToleranceDeviation_<'a> {
 }
 #[derive(Debug)]
 pub struct ApproximationToleranceParameter_<'a> { // entity
-    pub tolerances: Vec<ToleranceParameterSelect<'a>>,
+    pub tolerances: ArrayVec::<ToleranceParameterSelect<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ApproximationToleranceParameter<'a> = Id<ApproximationToleranceParameter_<'a>>;
@@ -3021,7 +3022,7 @@ impl<'a> ParseFromChunks<'a> for ApproximationToleranceParameter_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("APPROXIMATION_TOLERANCE_PARAMETER(")(strs[0])?;
-        let (s, tolerances) = param_from_chunks::<Vec<ToleranceParameterSelect<'a>>>(true, s, &mut i, strs)?;
+        let (s, tolerances) = param_from_chunks::<ArrayVec::<ToleranceParameterSelect<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             tolerances,
             _marker: std::marker::PhantomData}))
@@ -3263,7 +3264,7 @@ impl<'a> HasId for AssemblyComponentUsageSubstitute_<'a> {
 }
 #[derive(Debug)]
 pub struct AtanFunction_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type AtanFunction<'a> = Id<AtanFunction_<'a>>;
@@ -3279,7 +3280,7 @@ impl<'a> ParseFromChunks<'a> for AtanFunction_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("ATAN_FUNCTION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4142,7 +4143,7 @@ impl<'a> HasId for BezierSurface_<'a> {
 }
 #[derive(Debug)]
 pub struct BinaryBooleanExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BinaryBooleanExpression<'a> = Id<BinaryBooleanExpression_<'a>>;
@@ -4158,7 +4159,7 @@ impl<'a> ParseFromChunks<'a> for BinaryBooleanExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("BINARY_BOOLEAN_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4171,7 +4172,7 @@ impl<'a> HasId for BinaryBooleanExpression_<'a> {
 }
 #[derive(Debug)]
 pub struct BinaryFunctionCall_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BinaryFunctionCall<'a> = Id<BinaryFunctionCall_<'a>>;
@@ -4187,7 +4188,7 @@ impl<'a> ParseFromChunks<'a> for BinaryFunctionCall_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("BINARY_FUNCTION_CALL(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4200,7 +4201,7 @@ impl<'a> HasId for BinaryFunctionCall_<'a> {
 }
 #[derive(Debug)]
 pub struct BinaryGenericExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BinaryGenericExpression<'a> = Id<BinaryGenericExpression_<'a>>;
@@ -4216,7 +4217,7 @@ impl<'a> ParseFromChunks<'a> for BinaryGenericExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("BINARY_GENERIC_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4229,7 +4230,7 @@ impl<'a> HasId for BinaryGenericExpression_<'a> {
 }
 #[derive(Debug)]
 pub struct BinaryNumericExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type BinaryNumericExpression<'a> = Id<BinaryNumericExpression_<'a>>;
@@ -4245,7 +4246,7 @@ impl<'a> ParseFromChunks<'a> for BinaryNumericExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("BINARY_NUMERIC_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -4684,7 +4685,7 @@ impl<'a> HasId for BoundedSurface_<'a> {
 pub struct BoundedSurfaceCurve_<'a> { // entity
     pub representation_item__name: Label<'a>,
     pub curve_3d: Curve<'a>,
-    pub associated_geometry: Vec<PcurveOrSurface<'a>>,
+    pub associated_geometry: ArrayVec::<PcurveOrSurface<'a>, 2>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -4704,7 +4705,7 @@ impl<'a> ParseFromChunks<'a> for BoundedSurfaceCurve_<'a> {
         #[allow(non_snake_case)]
         let (s, representation_item__name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
         let (s, curve_3d) = param_from_chunks::<Curve<'a>>(false, s, &mut i, strs)?;
-        let (s, associated_geometry) = param_from_chunks::<Vec<PcurveOrSurface<'a>>>(false, s, &mut i, strs)?;
+        let (s, associated_geometry) = param_from_chunks::<ArrayVec::<PcurveOrSurface<'a>, 2>>(false, s, &mut i, strs)?;
         let (s, master_representation) = param_from_chunks::<PreferredSurfaceCurveRepresentation<'a>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             representation_item__name,
@@ -5254,7 +5255,7 @@ impl<'a> HasId for CameraUsage_<'a> {
 #[derive(Debug)]
 pub struct CartesianPoint_<'a> { // entity
     pub name: Label<'a>,
-    pub coordinates: Vec<LengthMeasure<'a>>,
+    pub coordinates: ArrayVec::<LengthMeasure<'a>, 3>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type CartesianPoint<'a> = Id<CartesianPoint_<'a>>;
@@ -5271,7 +5272,7 @@ impl<'a> ParseFromChunks<'a> for CartesianPoint_<'a> {
         let mut i = 0;
         let (s, _) = tag("CARTESIAN_POINT(")(strs[0])?;
         let (s, name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
-        let (s, coordinates) = param_from_chunks::<Vec<LengthMeasure<'a>>>(true, s, &mut i, strs)?;
+        let (s, coordinates) = param_from_chunks::<ArrayVec::<LengthMeasure<'a>, 3>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             name,
             coordinates,
@@ -6523,7 +6524,7 @@ impl<'a> HasId for CommonDatum_<'a> {
 }
 #[derive(Debug)]
 pub struct ComparisonEqual_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonEqual<'a> = Id<ComparisonEqual_<'a>>;
@@ -6539,7 +6540,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonEqual_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("COMPARISON_EQUAL(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -6552,7 +6553,7 @@ impl<'a> HasId for ComparisonEqual_<'a> {
 }
 #[derive(Debug)]
 pub struct ComparisonExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonExpression<'a> = Id<ComparisonExpression_<'a>>;
@@ -6568,7 +6569,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("COMPARISON_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -6581,7 +6582,7 @@ impl<'a> HasId for ComparisonExpression_<'a> {
 }
 #[derive(Debug)]
 pub struct ComparisonGreater_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonGreater<'a> = Id<ComparisonGreater_<'a>>;
@@ -6597,7 +6598,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonGreater_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("COMPARISON_GREATER(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -6610,7 +6611,7 @@ impl<'a> HasId for ComparisonGreater_<'a> {
 }
 #[derive(Debug)]
 pub struct ComparisonGreaterEqual_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonGreaterEqual<'a> = Id<ComparisonGreaterEqual_<'a>>;
@@ -6626,7 +6627,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonGreaterEqual_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("COMPARISON_GREATER_EQUAL(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -6639,7 +6640,7 @@ impl<'a> HasId for ComparisonGreaterEqual_<'a> {
 }
 #[derive(Debug)]
 pub struct ComparisonLess_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonLess<'a> = Id<ComparisonLess_<'a>>;
@@ -6655,7 +6656,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonLess_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("COMPARISON_LESS(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -6668,7 +6669,7 @@ impl<'a> HasId for ComparisonLess_<'a> {
 }
 #[derive(Debug)]
 pub struct ComparisonLessEqual_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonLessEqual<'a> = Id<ComparisonLessEqual_<'a>>;
@@ -6684,7 +6685,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonLessEqual_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("COMPARISON_LESS_EQUAL(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -6697,7 +6698,7 @@ impl<'a> HasId for ComparisonLessEqual_<'a> {
 }
 #[derive(Debug)]
 pub struct ComparisonNotEqual_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ComparisonNotEqual<'a> = Id<ComparisonNotEqual_<'a>>;
@@ -6713,7 +6714,7 @@ impl<'a> ParseFromChunks<'a> for ComparisonNotEqual_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("COMPARISON_NOT_EQUAL(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -10857,7 +10858,7 @@ impl<'a> HasId for DirectedDimensionalLocation_<'a> {
 #[derive(Debug)]
 pub struct Direction_<'a> { // entity
     pub name: Label<'a>,
-    pub direction_ratios: Vec<f64>,
+    pub direction_ratios: ArrayVec::<f64, 3>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type Direction<'a> = Id<Direction_<'a>>;
@@ -10874,7 +10875,7 @@ impl<'a> ParseFromChunks<'a> for Direction_<'a> {
         let mut i = 0;
         let (s, _) = tag("DIRECTION(")(strs[0])?;
         let (s, name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
-        let (s, direction_ratios) = param_from_chunks::<Vec<f64>>(true, s, &mut i, strs)?;
+        let (s, direction_ratios) = param_from_chunks::<ArrayVec::<f64, 3>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             name,
             direction_ratios,
@@ -10949,7 +10950,7 @@ impl<'a> HasId for DirectionShapeRepresentation_<'a> {
 }
 #[derive(Debug)]
 pub struct DivExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type DivExpression<'a> = Id<DivExpression_<'a>>;
@@ -10965,7 +10966,7 @@ impl<'a> ParseFromChunks<'a> for DivExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("DIV_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -12758,7 +12759,7 @@ impl<'a> HasId for Environment_<'a> {
 }
 #[derive(Debug)]
 pub struct EqualsExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type EqualsExpression<'a> = Id<EqualsExpression_<'a>>;
@@ -12774,7 +12775,7 @@ impl<'a> ParseFromChunks<'a> for EqualsExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("EQUALS_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -14614,7 +14615,7 @@ pub type FontSelect<'a> = Id<FontSelect_<'a>>;
 
 #[derive(Debug)]
 pub struct FormatFunction_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type FormatFunction<'a> = Id<FormatFunction_<'a>>;
@@ -14630,7 +14631,7 @@ impl<'a> ParseFromChunks<'a> for FormatFunction_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("FORMAT_FUNCTION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -16432,7 +16433,7 @@ impl<'a> HasId for InclusionProductConceptFeature_<'a> {
 }
 #[derive(Debug)]
 pub struct IndexExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type IndexExpression<'a> = Id<IndexExpression_<'a>>;
@@ -16448,7 +16449,7 @@ impl<'a> ParseFromChunks<'a> for IndexExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("INDEX_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -16709,7 +16710,7 @@ impl<'a> HasId for InterpolationType<'a> {
 pub struct IntersectionCurve_<'a> { // entity
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
-    pub associated_geometry: Vec<PcurveOrSurface<'a>>,
+    pub associated_geometry: ArrayVec::<PcurveOrSurface<'a>, 2>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -16728,7 +16729,7 @@ impl<'a> ParseFromChunks<'a> for IntersectionCurve_<'a> {
         let (s, _) = tag("INTERSECTION_CURVE(")(strs[0])?;
         let (s, name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
         let (s, curve_3d) = param_from_chunks::<Curve<'a>>(false, s, &mut i, strs)?;
-        let (s, associated_geometry) = param_from_chunks::<Vec<PcurveOrSurface<'a>>>(false, s, &mut i, strs)?;
+        let (s, associated_geometry) = param_from_chunks::<ArrayVec::<PcurveOrSurface<'a>, 2>>(false, s, &mut i, strs)?;
         let (s, master_representation) = param_from_chunks::<PreferredSurfaceCurveRepresentation<'a>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             name,
@@ -18192,7 +18193,7 @@ impl<'a> HasId for LightSourceSpot_<'a> {
 }
 #[derive(Debug)]
 pub struct LikeExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type LikeExpression<'a> = Id<LikeExpression_<'a>>;
@@ -18208,7 +18209,7 @@ impl<'a> ParseFromChunks<'a> for LikeExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("LIKE_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -19680,7 +19681,7 @@ impl<'a> HasId for MinimumFunction_<'a> {
 }
 #[derive(Debug)]
 pub struct MinusExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type MinusExpression<'a> = Id<MinusExpression_<'a>>;
@@ -19696,7 +19697,7 @@ impl<'a> ParseFromChunks<'a> for MinusExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("MINUS_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -19749,7 +19750,7 @@ impl<'a> HasId for MinuteInHour<'a> {
 
 #[derive(Debug)]
 pub struct ModExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type ModExpression<'a> = Id<ModExpression_<'a>>;
@@ -19765,7 +19766,7 @@ impl<'a> ParseFromChunks<'a> for ModExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("MOD_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -23985,7 +23986,7 @@ impl<'a> HasId for PositiveRatioMeasure<'a> {
 
 #[derive(Debug)]
 pub struct PowerExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type PowerExpression<'a> = Id<PowerExpression_<'a>>;
@@ -24001,7 +24002,7 @@ impl<'a> ParseFromChunks<'a> for PowerExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("POWER_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -29286,7 +29287,7 @@ impl<'a> HasId for ScrewPairValue_<'a> {
 pub struct SeamCurve_<'a> { // entity
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
-    pub associated_geometry: Vec<PcurveOrSurface<'a>>,
+    pub associated_geometry: ArrayVec::<PcurveOrSurface<'a>, 2>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -29305,7 +29306,7 @@ impl<'a> ParseFromChunks<'a> for SeamCurve_<'a> {
         let (s, _) = tag("SEAM_CURVE(")(strs[0])?;
         let (s, name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
         let (s, curve_3d) = param_from_chunks::<Curve<'a>>(false, s, &mut i, strs)?;
-        let (s, associated_geometry) = param_from_chunks::<Vec<PcurveOrSurface<'a>>>(false, s, &mut i, strs)?;
+        let (s, associated_geometry) = param_from_chunks::<ArrayVec::<PcurveOrSurface<'a>, 2>>(false, s, &mut i, strs)?;
         let (s, master_representation) = param_from_chunks::<PreferredSurfaceCurveRepresentation<'a>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             name,
@@ -30409,7 +30410,7 @@ impl<'a> HasId for SizeSelect<'a> {
 }
 #[derive(Debug)]
 pub struct SlashExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SlashExpression<'a> = Id<SlashExpression_<'a>>;
@@ -30425,7 +30426,7 @@ impl<'a> ParseFromChunks<'a> for SlashExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("SLASH_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))
@@ -31696,7 +31697,7 @@ impl<'a> HasId for SurfaceConditionCallout_<'a> {
 pub struct SurfaceCurve_<'a> { // entity
     pub name: Label<'a>,
     pub curve_3d: Curve<'a>,
-    pub associated_geometry: Vec<PcurveOrSurface<'a>>,
+    pub associated_geometry: ArrayVec::<PcurveOrSurface<'a>, 2>,
     pub master_representation: PreferredSurfaceCurveRepresentation<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
@@ -31715,7 +31716,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceCurve_<'a> {
         let (s, _) = tag("SURFACE_CURVE(")(strs[0])?;
         let (s, name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
         let (s, curve_3d) = param_from_chunks::<Curve<'a>>(false, s, &mut i, strs)?;
-        let (s, associated_geometry) = param_from_chunks::<Vec<PcurveOrSurface<'a>>>(false, s, &mut i, strs)?;
+        let (s, associated_geometry) = param_from_chunks::<ArrayVec::<PcurveOrSurface<'a>, 2>>(false, s, &mut i, strs)?;
         let (s, master_representation) = param_from_chunks::<PreferredSurfaceCurveRepresentation<'a>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             name,
@@ -32137,7 +32138,7 @@ impl<'a> HasId for SurfaceSide<'a> {
 #[derive(Debug)]
 pub struct SurfaceSideStyle_<'a> { // entity
     pub name: Label<'a>,
-    pub styles: Vec<SurfaceStyleElementSelect<'a>>,
+    pub styles: ArrayVec::<SurfaceStyleElementSelect<'a>, 7>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceSideStyle<'a> = Id<SurfaceSideStyle_<'a>>;
@@ -32154,7 +32155,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceSideStyle_<'a> {
         let mut i = 0;
         let (s, _) = tag("SURFACE_SIDE_STYLE(")(strs[0])?;
         let (s, name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
-        let (s, styles) = param_from_chunks::<Vec<SurfaceStyleElementSelect<'a>>>(true, s, &mut i, strs)?;
+        let (s, styles) = param_from_chunks::<ArrayVec::<SurfaceStyleElementSelect<'a>, 7>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             name,
             styles,
@@ -32265,7 +32266,7 @@ impl<'a> HasId for SurfaceStyleFillArea_<'a> {
 #[derive(Debug)]
 pub struct SurfaceStyleParameterLine_<'a> { // entity
     pub style_of_parameter_lines: CurveOrRender<'a>,
-    pub direction_counts: Vec<DirectionCountSelect<'a>>,
+    pub direction_counts: ArrayVec::<DirectionCountSelect<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceStyleParameterLine<'a> = Id<SurfaceStyleParameterLine_<'a>>;
@@ -32282,7 +32283,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleParameterLine_<'a> {
         let mut i = 0;
         let (s, _) = tag("SURFACE_STYLE_PARAMETER_LINE(")(strs[0])?;
         let (s, style_of_parameter_lines) = param_from_chunks::<CurveOrRender<'a>>(false, s, &mut i, strs)?;
-        let (s, direction_counts) = param_from_chunks::<Vec<DirectionCountSelect<'a>>>(true, s, &mut i, strs)?;
+        let (s, direction_counts) = param_from_chunks::<ArrayVec::<DirectionCountSelect<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             style_of_parameter_lines,
             direction_counts,
@@ -32439,7 +32440,7 @@ impl<'a> HasId for SurfaceStyleRendering_<'a> {
 pub struct SurfaceStyleRenderingWithProperties_<'a> { // entity
     pub rendering_method: ShadingSurfaceMethod<'a>,
     pub surface_colour: Colour<'a>,
-    pub properties: Vec<RenderingPropertiesSelect<'a>>,
+    pub properties: ArrayVec::<RenderingPropertiesSelect<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type SurfaceStyleRenderingWithProperties<'a> = Id<SurfaceStyleRenderingWithProperties_<'a>>;
@@ -32457,7 +32458,7 @@ impl<'a> ParseFromChunks<'a> for SurfaceStyleRenderingWithProperties_<'a> {
         let (s, _) = tag("SURFACE_STYLE_RENDERING_WITH_PROPERTIES(")(strs[0])?;
         let (s, rendering_method) = param_from_chunks::<ShadingSurfaceMethod<'a>>(false, s, &mut i, strs)?;
         let (s, surface_colour) = param_from_chunks::<Colour<'a>>(false, s, &mut i, strs)?;
-        let (s, properties) = param_from_chunks::<Vec<RenderingPropertiesSelect<'a>>>(true, s, &mut i, strs)?;
+        let (s, properties) = param_from_chunks::<ArrayVec::<RenderingPropertiesSelect<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             rendering_method,
             surface_colour,
@@ -33732,7 +33733,7 @@ impl<'a> HasId for TextStyleForDefinedFont_<'a> {
 pub struct TextStyleWithBoxCharacteristics_<'a> { // entity
     pub name: Label<'a>,
     pub character_appearance: CharacterStyleSelect<'a>,
-    pub characteristics: Vec<BoxCharacteristicSelect<'a>>,
+    pub characteristics: ArrayVec::<BoxCharacteristicSelect<'a>, 4>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type TextStyleWithBoxCharacteristics<'a> = Id<TextStyleWithBoxCharacteristics_<'a>>;
@@ -33750,7 +33751,7 @@ impl<'a> ParseFromChunks<'a> for TextStyleWithBoxCharacteristics_<'a> {
         let (s, _) = tag("TEXT_STYLE_WITH_BOX_CHARACTERISTICS(")(strs[0])?;
         let (s, name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
         let (s, character_appearance) = param_from_chunks::<CharacterStyleSelect<'a>>(false, s, &mut i, strs)?;
-        let (s, characteristics) = param_from_chunks::<Vec<BoxCharacteristicSelect<'a>>>(true, s, &mut i, strs)?;
+        let (s, characteristics) = param_from_chunks::<ArrayVec::<BoxCharacteristicSelect<'a>, 4>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             name,
             character_appearance,
@@ -34659,8 +34660,8 @@ impl<'a> HasId for TranslationalRangeMeasure<'a> {
 pub struct TrimmedCurve_<'a> { // entity
     pub name: Label<'a>,
     pub basis_curve: Curve<'a>,
-    pub trim_1: Vec<TrimmingSelect<'a>>,
-    pub trim_2: Vec<TrimmingSelect<'a>>,
+    pub trim_1: ArrayVec::<TrimmingSelect<'a>, 2>,
+    pub trim_2: ArrayVec::<TrimmingSelect<'a>, 2>,
     pub sense_agreement: bool,
     pub master_representation: TrimmingPreference<'a>,
     _marker: std::marker::PhantomData<&'a ()>,
@@ -34680,8 +34681,8 @@ impl<'a> ParseFromChunks<'a> for TrimmedCurve_<'a> {
         let (s, _) = tag("TRIMMED_CURVE(")(strs[0])?;
         let (s, name) = param_from_chunks::<Label<'a>>(false, s, &mut i, strs)?;
         let (s, basis_curve) = param_from_chunks::<Curve<'a>>(false, s, &mut i, strs)?;
-        let (s, trim_1) = param_from_chunks::<Vec<TrimmingSelect<'a>>>(false, s, &mut i, strs)?;
-        let (s, trim_2) = param_from_chunks::<Vec<TrimmingSelect<'a>>>(false, s, &mut i, strs)?;
+        let (s, trim_1) = param_from_chunks::<ArrayVec::<TrimmingSelect<'a>, 2>>(false, s, &mut i, strs)?;
+        let (s, trim_2) = param_from_chunks::<ArrayVec::<TrimmingSelect<'a>, 2>>(false, s, &mut i, strs)?;
         let (s, sense_agreement) = param_from_chunks::<bool>(false, s, &mut i, strs)?;
         let (s, master_representation) = param_from_chunks::<TrimmingPreference<'a>>(true, s, &mut i, strs)?;
         Ok((s, Self {
@@ -36042,7 +36043,7 @@ impl<'a> HasId for VolumeUnit_<'a> {
 }
 #[derive(Debug)]
 pub struct XorExpression_<'a> { // entity
-    pub operands: Vec<GenericExpression<'a>>,
+    pub operands: ArrayVec::<GenericExpression<'a>, 2>,
     _marker: std::marker::PhantomData<&'a ()>,
 }
 pub type XorExpression<'a> = Id<XorExpression_<'a>>;
@@ -36058,7 +36059,7 @@ impl<'a> ParseFromChunks<'a> for XorExpression_<'a> {
     fn parse_chunks(strs: &[&'a str]) -> IResult<'a, Self> {
         let mut i = 0;
         let (s, _) = tag("XOR_EXPRESSION(")(strs[0])?;
-        let (s, operands) = param_from_chunks::<Vec<GenericExpression<'a>>>(true, s, &mut i, strs)?;
+        let (s, operands) = param_from_chunks::<ArrayVec::<GenericExpression<'a>, 2>>(true, s, &mut i, strs)?;
         Ok((s, Self {
             operands,
             _marker: std::marker::PhantomData}))

@@ -464,12 +464,13 @@ use crate::{{
 }};
 use nom::{{
     branch::{{alt}},
-    bytes::complete::{{tag}},
+    bytes::complete::tag,
     character::complete::{{alpha0, alphanumeric1, char}},
     combinator::{{map, recognize}},
     multi::{{many0}},
     sequence::{{delimited, pair}},
-}};")?;
+}};
+use arrayvec::ArrayVec;")?;
 
     for k in &keys {
         type_map.0[k].write_type(k, &mut buf, &type_map)?;
@@ -670,6 +671,52 @@ impl<'a> ConcreteTypes<'a> {
         }
     }
 }
+impl<'a> SimpleExpression<'a> {
+    fn to_value(&self) -> Option<usize> {
+        if !self.1.is_empty() {
+            return None;
+        }
+        let term = &self.0;
+        if !term.1.is_empty() {
+            return None;
+        }
+        let factor = &term.0;
+        if !factor.1.is_none() {
+            return None;
+        }
+        let simple_factor = &factor.0;
+        let exp = if let SimpleFactor::Unary(op, exp) = simple_factor {
+            if op.is_some() {
+                return None;
+            } else {
+                exp
+            }
+        } else {
+            return None;
+        };
+
+        let primary = if let ExpressionOrPrimary::Primary(p) = exp {
+            p
+        } else {
+            return None;
+        };
+        let literal = if let Primary::Literal(lit) = primary {
+            lit
+        } else {
+            return None;
+        };
+
+        if let Literal::Real(f) = literal {
+            if f.fract() == 0.0 {
+                Some(*f as usize)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+}
 impl<'a> AggregationTypes<'a> {
     fn to_type(&self, type_map: &mut TypeMap<'a>) -> Type {
         let (optional, instantiable) = match self {
@@ -863,6 +910,15 @@ impl<'a> ParameterType<'a> {
     }
 }
 impl<'a> GeneralAggregationTypes<'a> {
+    fn upper_bound(&self) -> Option<usize> {
+        let upper: Option<&Bound2> = match &self {
+            GeneralAggregationTypes::Array(a) => Some(&a.bounds.1),
+            GeneralAggregationTypes::Bag(_) => None,
+            GeneralAggregationTypes::List(a) => a.bounds.as_ref().map(|b| &b.1),
+            GeneralAggregationTypes::Set(a) => a.bounds.as_ref().map(|b| &b.1),
+        };
+        upper.and_then(|v| v.0.0.to_value())
+    }
     fn to_attr_type_str(&'a self, type_map: &mut TypeMap<'a>) -> String {
         let (optional, param_type) = match self {
             GeneralAggregationTypes::Array(a) => (a.optional, &a.parameter_type),
@@ -871,10 +927,14 @@ impl<'a> GeneralAggregationTypes<'a> {
             GeneralAggregationTypes::Set(a) => (false, &a.parameter_type),
         };
         let t = param_type.to_attr_type_str(type_map);
+        let vec_type = match self.upper_bound() {
+            Some(b) => format!("ArrayVec::<{}, {}>", t, b),
+            None => format!("Vec<{}>", t),
+        };
         if optional {
-            format!("Option<Vec<{}>>", t)
+            format!("Option<{}>", vec_type)
         } else {
-            format!("Vec<{}>", t)
+            vec_type
         }
     }
 }
