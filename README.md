@@ -1,7 +1,7 @@
 # Foxtrot
 _A fast STEP file viewer_
 
-![Motherboard example](https://mattkeeter.com/projects/foxtrot/mobo.png)  
+![Motherboard example](https://mattkeeter.com/projects/foxtrot/rpi.png)  
 ([demo model source](https://grabcad.com/library/raspberry-pi-3-reference-design-model-b-rpi-raspberrypi-raspberry-pi-1))
 
 ## Quick start
