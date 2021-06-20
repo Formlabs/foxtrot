@@ -51,4 +51,6 @@ a {
 }
 #example_src {
     visibility: hidden;
+    margin-left: 10px;
+    color: #888;
 }
