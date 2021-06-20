@@ -74,7 +74,7 @@ export function loadMesh(buf) {
 
     scene.add(mesh);
 
-    camera.position.set(200, 200, 0);
+    camera.position.set(400, 200, 0);
     camera.lookAt(new THREE.Vector3(0,0,0));
     axisX();
 

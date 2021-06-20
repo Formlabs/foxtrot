@@ -1,1 +1,5 @@
-[]
+[
+    ["Abstract PCA", "examples/abstract_pca.step", "https://github.com/Formlabs/foxtrot/blob/master/examples/abstract_pca.step", "X"],
+    ["Cube with a hole", "examples/cube_hole.step", "https://github.com/Formlabs/foxtrot/blob/master/examples/cube_hole.step", "Y"],
+    ["Cuboid", "examples/cuboid.step", "https://github.com/Formlabs/foxtrot/blob/master/examples/cuboid.step"]
+]
