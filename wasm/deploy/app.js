@@ -24,6 +24,16 @@ worker.onmessage = function(e) {
     const dt_sec = (now - startTime) / 1000.0;
     setStatus("Loaded in " + dt_sec.toPrecision(3) + " sec");
     loadTimeShowing = true;
+    if (targetAxis) {
+        if (targetAxis == "X") {
+            SCENE.axisX();
+        } else if (targetAxis == "Y") {
+            SCENE.axisY();
+        } else if (targetAxis == "Z") {
+            SCENE.axisZ();
+        }
+        targetAxis = null;
+    }
 }
 const loadMeshFromString = function(s) {
     const d = new Date();
@@ -84,10 +94,13 @@ function populateExamples(d) {
         exampleList.push(ex);
     }
 }
+let targetAxis;
 exampleSelector.onchange = function(e) {
     const v = e.target.options[e.target.selectedIndex].value;
     console.log(v);
     if (v >= 1) {
+        setStatus("Downloading...");
+
         // Show the "Model Source" text
         const src = document.getElementById("example_src");
         src.style.visibility = "visible";
@@ -97,6 +110,9 @@ exampleSelector.onchange = function(e) {
 
         fileSelector.disabled = true;
         exampleSelector.disabled = true;
+        if (ex.length == 4) {
+            targetAxis = ex[3];
+        }
 
         fetch(ex[1])
             .then(response => response.text())
