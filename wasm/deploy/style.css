@@ -41,10 +41,14 @@ a {
 }
 #canvas_div {
     position: relative;
+    margin-bottom: 10px;
 }
 #axis_label {
     margin-left: 10px;
     background: #ffffff88;
     padding: 3px;
+    visibility: hidden;
+}
+#example_src {
     visibility: hidden;
 }
