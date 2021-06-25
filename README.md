@@ -1,5 +1,5 @@
 # Foxtrot
-[Project writeup](https://mattkeeter.com/projects/foxtrot)
+[We're hiring!](https://careers.formlabs.com/) | [Project writeup](https://mattkeeter.com/projects/foxtrot)
 
 Foxtrot is a **fast** viewer for
 [STEP files](https://en.wikipedia.org/wiki/ISO_10303-21),
