@@ -14,7 +14,7 @@ This repository includes a simple native GUI:
 
 In addition, the same code can run in a browser (click to [see the demo](https://mattkeeter.com/projects/foxtrot/demo)):
 
-[![Browser example](https://www.mattkeeter.com/projects/foxtrot/foxtrot365.png)](https://mattkeeter.com/projects/foxtrot/demo)
+[![Browser example](https://www.mattkeeter.com/projects/foxtrot/foxtrot365.png)](https://mattkeeter.com/projects/foxtrot/demo)  
 ([demo model source](https://grabcad.com/library/6-dof-mechanical-arm-claw-kit-1))
 
 ## Quick start
