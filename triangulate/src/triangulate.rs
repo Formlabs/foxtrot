@@ -659,8 +659,11 @@ fn curve(s: &StepFile, edge_curve: &ap214::EdgeCurve_,
                                edge_curve.same_sense ^ !orientation)
         },
         Entity::BSplineCurveWithKnots(c) => {
-            assert!(c.closed_curve.0.unwrap() == false);
-            assert!(c.self_intersect.0.unwrap()== false);
+            if c.closed_curve.0 != Some(false) {
+                return Err(Error::ClosedCurve);
+            } else if c.self_intersect.0 != Some(false) {
+                return Err(Error::SelfIntersectingCurve);
+            }
 
             let control_points_list = control_points_1d(
                 s, &c.control_points_list);
