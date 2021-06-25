@@ -7,8 +7,15 @@ a standard interchange format for mechanical [CAD](https://en.wikipedia.org/wiki
 It is an _experimental_ project built from the ground up,
 including new libraries for parsing and triangulation.
 
+This repository includes a simple native GUI:
+
 ![Motherboard example](https://mattkeeter.com/projects/foxtrot/rpi.png)  
 ([demo model source](https://grabcad.com/library/raspberry-pi-3-reference-design-model-b-rpi-raspberrypi-raspberry-pi-1))
+
+In addition, the same code can run in a browser (click to [see the demo](https://mattkeeter.com/projects/foxtrot/demo)):
+
+[![Browser example](https://www.mattkeeter.com/projects/foxtrot/foxtrot365.png)](https://mattkeeter.com/projects/foxtrot/demo)
+([demo model source](https://grabcad.com/library/6-dof-mechanical-arm-claw-kit-1))
 
 ## Quick start
 (Prerequisite: [install Rust and Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html), and clone this repository)
