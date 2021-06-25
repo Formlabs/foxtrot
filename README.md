@@ -17,7 +17,7 @@ cargo run --release -- examples/cube_hole.step
 ```
 
 ## WebAssembly demo
-(Prerequisite: [install `wasm-pack`](https://rustwasm.github.io/wasm-pack/installer/)) and clone this repository
+(Prerequisite: [install `wasm-pack`](https://rustwasm.github.io/wasm-pack/installer/) and clone this repository)
 ```sh
 cd wasm
 wasm-pack build --target no-modules
