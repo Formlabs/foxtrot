@@ -1,5 +1,4 @@
 # Foxtrot
-[We're hiring!](https://careers.formlabs.com/) | [Project writeup](https://mattkeeter.com/projects/foxtrot)
 
 Foxtrot is a **fast** viewer for
 [STEP files](https://en.wikipedia.org/wiki/ISO_10303-21),
@@ -16,6 +15,9 @@ In addition, the same code can run in a browser (click to [see the demo](https:/
 
 [![Browser example](https://www.mattkeeter.com/projects/foxtrot/foxtrot365.png)](https://mattkeeter.com/projects/foxtrot/demo)  
 ([demo model source](https://grabcad.com/library/6-dof-mechanical-arm-claw-kit-1))
+
+For more background on the project, check out [this writeup](https://mattkeeter.com/projects/foxtrot)
+by one of the main authors.
 
 ## Quick start
 (Prerequisite: [install Rust and Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html), and clone this repository)
