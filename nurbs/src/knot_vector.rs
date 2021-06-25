@@ -33,8 +33,10 @@ impl KnotVector {
         let m = self.len() - 1;
         let n = m - (self.p + 1); // max basis index
 
-        if u == self[n + 1] {
+        if u >= self[n + 1] {
             return n;
+        } else if u <= self[self.p] {
+            return self.p;
         }
         let mut low = self.p;
         let mut high = n + 1;
