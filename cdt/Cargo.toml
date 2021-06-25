@@ -4,6 +4,12 @@ version = "0.1.0"
 authors = ["Matt Keeter <matt@formlabs.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
+repository = "https://github.com/Formlabs/foxtrot"
+homepage = "https://github.com/Formlabs/foxtrot/tree/master/cdt"
+description = "Fast, robust constrained Delaunay triangulation"
+readme = "README.md"
+keywords = ["graphics", "triangulation", "delaunay"]
+categories = ["graphics", "mathematics", "algorithms"]
 
 [dependencies]
 geometry-predicates = "0.3.0"
