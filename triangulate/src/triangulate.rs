@@ -78,9 +78,12 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                     .map(|c| (styled.item, c))
             })
         .collect();
-    let manifold_solid_breps: HashSet<RepresentationItem> = s.0.iter()
+
+    // A list of entities that are ManifoldSolidBrep or ShellBasedSurfaceModel
+    let breps: HashSet<RepresentationItem> = s.0.iter()
         .enumerate()
-        .filter(|(_i, e)| ManifoldSolidBrep_::try_from_entity(e).is_some())
+        .filter(|(_i, e)| ManifoldSolidBrep_::try_from_entity(e).is_some() ||
+                          ShellBasedSurfaceModel_::try_from_entity(e).is_some())
         .map(|(i, _e)| Id::new(i))
         .collect();
 
@@ -124,24 +127,24 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
             }
         } else {
             // Bind this transform to the RepresentationItem, which is
-            // presumably a ManifoldSolidBrep
-            let items = match &s.0[id.0] {
+            // either a ManifoldSolidBrep or a ShellBasedSurfaceModel
+            let items = match &s[id] {
                 Entity::AdvancedBrepShapeRepresentation(b) => &b.items,
                 Entity::ShapeRepresentation(b) => &b.items,
                 Entity::ManifoldSurfaceShapeRepresentation(b) => &b.items,
                 e => panic!("Could not get shape from {:?}", e),
             };
 
-            for m in items.iter().filter(|i| manifold_solid_breps.contains(*i))
+            for m in items.iter().filter(|i| breps.contains(*i))
             {
                 to_mesh.entry(*m).or_default().push(mat);
             }
         }
     }
-    // If there are items in manifold_solid_breps that aren't attached to
+    // If there are items in breps that aren't attached to
     // a transformation chain, then draw them individually
     let seen: HashSet<Id<_>> = to_mesh.keys().map(|i| *i).collect();
-    for m in manifold_solid_breps.difference(&seen) {
+    for m in breps.difference(&seen) {
         to_mesh.entry(*m).or_default().push(DMat4::identity());
     }
 
@@ -160,15 +163,18 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
             |(mut mesh, mut stats), (id, mats)| {
                 let v_start = mesh.verts.len();
                 let t_start = mesh.triangles.len();
-                let brep: &ManifoldSolidBrep_ = match s.entity(id.cast()) {
-                    Some(b) => b,
-                    None => {
-                        warn!("Skipping {:?} (not a ManifoldSolidBrep)",
-                              s.0[id.0]);
+                match &s[*id] {
+                    Entity::ManifoldSolidBrep(b) =>
+                        closed_shell(s, b.outer, &mut mesh, &mut stats),
+                    Entity::ShellBasedSurfaceModel(b) =>
+                        for v in &b.sbsm_boundary {
+                            shell(s, *v, &mut mesh, &mut stats);
+                        },
+                    _ => {
+                        warn!("Skipping {:?} (not a known solid)", s[*id]);
                         return (mesh, stats);
                     },
                 };
-                closed_shell(s, brep.outer, &mut mesh, &mut stats);
 
                 // Pick out a color from the color map and apply it to each
                 // newly-created vertex
@@ -308,11 +314,29 @@ fn axis2_placement_3d(s: &StepFile, t: Id<Axis2Placement3d_>) -> (DVec3, DVec3, 
     (location, axis, ref_direction)
 }
 
+fn shell(s: &StepFile, c: Shell, mesh: &mut Mesh, stats: &mut Stats) {
+    match &s[c] {
+        Entity::ClosedShell(_) => closed_shell(s, c.cast(), mesh, stats),
+        Entity::OpenShell(_) => open_shell(s, c.cast(), mesh, stats),
+        h => warn!("Skipping {:?} (unknown Shell type)", h),
+    }
+}
+
+fn open_shell(s: &StepFile, c: OpenShell, mesh: &mut Mesh, stats: &mut Stats) {
+    let cs = s.entity(c).expect("Could not get OpenShell");
+    for face in &cs.cfs_faces {
+        if let Err(err) = advanced_face(s, face.cast(), mesh, stats) {
+            error!("Failed to triangulate {:?}: {}", s[*face], err);
+        }
+    }
+    stats.num_shells += 1;
+}
+
 fn closed_shell(s: &StepFile, c: ClosedShell, mesh: &mut Mesh, stats: &mut Stats) {
     let cs = s.entity(c).expect("Could not get ClosedShell");
     for face in &cs.cfs_faces {
         if let Err(err) = advanced_face(s, face.cast(), mesh, stats) {
-            error!("Failed to triangulate {:?}: {}", s.0[face.0], err);
+            error!("Failed to triangulate {:?}: {}", s[*face], err);
         }
     }
     stats.num_shells += 1;
@@ -462,7 +486,7 @@ fn advanced_face(s: &StepFile, f: AdvancedFace, mesh: &mut Mesh,
 }
 
 fn get_surface(s: &StepFile, surf: ap214::Surface) -> Result<Surface, Error> {
-    match &s.0[surf.0] {
+    match &s[surf] {
         Entity::CylindricalSurface(c) => {
             let (location, axis, ref_direction) = axis2_placement_3d(s, c.position);
             Ok(Surface::new_cylinder(axis, ref_direction, location, c.radius.0.0.0))
@@ -588,12 +612,12 @@ fn control_points_2d(s: &StepFile, rows: &Vec<Vec<CartesianPoint>>) -> Vec<Vec<D
 }
 
 fn face_bound(s: &StepFile, b: FaceBound) -> Result<Vec<DVec3>, Error> {
-    let (bound, orientation) = match &s.0[b.0] {
+    let (bound, orientation) = match &s[b] {
         Entity::FaceBound(b) => (b.bound, b.orientation),
         Entity::FaceOuterBound(b) => (b.bound, b.orientation),
         e => panic!("Could not get bound from {:?} at {:?}", e, b),
     };
-    match &s.0[bound.0] {
+    match &s[bound] {
         Entity::EdgeLoop(e) => {
             let mut d = edge_loop(s, &e.edge_list)?;
             if !orientation {
@@ -644,7 +668,7 @@ fn edge_curve(s: &StepFile, e: EdgeCurve, orientation: bool) -> Result<Vec<DVec3
 fn curve(s: &StepFile, edge_curve: &ap214::EdgeCurve_,
          curve_id: ap214::Curve, orientation: bool) -> Result<Curve, Error>
 {
-    Ok(match &s.0[curve_id.0] {
+    Ok(match &s[curve_id] {
         Entity::Circle(c) => {
             let (location, axis, ref_direction) = axis2_placement_3d(s, c.position.cast());
             Curve::new_circle(location, axis, ref_direction, c.radius.0.0.0,
