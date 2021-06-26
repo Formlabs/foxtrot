@@ -79,14 +79,6 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
             })
         .collect();
 
-    // A list of entities that are ManifoldSolidBrep or ShellBasedSurfaceModel
-    let breps: HashSet<RepresentationItem> = s.0.iter()
-        .enumerate()
-        .filter(|(_i, e)| ManifoldSolidBrep_::try_from_entity(e).is_some() ||
-                          ShellBasedSurfaceModel_::try_from_entity(e).is_some())
-        .map(|(i, _e)| Id::new(i))
-        .collect();
-
     // Store a map of parent -> (child, transform)
     let mut transform_stack = build_transform_stack(s, false);
     let mut roots = transform_stack_roots(&transform_stack);
@@ -135,17 +127,33 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                 e => panic!("Could not get shape from {:?}", e),
             };
 
-            for m in items.iter().filter(|i| breps.contains(*i))
-            {
-                to_mesh.entry(*m).or_default().push(mat);
+            for m in items.iter() {
+                match &s[*m] {
+                    Entity::ManifoldSolidBrep(_)
+                    | Entity::BrepWithVoids(_)
+                    | Entity::ShellBasedSurfaceModel(_) =>
+                        to_mesh.entry(*m).or_default().push(mat),
+                    Entity::Axis2Placement3d(_) => (),
+                    e => warn!("Skipping {:?}", e),
+                }
             }
         }
     }
-    // If there are items in breps that aren't attached to
-    // a transformation chain, then draw them individually
-    let seen: HashSet<Id<_>> = to_mesh.keys().map(|i| *i).collect();
-    for m in breps.difference(&seen) {
-        to_mesh.entry(*m).or_default().push(DMat4::identity());
+    // If there are items in breps that aren't attached to a transformation
+    // chain, then draw them individually (with an identity matrix)
+    if to_mesh.is_empty() {
+        s.0.iter()
+            .enumerate()
+            .filter(|(_i, e)|
+                match e {
+                    Entity::ManifoldSolidBrep(_)
+                    | Entity::BrepWithVoids(_)
+                    | Entity::ShellBasedSurfaceModel(_) => true,
+                    _ => false,
+                }
+            )
+            .map(|(i, _e)| Id::new(i))
+            .for_each(|i| to_mesh.entry(i).or_default().push(DMat4::identity()));
     }
 
     let (to_mesh_iter, empty) = {
@@ -170,6 +178,9 @@ pub fn triangulate(s: &StepFile) -> (Mesh, Stats) {
                         for v in &b.sbsm_boundary {
                             shell(s, *v, &mut mesh, &mut stats);
                         },
+                    Entity::BrepWithVoids(b) =>
+                        // TODO: handle voids
+                        closed_shell(s, b.outer, &mut mesh, &mut stats),
                     _ => {
                         warn!("Skipping {:?} (not a known solid)", s[*id]);
                         return (mesh, stats);
