@@ -112,6 +112,14 @@ impl<'a> StepFile<'a> {
     }
 }
 
+impl<'a, T> std::ops::Index<Id<T>> for StepFile<'a> {
+    type Output = Entity<'a>;
+
+    fn index(&self, id: Id<T>) -> &Self::Output {
+        &self.0[id.0]
+    }
+}
+
 pub trait FromEntity<'a> {
     fn try_from_entity(e: &'a Entity<'a>) -> Option<&'a Self>;
 }
