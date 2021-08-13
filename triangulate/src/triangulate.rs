@@ -320,8 +320,12 @@ fn direction(s: &StepFile, a: Direction) -> DVec3 {
 fn axis2_placement_3d(s: &StepFile, t: Id<Axis2Placement3d_>) -> (DVec3, DVec3, DVec3) {
     let a = s.entity(t).expect("Could not get Axis2Placement3d");
     let location = cartesian_point(s, a.location);
+    // TODO: this doesn't necessarily match the behavior of `build_axes`
     let axis = direction(s, a.axis.expect("Missing axis"));
-    let ref_direction = direction(s, a.ref_direction.expect("Missing ref_direction"));
+    let ref_direction = match a.ref_direction {
+        None => DVec3::new(1.0, 0.0, 0.0),
+        Some(r) => direction(s, r),
+    };
     (location, axis, ref_direction)
 }
 
