@@ -94,9 +94,12 @@ impl<const N: usize> SampledSurface<N>
                 dot(&S_u, &S_v) + dot(&r, &S_uv),
                 length2(&S_v) + dot(&r, &S_vv),
             );
-            let delta_i = match J_i.try_inverse() {
-                None => return None,
-                Some(m) => m * K_i,
+            // By using pseudo_inverse() rather than try_inverse() we can avoid the singularities
+            // that pop up from time to time when using Newton's method.
+            let delta_i = if let Ok(inverse) = J_i.pseudo_inverse(1e-4) {
+                inverse * K_i
+            } else {
+                return None;
             };
             let mut uv_ip1 = uv_i + delta_i;
 
